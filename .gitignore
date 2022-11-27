@@ -5,5 +5,5 @@
 .breakpoints
 .replit
 replit.nix
-servers.txt
-/pb-data
+servers.csv
+/pb_data

@@ -7,6 +7,7 @@ Quartz is a backend for Arth Panel, an open-source & self-hosted minecraft serve
 
 1. Download the image from docker hub with the command `sudo docker pull arthmc/quartz:latest`
 2. Run the image with `sudo docker run -p 4000:4000 arthmc/quartz:latest`. To change the port, replace the first 4000 with the port number you want.
+3. **Pocketbase will also need to be installed.** While there is no official docker image, installing it locally is very easy. Just download their executable file, and run `./pocketbase serve`.
 
 # Contributing
 
