@@ -7,3 +7,5 @@
 replit.nix
 servers.csv
 /pb_data
+public.pem
+private.pem
