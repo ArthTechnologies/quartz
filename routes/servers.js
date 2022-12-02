@@ -15,17 +15,22 @@ for (i in array) {
 }
 
 function checkServers(em) {
+
   amount = 0;
-  console.log(array[2].indexOf(em));
-  console.log(array[2]);
+
+
+  
   var n = [];
   var s = [];
   var v = [];
   for (i = 0; i < arraylength; i++) {
-    if (array[i].indexOf(em) > 0) {
-      n.push(array[i].split(",")[0]);
-      s.push(array[i].split(",")[1]);
-      v.push(array[i].split(",")[2]);
+    console.log("hi");
+    if (array[i] != (undefined | '')) {
+      if (array[i].indexOf(em) > 0) {
+        n.push(array[i].split(",")[0]);
+        s.push(array[i].split(",")[1]);
+        v.push(array[i].split(",")[2]);
+      }
     }
 
     v = v.filter(function (el) {
@@ -54,7 +59,8 @@ function checkServers(em) {
 console.log("names2: " + names);
 
 router.post(`/`, function (req, res) {
-  //add cors header
+  console.log(req.body.email)
+
 
   //if req.body.email is "noemail" return 404
   if (req.body.email == ("noemail" | "undefined")) {
@@ -63,14 +69,16 @@ router.post(`/`, function (req, res) {
   //set email to the email in the request
   email = req.body.email;
 
-  console.log("yyyy" + checkServers(email));
+  //if servers.csv isnt blank, run checkServers
+    checkServers(email);
+    console.log("return" + email + names + amount + softwares);
   //wait for checkServers to finish
-  console.log("return" + email + names + amount + softwares);
+
   function delay(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 
-  delay(0).then(() =>
+  delay(1000).then(() =>
     res.status(200).json({
       names: names,
       amount: amount,
@@ -78,7 +86,7 @@ router.post(`/`, function (req, res) {
       softwares: softwares,
     })
   );
-  console.log("g" + guard);
+
 });
 
 module.exports = router;
