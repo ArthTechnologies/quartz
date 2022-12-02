@@ -78,7 +78,7 @@ router.post(`/`, function (req, res) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 
-  delay(1000).then(() =>
+  delay(0).then(() =>
     res.status(200).json({
       names: names,
       amount: amount,
