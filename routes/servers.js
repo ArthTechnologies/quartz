@@ -15,7 +15,7 @@ for (i in array) {
 }
 
 function checkServers(em) {
-
+  
   amount = 0;
 
 
@@ -59,6 +59,7 @@ function checkServers(em) {
 console.log("names2: " + names);
 
 router.post(`/`, function (req, res) {
+  array = fs.readFileSync("servers.csv").toString().split("\n");
   console.log(req.body.email)
 
 
