@@ -8,7 +8,7 @@ let versions = [];
 var array = fs.readFileSync("servers.csv").toString().split("\n");
 var amount = 0;
 var arraylength = 0;
-var guard = 0;
+
 
 for (i in array) {
   arraylength++;
@@ -18,18 +18,28 @@ function checkServers(em) {
   
   amount = 0;
 
-
+  fs.readFile('servers.csv', 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+  console.log(data.split('\n'));  
+    // split the file data by '\n' and assign it to the 'array' variable
+   a = data.split('\n');
+  
+    // do something with the array
+  });
   
   var n = [];
   var s = [];
   var v = [];
-  for (i = 0; i < arraylength; i++) {
-    console.log("hi");
-    if (array[i] != (undefined | '')) {
-      if (array[i].indexOf(em) > 0) {
-        n.push(array[i].split(",")[0]);
-        s.push(array[i].split(",")[1]);
-        v.push(array[i].split(",")[2]);
+  for (i in a) {
+
+    if (a[i] != (undefined | '')) {
+      if (a[i].indexOf(em) > 0) {
+        n.push(a[i].split(",")[0]);
+        s.push(a[i].split(",")[1]);
+        v.push(a[i].split(",")[2]);
       }
     }
 
@@ -43,24 +53,29 @@ function checkServers(em) {
       return el != "";
     });
 
-    console.log(" a " + n);
 
-    if (array[i].indexOf(em) > 0) {
+
+    if (a[i].indexOf(em) > 0) {
       amount++;
-      console.log("amount is " + amount);
+
     }
 
-    console.log(n, s, v, amount);
+
   }
   names = n;
   softwares = s;
   versions = v;
+
 }
-console.log("names2: " + names);
+
 
 router.post(`/`, function (req, res) {
-  array = fs.readFileSync("servers.csv").toString().split("\n");
-  console.log(req.body.email)
+  //use fs.watchFile to watch for changes in servers.csv without causing node:7093
+
+
+  
+  
+  
 
 
   //if req.body.email is "noemail" return 404
@@ -72,7 +87,7 @@ router.post(`/`, function (req, res) {
 
   //if servers.csv isnt blank, run checkServers
     checkServers(email);
-    console.log("return" + email + names + amount + softwares);
+    
   //wait for checkServers to finish
 
   function delay(time) {
