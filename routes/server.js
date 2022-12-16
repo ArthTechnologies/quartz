@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 let techname;
+const f = require("./lib.js");
 
 const fs = require("fs");
 
@@ -74,64 +75,12 @@ router.post(`/new`, function (req, res) {
 
   
 
-  run(id, req.body.software);
+  f.run(id, req.body.software);
 
   res.status(202).json({ msg: `Request recieved.` });
 });
 
-function run(name, software) {
-  const path = "java";
-  const folder="servers/"+name;
-  const args = ["-jar server.jar"];
-  //make a new folder called name using fs
-  let s = "paper";
-  let c = "servers";
 
-  switch (software) {
-    case "paper": s = "paper"; c = "servers"; break;
-    case "velocity": s = "velocity"; c = "proxies"; break;
-    case "quilt": s = "quilt"; c = "modded"; break;
-    case "vanilla": s = "vanilla"; c = "vanilla"; break;
-    case "waterfall": s = "waterfall"; c = "proxies"; break;
-    case "forge": s = "forge"; c = "modded"; break;
-    case "fabric": s = "fabric"; c = "modded"; break;
-    case "mohist": s = "mohist"; c = "modded"; break;
-    case "spigot": s = "spigot"; c = "servers"; break;
-  }
-
-  if (!fs.existsSync(folder)){
-    fs.mkdirSync(folder);
-  }
-
-  //copy ../servers/template/server.jar to folder
-  fs.copyFileSync("servers/template/server.jar", folder+"/server.jar");
-
-
-
-  //add new file eula.txt in folder
-  fs.writeFileSync(folder+"/eula.txt", "eula=true");
-
-  fs.writeFileSync(folder+"/serverjars.properties", "category="+c+"\ntype="+s+"\nversion=latest\nuseHomeDirectory=true");
-
-  //run server.jar
-  const { exec } = require('child_process');
-
-  const ls = exec(path + ' ' + args, {cwd: folder}, function (error, stdout, stderr) {
-    
-    if (error) {
-      console.log(error.stack);
-      console.log('Error code: ' + error.code);
-      console.log('Signal received: ' + error.signal);
-    }
-    console.log('Child Process STDOUT: ' + stdout);
-    console.log('Child Process STDERR: ' + stderr);
-  });
-  
-  ls.on('exit', function (code) {
-    console.log('Child process exited with exit code ' + code);
-  });
-
-}
 
 
 module.exports = router;
