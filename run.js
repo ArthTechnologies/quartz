@@ -7,6 +7,28 @@ const rsa = require("node-rsa");
 const fs = require("fs");
 const crypto = require("crypto");
 
+// if java directory is empty
+if (!fs.existsSync("java")) {
+  fs.mkdirSync("java");
+
+  //make a new folder called 17 in java
+  //download https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz and put it in java/17 using curl -LO
+  //extract it
+
+  exec = require("child_process").exec;
+  exec("curl -LO https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz", {
+    cwd: "java",
+  });
+  //wait 5 seconds then extract it to java/17
+  setTimeout(function () { 
+    exec("tar -xvf OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz", {
+      cwd: "java",
+    });
+  }, 5000);
+s
+
+}
+
 // generate public and private key
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
   modulusLength: 2048,
