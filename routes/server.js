@@ -37,9 +37,6 @@ router.post(`/new`, function (req, res) {
   res.header("Access-Control-Allow-Origin", "*");
 
   var id = 0;
-  //set id to a uuid
-  var uuid = require("uuid");
-  id = uuid.v4();
   console.log(id);
   var fs = require("fs");
   em = req.body.email;
@@ -73,6 +70,9 @@ router.post(`/new`, function (req, res) {
       }
     });
   }
+
+
+  
 
   run(id, req.body.software);
 

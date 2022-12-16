@@ -7,12 +7,9 @@ let softwares = [];
 let versions = [];
 var array = fs.readFileSync("servers.csv").toString().split("\n");
 var amount = 0;
-var arraylength = 0;
+let ids = [];
 
 
-for (i in array) {
-  arraylength++;
-}
 
 function checkServers(em) {
   
@@ -33,6 +30,7 @@ function checkServers(em) {
   var n = [];
   var s = [];
   var v = [];
+
   for (i in a) {
 
     if (a[i] != (undefined | '')) {
@@ -40,6 +38,7 @@ function checkServers(em) {
         n.push(a[i].split(",")[0]);
         s.push(a[i].split(",")[1]);
         v.push(a[i].split(",")[2]);
+        
       }
     }
 
@@ -57,7 +56,7 @@ function checkServers(em) {
 
     if (a[i].indexOf(em) > 0) {
       amount++;
-
+      ids.push(i);
     }
 
 
@@ -65,6 +64,12 @@ function checkServers(em) {
   names = n;
   softwares = s;
   versions = v;
+
+  return {      names: names,
+    amount: amount,
+    versions: versions,
+    softwares: softwares,
+    ids: ids,};
 
 }
 
@@ -86,7 +91,7 @@ router.post(`/`, function (req, res) {
   email = req.body.email;
 
   //if servers.csv isnt blank, run checkServers
-    checkServers(email);
+    
     
   //wait for checkServers to finish
 
@@ -94,13 +99,11 @@ router.post(`/`, function (req, res) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 
+
+  var r = checkServers(email);
+
   delay(0).then(() =>
-    res.status(200).json({
-      names: names,
-      amount: amount,
-      versions: versions,
-      softwares: softwares,
-    })
+    res.status(200).json(r)
   );
 
 });
