@@ -25,7 +25,7 @@ if (!fs.existsSync("java")) {
       cwd: "java",
     });
   }, 5000);
-s
+
 
 }
 
