@@ -20,9 +20,14 @@ router.post(`/`, function (req, res) {
   console.log(req.headers.techname);
 });
 router.get(`/change-state`, function (req, res) {
-  state = req.headers.request;
+  state = req.headers.state;
+  id = req.headers.id;
   if ((state == "start") | (state == "stop") | (state == "restart")) {
     res.status(202).json({ msg: `Success. Server will ${state}.` });
+    switch (state) {
+      case "start": f.run(id); break;
+      default : console.log("Invalid state.");
+    }
     console.log(req.headers.request);
   } else {
     res
@@ -37,9 +42,9 @@ router.post(`/new`, function (req, res) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
 
-  var id = 0;
-  console.log(id);
-  var fs = require("fs");
+  //set id to the number of the last line in servers.csv
+  var id = fs.readFileSync("servers.csv").toString().split("\n").length-1;
+
   em = req.body.email;
   console.log(em);
   var store =
@@ -50,8 +55,6 @@ router.post(`/new`, function (req, res) {
     req.body.version +
     "," +
     em +
-    "," +
-    id +
     "\n";
 
   console.log(store);

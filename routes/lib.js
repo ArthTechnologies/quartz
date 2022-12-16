@@ -1,5 +1,6 @@
 fs = require("fs");
 
+let a = [];
 function checkServers(em) {
   
     amount = 0;
@@ -46,6 +47,7 @@ function checkServers(em) {
   
       if (a[i].indexOf(em) > 0) {
         amount++;
+
         ids.push(i);
       }
   
@@ -90,7 +92,12 @@ function checkServers(em) {
     //copy ../servers/template/server.jar to folder
     fs.copyFileSync("servers/template/server.jar", folder+"/server.jar");
   
-  
+    //change line 49 of folder/server.properties to server-port=name+20000
+    let data = fs.readFileSync("servers/template/server.properties", "utf8");
+    let result = data.replace(/server-port=25565/g, "server-port="+parseInt('1000') + parseInt(name));
+    fs.writeFileSync(folder+"/server.properties", result, "utf8");
+
+
   
     //add new file eula.txt in folder
     fs.writeFileSync(folder+"/eula.txt", "eula=true");
