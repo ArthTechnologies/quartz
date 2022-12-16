@@ -9,3 +9,6 @@ servers.csv
 /pb_data
 public.pem
 private.pem
+/java
+/servers/*
+!/servers/template

@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const fs = require("fs");
 
 //import settings.json
-const settings = require("../settings.json");
+let settings = require("../settings.json");
 
 //if environment variable WEB_PORT is set, set settings.webport to that
 if (process.env.SERVERS_PER_USER) {
@@ -32,11 +33,31 @@ router.get(`/`, function (req, res) {
 
 
 router.post(`/set`, function (req, res) {
+    //placeholder
+    var keyMatch  = true;
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+    settings = {
+        "serversPerUser":req.body.serversPerUser,
+        "browserTitle":req.body.browserTitle,
+        "webLogo":req.body.webLogo,
+        "enablePay":req.body.enablePay,
+        "trustedDomains": req.body.trustedDomains,
+    }
+    console.log(settings);
+    if(keyMatch){
+        //write settings to settings.json
+    fs.writeFile("settings.json", JSON.stringify(settings), function (err) {
+        if (err) throw err;
+        console.log("File is created successfully.");
+    });
+}
+    //return settings.json
+    res.json(settings);
     
-    //if req.body.email is "noemail" return 404
 });
+
 
 module.exports = router;
