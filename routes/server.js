@@ -54,6 +54,8 @@ router.post(`/new`, function (req, res) {
     "," +
     req.body.version +
     "," +
+    '[' + req.body.addons + ']' + 
+    "," +
     em +
     "\n";
 
@@ -75,12 +77,19 @@ router.post(`/new`, function (req, res) {
     });
   }
 
+  //scan servers.csv for req.body.name and if it exists, return 409
 
-  
+  let servers = fs.readFileSync("servers.csv").toString();
+console.log(req.body.name + servers);
+console.log(servers.indexOf("Arth"))
+  if ( servers.indexOf(req.body.name) > -1) {
+    res.status(409).json({ msg: `Server name already exists.` });
+  } else {
 
   f.run(id, req.body.software);
 
   res.status(202).json({ msg: `Request recieved.` });
+  }
 });
 
 
