@@ -114,13 +114,12 @@ function run(name, software) {
 
   //copy ../servers/template/server.jar to folder
   fs.copyFileSync("servers/template/server.jar", folder + "/server.jar");
-
+  let port = 10000 + parseInt(name);
   //change line 49 of folder/server.properties to server-port=name+20000
   let data = fs.readFileSync("servers/template/server.properties", "utf8");
-  let result = data.replace(
-    /server-port=25565/g,
-    "server-port=" + parseInt("1000") + parseInt(name)
-  );
+  let result = data.replace(/server-port=25565/g, "server-port=" + port);
+
+  console.log(port);
   fs.writeFileSync(folder + "/server.properties", result, "utf8");
 
   //add new file eula.txt in folder
