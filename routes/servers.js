@@ -10,10 +10,6 @@ var amount = 0;
 let ids = [];
 const f = require("./lib.js");
 
-
-
-
-
 router.post(`/`, function (req, res) {
   //if req.body.email is "noemail" return 404
   if (req.body.email == ("noemail" | "undefined")) {
@@ -23,21 +19,16 @@ router.post(`/`, function (req, res) {
   email = req.body.email;
 
   //if servers.csv isnt blank, run checkServers
-    
-    
+
   //wait for checkServers to finish
 
   function delay(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 
-
   var r = f.checkServers(email);
 
-  delay(0).then(() =>
-    res.status(200).json(r)
-  );
-
+  delay(0).then(() => res.status(200).json(r));
 });
 
 module.exports = router;

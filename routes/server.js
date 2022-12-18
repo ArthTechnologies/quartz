@@ -25,8 +25,11 @@ router.get(`/change-state`, function (req, res) {
   if ((state == "start") | (state == "stop") | (state == "restart")) {
     res.status(202).json({ msg: `Success. Server will ${state}.` });
     switch (state) {
-      case "start": f.run(id); break;
-      default : console.log("Invalid state.");
+      case "start":
+        f.run(id);
+        break;
+      default:
+        console.log("Invalid state.");
     }
     console.log(req.headers.request);
   } else {
@@ -37,13 +40,11 @@ router.get(`/change-state`, function (req, res) {
 });
 
 router.post(`/new`, function (req, res) {
-
-
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
 
   //set id to the number of the last line in servers.csv
-  var id = fs.readFileSync("servers.csv").toString().split("\n").length-1;
+  var id = fs.readFileSync("servers.csv").toString().split("\n").length - 1;
 
   em = req.body.email;
   console.log(em);
@@ -54,45 +55,43 @@ router.post(`/new`, function (req, res) {
     "," +
     req.body.version +
     "," +
-    '[' + req.body.addons + ']' + 
+    "[" +
+    req.body.addons +
+    "]" +
     "," +
     em +
     "\n";
 
   console.log(store);
-  if (
-    em !== "noemail" &&
-    req.body.software !== "undefined" &&
-    req.body.version !== "undefined" &&
-    req.body.name !== "undefined"
-  ) {
-    fs.appendFile("servers.csv", store, function (err) {
-      if (err) {
-        // append failed
-        console.log("failed to write to file.");
-      } else {
-        // done
-        console.log("written to file.");
-      }
-    });
-  }
 
   //scan servers.csv for req.body.name and if it exists, return 409
 
   let servers = fs.readFileSync("servers.csv").toString();
-console.log(req.body.name + servers);
-console.log(servers.indexOf("Arth"))
-  if ( servers.indexOf(req.body.name) > -1) {
+  console.log(req.body.name + servers);
+  console.log(servers.indexOf("Arth"));
+  if (servers.indexOf(req.body.name) > -1) {
     res.status(409).json({ msg: `Server name already exists.` });
   } else {
+    if (
+      em !== "noemail" &&
+      req.body.software !== "undefined" &&
+      req.body.version !== "undefined" &&
+      req.body.name !== "undefined"
+    ) {
+      fs.appendFile("servers.csv", store, function (err) {
+        if (err) {
+          // append failed
+          console.log("failed to write to file.");
+        } else {
+          // done
+          console.log("written to file.");
+        }
+      });
+    }
+    f.run(id, req.body.software);
 
-  f.run(id, req.body.software);
-
-  res.status(202).json({ msg: `Request recieved.` });
+    res.status(202).json({ msg: `Request recieved.` });
   }
 });
-
-
-
 
 module.exports = router;
