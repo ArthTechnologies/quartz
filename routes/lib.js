@@ -62,7 +62,7 @@ function checkServers(em) {
 }
 
 function run(name, software) {
-  const path = "java";
+  const path = "java/jdk-17.0.5+8/bin/java";
   const folder = "servers/" + name;
   const args = ["-jar server.jar"];
   //make a new folder called name using fs
