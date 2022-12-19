@@ -16,17 +16,16 @@ if (!fs.existsSync("java")) {
   //extract it
 
   exec = require("child_process").exec;
-  exec("curl -LO https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz", {
+  exec(
+    "curl -LO https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz",
+    {
+      cwd: "java",
+    }
+  );
+
+  exec("tar -xvf OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz", {
     cwd: "java",
   });
-  //wait 5 seconds then extract it to java/17
-  setTimeout(function () { 
-    exec("tar -xvf OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz", {
-      cwd: "java",
-    });
-  }, 5000);
-
-
 }
 
 // generate public and private key
@@ -45,9 +44,8 @@ const exportPrivateKey = privateKey.export({
 
 if (!fs.existsSync("public.pem")) {
   fs.writeFileSync("private.pem", exportPrivateKey, { encoding: "utf8" });
-fs.writeFileSync("public.pem", exportPublicKey, { encoding: "utf8" });
+  fs.writeFileSync("public.pem", exportPublicKey, { encoding: "utf8" });
 }
-
 
 //create servers.csv if it doesn't exist
 
