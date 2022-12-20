@@ -61,7 +61,7 @@ function checkServers(em) {
   };
 }
 
-function run(name, software) {
+function run(name, software, version, addons, cmd) {
   const path = "../../java/jdk-17.0.5+8/bin/java";
   const folder = "servers/" + name;
   const args = ["-jar server.jar"];
@@ -127,29 +127,27 @@ function run(name, software) {
 
   fs.writeFileSync(
     folder + "/serverjars.properties",
-    "category=" + c + "\ntype=" + s + "\nversion=latest\nuseHomeDirectory=true"
+    "category=" +
+      c +
+      "\ntype=" +
+      s +
+      "\nversion=" +
+      version +
+      "\nuseHomeDirectory=true"
   );
 
   //run server.jar
   const { exec } = require("child_process");
 
-  const ls = exec(
-    path + " " + args,
-    { cwd: folder },
-    function (error, stdout, stderr) {
-      if (error) {
-        console.log(error.stack);
-        console.log("Error code: " + error.code);
-        console.log("Signal received: " + error.signal);
-      }
-      console.log("Child Process STDOUT: " + stdout);
-      console.log("Child Process STDERR: " + stderr);
-      //
-    }
-  );
+  const ls = exec(path + " " + args, { cwd: folder });
+
+  //for every item in the cmd array, run the command
+  for (i in cmd) {
+    ls.stdin.write(cmd[i] + "\n");
+  }
 
   ls.on("exit", function (code) {
-    console.log("Child process exited with exit code " + code);
+    console.log("Server Stopped: exit code " + code);
   });
 }
 
