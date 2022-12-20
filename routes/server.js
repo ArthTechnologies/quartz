@@ -88,7 +88,13 @@ router.post(`/new`, function (req, res) {
         }
       });
     }
-    f.run(id, req.body.software);
+    f.run(
+      id,
+      req.body.software,
+      req.body.version,
+      req.body.addons,
+      req.body.cmd
+    );
 
     res.status(202).json({ msg: `Request recieved.` });
   }
