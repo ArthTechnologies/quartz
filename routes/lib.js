@@ -128,7 +128,6 @@ function run(id, software, version, addons, cmd, em) {
     fs.mkdirSync(folder + "/world");
     fs.mkdirSync(folder + "/world/datapacks");
   }
-  console.log(addons.split(","));
   for (i in addons.split(",")) {
     console.log(addons.split(",")[i] + " addon");
     if (addons.split(",")[i] != undefined) {
