@@ -65,30 +65,30 @@ router.post(`/new`, function (req, res) {
     "\n";
 
   //scan servers.csv for req.body.name and if it exists, return 409
+  if (s.getCustomerID(em)) {
+    let servers = fs.readFileSync("servers.csv").toString();
+    console.log(req.body);
+    console.log(servers.indexOf("Arth"));
+    if (servers.indexOf(req.body.name) > -1) {
+      res.status(409).json({ msg: `Server name already exists.` });
+    } else {
+      if (
+        em !== "noemail" &&
+        req.body.software !== "undefined" &&
+        req.body.version !== "undefined" &&
+        req.body.name !== "undefined"
+      ) {
+        fs.appendFile("servers.csv", store, function (err) {
+          if (err) {
+            // append failed
+            console.log("failed to write to file.");
+          } else {
+            // done
+            console.log("written to file.");
+          }
+        });
+      }
 
-  let servers = fs.readFileSync("servers.csv").toString();
-  console.log(req.body);
-  console.log(servers.indexOf("Arth"));
-  if (servers.indexOf(req.body.name) > -1) {
-    res.status(409).json({ msg: `Server name already exists.` });
-  } else {
-    if (
-      em !== "noemail" &&
-      req.body.software !== "undefined" &&
-      req.body.version !== "undefined" &&
-      req.body.name !== "undefined"
-    ) {
-      fs.appendFile("servers.csv", store, function (err) {
-        if (err) {
-          // append failed
-          console.log("failed to write to file.");
-        } else {
-          // done
-          console.log("written to file.");
-        }
-      });
-    }
-    if (s.getCustomerID(em)) {
       f.run(
         id,
         req.body.software,
@@ -99,8 +99,9 @@ router.post(`/new`, function (req, res) {
         true
       );
     }
-
     res.status(202).json({ msg: `Request recieved.` });
+  } else {
+    res.status(404).json({ msg: `Invalid email.` });
   }
 });
 
