@@ -132,6 +132,7 @@ function run(id, software, version, addons, cmd, em) {
   for (i in addons.split(",")) {
     console.log(addons.split(",")[i] + " addon");
     if (addons.split(",")[i] != undefined) {
+      console.log("copying " + addons.split(",")[i] + " to " + folder))
       fs.copyFileSync(
         "servers/template/" + addons.split(",")[i] + ".zip",
         folder + "/world/datapacks/" + addons.split(",")[i] + ".zip"
