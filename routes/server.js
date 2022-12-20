@@ -72,6 +72,7 @@ router.post(`/new`, function (req, res) {
     if (servers.indexOf(req.body.name) > -1) {
       res.status(409).json({ msg: `Server name already exists.` });
     } else {
+      console.log("creating server");
       if (
         em !== "noemail" &&
         req.body.software !== "undefined" &&
