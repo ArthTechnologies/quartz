@@ -129,7 +129,7 @@ function run(id, software, version, addons, cmd, em) {
     fs.mkdirSync(folder + "/world/datapacks");
   }
   for (i in addons.split(",")) {
-    console.log(addons.split(",")[i] + " addon");
+    console.log(addons.split(",") + " addon");
     if (addons.split(",")[i] != undefined) {
       console.log("copying " + addons.split(",")[i] + " to " + folder);
       fs.copyFileSync(
