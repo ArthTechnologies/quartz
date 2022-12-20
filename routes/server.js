@@ -63,9 +63,9 @@ router.post(`/new`, function (req, res) {
     "," +
     em +
     "\n";
-
+  let xx = true;
   //scan servers.csv for req.body.name and if it exists, return 409
-  if (s.getCustomerID(em)) {
+  if (xx) {
     let servers = fs.readFileSync("servers.csv").toString();
     console.log(req.body);
     console.log(servers.indexOf("Arth"));
