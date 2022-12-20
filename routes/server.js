@@ -22,16 +22,17 @@ router.post(`/`, function (req, res) {
 router.get(`/change-state`, function (req, res) {
   state = req.headers.state;
   id = req.headers.id;
+  em = req.headers.email;
   if ((state == "start") | (state == "stop") | (state == "restart")) {
-    res.status(202).json({ msg: `Success. Server will ${state}.` });
     switch (state) {
       case "start":
-        f.run(id);
+        f.run(id, undefined, undefined, undefined, undefined, em);
         break;
       default:
         console.log("Invalid state.");
     }
     console.log(req.headers.request);
+    res.status(202).json({ msg: `Success. Server will ${state}.` });
   } else {
     res
       .status(404)
@@ -67,7 +68,7 @@ router.post(`/new`, function (req, res) {
   //scan servers.csv for req.body.name and if it exists, return 409
 
   let servers = fs.readFileSync("servers.csv").toString();
-  console.log(req.body.name + servers);
+  console.log(req.body);
   console.log(servers.indexOf("Arth"));
   if (servers.indexOf(req.body.name) > -1) {
     res.status(409).json({ msg: `Server name already exists.` });

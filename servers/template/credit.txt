@@ -1,0 +1,2 @@
+Unmodified versions of Terralith, Nullscape, and Incendium are distributed here. Credit to Stardust Labs for making all these packs. You can view the Stardust Labs lisence at https://github.com/Stardust-Labs-MC/Terralith/blob/main/license.txt
+Credit to https://serverjars.com/ for their "Auto-Updater" jar, which is named server.jar here. 
