@@ -41,6 +41,7 @@ router.get(`/change-state`, function (req, res) {
 });
 
 router.post(`/new`, function (req, res) {
+  const s = require("../lib/stripe.js");
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
 
@@ -87,15 +88,17 @@ router.post(`/new`, function (req, res) {
         }
       });
     }
-    f.run(
-      id,
-      req.body.software,
-      req.body.version,
-      req.body.addons,
-      req.body.cmd,
-      undefined,
-      true
-    );
+    if (s.getCustomerID(em)) {
+      f.run(
+        id,
+        req.body.software,
+        req.body.version,
+        req.body.addons,
+        req.body.cmd,
+        undefined,
+        true
+      );
+    }
 
     res.status(202).json({ msg: `Request recieved.` });
   }

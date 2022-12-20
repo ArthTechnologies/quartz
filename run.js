@@ -9,8 +9,10 @@ const crypto = require("crypto");
 //import /lib/stripe.js
 const s = require("./lib/stripe.js");
 
-s.getCustomerID("egg@egg.com");
-
+//if it doesnt exist, write to /lib/store.json
+if (!fs.existsSync("./lib/store.json")) {
+  fs.writeFileSync("./lib/store.json", '{"stripemode":"test","stripekey":""}');
+}
 // if java directory is empty
 if (!fs.existsSync("java")) {
   fs.mkdirSync("java");

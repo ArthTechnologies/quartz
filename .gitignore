@@ -12,3 +12,4 @@ private.pem
 /java
 /servers/*
 !/servers/template
+/lib/store.json
