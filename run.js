@@ -6,6 +6,10 @@ const cors = require("cors");
 const rsa = require("node-rsa");
 const fs = require("fs");
 const crypto = require("crypto");
+//import /lib/stripe.js
+const s = require("./lib/stripe.js");
+
+s.getCustomerID("egg@egg.com");
 
 // if java directory is empty
 if (!fs.existsSync("java")) {

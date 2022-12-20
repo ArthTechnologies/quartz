@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 let techname;
-const f = require("./lib.js");
+const f = require("../lib/mc.js");
 
 const fs = require("fs");
 
