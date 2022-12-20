@@ -26,7 +26,7 @@ router.get(`/change-state`, function (req, res) {
   if ((state == "start") | (state == "stop") | (state == "restart")) {
     switch (state) {
       case "start":
-        f.run(id, undefined, undefined, undefined, undefined, em);
+        f.run(id, undefined, undefined, undefined, undefined, em, false);
         break;
       default:
         console.log("Invalid state.");
@@ -63,8 +63,6 @@ router.post(`/new`, function (req, res) {
     em +
     "\n";
 
-  console.log(store);
-
   //scan servers.csv for req.body.name and if it exists, return 409
 
   let servers = fs.readFileSync("servers.csv").toString();
@@ -94,7 +92,9 @@ router.post(`/new`, function (req, res) {
       req.body.software,
       req.body.version,
       req.body.addons,
-      req.body.cmd
+      req.body.cmd,
+      undefined,
+      true
     );
 
     res.status(202).json({ msg: `Request recieved.` });

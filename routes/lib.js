@@ -55,16 +55,29 @@ function checkServers(em) {
   };
 }
 
-function run(id, software, version, addons, cmd, em) {
-  if (software == undefined || version == undefined) {
+function run(id, software, version, addons, cmd, em, isNew) {
+  // i isNew is undefined, set it to true
+  if (isNew == undefined) {
+    isNew = true;
+  }
+
+  //make sure isNew is a boolean
+  isNew = Boolean(isNew);
+  console.log("isNew: " + isNew);
+  if (isNew === false) {
+    console.log("already created server, grabing data...");
     //run checkServers and store it
     let servers = checkServers(em);
     software = servers.softwares[id];
     version = servers.versions[id];
     addons = servers.addons[id];
+    addons = addons.split(",");
+  } else {
+    console.log("creating new server...");
   }
+  console.log("addons: " + addons);
   for (i in cmd) {
-    if (cmd[i] == undefined) {
+    if (cmd[i] != undefined) {
       cmd[i] = cmd[i].toLowerCase();
     }
   }
@@ -128,13 +141,13 @@ function run(id, software, version, addons, cmd, em) {
     fs.mkdirSync(folder + "/world");
     fs.mkdirSync(folder + "/world/datapacks");
   }
-  for (i in addons.split(",")) {
-    console.log(addons.split(",") + " addon");
-    if (addons.split(",")[i] != undefined) {
-      console.log("copying " + addons.split(",")[i] + " to " + folder);
+
+  for (i in addons) {
+    if (addons[i] != undefined) {
+      console.log("copying " + addons[i] + " to " + folder);
       fs.copyFileSync(
-        "servers/template/" + addons.split(",")[i] + ".zip",
-        folder + "/world/datapacks/" + addons.split(",")[i] + ".zip"
+        "servers/template/" + addons[i] + ".zip",
+        folder + "/world/datapacks/" + addons[i] + ".zip"
       );
     }
   }
