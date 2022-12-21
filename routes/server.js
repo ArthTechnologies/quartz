@@ -28,6 +28,13 @@ router.get(`/change-state`, function (req, res) {
       case "start":
         f.run(id, undefined, undefined, undefined, undefined, em, false);
         break;
+      case "stop":
+        f.stop();
+        break;
+      case "restart":
+        f.stop();
+        f.run(id, undefined, undefined, undefined, undefined, em, false);
+        break;
       default:
         console.log("Invalid state.");
     }
