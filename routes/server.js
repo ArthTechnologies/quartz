@@ -2,8 +2,12 @@ const express = require("express");
 const router = express.Router();
 let techname;
 const f = require("../lib/mc.js");
+const s = require("../lib/stripe.js");
 
 const fs = require("fs");
+
+let stripekey = require("../lib/store.json").stripekey;
+const stripe = require("stripe")(stripekey);
 
 let name = "MySurvival Server";
 router.post(`/`, function (req, res) {
@@ -23,6 +27,7 @@ router.get(`/change-state`, function (req, res) {
   state = req.headers.state;
   id = req.headers.id;
   em = req.headers.email;
+  console.log(s.getCustomerID(em));
   if ((state == "start") | (state == "stop") | (state == "restart")) {
     switch (state) {
       case "start":
@@ -51,7 +56,6 @@ router.get(`/change-state`, function (req, res) {
 });
 
 router.post(`/new`, function (req, res) {
-  const s = require("../lib/stripe.js");
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
 
@@ -73,47 +77,64 @@ router.post(`/new`, function (req, res) {
     "," +
     em +
     "\n";
-  let xx = true;
-  //scan servers.csv for req.body.name and if it exists, return 409
-  if (xx) {
-    let servers = fs.readFileSync("servers.csv").toString();
-    console.log(req.body);
-    console.log(servers.indexOf("Arth"));
-    if (servers.indexOf(req.body.name) > -1) {
-      res.status(409).json({ msg: `Server name already exists.` });
-    } else {
-      console.log("creating server");
-      if (
-        em !== "noemail" &&
-        req.body.software !== "undefined" &&
-        req.body.version !== "undefined" &&
-        req.body.name !== "undefined"
-      ) {
-        fs.appendFile("servers.csv", store, function (err) {
-          if (err) {
-            // append failed
-            console.log("failed to write to file.");
-          } else {
-            // done
-            console.log("written to file.");
-          }
-        });
-      }
 
-      f.run(
-        id,
-        req.body.software,
-        req.body.version,
-        req.body.addons,
-        req.body.cmd,
-        undefined,
-        true
-      );
+  let xx;
+  stripe.customers.list(
+    {
+      limit: 100,
+      email: em,
+    },
+    function (err, customers) {
+      if (err) {
+        console.log(err);
+        return "no";
+      } else {
+        if (customers.data.length > 0) {
+          const customer_id = customers.data[0].id;
+          console.log(customer_id);
+          let servers = fs.readFileSync("servers.csv").toString();
+          console.log(req.body);
+          console.log(servers.indexOf("Arth"));
+          if (servers.indexOf(req.body.name) > -1) {
+            res.status(409).json({ msg: `Server name already exists.` });
+          } else {
+            console.log("creating server");
+            if (
+              em !== "noemail" &&
+              req.body.software !== "undefined" &&
+              req.body.version !== "undefined" &&
+              req.body.name !== "undefined"
+            ) {
+              fs.appendFile("servers.csv", store, function (err) {
+                if (err) {
+                  // append failed
+                  console.log("failed to write to file.");
+                } else {
+                  // done
+                  console.log("written to file.");
+                }
+              });
+            }
+
+            f.run(
+              id,
+              req.body.software,
+              req.body.version,
+              req.body.addons,
+              req.body.cmd,
+              undefined,
+              true
+            );
+          }
+          res.status(202).json({ msg: `Request recieved.` });
+        } else {
+          console.log("No customers found.");
+
+          res.status(404).json({ msg: `Invalid email.` });
+        }
+      }
     }
-    res.status(202).json({ msg: `Request recieved.` });
-  } else {
-    res.status(404).json({ msg: `Invalid email.` });
-  }
+  );
 });
 
 module.exports = router;
