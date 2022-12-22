@@ -6,13 +6,19 @@ const cors = require("cors");
 const rsa = require("node-rsa");
 const fs = require("fs");
 const crypto = require("crypto");
+require("dotenv").config();
 //import /lib/stripe.js
-const s = require("./lib/stripe.js");
-
+console.log(process.env.stripe_key);
 //if it doesnt exist, write to /lib/store.json
 if (!fs.existsSync("./lib/store.json")) {
-  fs.writeFileSync("./lib/store.json", '{"stripemode":"test","stripekey":""}');
+  fs.writeFileSync(
+    "./lib/store.json",
+    '{"stripemode":"test","stripekey":"' + process.env.stripe_key + '"}'
+  );
 }
+
+const s = require("./lib/stripe.js");
+
 // if java directory is empty
 if (!fs.existsSync("java")) {
   fs.mkdirSync("java");

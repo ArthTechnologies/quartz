@@ -29,11 +29,14 @@ router.get(`/change-state`, function (req, res) {
         f.run(id, undefined, undefined, undefined, undefined, em, false);
         break;
       case "stop":
-        f.stop();
+        f.stop(id);
         break;
       case "restart":
-        f.stop();
-        f.run(id, undefined, undefined, undefined, undefined, em, false);
+        f.stop(id);
+        //wait 5 seconds
+        setTimeout(function () {
+          f.run(id, undefined, undefined, undefined, undefined, em, false);
+        }, 5000);
         break;
       default:
         console.log("Invalid state.");
