@@ -6,6 +6,8 @@ const cors = require("cors");
 const rsa = require("node-rsa");
 const fs = require("fs");
 const crypto = require("crypto");
+
+exec = require("child_process").exec;
 require("dotenv").config();
 //import /lib/stripe.js
 console.log(process.env.stripe_key);
@@ -18,7 +20,12 @@ if (!fs.existsSync("./lib/store.json")) {
 }
 
 const s = require("./lib/stripe.js");
-
+exec(
+  "curl -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
+  {
+    cwd: "servers/template",
+  }
+);
 // if java directory is empty
 if (!fs.existsSync("java")) {
   fs.mkdirSync("java");
@@ -27,7 +34,6 @@ if (!fs.existsSync("java")) {
   //download https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz and put it in java/17 using curl -LO
   //extract it
 
-  exec = require("child_process").exec;
   exec(
     "curl -LO https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz",
     {
