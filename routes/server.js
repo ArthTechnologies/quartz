@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 let techname;
-const f = require("../lib/mc.js");
-const s = require("../lib/stripe.js");
+const f = require("../scripts/mc.js");
+const s = require("../scripts/stripe.js");
 
 const fs = require("fs");
 
-let stripekey = require("../lib/store.json").stripekey;
+let stripekey = require("../scripts/store.json").stripekey;
 const stripe = require("stripe")(stripekey);
 
 let name = "MySurvival Server";

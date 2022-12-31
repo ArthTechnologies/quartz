@@ -8,7 +8,7 @@ let versions = [];
 var array = fs.readFileSync("servers.csv").toString().split("\n");
 var amount = 0;
 let ids = [];
-const f = require("../lib/mc.js");
+const f = require("../scripts/mc.js");
 
 router.post(`/`, function (req, res) {
   //if req.body.email is "noemail" return 404

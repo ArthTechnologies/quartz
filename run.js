@@ -12,14 +12,14 @@ require("dotenv").config();
 //import /lib/stripe.js
 console.log(process.env.stripe_key);
 //if it doesnt exist, write to /lib/store.json
-if (!fs.existsSync("./lib/store.json")) {
+if (!fs.existsSync("./scripts/store.json")) {
   fs.writeFileSync(
-    "./lib/store.json",
+    "./scripts/store.json",
     '{"stripemode":"test","stripekey":"' + process.env.stripe_key + '"}'
   );
 }
 
-const s = require("./lib/stripe.js");
+const s = require("./scripts/stripe.js");
 exec(
   "curl -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
   {
