@@ -14,3 +14,4 @@ private.pem
 !/servers/template
 .env
 /servers/template/Geyser-Spigot.jar
+/scripts/store.json
