@@ -7,6 +7,25 @@ const rsa = require("node-rsa");
 const fs = require("fs");
 const crypto = require("crypto");
 
+exec = require("child_process").exec;
+require("dotenv").config();
+//import /lib/stripe.js
+console.log(process.env.stripe_key);
+//if it doesnt exist, write to /lib/store.json
+if (!fs.existsSync("./scripts/store.json")) {
+  fs.writeFileSync(
+    "./scripts/store.json",
+    '{"stripemode":"test","stripekey":"' + process.env.stripe_key + '"}'
+  );
+}
+
+const s = require("./scripts/stripe.js");
+exec(
+  "curl -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
+  {
+    cwd: "servers/template",
+  }
+);
 // if java directory is empty
 if (!fs.existsSync("java")) {
   fs.mkdirSync("java");
@@ -15,18 +34,18 @@ if (!fs.existsSync("java")) {
   //download https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz and put it in java/17 using curl -LO
   //extract it
 
-  exec = require("child_process").exec;
-  exec("curl -LO https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz", {
-    cwd: "java",
-  });
+  exec(
+    "curl -LO https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz",
+    {
+      cwd: "java",
+    }
+  );
   //wait 5 seconds then extract it to java/17
-  setTimeout(function () { 
+  setTimeout(function () {
     exec("tar -xvf OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz", {
       cwd: "java",
     });
-  }, 5000);
-
-
+  }, 9000);
 }
 
 // generate public and private key
@@ -45,9 +64,8 @@ const exportPrivateKey = privateKey.export({
 
 if (!fs.existsSync("public.pem")) {
   fs.writeFileSync("private.pem", exportPrivateKey, { encoding: "utf8" });
-fs.writeFileSync("public.pem", exportPublicKey, { encoding: "utf8" });
+  fs.writeFileSync("public.pem", exportPublicKey, { encoding: "utf8" });
 }
-
 
 //create servers.csv if it doesn't exist
 
@@ -70,6 +88,7 @@ app.use("/servers", require("./routes/servers"));
 app.use("/settings", require("./routes/settings"));
 app.use("/panel-key", require("./routes/panel-key"));
 app.use("/key", require("./routes/key"));
+app.use("/terminal", require("./routes/terminal"));
 // port
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`Listening on Port: ${port}`));
