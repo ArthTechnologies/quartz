@@ -175,10 +175,13 @@ router.delete(`/`, function (req, res) {
   res.header("Access-Control-Allow-Origin", "*");
   id = req.body.id;
   f.stop(id);
-  //remove the idth line from servers.csv
-  var data = fs.readFileSync("servers.csv").toString().split("\n");
-  data.splice(id, 1);
-  var text = data.join("\n");
+  //remove the idth line from servers.csv and replace it with "deleted"
+  var text = fs.readFileSync("servers.csv").toString();
+  var textByLine = text.split("\n");
+  textByLine[id] = "deleted";
+  text = textByLine.join("\n");
+
+  fs.writeFileSync("servers.csv", text);
   fs.writeFile("servers.csv", text, function (err) {
     if (err) return console.log(err);
     console.log("deleted server");
