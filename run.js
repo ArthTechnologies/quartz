@@ -87,7 +87,6 @@ app.use("/server", require("./routes/server"));
 app.use("/servers", require("./routes/servers"));
 app.use("/settings", require("./routes/settings"));
 app.use("/panel-key", require("./routes/panel-key"));
-app.use("/key", require("./routes/key"));
 app.use("/terminal", require("./routes/terminal"));
 // port
 const port = process.env.PORT || 4000;
