@@ -11,13 +11,13 @@ const stripe = require("stripe")(stripekey);
 
 let name = "MySurvival Server";
 
-router.post(`/`, function (req, res) {
+router.get(`/`, function (req, res) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
-  id = req.body.id;
+  id = req.headers.id;
   res.status(200).json(f.checkServer(id));
 });
-router.get(`/change-state`, function (req, res) {
+router.post(`/`, function (req, res) {
   state = req.headers.state;
   id = req.headers.id;
   em = req.headers.email;
@@ -170,7 +170,7 @@ router.post(`/new`, function (req, res) {
   );
 });
 
-router.post(`/delete`, function (req, res) {
+router.delete(`/`, function (req, res) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
   id = req.body.id;

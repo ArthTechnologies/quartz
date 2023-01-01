@@ -34,7 +34,7 @@ router.get(`/`, function (req, res) {
   res.json(settings);
 });
 
-router.post(`/set`, function (req, res) {
+router.post(`/`, function (req, res) {
   var keyMatch = true;
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
