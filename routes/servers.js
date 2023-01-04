@@ -10,13 +10,13 @@ var amount = 0;
 let ids = [];
 const f = require("../scripts/mc.js");
 
-router.post(`/`, function (req, res) {
+router.get(`/`, function (req, res) {
   //if req.body.email is "noemail" return 404
-  if (req.body.email == ("noemail" | "undefined")) {
+  if (req.headers.email == ("noemail" | "undefined")) {
     //res.status(404).json({ msg: `Invalid email.` });
   }
   //set email to the email in the request
-  email = req.body.email;
+  email = req.headers.email;
 
   //if servers.csv isnt blank, run checkServers
 

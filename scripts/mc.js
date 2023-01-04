@@ -227,7 +227,19 @@ function run(id, software, version, addons, cmd, em, isNew) {
       ls.stdin.write(cmd[i] + "\n");
     }
   }
-  //run server.jar
+  //replace line 15 of folder/plugins/Geyser-Spigot/config.yml with "port: " + port
+
+  var text = fs.readFileSync("servers/template/geyserconfig.yml", "utf8");
+  var textByLine = text.split("\n");
+  textByLine[15] = "  port: " + port;
+
+  text = textByLine.join("\n");
+
+  //create /plugins/Geyser-Spigot/
+  if (!fs.existsSync(folder + "/plugins/Geyser-Spigot")) {
+    fs.mkdirSync(folder + "/plugins/Geyser-Spigot");
+  }
+  fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
 
   exec(
     "curl -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",

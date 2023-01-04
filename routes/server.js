@@ -11,13 +11,13 @@ const stripe = require("stripe")(stripekey);
 
 let name = "MySurvival Server";
 
-router.post(`/`, function (req, res) {
+router.get(`/`, function (req, res) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
-  id = req.body.id;
+  id = req.headers.id;
   res.status(200).json(f.checkServer(id));
 });
-router.get(`/change-state`, function (req, res) {
+router.post(`/`, function (req, res) {
   state = req.headers.state;
   id = req.headers.id;
   em = req.headers.email;
@@ -48,7 +48,30 @@ router.get(`/change-state`, function (req, res) {
       .json({ msg: `Invalid state. Valid states are start, stop, & restart.` });
   }
 });
-
+let lastPlugin = "";
+router.post(`/addplugin`, function (req, res) {
+  //add cors header
+  res.header("Access-Control-Allow-Origin", "*");
+  id = req.body.id;
+  pluginUrl = req.body.pluginUrl;
+  //download pluginUrl to /servers/id/plugins if the url starts with https://cdn.modrinth.com/data/
+  if (pluginUrl.startsWith("https://cdn.modrinth.com/data/")) {
+    const fs = require("fs");
+    const exec = require("child_process").exec;
+    if (pluginUrl != lastPlugin) {
+      exec(
+        `wget -P servers/${id}/plugins ${pluginUrl}`,
+        function (error, stdout, stderr) {
+          if (error) {
+            console.log(error);
+          }
+          lastPlugin = pluginUrl;
+        }
+      );
+    }
+    res.status(202).json({ msg: `Success. Plugin added.` });
+  }
+});
 router.post(`/new`, function (req, res) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
@@ -170,15 +193,18 @@ router.post(`/new`, function (req, res) {
   );
 });
 
-router.post(`/delete`, function (req, res) {
+router.delete(`/`, function (req, res) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
   id = req.body.id;
   f.stop(id);
-  //remove the idth line from servers.csv
-  var data = fs.readFileSync("servers.csv").toString().split("\n");
-  data.splice(id, 1);
-  var text = data.join("\n");
+  //remove the idth line from servers.csv and replace it with "deleted"
+  var text = fs.readFileSync("servers.csv").toString();
+  var textByLine = text.split("\n");
+  textByLine[id] = "deleted";
+  text = textByLine.join("\n");
+
+  fs.writeFileSync("servers.csv", text);
   fs.writeFile("servers.csv", text, function (err) {
     if (err) return console.log(err);
     console.log("deleted server");

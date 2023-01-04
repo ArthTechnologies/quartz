@@ -31,13 +31,13 @@ The main difference between an alternative like pufferpanel or pterodactyl is th
 POST /terminal
 GET /terminal
 GET /panel-key
+GET /server
+DELETE /server
 POST /server
-GET /server/change-state
 POST /server/new
-POST /server/delete
-POST /servers
+GET /servers
 GET /settings
-POST /settings/set
+POST /settings
 ```
 
 # To-do list
