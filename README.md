@@ -3,7 +3,7 @@
 ### Warnings:
 
 - Arth Panel is in beta and should not be used in production yet.
-- There are several issues with the docker image currently, and we reccomend running it directly for now.
+- There are several issues with the docker image currently, and we reccomend running quartz directly for now.
 
 # Quartz
 
