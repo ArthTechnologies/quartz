@@ -48,7 +48,30 @@ router.post(`/`, function (req, res) {
       .json({ msg: `Invalid state. Valid states are start, stop, & restart.` });
   }
 });
-
+let lastPlugin = "";
+router.post(`/addplugin`, function (req, res) {
+  //add cors header
+  res.header("Access-Control-Allow-Origin", "*");
+  id = req.body.id;
+  pluginUrl = req.body.pluginUrl;
+  //download pluginUrl to /servers/id/plugins if the url starts with https://cdn.modrinth.com/data/
+  if (pluginUrl.startsWith("https://cdn.modrinth.com/data/")) {
+    const fs = require("fs");
+    const exec = require("child_process").exec;
+    if (pluginUrl != lastPlugin) {
+      exec(
+        `wget -P servers/${id}/plugins ${pluginUrl}`,
+        function (error, stdout, stderr) {
+          if (error) {
+            console.log(error);
+          }
+          lastPlugin = pluginUrl;
+        }
+      );
+    }
+    res.status(202).json({ msg: `Success. Plugin added.` });
+  }
+});
 router.post(`/new`, function (req, res) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
