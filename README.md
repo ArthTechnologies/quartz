@@ -5,6 +5,8 @@
 - Arth Panel is in beta and should not be used in production yet.
 - There are several issues with the docker image currently, and we reccomend running quartz directly for now.
 
+Documentation is at [our wiki](https://codeberg.org/arth/quartz/wiki)
+
 # Quartz
 
 Quartz is a backend for Arth Panel, a lightweight self-hosted Minecraft server panel. Quartz is meant to be run as a docker container, and is made with Node. For testing purposes, there is an instance of quartz you can use at https://api.arthmc.xyz/
@@ -53,8 +55,9 @@ POST /settings
 
 ✅ Basic file data storage that stores details about servers.  
 ✅ Basic API that provides details about servers to frontend.  
-✅ Ability to run Minecraft servers with specified versions and softwares
-✅ Basic communication with frontend for terminal
-🔨 Consistent routes
-❌ Locking a customer's assets behing a password/valid pocketbase token
-❓ Protecting a customer's assets with end-to-end encryption
+✅ Ability to run Minecraft servers with specified versions and softwares  
+✅ Basic communication with frontend for terminal  
+🔨 Consistent routes  
+❌ Locking a customer's assets behing a password/valid pocketbase token  
+❓ Protecting a customer's assets with end-to-end encryption  
+  
