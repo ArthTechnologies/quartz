@@ -17,9 +17,7 @@ if (process.env.BROWSER_TITLE) {
 if (process.env.WEB_NAME) {
 	settings.webName = process.env.WEB_PORT;
 }
-if (process.env.ENABLE_PAY) {
-	settings.enablePay = process.env.WEB_PORT;
-}
+
 if (process.env.TRUSTED_DOMAINS) {
 	settings.trustedDomains = process.env.WEB_PORT;
 }
@@ -47,12 +45,17 @@ router.post(`/`, function(req, res) {
 		"Origin, X-Requested-With, Content-Type, Accept"
 	);
 
-	for (i in req.body) {
-		if (req.body[i] != "") {
-			let x = req.body[i];
-			settings.$i = req.body[i];
-		}
-	}
+	settings = {
+		serversPerUser: req.body.serversPerUser,
+		browserTitle: req.body.browserTitle,
+		webLogo: req.body.webLogo,
+		disableAuth: req.body.disableAuth,
+		trustedDomains: req.body.trustedDomains,
+	};
+
+	//for each setting, if its not blank set it to settings
+	for (var setting in req.body) {
+		
 	console.log(settings);
 	if (keyMatch) {
 		//write settings to settings.json
