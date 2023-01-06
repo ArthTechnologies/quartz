@@ -12,9 +12,9 @@ require("dotenv").config();
 //import /lib/stripe.js
 console.log(process.env.stripe_key);
 //if it doesnt exist, write to /lib/store.json
-if (!fs.existsSync("./scripts/store.json")) {
+if (!fs.existsSync("./stores/secrets.json")) {
   fs.writeFileSync(
-    "./scripts/store.json",
+    "./stores/secrets.json",
     '{"stripemode":"test","stripekey":"' + process.env.stripe_key + '"}'
   );
 }

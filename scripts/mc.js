@@ -75,7 +75,6 @@ function checkServer(id) {
   let st = states[id];
   //line is the idth line in servers.csv
   line = fs.readFileSync("servers.csv", "utf8").split("\n")[id];
-  console.log("state: " + states[id]);
   //split the line by commas except for commas inside []s
   let split = line.split(/,(?![^[]*])/);
   let addons = split[3];

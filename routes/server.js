@@ -6,7 +6,7 @@ const s = require("../scripts/stripe.js");
 
 const fs = require("fs");
 
-let stripekey = require("../scripts/store.json").stripekey;
+let stripekey = require("../stores/secrets.json").stripekey;
 const stripe = require("stripe")(stripekey);
 
 let name = "MySurvival Server";
@@ -95,102 +95,130 @@ router.post(`/new`, function (req, res) {
     em +
     "\n";
   let cid = "";
-  let isCustomer = false;
-  stripe.customers.list(
-    {
-      limit: 100,
-      email: em,
-    },
-    function (err, customers) {
-      if (err) {
-        console.log(err);
-        return "no";
-      } else {
-        if (customers.data.length > 0) {
-          cid = customers.data[0].id;
-          console.log(cid);
+  if (stripekey.indexOf("sk") == -1) {
+    if (
+      em !== "noemail" &&
+      req.body.software !== "undefined" &&
+      req.body.version !== "undefined" &&
+      req.body.name !== "undefined"
+    ) {
+      fs.appendFile("servers.csv", store, function (err) {
+        if (err) {
+          // append failed
+          console.log("failed to write to file.");
+        } else {
+          // done
+          console.log("written to file.");
+        }
+      });
+    }
+    f.run(
+      id,
+      req.body.software,
+      req.body.version,
+      req.body.addons,
+      req.body.cmd,
+      undefined,
+      true
+    );
+  } else {
+    console.log(stripekey);
+    stripe.customers.list(
+      {
+        limit: 100,
+        email: em,
+      },
+      function (err, customers) {
+        if (err) {
+          console.log(err);
+          return "no";
+        } else {
+          if (customers.data.length > 0) {
+            cid = customers.data[0].id;
+            console.log(cid);
 
-          let servers = fs.readFileSync("servers.csv").toString();
-          console.log(req.body);
-          console.log(servers.indexOf("Arth"));
-          if (servers.indexOf(req.body.name) > -1) {
-            res
-              .status(409)
-              .json({ msg: `Faliure: Server name already exists.` });
-          } else {
-            console.log("yo");
-            //check the customer's subscriptions and return it
-            stripe.subscriptions.list(
-              {
-                customer: cid,
-                limit: 100,
-              },
-              function (err, subscriptions) {
-                console.log(subscriptions.data);
-                let subs = 0;
-                //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
-                for (i in subscriptions.data) {
-                  if (subscriptions.data[i] != undefined) {
-                    subs++;
+            let servers = fs.readFileSync("servers.csv").toString();
+            console.log(req.body);
+            console.log(servers.indexOf("Arth"));
+            if (servers.indexOf(req.body.name) > -1) {
+              res
+                .status(409)
+                .json({ msg: `Faliure: Server name already exists.` });
+            } else {
+              console.log("yo");
+              //check the customer's subscriptions and return it
+              stripe.subscriptions.list(
+                {
+                  customer: cid,
+                  limit: 100,
+                },
+                function (err, subscriptions) {
+                  console.log(subscriptions.data);
+                  let subs = 0;
+                  //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
+                  for (i in subscriptions.data) {
+                    if (subscriptions.data[i] != undefined) {
+                      subs++;
+                    }
                   }
-                }
-                console.log(subs);
-                if (subs > 0) {
-                  //create server
-                  console.log("creating server");
-                  if (
-                    em !== "noemail" &&
-                    req.body.software !== "undefined" &&
-                    req.body.version !== "undefined" &&
-                    req.body.name !== "undefined"
-                  ) {
-                    fs.appendFile("servers.csv", store, function (err) {
-                      if (err) {
-                        // append failed
-                        console.log("failed to write to file.");
-                      } else {
-                        // done
-                        console.log("written to file.");
-                      }
+                  console.log(subs);
+                  if (subs > 0) {
+                    //create server
+                    console.log("creating server");
+                    if (
+                      em !== "noemail" &&
+                      req.body.software !== "undefined" &&
+                      req.body.version !== "undefined" &&
+                      req.body.name !== "undefined"
+                    ) {
+                      fs.appendFile("servers.csv", store, function (err) {
+                        if (err) {
+                          // append failed
+                          console.log("failed to write to file.");
+                        } else {
+                          // done
+                          console.log("written to file.");
+                        }
+                      });
+                    }
+
+                    f.run(
+                      id,
+                      req.body.software,
+                      req.body.version,
+                      req.body.addons,
+                      req.body.cmd,
+                      undefined,
+                      true
+                    );
+                    res.status(202).json({
+                      msg: `Success: Starting Server`,
+                      subscriptions: subs,
+                      isCustomer: true,
+                    });
+                  } else {
+                    res.status(200).json({
+                      msg: `Faliure: Insufficient Funds`,
+                      subscriptions: subs,
+                      isCustomer: true,
                     });
                   }
-
-                  f.run(
-                    id,
-                    req.body.software,
-                    req.body.version,
-                    req.body.addons,
-                    req.body.cmd,
-                    undefined,
-                    true
-                  );
-                  res.status(202).json({
-                    msg: `Success: Starting Server`,
-                    subscriptions: subs,
-                    isCustomer: true,
-                  });
-                } else {
-                  res.status(200).json({
-                    msg: `Faliure: Insufficient Funds`,
-                    subscriptions: subs,
-                    isCustomer: true,
-                  });
                 }
-              }
-            );
-          }
-        } else {
-          console.log("No customers found.");
+              );
+            }
+          } else {
+            console.log("No customers found.");
 
-          res.status(200).json({
-            msg: `Faliure: Please Subscribe`,
-            subscriptions: 0,
-            isCustomer: false,
-          });
+            res.status(200).json({
+              msg: `Faliure: Please Subscribe`,
+              subscriptions: 0,
+              isCustomer: false,
+            });
+          }
         }
       }
-    }
-  );
+    );
+  }
 });
 
 router.delete(`/`, function (req, res) {

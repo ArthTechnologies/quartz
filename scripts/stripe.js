@@ -1,6 +1,6 @@
 //stripekey is stripe.key from lib/store.json
 
-let stripekey = require("./store.json").stripekey;
+let stripekey = require("../stores/secrets.json").stripekey;
 const stripe = require("stripe")(stripekey);
 const express = require("express");
 
