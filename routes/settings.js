@@ -3,7 +3,9 @@ const router = express.Router();
 const fs = require("fs");
 
 //import settings.json
-let settings = require("../settings.json");
+let settings = require("../stores/settings.json");
+
+let sk = require("../stores/secrets.json").stripekey;
 
 //if environment variable WEB_PORT is set, set settings.webport to that
 if (process.env.SERVERS_PER_USER) {
@@ -24,6 +26,9 @@ if (process.env.TRUSTED_DOMAINS) {
 }
 
 router.get(`/`, function (req, res) {
+  if (sk.indexOf("sk") == "-1") {
+    settings.enablePay = false;
+  }
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -48,15 +53,20 @@ router.post(`/`, function (req, res) {
     browserTitle: req.body.browserTitle,
     webLogo: req.body.webLogo,
     enablePay: req.body.enablePay,
+    disableAuth: req.body.disableAuth,
     trustedDomains: req.body.trustedDomains,
   };
   console.log(settings);
   if (keyMatch) {
     //write settings to settings.json
-    fs.writeFile("settings.json", JSON.stringify(settings), function (err) {
-      if (err) throw err;
-      console.log("File is created successfully.");
-    });
+    fs.writeFile(
+      "stores/settings.json",
+      JSON.stringify(settings),
+      function (err) {
+        if (err) throw err;
+        console.log("File is created successfully.");
+      }
+    );
   }
   //return settings.json
   res.json(settings);
