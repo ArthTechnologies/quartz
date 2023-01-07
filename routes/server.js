@@ -18,7 +18,7 @@ router.get(`/:id`, function (req, res) {
   res.status(200).json(f.checkServer(id));
 });
 router.post(`/:id/:state`, function (req, res) {
-  state = req.query.state;
+  state = req.params.state;
   id = req.params.id;
   em = req.params.email;
   console.log(state);
