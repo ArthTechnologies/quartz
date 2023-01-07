@@ -12,11 +12,11 @@ const f = require("../scripts/mc.js");
 
 router.get(`/`, function (req, res) {
   //if req.body.email is "noemail" return 404
-  if (req.headers.email == ("noemail" | "undefined")) {
+  if (req.query.email == ("noemail" | "undefined")) {
     //res.status(404).json({ msg: `Invalid email.` });
   }
   //set email to the email in the request
-  email = req.headers.email;
+  email = req.query.email;
 
   //if servers.csv isnt blank, run checkServers
 
