@@ -11,17 +11,17 @@ const stripe = require("stripe")(stripekey);
 
 let name = "MySurvival Server";
 
-router.get(`/`, function (req, res) {
+router.get(`/:id`, function (req, res) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
-  id = req.headers.id;
+  id = req.params.id;
   res.status(200).json(f.checkServer(id));
 });
-router.post(`/`, function (req, res) {
-  state = req.headers.state;
-  id = req.headers.id;
-  em = req.headers.email;
-  console.log(s.getCustomerID(em));
+router.post(`/:id/state/:state`, function (req, res) {
+  state = req.params.state;
+  id = req.params.id;
+  em = req.params.email;
+  console.log(state);
   if ((state == "start") | (state == "stop") | (state == "restart")) {
     switch (state) {
       case "start":
@@ -49,11 +49,12 @@ router.post(`/`, function (req, res) {
   }
 });
 let lastPlugin = "";
-router.post(`/addplugin`, function (req, res) {
+router.post(`/:id/addplugin`, function (req, res) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
-  id = req.body.id;
-  pluginUrl = req.body.pluginUrl;
+  id = req.params.id;
+  pluginUrl = req.query.pluginUrl;
+  console.log(req.query.a);
   //download pluginUrl to /servers/id/plugins if the url starts with https://cdn.modrinth.com/data/
   if (pluginUrl.startsWith("https://cdn.modrinth.com/data/")) {
     const fs = require("fs");
@@ -79,8 +80,8 @@ router.post(`/new`, function (req, res) {
   //set id to the number of the last line in servers.csv
   var id = fs.readFileSync("servers.csv").toString().split("\n").length - 1;
 
-  em = req.body.email;
-  console.log(em);
+  em = req.query.email;
+  console.log("creating server.. email: " + req.query);
   var store =
     req.body.name +
     "," +
@@ -221,10 +222,10 @@ router.post(`/new`, function (req, res) {
   }
 });
 
-router.delete(`/`, function (req, res) {
+router.delete(`/:id`, function (req, res) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
-  id = req.body.id;
+  id = req.params.id;
   f.stop(id);
   //remove the idth line from servers.csv and replace it with "deleted"
   var text = fs.readFileSync("servers.csv").toString();
