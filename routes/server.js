@@ -81,7 +81,7 @@ router.post(`/new`, function (req, res) {
   var id = fs.readFileSync("servers.csv").toString().split("\n").length - 1;
 
   em = req.query.email;
-  console.log("creating server.. email: " + req.query);
+  console.log("creating server.. email: " + req.query.email);
   var store =
     req.body.name +
     "," +
