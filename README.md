@@ -5,7 +5,7 @@
 - Arth Panel is in beta and should not be used in production yet.
 - There are several issues with the docker image currently, and we reccomend running quartz directly for now.
 
-Documentation is at [our wiki](https://codeberg.org/arth/quartz/wiki)
+Documentation can be found on [our website](https://codeberg.org/arth/quartz/wiki).
 
 # Quartz
 
