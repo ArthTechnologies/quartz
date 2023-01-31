@@ -111,7 +111,7 @@ function run(id, software, version, addons, cmd, em, isNew) {
   } else {
     console.log("creating new server...");
   }
-  console.log("addons: " + addons);
+  console.log("cmds: " + cmd);
   for (i in cmd) {
     if (cmd[i] != undefined) {
       cmd[i] = cmd[i].toLowerCase();

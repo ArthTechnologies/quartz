@@ -1,1 +1,1 @@
-{"serversPerUser":"1","browserTitle":"Your Servers","webLogo":"/images/sitelogo.svg","enablePay":true,"trustedDomains":["modrinth.com","example.com"],"$i":"2"}
+{"serversPerUser":"1","browserTitle":"Your Servers","webLogo":"/images/sitelogo.svg","enablePay":true,"trustedDomains":["modrinth.com","example.com"],"enableAuth":true,"address":"arthmc.xyz"}

@@ -182,7 +182,7 @@ router.post(`/new`, function (req, res) {
                         }
                       });
                     }
-
+                    console.log("cmds: " + req.body.cmd);
                     f.run(
                       id,
                       req.body.software,
@@ -196,6 +196,7 @@ router.post(`/new`, function (req, res) {
                       msg: `Success: Starting Server`,
                       subscriptions: subs,
                       isCustomer: true,
+                      cmds: req.body.cmd,
                     });
                   } else {
                     res.status(200).json({
