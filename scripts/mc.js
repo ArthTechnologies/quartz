@@ -181,7 +181,7 @@ function run(id, software, version, addons, cmd, em, isNew) {
   }
 
   for (i in addons) {
-    if (addons[i] != undefined) {
+    if (addons[i] != undefined && addons[i] != "") {
       console.log("copying " + addons[i] + " to " + folder);
       fs.copyFileSync(
         "servers/template/" + addons[i] + ".zip",
