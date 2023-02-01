@@ -246,7 +246,13 @@ function run(id, software, version, addons, cmd, em, isNew) {
       cwd: folder + "/plugins",
     }
   );
-
+  exec(
+    "curl -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
+    {
+      cwd: folder + "/plugins",
+    }
+  );
+  
   let out = [];
   let count = 0;
   //log output
