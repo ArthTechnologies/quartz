@@ -56,7 +56,7 @@ router.post(`/:id/addplugin`, function (req, res) {
   pluginUrl = req.query.pluginUrl;
   console.log(req.query.a);
   //download pluginUrl to /servers/id/plugins if the url starts with https://cdn.modrinth.com/data/
-  if (pluginUrl.startsWith("https://cdn.modrinth.com/data/")) {
+  if (pluginUrl.startsWith("https://cdn.modrinth.com/data/") | pluginUrl.startsWith("https://github.com/")) {
     const fs = require("fs");
     const exec = require("child_process").exec;
     if (pluginUrl != lastPlugin) {
