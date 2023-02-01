@@ -248,17 +248,20 @@ function run(id, software, version, addons, cmd, em, isNew) {
   );
 
   let out = [];
+  let count = 0;
   //log output
   console.log("test1");
   ls.stdout.on("data", function (data, er) {
     if (er) {
       console.log(er);
     }
-    console.log("test2" + data);
+    count++;
+    if (count >= 9) {
     out.push(data);
+    }
     console.log("test3" + out);
-    console.log(out.slice(-12, 0));
 
+   
     terminalOutput[id] = out.join("\n");
     if (terminalOutput[id].indexOf("Done") > -1) {
       //replace states[id] with true
@@ -288,8 +291,11 @@ function stop(id) {
 }
 
 function readTerminal(id) {
-  //turn the array in to a string with each item seperated by \n
+ 
   let ret = terminalOutput[id];
+
+
+
   return ret;
 }
 
