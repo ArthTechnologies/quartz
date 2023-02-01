@@ -252,7 +252,7 @@ function run(id, software, version, addons, cmd, em, isNew) {
       cwd: folder + "/plugins",
     }
   );
-  
+
   let out = [];
   let count = 0;
   //log output
@@ -263,11 +263,10 @@ function run(id, software, version, addons, cmd, em, isNew) {
     }
     count++;
     if (count >= 9) {
-    out.push(data);
+      out.push(data);
     }
     console.log("test3" + out);
 
-   
     terminalOutput[id] = out.join("\n");
     if (terminalOutput[id].indexOf("Done") > -1) {
       //replace states[id] with true
@@ -297,10 +296,7 @@ function stop(id) {
 }
 
 function readTerminal(id) {
- 
   let ret = terminalOutput[id];
-
-
 
   return ret;
 }
