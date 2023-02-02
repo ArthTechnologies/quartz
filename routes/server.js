@@ -48,6 +48,32 @@ router.post(`/:id/state/:state`, function (req, res) {
       .json({ msg: `Invalid state. Valid states are start, stop, & restart.` });
   }
 });
+
+router.get(`/:id/plugins`, function (req, res) {
+  let platforms = [];
+  let names = [];
+  let ids = [];
+  let id = req.params.id;
+
+  const fs = require("fs");
+
+  fs.readdirSync(`servers/${id}/plugins`).forEach((file) => {
+    if (file.startsWith("gh_")) {
+      platforms.push(file.split("_")[0]);
+
+      ids.push(file.split("_")[1] + "/" + file.split("_")[2]);
+      names.push(file.split("_")[3].replace(".jar", ""));
+    } else if (file.startsWith("lr_")) {
+      platforms.push(file.split("_")[0]);
+
+      ids.push(file.split("_")[1]);
+      names.push(file.split("_")[2].replace(".jar", ""));
+    }
+  });
+
+  res.status(200).json({ platforms, names, ids });
+});
+
 let lastPlugin = "";
 router.post(`/:id/addplugin`, function (req, res) {
   //add cors header
