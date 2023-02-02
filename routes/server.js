@@ -54,18 +54,20 @@ router.post(`/:id/addplugin`, function (req, res) {
   res.header("Access-Control-Allow-Origin", "*");
   id = req.params.id;
   pluginUrl = req.query.pluginUrl;
-  console.log(req.query.a);
-  //download pluginUrl to /servers/id/plugins if the url starts with https://cdn.modrinth.com/data/
+  pluginId = req.query.id;
+  pluginName = req.query.name;
+
   if (
     pluginUrl.startsWith("https://cdn.modrinth.com/data/") |
     pluginUrl.startsWith("https://github.com/")
   ) {
     const fs = require("fs");
     const exec = require("child_process").exec;
+    console.log(pluginName);
     if (pluginUrl != lastPlugin) {
       exec(
-        `wget -P servers/${id}/plugins ${pluginUrl}`,
-        function (error, stdout, stderr) {
+        `curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar ${pluginUrl}`,
+        function (error) {
           if (error) {
             console.log(error);
           }
@@ -73,6 +75,7 @@ router.post(`/:id/addplugin`, function (req, res) {
         }
       );
     }
+
     res.status(202).json({ msg: `Success. Plugin added.` });
   }
 });
