@@ -104,14 +104,14 @@ router.post(`/:id/addplugin`, function (req, res) {
   pluginUrl = req.query.pluginUrl;
   pluginId = req.query.id;
   pluginName = req.query.name;
-
+  
   if (
     pluginUrl.startsWith("https://cdn.modrinth.com/data/") |
     pluginUrl.startsWith("https://github.com/")
   ) {
     const fs = require("fs");
     const exec = require("child_process").exec;
-    console.log(pluginName);
+    console.log(`curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar ${pluginUrl}`);
     if (pluginUrl != lastPlugin) {
       exec(
         `curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar ${pluginUrl}`,

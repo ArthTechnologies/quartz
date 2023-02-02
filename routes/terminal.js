@@ -7,6 +7,7 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/:id", (req, res) => {
+  console.log("revieved request: " + req.query.cmd);
   f.writeTerminal(req.params.id, req.query.cmd);
   res.send("Success");
 });

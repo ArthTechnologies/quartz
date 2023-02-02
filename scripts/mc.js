@@ -265,7 +265,7 @@ function run(id, software, version, addons, cmd, em, isNew) {
     if (count >= 9) {
       out.push(data);
     }
-    console.log("test3" + out);
+  
 
     terminalOutput[id] = out.join("\n");
     if (terminalOutput[id].indexOf("Done") > -1) {
@@ -302,6 +302,7 @@ function readTerminal(id) {
 }
 
 function writeTerminal(id, cmd) {
+  console.log("writing command: " + cmd)
   x = true;
   terminalInput = cmd;
 }
