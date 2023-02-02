@@ -49,6 +49,23 @@ router.post(`/:id/state/:state`, function (req, res) {
   }
 });
 
+router.delete (`/:id/plugins`, function (req, res) {
+  id = req.params.id;
+  pluginId = req.query.pluginId;
+  pluginPlatform = req.query.pluginPlatform;
+  pluginName = req.query.pluginName;
+
+  const fs = require("fs");
+
+  //delete platform_id_name.jar
+
+  fs.unlinkSync(`servers/${id}/plugins/${pluginPlatform}_${pluginId}_${pluginName}.jar`);
+
+  res.status(200).json({ msg: `Success. Plugin deleted.` });
+
+
+});
+
 router.get(`/:id/plugins`, function (req, res) {
   let platforms = [];
   let names = [];
@@ -68,6 +85,11 @@ router.get(`/:id/plugins`, function (req, res) {
 
       ids.push(file.split("_")[1]);
       names.push(file.split("_")[2].replace(".jar", ""));
+    } else if (file.startsWith("cx_")) {
+      platforms.push(file.split("_")[0]);
+      ids.push(file.split("_")[1]);
+      names.push(file.split("_")[2].replace(".jar", ""));
+
     }
   });
 
