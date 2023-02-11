@@ -277,6 +277,18 @@ router.post(`/new`, function (req, res) {
   }
 });
 
+router.patch(`/:id/updateInfo`, function (req, res) {
+  //take the file called "icon" and add it to the server's folder, take the body parameter called "desc" and set line 12 to "motd=" + desc
+id = req.params.id;
+
+//icon = multipart form data value "icon"
+  icon = req.files.icon;
+  //add cors header
+  res.header("Access-Control-Allow-Origin", "*");
+ console.log(req);
+  fs.writeFileSync(`servers/${id}/`, icon);
+});
+
 router.delete(`/:id`, function (req, res) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");

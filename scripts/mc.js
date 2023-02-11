@@ -1,5 +1,6 @@
 const { stdin } = require("process");
-
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
 fs = require("fs");
 let states = [];
 let a = [];
@@ -274,7 +275,7 @@ function run(id, software, version, addons, cmd, em, isNew) {
     }
   });
 
-  //check every 2 seconds if stop is true
+  /*
   setInterval(function () {
     if (states[id] == "false") {
       ls.stdin.write("stop\n");
@@ -283,8 +284,10 @@ function run(id, software, version, addons, cmd, em, isNew) {
       ls.stdin.write(terminalInput + "\n");
       x = false;
     }
-  }, 200);
-
+  }, 200); */
+  eventEmitter.on('writeCmd', function () {
+    ls.stdin.write(terminalInput + "\n");
+  });
   ls.on("exit", function (code) {
     console.log("Server Stopped: exit code " + code);
     states[id] = "false";
@@ -305,6 +308,7 @@ function writeTerminal(id, cmd) {
   console.log("writing command: " + cmd)
   x = true;
   terminalInput = cmd;
+  eventEmitter.emit('writeCmd');
 }
 
 module.exports = {
