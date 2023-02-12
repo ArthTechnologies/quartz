@@ -244,13 +244,13 @@ function run(id, software, version, addons, cmd, em, isNew) {
   fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
 
   exec(
-    "curl -o cx_geyser-spigot_Geyser.jar https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
+    "curl -o cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
     {
       cwd: folder + "/plugins",
     }
   );
   exec(
-    "curl -o cx_floodgate-spigot_Floodgate.jar https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
+    "curl -o cx_floodgate-spigot_Floodgate.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
     {
       cwd: folder + "/plugins",
     }

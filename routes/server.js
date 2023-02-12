@@ -111,10 +111,10 @@ router.post(`/:id/addplugin`, function (req, res) {
   ) {
     const fs = require("fs");
     const exec = require("child_process").exec;
-    console.log(`curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar ${pluginUrl}`);
+    console.log(`curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar -LO ${pluginUrl}`);
     if (pluginUrl != lastPlugin) {
       exec(
-        `curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar ${pluginUrl}`,
+        `curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar -LO ${pluginUrl}`,
         function (error) {
           if (error) {
             console.log(error);
@@ -290,7 +290,7 @@ router.post(`/:id/setInfo`, function (req, res) {
   fs.writeFileSync(`servers/${id}/server.properties`, text);
 
   //download the icon url with curl and save it to the server folder as server-icon.png
-  exec(`curl ${iconUrl} -o servers/${id}/server-icon.png`, (err, stdout, stderr) => {
+  exec(`curl -LO ${iconUrl} -o servers/${id}/server-icon.png`, (err, stdout, stderr) => {
     if (err) {
       console.log(err);
     } else {
