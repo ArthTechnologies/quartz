@@ -196,7 +196,9 @@ function run(id, software, version, addons, cmd, em, isNew) {
   let result = data.replace(/server-port=25565/g, "server-port=" + port);
 
   console.log("starting server on port " + port);
+ if(isNew) {
   fs.writeFileSync(folder + "/server.properties", result, "utf8");
+ }
 
   //add new file eula.txt in folder
   fs.writeFileSync(folder + "/eula.txt", "eula=true");
@@ -275,16 +277,13 @@ function run(id, software, version, addons, cmd, em, isNew) {
     }
   });
 
-  /*
+  
   setInterval(function () {
     if (states[id] == "false") {
       ls.stdin.write("stop\n");
     }
-    if (x == true) {
-      ls.stdin.write(terminalInput + "\n");
-      x = false;
-    }
-  }, 200); */
+
+  }, 200); 
   eventEmitter.on('writeCmd', function () {
     ls.stdin.write(terminalInput + "\n");
   });
