@@ -3,15 +3,15 @@
 ### Warnings:
 
 - Arth Panel is in beta and should not be used in production yet.
-- There are several issues with the docker image currently, and we reccomend running quartz directly for now.
+- There are several issues with the docker image currently, and we recommend running quartz directly for now.
 
-Documentation is at [our wiki](https://codeberg.org/arth/quartz/wiki)
+Documentation can be found [here](https://codeberg.org/arth/quartz/wiki)
 
 # Quartz
 
-Quartz is a backend for Arth Panel, a lightweight self-hosted Minecraft server panel. Quartz is meant to be run as a docker container, and is made with Node. For testing purposes, there is an instance of quartz you can use at https://api.arthmc.xyz/
+Quartz is a backend for Arth Panel, a lightweight self-hosted Minecraft server panel. Quartz is made with Node and Express. For testing purposes, there is an instance of quartz you can use at https://api.arthmc.xyz/
 
-## How to run
+## How to run with docker
 
 1. Download the image from docker hub with the command `sudo docker pull arthmc/quartz:latest`
 2. Run the image with `sudo docker run -p 4000:4000 -e STRIPE-KEY=yourstripekey arthmc/quartz:latest`. To change the port, replace the first 4000 with the port number you want.
@@ -22,13 +22,16 @@ Quartz is a backend for Arth Panel, a lightweight self-hosted Minecraft server p
 2. Install the packages with `npm i`
 3. Run with `node run`
 
+# Dependencies
+- Arth Uses the `curl` command to download plugins and the `convert` command to downscale images. If you want these functionalities, you'll need to install those commands.
+
 # Contributing
 
-To run a dev server, follow the instructions in How to run withour docker
+To run a dev server, follow the instructions in "how to run without docker"
 
 ## Contributing Guidelines
 
-- Please format your code with Prettier VSCode extension, or an alternative that achieves the same results.
+- Please format your code with Prettier VSCode extension or an alternative that achieves the same results.
 
 ### Check out our [frontend](https://github.com/arthmc/observer)'s progress
 
@@ -57,7 +60,7 @@ POST /settings
 ✅ Basic API that provides details about servers to frontend.  
 ✅ Ability to run Minecraft servers with specified versions and softwares  
 ✅ Basic communication with frontend for terminal  
-🔨 Consistent routes  
+✅ Consistent routes  
 ❌ Locking a customer's assets behing a password/valid pocketbase token  
 ❓ Protecting a customer's assets with end-to-end encryption  
   
