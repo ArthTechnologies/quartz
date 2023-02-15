@@ -19,6 +19,13 @@ if (!fs.existsSync("./stores/secrets.json")) {
   );
 }
 
+if (!fs.existsSync("accounts.json")) {
+  fs.writeFileSync(
+    "accounts.json",
+    '{}'
+  );
+}
+
 const s = require("./scripts/stripe.js");
 exec(
   "curl -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
@@ -88,6 +95,7 @@ app.use("/servers", require("./routes/servers"));
 app.use("/settings", require("./routes/settings"));
 app.use("/keys", require("./routes/keys"));
 app.use("/terminal", require("./routes/terminal"));
+app.use("/accounts", require("./routes/accounts"));
 // port
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`Listening on Port: ${port}`));
