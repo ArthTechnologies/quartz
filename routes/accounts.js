@@ -20,10 +20,10 @@ function hash(input, salt) {
 
 Router.post("/email/signup/", (req, res) => {
 console.log(req.query);
-    //add cors header
+
     res.header("Access-Control-Allow-Origin", "*");
-    let uuid = uuidv4();
-    //import accounts.json
+    let accountId = uuidv4();
+
     let accounts = require("../accounts.json");
 
 let password = req.query.password;
@@ -36,15 +36,15 @@ if (password == confirmPassword) {
     if (password.length > 6) {
         if (accounts[email] == undefined) {
             [salt, password] = hash(password).split(":");
-            //create new item in accounts called uuid with the value of a blank object
+          
             accounts[email] = {};
             accounts[email].password = password;
-            accounts[email].uuid = uuid;
+            accounts[email].accountId = accountId;
             accounts[email].token = uuidv4();
             accounts[email].salt = salt;
 
 
-            res.status(200).send({token: accounts[email].token, uuid: uuid});
+            res.status(200).send({token: accounts[email].token, accountId: accountId});
         } else {
 res.status(400).send({token: -1, reason: "Email already exists"});
         }
@@ -67,7 +67,6 @@ Router.post("/email/signin/", (req, res) => {
     let accounts = require("../accounts.json");
     let password = req.query.password;
     let email = req.query.email;
-    let uuid = req.query.uuid;
     let salt = accounts[email].salt;
 
     if (accounts[email].password == hash(password,salt).split(":")[1]) {

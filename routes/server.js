@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const accounts = require("../accounts.json");
 let techname;
 const f = require("../scripts/mc.js");
 const s = require("../scripts/stripe.js");
@@ -12,15 +13,26 @@ const stripe = require("stripe")(stripekey);
 let name = "MySurvival Server";
 
 router.get(`/:id`, function (req, res) {
-  //add cors header
+  email = req.headers.email;
+  token = req.headers.token;
+  if (token = accounts[email].token) {
+    //add cors header
   res.header("Access-Control-Allow-Origin", "*");
   id = req.params.id;
   res.status(200).json(f.checkServer(id));
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
 });
 router.post(`/:id/state/:state`, function (req, res) {
+    email = req.headers.email;
+  token = req.headers.token;
+  if (token = accounts[email].token) {
   state = req.params.state;
   id = req.params.id;
   em = req.params.email;
+  token = req.headers.token;
+
   console.log(state);
   if ((state == "start") | (state == "stop") | (state == "restart")) {
     switch (state) {
@@ -47,13 +59,20 @@ router.post(`/:id/state/:state`, function (req, res) {
       .status(404)
       .json({ msg: `Invalid state. Valid states are start, stop, & restart.` });
   }
+    } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
 });
 
 router.delete (`/:id/plugins`, function (req, res) {
+    email = req.headers.email;
+  token = req.headers.token;
+  if (token = accounts[email].token) {
   id = req.params.id;
   pluginId = req.query.pluginId;
   pluginPlatform = req.query.pluginPlatform;
   pluginName = req.query.pluginName;
+  token = req.headers.token;
 
   const fs = require("fs");
 
@@ -63,14 +82,20 @@ router.delete (`/:id/plugins`, function (req, res) {
 
   res.status(200).json({ msg: `Success. Plugin deleted.` });
 
-
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
 });
 
 router.get(`/:id/plugins`, function (req, res) {
+    email = req.headers.email;
+  token = req.headers.token;
+  if (token = accounts[email].token) {
   let platforms = [];
   let names = [];
   let ids = [];
   let id = req.params.id;
+  token = req.headers.token;
 
   const fs = require("fs");
 
@@ -94,10 +119,16 @@ router.get(`/:id/plugins`, function (req, res) {
   });
 
   res.status(200).json({ platforms, names, ids });
+    } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
 });
 
 let lastPlugin = "";
 router.post(`/:id/addplugin`, function (req, res) {
+    email = req.headers.email;
+  token = req.headers.token;
+  if (token = accounts[email].token) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
   id = req.params.id;
@@ -126,8 +157,14 @@ router.post(`/:id/addplugin`, function (req, res) {
 
     res.status(202).json({ msg: `Success. Plugin added.` });
   }
+    } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
 });
 router.post(`/new`, function (req, res) {
+    email = req.headers.email;
+  token = req.headers.token;
+  if (token = accounts[email].token) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
 
@@ -275,9 +312,15 @@ router.post(`/new`, function (req, res) {
       }
     );
   }
+    } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
 });
 
 router.post(`/:id/setInfo`, function (req, res) {
+    email = req.headers.email;
+  token = req.headers.token;
+  if (token = accounts[email].token) {
   id = req.params.id;
   iconUrl = req.body.icon;
   desc = req.body.desc;
@@ -341,9 +384,15 @@ router.post(`/:id/setInfo`, function (req, res) {
   //add iconurl.txt to the server folder with the icon url
   fs.writeFileSync(`servers/${id}/iconurl.txt`, iconUrl);
   res.status(200).json({ msg: `Success: Set server info` });
+    } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
 });
 
 router.get(`/:id/getInfo`, function (req, res) {
+    email = req.headers.email;
+  token = req.headers.token;
+  if (token = accounts[email].token) {
 
   //send the motd and iconUrl
   let iconUrl = "";
@@ -355,11 +404,16 @@ router.get(`/:id/getInfo`, function (req, res) {
 
   iconUrl = fs.readFileSync(`servers/${id}/iconurl.txt`).toString();
   res.status(200).json({ msg: `Success: Got server info`, iconUrl: iconUrl, desc: desc });
-
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
 });
 
 
 router.delete(`/:id`, function (req, res) {
+    email = req.headers.email;
+  token = req.headers.token;
+  if (token = accounts[email].token) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
   id = req.params.id;
@@ -376,6 +430,9 @@ router.delete(`/:id`, function (req, res) {
     console.log("deleted server");
   });
   res.status(202).json({ msg: `Request recieved.` });
+    } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
 });
 
 module.exports = router;
