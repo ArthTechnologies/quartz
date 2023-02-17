@@ -15,7 +15,7 @@ let name = "MySurvival Server";
 router.get(`/:id`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
-  if (token = accounts[email].token) {
+  if (token == accounts[email].token) {
     //add cors header
   res.header("Access-Control-Allow-Origin", "*");
   id = req.params.id;
@@ -27,7 +27,7 @@ router.get(`/:id`, function (req, res) {
 router.post(`/:id/state/:state`, function (req, res) {
     email = req.headers.email;
   token = req.headers.token;
-  if (token = accounts[email].token) {
+  if (token == accounts[email].token) {
   state = req.params.state;
   id = req.params.id;
   em = req.params.email;
@@ -67,7 +67,7 @@ router.post(`/:id/state/:state`, function (req, res) {
 router.delete (`/:id/plugins`, function (req, res) {
     email = req.headers.email;
   token = req.headers.token;
-  if (token = accounts[email].token) {
+  if (token == accounts[email].token) {
   id = req.params.id;
   pluginId = req.query.pluginId;
   pluginPlatform = req.query.pluginPlatform;
@@ -90,7 +90,7 @@ router.delete (`/:id/plugins`, function (req, res) {
 router.get(`/:id/plugins`, function (req, res) {
     email = req.headers.email;
   token = req.headers.token;
-  if (token = accounts[email].token) {
+  if (token == accounts[email].token) {
   let platforms = [];
   let names = [];
   let ids = [];
@@ -128,7 +128,7 @@ let lastPlugin = "";
 router.post(`/:id/addplugin`, function (req, res) {
     email = req.headers.email;
   token = req.headers.token;
-  if (token = accounts[email].token) {
+  if (token == accounts[email].token) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
   id = req.params.id;
@@ -164,7 +164,7 @@ router.post(`/:id/addplugin`, function (req, res) {
 router.post(`/new`, function (req, res) {
     email = req.headers.email;
   token = req.headers.token;
-  if (token = accounts[email].token) {
+  if (token == accounts[email].token) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
 
@@ -320,7 +320,7 @@ router.post(`/new`, function (req, res) {
 router.post(`/:id/setInfo`, function (req, res) {
     email = req.headers.email;
   token = req.headers.token;
-  if (token = accounts[email].token) {
+  if (token == accounts[email].token) {
   id = req.params.id;
   iconUrl = req.body.icon;
   desc = req.body.desc;
@@ -392,7 +392,7 @@ router.post(`/:id/setInfo`, function (req, res) {
 router.get(`/:id/getInfo`, function (req, res) {
     email = req.headers.email;
   token = req.headers.token;
-  if (token = accounts[email].token) {
+  if (token == accounts[email].token) {
 
   //send the motd and iconUrl
   let iconUrl = "";
@@ -413,7 +413,7 @@ router.get(`/:id/getInfo`, function (req, res) {
 router.delete(`/:id`, function (req, res) {
     email = req.headers.email;
   token = req.headers.token;
-  if (token = accounts[email].token) {
+  if (token == accounts[email].token) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
   id = req.params.id;

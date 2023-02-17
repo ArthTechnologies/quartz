@@ -19,7 +19,7 @@ function hash(input, salt) {
 }
 
 Router.post("/email/signup/", (req, res) => {
-console.log(req.query);
+
 
     res.header("Access-Control-Allow-Origin", "*");
     let accountId = uuidv4();
