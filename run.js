@@ -25,7 +25,12 @@ if (!fs.existsSync("accounts.json")) {
     '{}'
   );
 }
-
+if (!fs.existsSync("servers.json")) {
+  fs.writeFileSync(
+    "servers.json",
+    '{}'
+  );
+}
 const s = require("./scripts/stripe.js");
 exec(
   "curl -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
@@ -82,14 +87,6 @@ if (!fs.existsSync("public.pem")) {
   fs.writeFileSync("public.pem", exportPublicKey, { encoding: "utf8" });
 }
 
-//create servers.csv if it doesn't exist
-
-if (!fs.existsSync("servers.csv")) {
-  fs.writeFile("servers.csv", "", function (err) {
-    if (err) throw err;
-    console.log("File is created successfully.");
-  });
-}
 app.get("/", (req, res) => {
   res.status(200).sendFile(path.join(__dirname, "index.html"));
 });

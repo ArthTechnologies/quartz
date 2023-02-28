@@ -12,9 +12,7 @@ function hash(input, salt) {
 		salt = randomBytes(12).toString('hex');
 
 	}
-	console.log("salt = " + salt)
 
-	console.log("h = " + scryptSync(input, salt, 48).toString('hex'))
 	return salt + ":" + scryptSync(input, salt, 48).toString('hex');
 }
 
@@ -31,7 +29,7 @@ Router.post("/email/signup/", (req, res) => {
 	let confirmPassword = req.query.confirmPassword;
 
 	for (i in accounts) {
-		if (accounts[i].email != undefined) {
+		if (accounts[i].email == email) {
 			emailExists = true;
 		}
 	}
@@ -44,14 +42,14 @@ Router.post("/email/signup/", (req, res) => {
 				let accountId = uuidv4();
 				[salt, password] = hash(password).split(":");
 
-				accounts[accountId] = {};
-				accounts[accountId].password = password;
-				accounts[accountId].email = email;
-				accounts[accountId].token = uuidv4();
-				accounts[accountId].salt = salt;
+				accounts[email] = {};
+				accounts[email].password = password;
+				accounts[email].accountId = accountId;
+				accounts[email].token = uuidv4();
+				accounts[email].salt = salt;
 
 
-				res.status(200).send({ token: accounts[email].token, account: accountId });
+				res.status(200).send({ token: accounts[email].token, accountId: accountId });
 			} else {
 				res.status(400).send({ token: -1, reason: "Email already exists" });
 			}
@@ -71,20 +69,25 @@ Router.post("/email/signup/", (req, res) => {
 });
 
 Router.post("/email/signin/", (req, res) => {
+
+	res.header("Access-Control-Allow-Origin", "*");
+
+
 	let accounts = require("../accounts.json");
 	let password = req.query.password;
 	let email = req.query.email;
-	let salt = accounts[email].salt;
-	for(i in accounts) {
-		if (accounts[i].email == email) {
+	let response = {};
+
+			let salt = accounts[email].salt;
 				if (accounts[email].password == hash(password, salt).split(":")[1]) {
-		res.status(200).send({ token: accounts[email].token });
+		response = { token: accounts[email].token };
 					} else {
-					res.status(200).send({ token: -1, reason: "Incorrect password"  });
+					response  = { token: -1, reason: "Incorrect email or password"  };
 					}
-			} 
-	} 
-res.status(200).send({ token: -1, reason: "Incorrect email"  });
+
+
+
+res.status(200).send(response);
 
 
 });

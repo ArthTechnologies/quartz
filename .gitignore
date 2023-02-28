@@ -5,7 +5,7 @@
 .breakpoints
 .replit
 replit.nix
-servers.csv
+servers.json
 /pb_data
 public.pem
 private.pem

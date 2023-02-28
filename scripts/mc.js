@@ -36,15 +36,6 @@ function checkServers(em) {
 			}
 		}
 
-		v = v.filter(function(el) {
-			return el != null;
-		});
-		s = s.filter(function(el) {
-			return el != null;
-		});
-		n = n.filter(function(el) {
-			return el != "";
-		});
 
 		if (servers[i].email != undefined) {
 			amount++;

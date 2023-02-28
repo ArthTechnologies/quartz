@@ -33,7 +33,7 @@ router.post(`/:id/state/:state`, function(req, res) {
 		id = req.params.id;
 		token = req.headers.token;
 
-		console.log(state);
+	
 		if ((state == "start") | (state == "stop") | (state == "restart")) {
 			switch (state) {
 				case "start":
@@ -50,9 +50,9 @@ router.post(`/:id/state/:state`, function(req, res) {
 					}, 5000);
 					break;
 				default:
-					console.log("Invalid state.");
+					
 			}
-			console.log(req.headers.request);
+
 			res.status(202).json({ msg: `Success. Server will ${state}.` });
 		} else {
 			res
@@ -142,7 +142,7 @@ router.post(`/:id/addplugin`, function(req, res) {
 		) {
 			const fs = require("fs");
 			const exec = require("child_process").exec;
-			console.log(`curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar -LO ${pluginUrl}`);
+			
 			if (pluginUrl != lastPlugin) {
 				exec(
 					`curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar -LO ${pluginUrl}`,
@@ -163,30 +163,24 @@ router.post(`/:id/addplugin`, function(req, res) {
 });
 
 router.post(`/new`, function (req, res) {
+	console.log(stripekey.indexOf("sk"))
     email = req.headers.email;
   token = req.headers.token;
   if (token == accounts[email].token) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
 
-  //set id to the number of the last line in servers.csv
-  var id = fs.readFileSync("servers.csv").toString().split("\n").length - 1;
+  var id = servers.length;
 
   em = req.query.email;
-  console.log("creating server.. email: " + req.query.email);
-  var store =
-    req.body.name +
-    "," +
-    req.body.software +
-    "," +
-    req.body.version +
-    "," +
-    "[" +
-    req.body.addons +
-    "]" +
-    "," +
-    em +
-    "\n";
+
+  var store = {
+    name: req.body.name,
+    software: req.body.software,
+    version: req.body.version,
+    addons: req.body.addons,
+    accountId: accounts[email].accountId
+  };
   let cid = "";
   if (stripekey.indexOf("sk") == -1) {
     if (
@@ -195,17 +189,25 @@ router.post(`/new`, function (req, res) {
       req.body.version !== "undefined" &&
       req.body.name !== "undefined"
     ) {
-      fs.appendFile("servers.csv", store, function (err) {
-        if (err) {
-          // append failed
-          console.log("failed to write to file.");
-        } else {
-          // done
-          console.log("written to file.");
-        }
-      });
+		servers[id] = {};
+		servers[id].name = req.body.name;
+		servers[id].software = req.body.software;
+		servers[id].version = req.body.version;
+		servers[id].addons = req.body.addons;
+		servers[id].accountId = accounts[email].accountId;
+		console.log(JSON.stringify(servers) + "servers.json")
+		//console log if ../servers.json exists
+		console.log(fs.existsSync("../servers.json") + "servers.json")
+		fs.writeFile("servers.json", JSON.stringify(servers, null, 4), (err) => {
+			if (err) {
+				console.error(err);
+				return;
+			};
+			console.log("File has been created");
+		});
     }
-    console.log(req.body.modpackId + " " + req.body.modpackVersion);
+	
+
     f.run(
       id,
       req.body.software,
@@ -217,7 +219,7 @@ router.post(`/new`, function (req, res) {
       req.body.modpackURL
     );
   } else {
-    console.log(stripekey);
+console.log("phhhhhlojnhiokln")
     stripe.customers.list(
       {
         limit: 100,
@@ -225,22 +227,19 @@ router.post(`/new`, function (req, res) {
       },
       function (err, customers) {
         if (err) {
-          console.log(err);
+          console.log("err");
           return "no";
         } else {
+			console.log("...")
           if (customers.data.length > 0) {
             cid = customers.data[0].id;
-            console.log(cid);
-
-            let servers = fs.readFileSync("servers.csv").toString();
-            console.log(req.body);
-            console.log(servers.indexOf("Arth"));
-            if (servers.indexOf(req.body.name) > -1) {
+     
+            if (JSON.stringify(servers).indexOf(req.body.name) > -1) {
               res
                 .status(409)
                 .json({ msg: `Faliure: Server name already exists.` });
             } else {
-              console.log("yo");
+				console.log("eieio")
               //check the customer's subscriptions and return it
               stripe.subscriptions.list(
                 {
@@ -248,7 +247,6 @@ router.post(`/new`, function (req, res) {
                   limit: 100,
                 },
                 function (err, subscriptions) {
-                  console.log(subscriptions.data);
                   let subs = 0;
                   //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
                   for (i in subscriptions.data) {
@@ -256,27 +254,31 @@ router.post(`/new`, function (req, res) {
                       subs++;
                     }
                   }
-                  console.log(subs);
                   if (subs > 0) {
-                    //create server
-                    console.log("creating server");
+					console.log("subs > 0")
                     if (
                       em !== "noemail" &&
                       req.body.software !== "undefined" &&
                       req.body.version !== "undefined" &&
                       req.body.name !== "undefined"
                     ) {
-                      fs.appendFile("servers.csv", store, function (err) {
-                        if (err) {
-                          // append failed
-                          console.log("failed to write to file.");
-                        } else {
-                          // done
-                          console.log("written to file.");
-                        }
-                      });
+						
+						servers[id] = {};
+						servers[id].name = req.body.name;
+						servers[id].software = req.body.software;
+						servers[id].version = req.body.version;
+						servers[id].addons = req.body.addons;
+						servers[id].accountId = accounts[email].accountId;
+						console.log(JSON.stringify(servers[id]));
+						console.log
+					  fs.writeFile("servers.json", JSON.stringify(servers, null, 4), (err) => {
+						if (err) {
+							console.error(err);
+							return;
+						};
+						console.log("File has been created");
+					});
                     }
-                    console.log("cmds: " + req.body.cmd);
                     f.run(
                       id,
                       req.body.software,
@@ -319,6 +321,8 @@ router.post(`/new`, function (req, res) {
     } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
+
+
 });
 router.post(`/:id/setInfo`, function(req, res) {
 	account = req.headers.account;
