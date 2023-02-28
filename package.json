@@ -12,15 +12,19 @@
   "dependencies": {
     "btoa": "^1.2.1",
     "cors": "^2.8.5",
+    "decompress": "^4.2.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
+    "extract-zip": "^2.0.1",
+    "extract-zip-relative-path": "^2.0.4",
     "image-size": "^1.0.2",
     "node-fetch": "^2.6.7",
     "node-rsa": "^1.1.1",
     "socket.io": "^4.5.2",
     "stripe": "^11.4.0",
     "uuid": "^9.0.0",
-    "whatwg-fetch": "^3.6.2"
+    "whatwg-fetch": "^3.6.2",
+    "yauzl": "^2.10.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"

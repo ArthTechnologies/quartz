@@ -33,13 +33,9 @@ exec(
     cwd: "servers/template",
   }
 );
-// if java directory is empty
+
 if (!fs.existsSync("java")) {
   fs.mkdirSync("java");
-
-  //make a new folder called 17 in java
-  //download https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz and put it in java/17 using curl -LO
-  //extract it
 
   exec(
     "curl -LO https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz",
@@ -47,12 +43,24 @@ if (!fs.existsSync("java")) {
       cwd: "java",
     }
   );
-  //wait 5 seconds then extract it to java/17
+  exec(
+    "curl -LO https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz",
+    {
+      cwd: "java",
+    }
+  );
+
   setTimeout(function () {
-    exec("tar -xvf OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz", {
+    exec("tar -xvf OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz", {
       cwd: "java",
     });
   }, 9000);
+
+    setTimeout(function () {
+      exec("tar -xvf OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz", {
+        cwd: "java",
+      });
+    }, 9000);
 }
 
 // generate public and private key

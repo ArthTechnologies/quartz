@@ -204,6 +204,7 @@ router.post(`/new`, function (req, res) {
         }
       });
     }
+    console.log(req.body.modpackId + " " + req.body.modpackVersion);
     f.run(
       id,
       req.body.software,
@@ -211,7 +212,8 @@ router.post(`/new`, function (req, res) {
       req.body.addons,
       req.body.cmd,
       undefined,
-      true
+      true,
+      req.body.modpackURL
     );
   } else {
     console.log(stripekey);
@@ -281,7 +283,8 @@ router.post(`/new`, function (req, res) {
                       req.body.addons,
                       req.body.cmd,
                       undefined,
-                      true
+                      true,
+                      req.body.modpackURL
                     );
                     res.status(202).json({
                       msg: `Success: Starting Server`,

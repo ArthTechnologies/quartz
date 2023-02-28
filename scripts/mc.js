@@ -90,7 +90,8 @@ function checkServer(id) {
   };
 }
 
-function run(id, software, version, addons, cmd, em, isNew) {
+function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
+
   states[id] = "starting";
   console.log(states);
   // i isNew is undefined, set it to true
@@ -118,7 +119,7 @@ function run(id, software, version, addons, cmd, em, isNew) {
       cmd[i] = cmd[i].toLowerCase();
     }
   }
-  const path = "../../java/jdk-17.0.5+8/bin/java";
+  let path = "../../java/jdk-17.0.5+8/bin/java";
   const folder = "servers/" + id;
   const args = [
     "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Daikars.new.flags=true -Dusing.aikars.flags=https://mcflags.emc.gs -jar server.jar",
@@ -157,9 +158,9 @@ function run(id, software, version, addons, cmd, em, isNew) {
       s = "fabric";
       c = "modded";
       break;
-    case "mohist":
-      s = "mohist";
-      c = "modded";
+    case "snapshot":
+      s = "snapshot";
+      c = "vanilla";
       break;
     case "spigot":
       s = "spigot";
@@ -167,16 +168,41 @@ function run(id, software, version, addons, cmd, em, isNew) {
       break;
   }
 
+  switch (version) {
+    case "latest": path = "../../java/jdk-17.0.5+8/bin/java"; break;
+    case "Latest": path = "../../java/jdk-17.0.5+8/bin/java"; break;
+    case "1.19.3": path = "../../java/jdk-17.0.5+8/bin/java"; break;
+    case "1.18.2": path = "../../java/jdk-17.0.5+8/bin/java"; break;
+    case "1.17.1": path = "../../java/jdk-17.0.5+8/bin/java"; break;
+    default: path = "../../java/jdk-11.0.18+10/bin/java"; break;
+  }
+    
+
+
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
   }
+  if (c == "modded" && isNew) {
+    const {exec} = require("child_process");
+    //extract modpack.mrpack to folder
+    const decompress = require("decompress");
+    exec("curl -o " + folder + "/modpack.zip "+ modpackURL, (error, stdout, stderr) => {
+      decompress(folder + "/modpack.zip", "dist", ).then((files) => {
+        console.log("done");
+      });
+  
 
+    });
+
+
+
+  }
   //copy ../servers/template/server.jar to folder
   fs.copyFileSync("servers/template/server.jar", folder + "/server.jar");
   //run code for each item in addons
   //mkdir folder/world/datapacks
   // if world folder doesnt exist
-  if (!fs.existsSync(folder + "/world")) {
+  if (!fs.existsSync(folder + "/world") && software != "mohist") {
     fs.mkdirSync(folder + "/world");
     fs.mkdirSync(folder + "/world/datapacks");
   }
@@ -255,7 +281,7 @@ function run(id, software, version, addons, cmd, em, isNew) {
       cwd: folder + "/plugins",
     }
   );
-
+let mohisteula = false;
   let out = [];
   let count = 0;
   //log output
@@ -268,15 +294,17 @@ function run(id, software, version, addons, cmd, em, isNew) {
     if (count >= 9) {
       out.push(data);
     }
-  
-
+  console.log(data);
     terminalOutput[id] = out.join("\n");
     if (terminalOutput[id].indexOf("Done") > -1) {
       //replace states[id] with true
       states[id] = "true";
     }
   });
-
+  if (software == "mohist" && mohisteula == false) {
+    ls.stdin.write("true\n");
+    mohisteula = true;
+  }
   
   setInterval(function () {
     if (states[id] == "false") {
