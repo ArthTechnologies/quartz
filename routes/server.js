@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const accounts = require("../accounts.json");
+const servers = require("../servers.json");
 let techname;
 const f = require("../scripts/mc.js");
 const s = require("../scripts/stripe.js");
@@ -12,155 +13,155 @@ const stripe = require("stripe")(stripekey);
 
 let name = "MySurvival Server";
 
-router.get(`/:id`, function (req, res) {
-  email = req.headers.email;
-  token = req.headers.token;
-  if (token == accounts[email].token) {
-    //add cors header
-  res.header("Access-Control-Allow-Origin", "*");
-  id = req.params.id;
-  res.status(200).json(f.checkServer(id));
-  } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
-  }
+router.get(`/:id`, function(req, res) {
+	account = req.headers.account;
+	token = req.headers.token;
+	if (token == accounts[account].token) {
+		//add cors header
+		res.header("Access-Control-Allow-Origin", "*");
+		id = req.params.id;
+		res.status(200).json(f.checkServer(id));
+	} else {
+		res.status(401).json({ msg: `Invalid credentials.` });
+	}
 });
-router.post(`/:id/state/:state`, function (req, res) {
-    email = req.headers.email;
-  token = req.headers.token;
-  if (token == accounts[email].token) {
-  state = req.params.state;
-  id = req.params.id;
-  em = req.params.email;
-  token = req.headers.token;
+router.post(`/:id/state/:state`, function(req, res) {
+	account = req.headers.account;
+	token = req.headers.token;
+	if (token == accounts[account].token) {
+		state = req.params.state;
+		id = req.params.id;
+		token = req.headers.token;
 
-  console.log(state);
-  if ((state == "start") | (state == "stop") | (state == "restart")) {
-    switch (state) {
-      case "start":
-        f.run(id, undefined, undefined, undefined, undefined, em, false);
-        break;
-      case "stop":
-        f.stop(id);
-        break;
-      case "restart":
-        f.stop(id);
-        //wait 5 seconds
-        setTimeout(function () {
-          f.run(id, undefined, undefined, undefined, undefined, em, false);
-        }, 5000);
-        break;
-      default:
-        console.log("Invalid state.");
-    }
-    console.log(req.headers.request);
-    res.status(202).json({ msg: `Success. Server will ${state}.` });
-  } else {
-    res
-      .status(404)
-      .json({ msg: `Invalid state. Valid states are start, stop, & restart.` });
-  }
-    } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
-  }
-});
-
-router.delete (`/:id/plugins`, function (req, res) {
-    email = req.headers.email;
-  token = req.headers.token;
-  if (token == accounts[email].token) {
-  id = req.params.id;
-  pluginId = req.query.pluginId;
-  pluginPlatform = req.query.pluginPlatform;
-  pluginName = req.query.pluginName;
-  token = req.headers.token;
-
-  const fs = require("fs");
-
-  //delete platform_id_name.jar
-
-  fs.unlinkSync(`servers/${id}/plugins/${pluginPlatform}_${pluginId}_${pluginName}.jar`);
-
-  res.status(200).json({ msg: `Success. Plugin deleted.` });
-
-  } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
-  }
+		console.log(state);
+		if ((state == "start") | (state == "stop") | (state == "restart")) {
+			switch (state) {
+				case "start":
+					f.run(id, undefined, undefined, undefined, undefined, account, false);
+					break;
+				case "stop":
+					f.stop(id);
+					break;
+				case "restart":
+					f.stop(id);
+					//wait 5 seconds
+					setTimeout(function() {
+						f.run(id, undefined, undefined, undefined, undefined, account, false);
+					}, 5000);
+					break;
+				default:
+					console.log("Invalid state.");
+			}
+			console.log(req.headers.request);
+			res.status(202).json({ msg: `Success. Server will ${state}.` });
+		} else {
+			res
+				.status(404)
+				.json({ msg: `Invalid state. Valid states are start, stop, & restart.` });
+		}
+	} else {
+		res.status(401).json({ msg: `Invalid credentials.` });
+	}
 });
 
-router.get(`/:id/plugins`, function (req, res) {
-    email = req.headers.email;
-  token = req.headers.token;
-  if (token == accounts[email].token) {
-  let platforms = [];
-  let names = [];
-  let ids = [];
-  let id = req.params.id;
-  token = req.headers.token;
+router.delete(`/:id/plugins`, function(req, res) {
+	account = req.headers.account;
+	token = req.headers.token;
+	if (token == accounts[account].token) {
+		id = req.params.id;
+		pluginId = req.query.pluginId;
+		pluginPlatform = req.query.pluginPlatform;
+		pluginName = req.query.pluginName;
+		token = req.headers.token;
 
-  const fs = require("fs");
+		const fs = require("fs");
 
-  fs.readdirSync(`servers/${id}/plugins`).forEach((file) => {
-    if (file.startsWith("gh_")) {
-      platforms.push(file.split("_")[0]);
+		//delete platform_id_name.jar
 
-      ids.push(file.split("_")[1] + "/" + file.split("_")[2]);
-      names.push(file.split("_")[3].replace(".jar", ""));
-    } else if (file.startsWith("lr_")) {
-      platforms.push(file.split("_")[0]);
+		fs.unlinkSync(`servers/${id}/plugins/${pluginPlatform}_${pluginId}_${pluginName}.jar`);
 
-      ids.push(file.split("_")[1]);
-      names.push(file.split("_")[2].replace(".jar", ""));
-    } else if (file.startsWith("cx_")) {
-      platforms.push(file.split("_")[0]);
-      ids.push(file.split("_")[1]);
-      names.push(file.split("_")[2].replace(".jar", ""));
+		res.status(200).json({ msg: `Success. Plugin deleted.` });
 
-    }
-  });
+	} else {
+		res.status(401).json({ msg: `Invalid credentials.` });
+	}
+});
 
-  res.status(200).json({ platforms, names, ids });
-    } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
-  }
+router.get(`/:id/plugins`, function(req, res) {
+	account = req.headers.account;
+	token = req.headers.token;
+	if (token == accounts[account].token) {
+		let platforms = [];
+		let names = [];
+		let ids = [];
+		let id = req.params.id;
+		token = req.headers.token;
+
+		const fs = require("fs");
+
+		fs.readdirSync(`servers/${id}/plugins`).forEach((file) => {
+			if (file.startsWith("gh_")) {
+				platforms.push(file.split("_")[0]);
+
+				ids.push(file.split("_")[1] + "/" + file.split("_")[2]);
+				names.push(file.split("_")[3].replace(".jar", ""));
+			} else if (file.startsWith("lr_")) {
+				platforms.push(file.split("_")[0]);
+
+				ids.push(file.split("_")[1]);
+				names.push(file.split("_")[2].replace(".jar", ""));
+			} else if (file.startsWith("cx_")) {
+				platforms.push(file.split("_")[0]);
+				ids.push(file.split("_")[1]);
+				names.push(file.split("_")[2].replace(".jar", ""));
+
+			}
+		});
+
+		res.status(200).json({ platforms, names, ids });
+	} else {
+		res.status(401).json({ msg: `Invalid credentials.` });
+	}
 });
 
 let lastPlugin = "";
-router.post(`/:id/addplugin`, function (req, res) {
-    email = req.headers.email;
-  token = req.headers.token;
-  if (token == accounts[email].token) {
-  //add cors header
-  res.header("Access-Control-Allow-Origin", "*");
-  id = req.params.id;
-  pluginUrl = req.query.pluginUrl;
-  pluginId = req.query.id;
-  pluginName = req.query.name;
-  
-  if (
-    pluginUrl.startsWith("https://cdn.modrinth.com/data/") |
-    pluginUrl.startsWith("https://github.com/")
-  ) {
-    const fs = require("fs");
-    const exec = require("child_process").exec;
-    console.log(`curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar -LO ${pluginUrl}`);
-    if (pluginUrl != lastPlugin) {
-      exec(
-        `curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar -LO ${pluginUrl}`,
-        function (error) {
-          if (error) {
-            console.log(error);
-          }
-          lastPlugin = pluginUrl;
-        }
-      );
-    }
+router.post(`/:id/addplugin`, function(req, res) {
+	account = req.headers.account;
+	token = req.headers.token;
+	if (token == accounts[account].token) {
+		//add cors header
+		res.header("Access-Control-Allow-Origin", "*");
+		id = req.params.id;
+		pluginUrl = req.query.pluginUrl;
+		pluginId = req.query.id;
+		pluginName = req.query.name;
 
-    res.status(202).json({ msg: `Success. Plugin added.` });
-  }
-    } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
-  }
+		if (
+			pluginUrl.startsWith("https://cdn.modrinth.com/data/") |
+			pluginUrl.startsWith("https://github.com/")
+		) {
+			const fs = require("fs");
+			const exec = require("child_process").exec;
+			console.log(`curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar -LO ${pluginUrl}`);
+			if (pluginUrl != lastPlugin) {
+				exec(
+					`curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar -LO ${pluginUrl}`,
+					function(error) {
+						if (error) {
+							console.log(error);
+						}
+						lastPlugin = pluginUrl;
+					}
+				);
+			}
+
+			res.status(202).json({ msg: `Success. Plugin added.` });
+		}
+	} else {
+		res.status(401).json({ msg: `Invalid credentials.` });
+	}
 });
+
 router.post(`/new`, function (req, res) {
     email = req.headers.email;
   token = req.headers.token;
@@ -319,123 +320,114 @@ router.post(`/new`, function (req, res) {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
 });
+router.post(`/:id/setInfo`, function(req, res) {
+	account = req.headers.account;
+	token = req.headers.token;
+	if (token == accounts[account].token) {
+		id = req.params.id;
+		iconUrl = req.body.icon;
+		desc = req.body.desc;
+		//set line 12 of server.properties in the server folder to "motd=" + desc
+		var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
+		var textByLine = text.split("\n");
+		textByLine[11] = `motd=${desc}`;
+		text = textByLine.join("\n");
+		console.log(desc + " " + iconUrl)
+		fs.writeFileSync(`servers/${id}/server.properties`, text);
 
-router.post(`/:id/setInfo`, function (req, res) {
-    email = req.headers.email;
-  token = req.headers.token;
-  if (token == accounts[email].token) {
-  id = req.params.id;
-  iconUrl = req.body.icon;
-  desc = req.body.desc;
-  //set line 12 of server.properties in the server folder to "motd=" + desc
-  var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
-  var textByLine = text.split("\n");
-  textByLine[11] = `motd=${desc}`;
-  text = textByLine.join("\n");
-  console.log(desc + " " + iconUrl)
-  fs.writeFileSync(`servers/${id}/server.properties`, text);
+		//download the icon url with curl and save it to the server folder as server-icon.png
+		exec(`curl -LO ${iconUrl} -o servers/${id}/server-icon.png`, (err, stdout, stderr) => {
+			if (err) {
+				console.log(err);
+			} else {
+				console.log("icon set");
+				//if command "convert" exists, convert the icon to 64x64
+				if (fs.existsSync("/usr/bin/convert")) {
+					if (fs.existsSync(`servers/${id}/server-icon.png`)) {
+						var sizeOf = require('image-size');
+						var dimensions = sizeOf(`servers/${id}/server-icon.png`);
+						console.log(dimensions.width, dimensions.height);
+						if (dimensions.width > 64 || dimensions.height > 64) {
+							//if the image is equal in width and height, convert it to 64x64
+							if (dimensions.width == dimensions.height) {
+								//convert the image to 64x64, make sure its not smaller, squish it if nesescary
+								exec(`convert servers/${id}/server-icon.png -resize 64x64 servers/${id}/server-icon.png`, (err, stdout, stderr) => {
+									if (err) {
+										console.log(err);
+									} else {
+										console.log("icon resized");
+									}
+								});
+							} else if (dimensions.width > dimensions.height) {
+								let ratio = dimensions.width / dimensions.height;
 
-  //download the icon url with curl and save it to the server folder as server-icon.png
-  exec(`curl -LO ${iconUrl} -o servers/${id}/server-icon.png`, (err, stdout, stderr) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("icon set");
-     //if command "convert" exists, convert the icon to 64x64
-     if (fs.existsSync("/usr/bin/convert")) {
-      if ( fs.existsSync(`servers/${id}/server-icon.png`)) {
-        var sizeOf = require('image-size');
-        var dimensions = sizeOf(`servers/${id}/server-icon.png`);
-        console.log(dimensions.width, dimensions.height);
-        if (dimensions.width > 64 || dimensions.height > 64) {
-          //if the image is equal in width and height, convert it to 64x64
-          if (dimensions.width == dimensions.height) {
-            //convert the image to 64x64, make sure its not smaller, squish it if nesescary
-          exec(`convert servers/${id}/server-icon.png -resize 64x64 servers/${id}/server-icon.png`, (err, stdout, stderr) => {
-            if (err) {
-              console.log(err);
-            } else {
-              console.log("icon resized");
-            }
-          });
-        } else if (dimensions.width > dimensions.height) {
-          let ratio = dimensions.width / dimensions.height;
+								let newWidth = 64 * ratio;
+								let newHeight = 64;
 
-          let newWidth = 64 * ratio;
-          let newHeight = 64;
-
-          exec(`convert servers/${id}/server-icon.png -resize ${newWidth}x${newHeight} -gravity center -crop 64x64+0+0 +repage servers/${id}/server-icon.png`, (err, stdout, stderr) => {
-            if (err) {
-              console.log(err);
-            }
-          });
-        } else if (dimensions.width < dimensions.height) {
-          //this doesnt work for some reason
-        }
-        }
-      }
-    } else {
-      console.log("convert command not found, not converting image.")
-    }
-  }
-  });
-
+								exec(`convert servers/${id}/server-icon.png -resize ${newWidth}x${newHeight} -gravity center -crop 64x64+0+0 +repage servers/${id}/server-icon.png`, (err, stdout, stderr) => {
+									if (err) {
+										console.log(err);
+									}
+								});
+							} else if (dimensions.width < dimensions.height) {
+								//this doesnt work for some reason
+							}
+						}
+					}
+				} else {
+					console.log("convert command not found, not converting image.")
+				}
+			}
+		});
 
 
 
 
-  //add iconurl.txt to the server folder with the icon url
-  fs.writeFileSync(`servers/${id}/iconurl.txt`, iconUrl);
-  res.status(200).json({ msg: `Success: Set server info` });
-    } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
-  }
+
+		//add iconurl.txt to the server folder with the icon url
+		fs.writeFileSync(`servers/${id}/iconurl.txt`, iconUrl);
+		res.status(200).json({ msg: `Success: Set server info` });
+	} else {
+		res.status(401).json({ msg: `Invalid credentials.` });
+	}
 });
 
-router.get(`/:id/getInfo`, function (req, res) {
-    email = req.headers.email;
-  token = req.headers.token;
-  if (token == accounts[email].token) {
+router.get(`/:id/getInfo`, function(req, res) {
+	account = req.headers.account;
+	token = req.headers.token;
+	if (token == accounts[account].token) {
 
-  //send the motd and iconUrl
-  let iconUrl = "";
-  let desc = "";
-  id = req.params.id;
-  var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
-  var textByLine = text.split("\n");
-  desc = textByLine[11].split("=")[1];
+		//send the motd and iconUrl
+		let iconUrl = "";
+		let desc = "";
+		id = req.params.id;
+		var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
+		var textByLine = text.split("\n");
+		desc = textByLine[11].split("=")[1];
 
-  iconUrl = fs.readFileSync(`servers/${id}/iconurl.txt`).toString();
-  res.status(200).json({ msg: `Success: Got server info`, iconUrl: iconUrl, desc: desc });
-  } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
-  }
+		iconUrl = fs.readFileSync(`servers/${id}/iconurl.txt`).toString();
+		res.status(200).json({ msg: `Success: Got server info`, iconUrl: iconUrl, desc: desc });
+	} else {
+		res.status(401).json({ msg: `Invalid credentials.` });
+	}
 });
 
 
-router.delete(`/:id`, function (req, res) {
-    email = req.headers.email;
-  token = req.headers.token;
-  if (token == accounts[email].token) {
-  //add cors header
-  res.header("Access-Control-Allow-Origin", "*");
-  id = req.params.id;
-  f.stop(id);
-  //remove the idth line from servers.csv and replace it with "deleted"
-  var text = fs.readFileSync("servers.csv").toString();
-  var textByLine = text.split("\n");
-  textByLine[id] = "deleted";
-  text = textByLine.join("\n");
+router.delete(`/:id`, function(req, res) {
+	account = req.headers.account;
+	token = req.headers.token;
+	if (token == accounts[account].token) {
 
-  fs.writeFileSync("servers.csv", text);
-  fs.writeFile("servers.csv", text, function (err) {
-    if (err) return console.log(err);
-    console.log("deleted server");
-  });
-  res.status(202).json({ msg: `Request recieved.` });
-    } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
-  }
+		res.header("Access-Control-Allow-Origin", "*");
+		id = req.params.id;
+		f.stop(id);
+
+		servers[id] = "deleted";
+
+		res.status(202).json({ msg: `Request recieved.` });
+	} else {
+		res.status(401).json({ msg: `Invalid credentials.` });
+	}
 });
 
 module.exports = router;

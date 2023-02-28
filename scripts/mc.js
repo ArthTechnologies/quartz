@@ -5,90 +5,82 @@ fs = require("fs");
 let states = [];
 let a = [];
 let x = false;
-
+let servers = require("../servers.json");
 let terminalOutput = [];
 let terminalInput = "";
 function checkServers(em) {
-  console.log("Checking servers for " + em);
-  amount = 0;
+	console.log("Checking servers for " + em);
+	amount = 0;
 
-  a = fs.readFileSync("servers.csv", "utf8");
-  a = a.split("\n");
 
-  var n = [];
-  var s = [];
-  var v = [];
-  var addons = [];
-  var st = [];
-  var ids = [];
 
-  for (i in a) {
-    if (states[i] == undefined) {
-      states[i] = "false";
-    }
-    if (a[i] != (undefined | "")) {
-      if (a[i].indexOf(em) > 0) {
-        n.push(a[i].split(",")[0]);
-        s.push(a[i].split(",")[1]);
-        v.push(a[i].split(",")[2]);
-        st.push(states[i]);
-        //push addons, which start after the first [ and end before the last ]
-        addons.push(a[i].slice(a[i].indexOf("[") + 1, a[i].lastIndexOf("]")));
-      }
-    }
+	var n = [];
+	var s = [];
+	var v = [];
+	var addons = [];
+	var st = [];
+	var ids = [];
 
-    v = v.filter(function (el) {
-      return el != null;
-    });
-    s = s.filter(function (el) {
-      return el != null;
-    });
-    n = n.filter(function (el) {
-      return el != "";
-    });
+	for (i in servers) {
+		if (states[i] == undefined) {
+			states[i] = "false";
+		}
+		if (servers[i] != (undefined | "")) {
+			if (servers[i].accountId != undefined) {
+				n.push(servers[i].name);
+				s.push(servers[i].software);
+				v.push(servers[i].version);
+				st.push(states[i]);
 
-    if (a[i].indexOf(em) > 0) {
-      amount++;
+				addons = servers[i].addons;
+			}
+		}
 
-      ids.push(i);
-    }
-  }
+		v = v.filter(function(el) {
+			return el != null;
+		});
+		s = s.filter(function(el) {
+			return el != null;
+		});
+		n = n.filter(function(el) {
+			return el != "";
+		});
 
-  names = n;
-  softwares = s;
-  versions = v;
-  return {
-    names: names,
-    amount: amount,
-    versions: versions,
-    softwares: softwares,
-    addons: addons,
-    states: st,
-    ids: ids,
-  };
+		if (servers[i].email != undefined) {
+			amount++;
+
+			ids.push(i);
+		}
+	}
+
+	names = n;
+	softwares = s;
+	versions = v;
+	return {
+		names: names,
+		amount: amount,
+		versions: versions,
+		softwares: softwares,
+		addons: addons,
+		states: st,
+		ids: ids,
+	};
 }
 
 function checkServer(id) {
-  if (states[id] == undefined) {
-    states[id] = "false";
-  }
-  let line;
-  let st = states[id];
-  //line is the idth line in servers.csv
-  line = fs.readFileSync("servers.csv", "utf8").split("\n")[id];
-  //split the line by commas except for commas inside []s
-  let split = line.split(/,(?![^[]*])/);
-  let addons = split[3];
-  //remove []s from addons
-  addons = addons.slice(1, addons.length - 1);
+	if (states[id] == undefined) {
+		states[id] = "false";
+	}
+	let server = servers[id]
 
-  return {
-    version: split[2],
-    software: split[1],
-    addons: addons,
-    state: st,
-  };
+	return {
+		version: server.addons,
+		software: server.software,
+		addons: server.addons,
+		state: states[id],
+	};
 }
+
 
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
