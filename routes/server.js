@@ -428,6 +428,14 @@ router.delete(`/:id`, function(req, res) {
 		f.stop(id);
 
 		servers[id] = "deleted";
+		//delete /servers/id
+		exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
+			if (err) {
+				console.log(err);
+			} else {
+				console.log("deleted server");
+			}
+		});
 
 		res.status(202).json({ msg: `Request recieved.` });
 	} else {
