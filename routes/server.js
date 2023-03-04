@@ -14,9 +14,9 @@ const stripe = require("stripe")(stripekey);
 let name = "MySurvival Server";
 
 router.get(`/:id`, function(req, res) {
-	account = req.headers.account;
+	email = req.headers.email;
 	token = req.headers.token;
-	if (token == accounts[account].token) {
+	if (token == accounts[email].token) {
 		//add cors header
 		res.header("Access-Control-Allow-Origin", "*");
 		id = req.params.id;
@@ -26,9 +26,9 @@ router.get(`/:id`, function(req, res) {
 	}
 });
 router.post(`/:id/state/:state`, function(req, res) {
-	account = req.headers.account;
+	email = req.headers.email;
 	token = req.headers.token;
-	if (token == accounts[account].token) {
+	if (token == accounts[email].token) {
 		state = req.params.state;
 		id = req.params.id;
 		token = req.headers.token;
@@ -37,7 +37,7 @@ router.post(`/:id/state/:state`, function(req, res) {
 		if ((state == "start") | (state == "stop") | (state == "restart")) {
 			switch (state) {
 				case "start":
-					f.run(id, undefined, undefined, undefined, undefined, account, false);
+					f.run(id, undefined, undefined, undefined, undefined, email, false);
 					break;
 				case "stop":
 					f.stop(id);
@@ -46,7 +46,7 @@ router.post(`/:id/state/:state`, function(req, res) {
 					f.stop(id);
 					//wait 5 seconds
 					setTimeout(function() {
-						f.run(id, undefined, undefined, undefined, undefined, account, false);
+						f.run(id, undefined, undefined, undefined, undefined, email, false);
 					}, 5000);
 					break;
 				default:
@@ -65,9 +65,9 @@ router.post(`/:id/state/:state`, function(req, res) {
 });
 
 router.delete(`/:id/plugins`, function(req, res) {
-	account = req.headers.account;
+	email = req.headers.email;
 	token = req.headers.token;
-	if (token == accounts[account].token) {
+	if (token == accounts[email].token) {
 		id = req.params.id;
 		pluginId = req.query.pluginId;
 		pluginPlatform = req.query.pluginPlatform;
@@ -88,9 +88,9 @@ router.delete(`/:id/plugins`, function(req, res) {
 });
 
 router.get(`/:id/plugins`, function(req, res) {
-	account = req.headers.account;
+	email = req.headers.email;
 	token = req.headers.token;
-	if (token == accounts[account].token) {
+	if (token == accounts[email].token) {
 		let platforms = [];
 		let names = [];
 		let ids = [];
@@ -126,9 +126,9 @@ router.get(`/:id/plugins`, function(req, res) {
 
 let lastPlugin = "";
 router.post(`/:id/addplugin`, function(req, res) {
-	account = req.headers.account;
+	email = req.headers.email;
 	token = req.headers.token;
-	if (token == accounts[account].token) {
+	if (token == accounts[email].token) {
 		//add cors header
 		res.header("Access-Control-Allow-Origin", "*");
 		id = req.params.id;
@@ -170,7 +170,7 @@ router.post(`/new`, function (req, res) {
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
 
-  var id = servers.length;
+  var id = Object.keys(servers).length;
 
   em = req.query.email;
 
@@ -198,7 +198,7 @@ router.post(`/new`, function (req, res) {
 		console.log(JSON.stringify(servers) + "servers.json")
 		//console log if ../servers.json exists
 		console.log(fs.existsSync("../servers.json") + "servers.json")
-		fs.writeFile("servers.json", JSON.stringify(servers, null, 4), (err) => {
+		fs.writeFile("../servers.json", JSON.stringify(servers, null, 4), (err) => {
 			if (err) {
 				console.error(err);
 				return;
@@ -270,8 +270,8 @@ console.log("phhhhhlojnhiokln")
 						servers[id].addons = req.body.addons;
 						servers[id].accountId = accounts[email].accountId;
 						console.log(JSON.stringify(servers[id]));
-						console.log
-					  fs.writeFile("servers.json", JSON.stringify(servers, null, 4), (err) => {
+						console.log("servers.json" + fs.existsSync("../servers.json"))
+					  fs.writeFile("../servers.json", JSON.stringify(servers, null, 4), (err) => {
 						if (err) {
 							console.error(err);
 							return;
@@ -325,9 +325,9 @@ console.log("phhhhhlojnhiokln")
 
 });
 router.post(`/:id/setInfo`, function(req, res) {
-	account = req.headers.account;
+	email = req.headers.email;
 	token = req.headers.token;
-	if (token == accounts[account].token) {
+	if (token == accounts[email].token) {
 		id = req.params.id;
 		iconUrl = req.body.icon;
 		desc = req.body.desc;
@@ -397,9 +397,9 @@ router.post(`/:id/setInfo`, function(req, res) {
 });
 
 router.get(`/:id/getInfo`, function(req, res) {
-	account = req.headers.account;
+	email = req.headers.email;
 	token = req.headers.token;
-	if (token == accounts[account].token) {
+	if (token == accounts[email].token) {
 
 		//send the motd and iconUrl
 		let iconUrl = "";
@@ -418,9 +418,10 @@ router.get(`/:id/getInfo`, function(req, res) {
 
 
 router.delete(`/:id`, function(req, res) {
-	account = req.headers.account;
+	
+	email = req.headers.email;
 	token = req.headers.token;
-	if (token == accounts[account].token) {
+	if (token == accounts[email].token) {
 
 		res.header("Access-Control-Allow-Origin", "*");
 		id = req.params.id;

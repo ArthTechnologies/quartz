@@ -33,15 +33,13 @@ function checkServers(em) {
 				st.push(states[i]);
 
 				addons = servers[i].addons;
+        amount++;
+
+        ids.push(i);
 			}
 		}
 
 
-		if (servers[i].email != undefined) {
-			amount++;
-
-			ids.push(i);
-		}
 	}
 
 	names = n;
@@ -74,7 +72,7 @@ function checkServer(id) {
 
 
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
-
+  console.log("id is " + id);
   states[id] = "starting";
   console.log(states);
   // i isNew is undefined, set it to true
@@ -92,7 +90,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     software = servers.software;
     version = servers.version;
     addons = servers.addons;
-    addons = addons.split(",");
+
   } else {
     console.log("creating new server...");
   }
@@ -211,7 +209,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   //add new file eula.txt in folder
   fs.writeFileSync(folder + "/eula.txt", "eula=true");
-  console.log("writing to serverjars");
+  console.log("writing to serverjars... " + version);
   fs.writeFileSync(
     folder + "/serverjars.properties",
     "category=" +
