@@ -20,6 +20,7 @@
     "image-size": "^1.0.2",
     "node-fetch": "^2.6.7",
     "node-rsa": "^1.1.1",
+    "serverjars-api": "^1.0.1",
     "socket.io": "^4.5.2",
     "stripe": "^11.4.0",
     "uuid": "^9.0.0",

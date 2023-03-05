@@ -64,9 +64,10 @@ router.post(`/:id/state/:state`, function(req, res) {
 	}
 });
 
-router.delete(`/:id/plugins`, function(req, res) {
+router.delete(`/:id/:modtype`, function(req, res) {
 	email = req.headers.email;
 	token = req.headers.token;
+	modtype = req.params.modtype;
 	if (token == accounts[email].token) {
 		id = req.params.id;
 		pluginId = req.query.pluginId;
@@ -77,29 +78,33 @@ router.delete(`/:id/plugins`, function(req, res) {
 		const fs = require("fs");
 
 		//delete platform_id_name.jar
+		console.log(id + modtype + pluginPlatform + "_" + pluginId + "_" + pluginName + ".jar");
+		fs.unlinkSync(`servers/${id}/${modtype}/${pluginPlatform}_${pluginId}_${pluginName}.jar`);
 
-		fs.unlinkSync(`servers/${id}/plugins/${pluginPlatform}_${pluginId}_${pluginName}.jar`);
-
-		res.status(200).json({ msg: `Success. Plugin deleted.` });
+		res.status(200).json({ msg: `Success. Mod deleted.` });
 
 	} else {
 		res.status(401).json({ msg: `Invalid credentials.` });
 	}
 });
 
-router.get(`/:id/plugins`, function(req, res) {
+router.get(`/:id/:modtype`, function(req, res) {
 	email = req.headers.email;
 	token = req.headers.token;
+	modtype = req.params.modtype;
 	if (token == accounts[email].token) {
 		let platforms = [];
 		let names = [];
 		let ids = [];
 		let id = req.params.id;
+		let modpack = require(`../servers/${id}/modrinth.index.json`);
+
 		token = req.headers.token;
 
 		const fs = require("fs");
+		
 
-		fs.readdirSync(`servers/${id}/plugins`).forEach((file) => {
+		fs.readdirSync(`servers/${id}/${modtype}`).forEach((file) => {
 			if (file.startsWith("gh_")) {
 				platforms.push(file.split("_")[0]);
 
@@ -118,16 +123,17 @@ router.get(`/:id/plugins`, function(req, res) {
 			}
 		});
 
-		res.status(200).json({ platforms, names, ids });
+		res.status(200).json({ platforms, names, ids, modpack });
 	} else {
 		res.status(401).json({ msg: `Invalid credentials.` });
 	}
 });
 
 let lastPlugin = "";
-router.post(`/:id/addplugin`, function(req, res) {
+router.post(`/:id/add/:modtype`, function(req, res) {
 	email = req.headers.email;
 	token = req.headers.token;
+	modtype = req.params.modtype;
 	if (token == accounts[email].token) {
 		//add cors header
 		res.header("Access-Control-Allow-Origin", "*");
@@ -135,7 +141,7 @@ router.post(`/:id/addplugin`, function(req, res) {
 		pluginUrl = req.query.pluginUrl;
 		pluginId = req.query.id;
 		pluginName = req.query.name;
-
+		pluginName = pluginName.replace(/\//g, "-");
 		if (
 			pluginUrl.startsWith("https://cdn.modrinth.com/data/") |
 			pluginUrl.startsWith("https://github.com/")
@@ -145,7 +151,7 @@ router.post(`/:id/addplugin`, function(req, res) {
 			
 			if (pluginUrl != lastPlugin) {
 				exec(
-					`curl -o servers/${id}/plugins/${pluginId}_${pluginName}.jar -LO ${pluginUrl}`,
+					`curl -o servers/${id}/${modtype}s/${pluginId}_${pluginName}.jar -LO ${pluginUrl}`,
 					function(error) {
 						if (error) {
 							console.log(error);
@@ -163,7 +169,7 @@ router.post(`/:id/addplugin`, function(req, res) {
 });
 
 router.post(`/new`, function (req, res) {
-	console.log(stripekey.indexOf("sk"))
+	console.log(req.body.version)
     email = req.headers.email;
   token = req.headers.token;
   if (token == accounts[email].token) {
@@ -212,7 +218,7 @@ router.post(`/new`, function (req, res) {
       id,
       req.body.software,
       req.body.version,
-      req.body.addons,
+      req.body.addons,	
       req.body.cmd,
       undefined,
       true,
@@ -271,7 +277,7 @@ console.log("phhhhhlojnhiokln")
 						servers[id].accountId = accounts[email].accountId;
 						console.log(JSON.stringify(servers[id]));
 						console.log("servers.json" + fs.existsSync("../servers.json"))
-					  fs.writeFile("../servers.json", JSON.stringify(servers, null, 4), (err) => {
+					  fs.writeFile("servers.json", JSON.stringify(servers, null, 4), (err) => {
 						if (err) {
 							console.error(err);
 							return;
@@ -426,8 +432,10 @@ router.delete(`/:id`, function(req, res) {
 		res.header("Access-Control-Allow-Origin", "*");
 		id = req.params.id;
 		f.stop(id);
+		
 
 		servers[id] = "deleted";
+		fs.writeFileSync("servers.json", JSON.stringify(servers));
 		//delete /servers/id
 		exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
 			if (err) {

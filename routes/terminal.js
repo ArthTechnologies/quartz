@@ -20,7 +20,6 @@ router.post("/:id", (req, res) => {
   console.log("revieved request: " + req.query.cmd);
   f.writeTerminal(req.params.id, req.query.cmd);
   res.send("Success");
-} else {
   res.status(401).json({ msg: `Invalid credentials.` });
 }
 });

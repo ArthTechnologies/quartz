@@ -1,4 +1,4 @@
-const { stdin } = require("process");
+
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
 fs = require("fs");
@@ -72,6 +72,7 @@ function checkServer(id) {
 
 
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
+
   console.log("id is " + id);
   states[id] = "starting";
   console.log(states);
@@ -86,10 +87,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   if (isNew === false) {
     console.log("already created server, grabing data...");
     //run checkServers and store it
-    let servers = checkServer(id);
-    software = servers.software;
-    version = servers.version;
-    addons = servers.addons;
+    software = servers[id].software;
+    version = servers[id].version;
+    addons = servers[id].addons;
 
   } else {
     console.log("creating new server...");
@@ -102,6 +102,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   }
   let path = "../../java/jdk-17.0.5+8/bin/java";
   const folder = "servers/" + id;
+
   const args = [
     "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Daikars.new.flags=true -Dusing.aikars.flags=https://mcflags.emc.gs -jar server.jar",
   ];
@@ -120,7 +121,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       c = "proxies";
       break;
     case "quilt":
-      s = "quilt";
+      s = "fabric";
       c = "modded";
       break;
     case "vanilla":
@@ -149,37 +150,80 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       break;
   }
 
-  switch (version) {
-    case "latest": path = "../../java/jdk-17.0.5+8/bin/java"; break;
-    case "Latest": path = "../../java/jdk-17.0.5+8/bin/java"; break;
-    case "1.19.3": path = "../../java/jdk-17.0.5+8/bin/java"; break;
-    case "1.18.2": path = "../../java/jdk-17.0.5+8/bin/java"; break;
-    case "1.17.1": path = "../../java/jdk-17.0.5+8/bin/java"; break;
-    default: path = "../../java/jdk-11.0.18+10/bin/java"; break;
-  }
+  console.log(version);
+    switch (version) {
+      case "latest": version = "1.19.3"; path = "../../java/jdk-19.0.2+7/bin/java"; break;
+      case "Latest": version = "1.19.3"; path = "../../java/jdk-19.0.2+7/bin/java"; break;
+      case "1.19.3": path = "../../java/jdk-19.0.2+7/bin/java"; break;
+      case "1.18.2": path = "../../java/jdk-17.0.5+8/bin/java"; break;
+      case "1.17.1": path = "../../java/jdk-17.0.5+8/bin/java"; break;
+      default: path = "../../java/jdk-11.0.18+10/bin/java"; break;
+    }
+  
+
+
     
 
 
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
+    if (!fs.existsSync(folder + "/mods/")) {
+      fs.mkdirSync(folder + "/mods/");
+    }
   }
-  if (c == "modded" && isNew) {
-    const {exec} = require("child_process");
-    //extract modpack.mrpack to folder
-    const decompress = require("decompress");
-    exec("curl -o " + folder + "/modpack.zip "+ modpackURL, (error, stdout, stderr) => {
-      decompress(folder + "/modpack.zip", "dist", ).then((files) => {
-        console.log("done");
-      });
+  if (s == "fabric" || s == "quilt") {
+    const { exec } = require("child_process");
+   if (version = "latest") {
+    version = "1.19.3"
+
+   } 
+let modpack;
+   console.log(s + "/" + v)
+    exec("curl -o " + folder + "/server.jar -LO https://serverjars.com/api/fetchJar/modded/" + s + "/" + v, (error, stdout, stderr) => {
+      console.log("done");
+    });
+console.log(modpackURL)
+    exec("curl -o " + folder + "/modpack.mrpack -LO "+ modpackURL, (error, stdout, stderr) => {
+
+      exec("unzip " + folder + "/modpack.mrpack" + " -d " + folder, (error, stdout, stderr) => {
+        exec("cp -r " + folder + "/overrides/* " + folder + "/", (error, stdout, stderr) => {
+          if (!fs.existsSync(folder + "/overrides/mods")) {
+            modpack = JSON.parse(fs.readFileSync(folder + "/modrinth.index.json"));
+            console.log(modpack.files.length)
+      
+            console.log(modpack.files.length)
+            //for each file in modpack.files, download it
+            for (i in modpack.files) {
+              console.log("curl -o " + folder + "/" + modpack.files[i].path + " -LO " + modpack.files[i].downloads[0]);
+      
+              exec("curl -o " + folder + "/" + modpack.files[i].path + " -LO " + modpack.files[i].downloads[0], (error, stdout, stderr) => {
+                console.log("done b");
+              });
+          }
+        }
+          console.log("done installing modpack");
+        });
+       
+        
+      }
+    );
   
 
     });
 
 
 
+   
+  } else if (s == "forge") {
+    const { exec } = require("child_process");
+
+    exec("cp -r forgelibs/" + version + "/* " + folder + "/", (error, stdout, stderr) => {
+      console.log("done c ");
+  });
+  } else {
+    fs.copyFileSync("servers/template/server.jar", folder + "/server.jar");
   }
-  //copy ../servers/template/server.jar to folder
-  fs.copyFileSync("servers/template/server.jar", folder + "/server.jar");
+ 
   //run code for each item in addons
   //mkdir folder/world/datapacks
   // if world folder doesnt exist
@@ -226,7 +270,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     fs.mkdirSync(folder + "/plugins");
   }
   const { exec } = require("child_process");
-  const ls = exec(path + " " + args, { cwd: folder });
+  let ls;
+  if (s == "forge") {
+    ls = exec("./run.sh", { cwd: folder });
+  } else {
+    console.log(path + " " + args + " @ " + folder);
+    ls = exec(path + " " + args, { cwd: folder });
+  }
   console.log(folder + "/plugins/Geyser-Spigot.jar");
   console.log("starting commands are: " + cmd);
   //for every item in the cmd array, run the command
@@ -262,7 +312,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       cwd: folder + "/plugins",
     }
   );
-let mohisteula = false;
+
   let out = [];
   let count = 0;
   //log output
@@ -271,6 +321,7 @@ let mohisteula = false;
     if (er) {
       console.log(er);
     }
+    console.log(data);  
     count++;
     if (count >= 9) {
       out.push(data);
@@ -282,10 +333,7 @@ let mohisteula = false;
       states[id] = "true";
     }
   });
-  if (software == "mohist" && mohisteula == false) {
-    ls.stdin.write("true\n");
-    mohisteula = true;
-  }
+ 
   
   setInterval(function () {
     if (states[id] == "false") {
@@ -300,8 +348,8 @@ let mohisteula = false;
     console.log("Server Stopped: exit code " + code);
     states[id] = "false";
   });
-}
 
+}
 function stop(id) {
   states[id] = "false";
 }

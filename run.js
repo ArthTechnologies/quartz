@@ -54,6 +54,12 @@ if (!fs.existsSync("java")) {
       cwd: "java",
     }
   );
+  exec(
+    "curl -LO https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.2%2B7/OpenJDK19U-jdk_x64_linux_hotspot_19.0.2_7.tar.gz",
+    {
+      cwd: "java",
+    }
+  );
 
   setTimeout(function () {
     exec("tar -xvf OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz", {
@@ -67,6 +73,12 @@ if (!fs.existsSync("java")) {
       });
     }, 9000);
 }
+
+setTimeout(function () {
+	exec("tar -xvf OpenJDK19U-jdk_x64_linux_hotspot_19.0.2_7.tar.gz", {
+	  cwd: "java",
+	});
+  }, 9000);
 
 // generate public and private key
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
