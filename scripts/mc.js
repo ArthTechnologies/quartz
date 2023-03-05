@@ -191,10 +191,7 @@ console.log(modpackURL)
 
             setTimeout(function () {
               modpack = JSON.parse(fs.readFileSync(folder + "/modrinth.index.json"));
-            }, 200);
-            console.log(modpack.files.length)
-      
-            console.log(modpack.files.length)
+
             //for each file in modpack.files, download it
             for (i in modpack.files) {
               console.log("curl -o " + folder + "/" + modpack.files[i].path + " -LO " + modpack.files[i].downloads[0]);
@@ -203,6 +200,8 @@ console.log(modpackURL)
                 console.log("done b");
               });
           }
+            }, 200);
+
         }
           console.log("done installing modpack");
         });
