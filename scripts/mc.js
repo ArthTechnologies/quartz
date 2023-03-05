@@ -186,10 +186,14 @@ console.log(modpackURL)
     exec("curl -o " + folder + "/modpack.mrpack -LO "+ modpackURL, (error, stdout, stderr) => {
 
       exec("unzip " + folder + "/modpack.mrpack" + " -d " + folder, (error, stdout, stderr) => {
+        
+        
         exec("cp -r " + folder + "/overrides/* " + folder + "/", (error, stdout, stderr) => {
-          if (!fs.existsSync(folder + "/overrides/mods")) {
+          if (!fs.existsSync(folder + "/overrides/mods") && fs.existsSync(folder + "/modrinth.index.json")) {
+            //when its done unzipping
+            
 
-            setTimeout(function () {
+           
               modpack = JSON.parse(fs.readFileSync(folder + "/modrinth.index.json"));
 
             //for each file in modpack.files, download it
@@ -200,11 +204,12 @@ console.log(modpackURL)
                 console.log("done b");
               });
           }
-            }, 200);
+         
 
         }
           console.log("done installing modpack");
         });
+     
        
         
       }

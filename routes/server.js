@@ -89,6 +89,7 @@ router.delete(`/:id/:modtype`, function(req, res) {
 });
 
 router.get(`/:id/:modtype`, function(req, res) {
+	const fs = require("fs");
 	email = req.headers.email;
 	token = req.headers.token;
 	modtype = req.params.modtype;
@@ -97,11 +98,15 @@ router.get(`/:id/:modtype`, function(req, res) {
 		let names = [];
 		let ids = [];
 		let id = req.params.id;
-		let modpack = require(`../servers/${id}/modrinth.index.json`);
+	let modpack;
+	if (fs.existsSync(`servers/${id}/modrinth.index.json`)) {
+		 modpack = require(`../servers/${id}/modrinth.index.json`);
 
-		token = req.headers.token;
 
-		const fs = require("fs");
+
+		
+	}
+
 		
 
 		fs.readdirSync(`servers/${id}/${modtype}`).forEach((file) => {
