@@ -179,7 +179,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
    } 
 let modpack;
 
-    exec("curl -o " + folder + "/server.jar -LO https://serverjars.com/api/fetchJar/modded/" + s + "/" + v, (error, stdout, stderr) => {
+    exec("curl -o " + folder + "/server.jar -LO https://serverjars.com/api/fetchJar/modded/" + s + "/" + version, (error, stdout, stderr) => {
       console.log("done");
     });
 console.log(modpackURL)
