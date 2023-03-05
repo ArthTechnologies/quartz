@@ -188,7 +188,10 @@ console.log(modpackURL)
       exec("unzip " + folder + "/modpack.mrpack" + " -d " + folder, (error, stdout, stderr) => {
         exec("cp -r " + folder + "/overrides/* " + folder + "/", (error, stdout, stderr) => {
           if (!fs.existsSync(folder + "/overrides/mods")) {
-            modpack = JSON.parse(fs.readFileSync(folder + "/modrinth.index.json"));
+
+            setTimeout(function () {
+              modpack = JSON.parse(fs.readFileSync(folder + "/modrinth.index.json"));
+            }, 200);
             console.log(modpack.files.length)
       
             console.log(modpack.files.length)
