@@ -152,9 +152,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   console.log(version);
     switch (version) {
-      case "latest": version = "1.19.3"; path = "../../java/jdk-19.0.2+7/bin/java"; break;
-      case "Latest": version = "1.19.3"; path = "../../java/jdk-19.0.2+7/bin/java"; break;
-      case "1.19.3": path = "../../java/jdk-19.0.2+7/bin/java"; break;
+      case "latest": version = "1.19.4"; path = "../../java/jdk-19.0.2+7/bin/java"; break;
+      case "Latest": version = "1.19.4"; path = "../../java/jdk-19.0.2+7/bin/java"; break;
+      case "1.19.4": path = "../../java/jdk-19.0.2+7/bin/java"; break;
       case "1.18.2": path = "../../java/jdk-17.0.5+8/bin/java"; break;
       case "1.17.1": path = "../../java/jdk-17.0.5+8/bin/java"; break;
       default: path = "../../java/jdk-11.0.18+10/bin/java"; break;
@@ -174,7 +174,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   if (s == "fabric" || s == "quilt") {
     const { exec } = require("child_process");
    if (version = "latest") {
-    version = "1.19.3"
+    version = "1.19.4"
 
    } 
 let modpack;
