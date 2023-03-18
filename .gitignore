@@ -15,6 +15,7 @@ private.pem
 .env
 /servers/template/Geyser-Spigot.jar
 /scripts/store.json
+/stores/secrets.json
 accounts.json
 servers.json
 /forgelibs
