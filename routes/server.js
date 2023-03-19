@@ -348,7 +348,7 @@ router.post(`/:id/setInfo`, function(req, res) {
 		//set line 12 of server.properties in the server folder to "motd=" + desc
 		var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
 		var textByLine = text.split("\n");
-		textByLine[11] = `motd=${desc}`;
+		textByLine[32] = `motd=${desc}`;
 		text = textByLine.join("\n");
 		console.log(desc + " " + iconUrl)
 		fs.writeFileSync(`servers/${id}/server.properties`, text);
