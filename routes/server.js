@@ -174,6 +174,8 @@ router.post(`/:id/add/:modtype`, function(req, res) {
 });
 
 router.post(`/new`, function (req, res) {
+	console.log(req.body.accountId)
+	let amount = f.checkServers(accounts[email].accountId).amount;
 	console.log(req.body.version)
     email = req.headers.email;
   token = req.headers.token;
@@ -230,7 +232,7 @@ router.post(`/new`, function (req, res) {
       req.body.modpackURL
     );
   } else {
-console.log("phhhhhlojnhiokln")
+
     stripe.customers.list(
       {
         limit: 100,
@@ -250,7 +252,7 @@ console.log("phhhhhlojnhiokln")
                 .status(409)
                 .json({ msg: `Faliure: Server name already exists.` });
             } else {
-				console.log("eieio")
+				console.log("")
               //check the customer's subscriptions and return it
               stripe.subscriptions.list(
                 {
@@ -258,6 +260,7 @@ console.log("phhhhhlojnhiokln")
                   limit: 100,
                 },
                 function (err, subscriptions) {
+					console.log(subscriptions)
                   let subs = 0;
                   //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
                   for (i in subscriptions.data) {
@@ -265,8 +268,8 @@ console.log("phhhhhlojnhiokln")
                       subs++;
                     }
                   }
-                  if (subs > 0) {
-					console.log("subs > 0")
+                  if (subs > amount) {
+					console.log(subs + " > " + amount)
                     if (
                       em !== "noemail" &&
                       req.body.software !== "undefined" &&

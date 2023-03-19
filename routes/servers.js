@@ -14,7 +14,7 @@ router.get(`/`, function (req, res) {
     //res.status(404).json({ msg: `Invalid email.` });
   }
   //set email to the email in the request
-  email = req.query.email;
+  accountId = req.query.accountId;
 
   //if servers.csv isnt blank, run checkServers
 
@@ -24,7 +24,7 @@ router.get(`/`, function (req, res) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 
-  var r = f.checkServers(email);
+  var r = f.checkServers(accountId);
 
   delay(0).then(() => res.status(200).json(r));
 } else {

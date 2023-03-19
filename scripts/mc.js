@@ -8,8 +8,7 @@ let x = false;
 let servers = require("../servers.json");
 let terminalOutput = [];
 let terminalInput = "";
-function checkServers(em) {
-	console.log("Checking servers for " + em);
+function checkServers(accountId) {
 	amount = 0;
 
 
@@ -26,7 +25,7 @@ function checkServers(em) {
 			states[i] = "false";
 		}
 		if (servers[i] != (undefined | "")) {
-			if (servers[i].accountId != undefined) {
+			if (servers[i].accountId != undefined && servers[i].accountId == accountId) {
 				n.push(servers[i].name);
 				s.push(servers[i].software);
 				v.push(servers[i].version);

@@ -80,7 +80,7 @@ Router.post("/email/signin/", (req, res) => {
 
 			let salt = accounts[email].salt;
 				if (accounts[email].password == hash(password, salt).split(":")[1]) {
-		response = { token: accounts[email].token };
+		response = { token: accounts[email].token,accountId: accounts[email].accountId };
 					} else {
 					response  = { token: -1, reason: "Incorrect email or password"  };
 					}
