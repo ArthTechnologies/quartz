@@ -88,7 +88,7 @@ router.delete(`/:id/:modtype`, function(req, res) {
 	}
 });
 
-router.get(`/:id/:modtype`, function(req, res) {
+router.get(`/:id/:modtype(plugins|mods)`, function(req, res) {
 	const fs = require("fs");
 	email = req.headers.email;
 	token = req.headers.token;
@@ -411,19 +411,26 @@ router.post(`/:id/setInfo`, function(req, res) {
 });
 
 router.get(`/:id/getInfo`, function(req, res) {
+
 	email = req.headers.email;
 	token = req.headers.token;
 	if (token == accounts[email].token) {
 
 		//send the motd and iconUrl
-		let iconUrl = "";
+		let iconUrl = "/images/placeholder.webp";
 		let desc = "";
 		id = req.params.id;
-		var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
-		var textByLine = text.split("\n");
-		desc = textByLine[11].split("=")[1];
+		
 
-		iconUrl = fs.readFileSync(`servers/${id}/iconurl.txt`).toString();
+			var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
+		var textByLine = text.split("\n");
+		desc = textByLine[32].split("=")[1]; 
+		
+
+
+		if (fs.existsSync(`servers/${id}/iconurl.txt`)) {
+			iconUrl = fs.readFileSync(`servers/${id}/iconurl.txt`).toString();
+		}
 		res.status(200).json({ msg: `Success: Got server info`, iconUrl: iconUrl, desc: desc });
 	} else {
 		res.status(401).json({ msg: `Invalid credentials.` });
