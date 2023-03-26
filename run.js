@@ -26,7 +26,6 @@ if (!fs.existsSync("./stores/settings.json")) {
       "webLogo": "/images/sitelogo.svg",
       "enableAuth": true,
       "address": "arthmc.xyz",
-      "navbarText": ""
     }`
   );
 }
