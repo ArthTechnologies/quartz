@@ -18,18 +18,24 @@ if (!fs.existsSync("./stores/secrets.json")) {
     '{"stripemode":"test","stripekey":"' + process.env.stripe_key + '"}'
   );
 }
-
-if (!fs.existsSync("accounts.json")) {
+if (!fs.existsSync("./stores/settings.json")) {
   fs.writeFileSync(
-    "accounts.json",
-    '{}'
+    "./stores/secrets.json",
+    `{
+      "browserTitle": "Your Servers",
+      "webLogo": "/images/sitelogo.svg",
+      "enableAuth": true,
+      "address": "arthmc.xyz",
+      "navbarText": ""
+    }`
   );
 }
+
+if (!fs.existsSync("accounts.json")) {
+  fs.writeFileSync("accounts.json", "{}");
+}
 if (!fs.existsSync("servers.json")) {
-  fs.writeFileSync(
-    "servers.json",
-    '{}'
-  );
+  fs.writeFileSync("servers.json", "{}");
 }
 const s = require("./scripts/stripe.js");
 exec(
@@ -67,18 +73,18 @@ if (!fs.existsSync("java")) {
     });
   }, 9000);
 
-    setTimeout(function () {
-      exec("tar -xvf OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz", {
-        cwd: "java",
-      });
-    }, 9000);
+  setTimeout(function () {
+    exec("tar -xvf OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz", {
+      cwd: "java",
+    });
+  }, 9000);
 }
 
 setTimeout(function () {
-	exec("tar -xvf OpenJDK19U-jdk_x64_linux_hotspot_19.0.2_7.tar.gz", {
-	  cwd: "java",
-	});
-  }, 9000);
+  exec("tar -xvf OpenJDK19U-jdk_x64_linux_hotspot_19.0.2_7.tar.gz", {
+    cwd: "java",
+  });
+}, 9000);
 
 // generate public and private key
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
