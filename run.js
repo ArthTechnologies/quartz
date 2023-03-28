@@ -41,6 +41,13 @@ exec(
   "curl -o cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
   {
     cwd: "/servers/template/",
+    function(error, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+      if (error !== null) {
+        console.log("exec error: " + error);
+      }
+    },
   }
 );
 exec(
