@@ -25,7 +25,8 @@ if (!fs.existsSync("./stores/settings.json")) {
       "browserTitle": "Your Servers",
       "webLogo": "/images/sitelogo.svg",
       "enableAuth": true,
-      "address": "arthmc.xyz"
+      "address": "arthmc.xyz",
+      "enablePay": true
     }`
   );
 }
