@@ -332,12 +332,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   }
   fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
   fs.copyFileSync(
-    "/server/template/cx_geyser-spigot_Geyser.jar",
+    "servers/template/cx_geyser-spigot_Geyser.jar",
     folder + "/plugins/cx_geyser-spigot_Geyser.jar"
   );
 
   fs.copyFileSync(
-    "/server/template/cx_floodgate-spigot_Floodgate.jar",
+    "servers/template/cx_floodgate-spigot_Floodgate.jar",
     folder + "/plugins/cx_floodgate-spigot_Floodgate.jar"
   );
   exec(
