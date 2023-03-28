@@ -1,5 +1,4 @@
-
-var events = require('events');
+var events = require("events");
 var eventEmitter = new events.EventEmitter();
 fs = require("fs");
 let states = [];
@@ -9,69 +8,66 @@ let servers = require("../servers.json");
 let terminalOutput = [];
 let terminalInput = "";
 function checkServers(accountId) {
-	amount = 0;
+  amount = 0;
 
+  var n = [];
+  var s = [];
+  var v = [];
+  var addons = [];
+  var st = [];
+  var ids = [];
 
+  for (i in servers) {
+    if (states[i] == undefined) {
+      states[i] = "false";
+    }
+    if (servers[i] != (undefined | "")) {
+      if (
+        servers[i].accountId != undefined &&
+        servers[i].accountId == accountId
+      ) {
+        n.push(servers[i].name);
+        s.push(servers[i].software);
+        v.push(servers[i].version);
+        st.push(states[i]);
 
-	var n = [];
-	var s = [];
-	var v = [];
-	var addons = [];
-	var st = [];
-	var ids = [];
-
-	for (i in servers) {
-		if (states[i] == undefined) {
-			states[i] = "false";
-		}
-		if (servers[i] != (undefined | "")) {
-			if (servers[i].accountId != undefined && servers[i].accountId == accountId) {
-				n.push(servers[i].name);
-				s.push(servers[i].software);
-				v.push(servers[i].version);
-				st.push(states[i]);
-
-				addons = servers[i].addons;
+        addons = servers[i].addons;
         amount++;
 
         ids.push(i);
-			}
-		}
+      }
+    }
+  }
 
-
-	}
-
-	names = n;
-	softwares = s;
-	versions = v;
-	return {
-		names: names,
-		amount: amount,
-		versions: versions,
-		softwares: softwares,
-		addons: addons,
-		states: st,
-		ids: ids,
-	};
+  names = n;
+  softwares = s;
+  versions = v;
+  return {
+    names: names,
+    amount: amount,
+    versions: versions,
+    softwares: softwares,
+    addons: addons,
+    states: st,
+    ids: ids,
+  };
 }
 
 function checkServer(id) {
-	if (states[id] == undefined) {
-		states[id] = "false";
-	}
-	let server = servers[id]
+  if (states[id] == undefined) {
+    states[id] = "false";
+  }
+  let server = servers[id];
 
-	return {
-		version: server.addons,
-		software: server.software,
-		addons: server.addons,
-		state: states[id],
-	};
+  return {
+    version: server.addons,
+    software: server.software,
+    addons: server.addons,
+    state: states[id],
+  };
 }
 
-
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
-
   console.log("id is " + id);
   states[id] = "starting";
   console.log(states);
@@ -89,7 +85,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     software = servers[id].software;
     version = servers[id].version;
     addons = servers[id].addons;
-
   } else {
     console.log("creating new server...");
   }
@@ -150,19 +145,28 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   }
 
   console.log(version);
-    switch (version) {
-      case "latest": version = "1.19.4"; path = "../../java/jdk-19.0.2+7/bin/java"; break;
-      case "Latest": version = "1.19.4"; path = "../../java/jdk-19.0.2+7/bin/java"; break;
-      case "1.19.4": path = "../../java/jdk-19.0.2+7/bin/java"; break;
-      case "1.18.2": path = "../../java/jdk-17.0.5+8/bin/java"; break;
-      case "1.17.1": path = "../../java/jdk-17.0.5+8/bin/java"; break;
-      default: path = "../../java/jdk-11.0.18+10/bin/java"; break;
-    }
-  
-
-
-    
-
+  switch (version) {
+    case "latest":
+      version = "1.19.4";
+      path = "../../java/jdk-19.0.2+7/bin/java";
+      break;
+    case "Latest":
+      version = "1.19.4";
+      path = "../../java/jdk-19.0.2+7/bin/java";
+      break;
+    case "1.19.4":
+      path = "../../java/jdk-19.0.2+7/bin/java";
+      break;
+    case "1.18.2":
+      path = "../../java/jdk-17.0.5+8/bin/java";
+      break;
+    case "1.17.1":
+      path = "../../java/jdk-17.0.5+8/bin/java";
+      break;
+    default:
+      path = "../../java/jdk-11.0.18+10/bin/java";
+      break;
+  }
 
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
@@ -172,64 +176,86 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   }
   if (s == "fabric" || s == "quilt") {
     const { exec } = require("child_process");
-   if (version = "latest") {
-    version = "1.19.4"
+    if ((version = "latest")) {
+      version = "1.19.4";
+    }
+    let modpack;
 
-   } 
-let modpack;
-
-    exec("curl -o " + folder + "/server.jar -LO https://serverjars.com/api/fetchJar/modded/" + s + "/" + version, (error, stdout, stderr) => {
-      console.log("done");
-    });
-console.log(modpackURL)
-    exec("curl -o " + folder + "/modpack.mrpack -LO "+ modpackURL, (error, stdout, stderr) => {
-
-      exec("unzip " + folder + "/modpack.mrpack" + " -d " + folder, (error, stdout, stderr) => {
-        
-        
-        exec("cp -r " + folder + "/overrides/* " + folder + "/", (error, stdout, stderr) => {
-          if (!fs.existsSync(folder + "/overrides/mods") && fs.existsSync(folder + "/modrinth.index.json")) {
-            //when its done unzipping
-            
-
-           
-              modpack = JSON.parse(fs.readFileSync(folder + "/modrinth.index.json"));
-
-            //for each file in modpack.files, download it
-            for (i in modpack.files) {
-              console.log("curl -o " + folder + "/" + modpack.files[i].path + " -LO " + modpack.files[i].downloads[0]);
-      
-              exec("curl -o " + folder + "/" + modpack.files[i].path + " -LO " + modpack.files[i].downloads[0], (error, stdout, stderr) => {
-                console.log("done b");
-              });
-          }
-         
-
-        }
-          console.log("done installing modpack");
-        });
-     
-       
-        
+    exec(
+      "curl -o " +
+        folder +
+        "/server.jar -LO https://serverjars.com/api/fetchJar/modded/" +
+        s +
+        "/" +
+        version,
+      (error, stdout, stderr) => {
+        console.log("done");
       }
     );
-  
+    console.log(modpackURL);
+    exec(
+      "curl -o " + folder + "/modpack.mrpack -LO " + modpackURL,
+      (error, stdout, stderr) => {
+        exec(
+          "unzip " + folder + "/modpack.mrpack" + " -d " + folder,
+          (error, stdout, stderr) => {
+            exec(
+              "cp -r " + folder + "/overrides/* " + folder + "/",
+              (error, stdout, stderr) => {
+                if (
+                  !fs.existsSync(folder + "/overrides/mods") &&
+                  fs.existsSync(folder + "/modrinth.index.json")
+                ) {
+                  //when its done unzipping
 
-    });
+                  modpack = JSON.parse(
+                    fs.readFileSync(folder + "/modrinth.index.json")
+                  );
 
+                  //for each file in modpack.files, download it
+                  for (i in modpack.files) {
+                    console.log(
+                      "curl -o " +
+                        folder +
+                        "/" +
+                        modpack.files[i].path +
+                        " -LO " +
+                        modpack.files[i].downloads[0]
+                    );
 
-
-   
+                    exec(
+                      "curl -o " +
+                        folder +
+                        "/" +
+                        modpack.files[i].path +
+                        " -LO " +
+                        modpack.files[i].downloads[0],
+                      (error, stdout, stderr) => {
+                        console.log("done b");
+                      }
+                    );
+                  }
+                }
+                console.log("done installing modpack");
+              }
+            );
+          }
+        );
+      }
+    );
   } else if (s == "forge") {
     const { exec } = require("child_process");
 
-    exec("cp -r forgelibs/" + version + "/* " + folder + "/", (error, stdout, stderr) => {
-      console.log("done c ");
-  });
+    exec(
+      "cp -r forgelibs/" + version + "/* " + folder + "/",
+      (error, stdout, stderr) => {
+        console.log("done c ");
+      }
+    );
   } else {
     fs.copyFileSync("servers/template/server.jar", folder + "/server.jar");
   }
- 
+
   //run code for each item in addons
   //mkdir folder/world/datapacks
   // if world folder doesnt exist
@@ -253,9 +279,9 @@ console.log(modpackURL)
   let result = data.replace(/server-port=25565/g, "server-port=" + port);
 
   console.log("starting server on port " + port);
- if(isNew) {
-  fs.writeFileSync(folder + "/server.properties", result, "utf8");
- }
+  if (isNew) {
+    fs.writeFileSync(folder + "/server.properties", result, "utf8");
+  }
 
   //add new file eula.txt in folder
   fs.writeFileSync(folder + "/eula.txt", "eula=true");
@@ -305,17 +331,25 @@ console.log(modpackURL)
     fs.mkdirSync(folder + "/plugins/Geyser-Spigot");
   }
   fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
+  fs.copyFileSync(
+    "/server/template/cx_geyser-spigot_Geyser.jar",
+    folder + "/plugins/cx_geyser-Floodgate.jar"
+  );
 
+  fs.copyFileSync(
+    "/server/template/floodgate-spigot_Geyser.jar",
+    folder + "/plugins/floodgate-Floodgate.jar"
+  );
   exec(
     "curl -o cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
     {
-      cwd: folder + "/plugins",
+      cwd: "/servers/template/",
     }
   );
   exec(
     "curl -o cx_floodgate-spigot_Floodgate.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
     {
-      cwd: folder + "/plugins",
+      cwd: "/servers/template/",
     }
   );
 
@@ -327,34 +361,31 @@ console.log(modpackURL)
     if (er) {
       console.log(er);
     }
-    console.log(data);  
+    console.log(data);
     count++;
     if (count >= 9) {
       out.push(data);
     }
-  console.log(data);
+    console.log(data);
     terminalOutput[id] = out.join("\n");
     if (terminalOutput[id].indexOf("Done") > -1) {
       //replace states[id] with true
       states[id] = "true";
     }
   });
- 
-  
+
   setInterval(function () {
     if (states[id] == "false") {
       ls.stdin.write("stop\n");
     }
-
-  }, 200); 
-  eventEmitter.on('writeCmd', function () {
+  }, 200);
+  eventEmitter.on("writeCmd", function () {
     ls.stdin.write(terminalInput + "\n");
   });
   ls.on("exit", function (code) {
     console.log("Server Stopped: exit code " + code);
     states[id] = "false";
   });
-
 }
 function stop(id) {
   states[id] = "false";
@@ -367,10 +398,10 @@ function readTerminal(id) {
 }
 
 function writeTerminal(id, cmd) {
-  console.log("writing command: " + cmd)
+  console.log("writing command: " + cmd);
   x = true;
   terminalInput = cmd;
-  eventEmitter.emit('writeCmd');
+  eventEmitter.emit("writeCmd");
 }
 
 module.exports = {
