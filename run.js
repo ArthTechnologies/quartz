@@ -19,7 +19,6 @@ if (!fs.existsSync("./stores")) {
     '{"stripemode":"test","stripekey":"' + process.env.stripe_key + '"}'
   );
 
-
   fs.writeFileSync(
     "./stores/settings.json",
     `{
@@ -38,16 +37,17 @@ if (!fs.existsSync("accounts.json")) {
 if (!fs.existsSync("servers.json")) {
   fs.writeFileSync("servers.json", "{}");
 }
+if (!fs.existsSync("servers/template/downloading")) {
+  fs.mkdirSync("servers/template/downloading");
+}
 const s = require("./scripts/stripe.js");
 
-  exec(
-    "curl -o servers/template/downloading/cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
-  );
-  exec(
-    "curl -o servers/template/downloading/cx_floodgate-spigot_Floodgate.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
-  );
-
-
+exec(
+  "curl -o servers/template/downloading/cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
+);
+exec(
+  "curl -o servers/template/downloading/cx_floodgate-spigot_Floodgate.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
+);
 
 if (!fs.existsSync("java")) {
   fs.mkdirSync("java");

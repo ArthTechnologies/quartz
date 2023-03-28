@@ -318,6 +318,28 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       ls.stdin.write(cmd[i] + "\n");
     }
   }
+  //if geyser is fully downloaded, copy it to folder
+  if (
+    fs.statSync("servers/template/downloading/cx_geyser-spigot_Geyser.jar")
+      .size > 13000000
+  ) {
+    fs.copyFileSync(
+      "servers/template/downloading/cx_geyser-spigot_Geyser.jar",
+      folder + "/plugins/cx_geyser-spigot_Geyser.jar"
+    );
+  }
+
+  //if floodgate is fully downloaded, copy it to folder
+  if (
+    fs.statSync(
+      "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar"
+    ).size > 10200000
+  ) {
+    fs.copyFileSync(
+      "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
+      folder + "/plugins/cx_floodgate-spigot_Floodgate.jar"
+    );
+  }
   //replace line 15 of folder/plugins/Geyser-Spigot/config.yml with "port: " + port
 
   var text = fs.readFileSync("servers/template/geyserconfig.yml", "utf8");
@@ -343,6 +365,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   let out = [];
   let count = 0;
+
   //log output
   console.log("test1");
   ls.stdout.on("data", function (data, er) {
@@ -375,13 +398,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     states[id] = "false";
   });
 
-    exec(
-      "curl -o servers/template/downloading/cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
-    );
-    exec(
-      "curl -o servers/template/downloading/cx_floodgate-spigot_Floodgate.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
-    );
-
+  exec(
+    "curl -o servers/template/downloading/cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
+  );
+  exec(
+    "curl -o servers/template/downloading/cx_floodgate-spigot_Floodgate.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
+  );
 }
 function stop(id) {
   states[id] = "false";
