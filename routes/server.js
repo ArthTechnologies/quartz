@@ -175,11 +175,13 @@ router.post(`/:id/add/:modtype`, function(req, res) {
 
 router.post(`/new`, function (req, res) {
 	console.log(req.body.accountId)
-	let amount = f.checkServers(accounts[email].accountId).amount;
+
 	console.log(req.body.version)
     email = req.headers.email;
+	
   token = req.headers.token;
   if (token == accounts[email].token) {
+	let amount = f.checkServers(accounts[email].accountId).amount;
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
 
