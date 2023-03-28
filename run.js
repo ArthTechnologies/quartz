@@ -20,7 +20,7 @@ if (!fs.existsSync("./stores/secrets.json")) {
 }
 if (!fs.existsSync("./stores/settings.json")) {
   fs.writeFileSync(
-    "./stores/secrets.json",
+    "./stores/settings.json",
     `{
       "browserTitle": "Your Servers",
       "webLogo": "/images/sitelogo.svg",
