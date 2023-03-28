@@ -38,12 +38,17 @@ if (!fs.existsSync("servers.json")) {
 }
 const s = require("./scripts/stripe.js");
 exec(
-  "curl -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
+  "curl -o cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
   {
-    cwd: "servers/template",
+    cwd: "/servers/template/",
   }
 );
-
+exec(
+  "curl -o cx_floodgate-spigot_Floodgate.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
+  {
+    cwd: "/servers/template/",
+  }
+);
 if (!fs.existsSync("java")) {
   fs.mkdirSync("java");
 
