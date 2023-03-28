@@ -341,16 +341,10 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     folder + "/plugins/floodgate-Floodgate.jar"
   );
   exec(
-    "curl -o cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
-    {
-      cwd: "/servers/template/",
-    }
+    "curl -o servers/template/cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
   );
   exec(
-    "curl -o cx_floodgate-spigot_Floodgate.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
-    {
-      cwd: "/servers/template/",
-    }
+    "curl -o servers/template/cx_floodgate-spigot_Floodgate.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
   );
 
   let out = [];
