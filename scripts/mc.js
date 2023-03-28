@@ -333,12 +333,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
   fs.copyFileSync(
     "/server/template/cx_geyser-spigot_Geyser.jar",
-    folder + "/plugins/cx_geyser-Floodgate.jar"
+    folder + "/plugins/cx_geyser-spigot_Geyser.jar"
   );
 
   fs.copyFileSync(
     "/server/template/floodgate-spigot_Geyser.jar",
-    folder + "/plugins/floodgate-Floodgate.jar"
+    folder + "/plugins/floodgate-spigot_Floodgate.jar"
   );
   exec(
     "curl -o servers/template/cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
