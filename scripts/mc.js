@@ -340,12 +340,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     "servers/template/cx_floodgate-spigot_Floodgate.jar",
     folder + "/plugins/cx_floodgate-spigot_Floodgate.jar"
   );
-  exec(
-    "curl -o servers/template/cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
-  );
-  exec(
-    "curl -o servers/template/cx_floodgate-spigot_Floodgate.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
-  );
 
   let out = [];
   let count = 0;
@@ -380,6 +374,16 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     console.log("Server Stopped: exit code " + code);
     states[id] = "false";
   });
+  //set timeout for 45 seconds
+
+  setTimeout(function () {
+    exec(
+      "curl -o servers/template/cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
+    );
+    exec(
+      "curl -o servers/template/cx_floodgate-spigot_Floodgate.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
+    );
+  }, 45000);
 }
 function stop(id) {
   states[id] = "false";
