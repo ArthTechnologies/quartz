@@ -23,7 +23,7 @@ Router.post("/email/signup/", (req, res) => {
   let confirmPassword = req.query.confirmPassword;
 
   for (i in accounts) {
-    if (accounts[i].email == email) {
+    if (i == email) {
       emailExists = true;
     }
   }
