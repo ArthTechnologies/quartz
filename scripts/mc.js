@@ -3,7 +3,6 @@ var eventEmitter = new events.EventEmitter();
 fs = require("fs");
 let states = [];
 let a = [];
-let x = false;
 let servers = require("../servers.json");
 let terminalOutput = [];
 let terminalInput = "";
@@ -68,9 +67,9 @@ function checkServer(id) {
 }
 
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
-  console.log("id is " + id);
+
   states[id] = "starting";
-  console.log(states);
+
   // i isNew is undefined, set it to true
   if (isNew == undefined) {
     isNew = true;
@@ -78,17 +77,17 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   //make sure isNew is a boolean
   isNew = Boolean(isNew);
-  console.log("isNew: " + isNew);
+
   if (isNew === false) {
-    console.log("already created server, grabing data...");
+
     //run checkServers and store it
     software = servers[id].software;
     version = servers[id].version;
     addons = servers[id].addons;
   } else {
-    console.log("creating new server...");
+
   }
-  console.log("cmds: " + cmd);
+
   for (i in cmd) {
     if (cmd[i] != undefined) {
       cmd[i] = cmd[i].toLowerCase();
@@ -144,7 +143,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       break;
   }
 
-  console.log(version);
+
   switch (version) {
     case "latest":
       version = "1.19.4";
@@ -187,12 +186,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         "/server.jar -LO https://serverjars.com/api/fetchJar/modded/" +
         s +
         "/" +
-        version,
-      (error, stdout, stderr) => {
-        console.log("done");
-      }
+        version
     );
-    console.log(modpackURL);
+
     exec(
       "curl -o " + folder + "/modpack.mrpack -LO " + modpackURL,
       (error, stdout, stderr) => {
@@ -206,7 +202,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                   !fs.existsSync(folder + "/overrides/mods") &&
                   fs.existsSync(folder + "/modrinth.index.json")
                 ) {
-                  //when its done unzipping
 
                   modpack = JSON.parse(
                     fs.readFileSync(folder + "/modrinth.index.json")
@@ -214,7 +209,8 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
                   //for each file in modpack.files, download it
                   for (i in modpack.files) {
-                    console.log(
+                   
+                    exec(
                       "curl -o " +
                         folder +
                         "/" +
@@ -222,21 +218,8 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                         " -LO " +
                         modpack.files[i].downloads[0]
                     );
-
-                    exec(
-                      "curl -o " +
-                        folder +
-                        "/" +
-                        modpack.files[i].path +
-                        " -LO " +
-                        modpack.files[i].downloads[0],
-                      (error, stdout, stderr) => {
-                        console.log("done b");
-                      }
-                    );
                   }
                 }
-                console.log("done installing modpack");
               }
             );
           }
@@ -247,10 +230,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     const { exec } = require("child_process");
 
     exec(
-      "cp -r forgelibs/" + version + "/* " + folder + "/",
-      (error, stdout, stderr) => {
-        console.log("done c ");
-      }
+      "cp -r forgelibs/" + version + "/* " + folder + "/"
     );
   } else {
     fs.copyFileSync("servers/template/server.jar", folder + "/server.jar");
@@ -266,7 +246,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   for (i in addons) {
     if (addons[i] != undefined && addons[i] != "") {
-      console.log("copying " + addons[i] + " to " + folder);
+
       fs.copyFileSync(
         "servers/template/" + addons[i] + ".zip",
         folder + "/world/datapacks/" + addons[i] + ".zip"
@@ -278,14 +258,14 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let data = fs.readFileSync("servers/template/server.properties", "utf8");
   let result = data.replace(/server-port=25565/g, "server-port=" + port);
 
-  console.log("starting server on port " + port);
+
   if (isNew) {
     fs.writeFileSync(folder + "/server.properties", result, "utf8");
   }
 
   //add new file eula.txt in folder
   fs.writeFileSync(folder + "/eula.txt", "eula=true");
-  console.log("writing to serverjars... " + version);
+
   fs.writeFileSync(
     folder + "/serverjars.properties",
     "category=" +
@@ -306,15 +286,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   if (s == "forge") {
     ls = exec("./run.sh", { cwd: folder });
   } else {
-    console.log(path + " " + args + " @ " + folder);
+
     ls = exec(path + " " + args, { cwd: folder });
   }
-  console.log(folder + "/plugins/Geyser-Spigot.jar");
-  console.log("starting commands are: " + cmd);
+
   //for every item in the cmd array, run the command
   for (i in cmd) {
     if (cmd[i] != undefined && cmd[i] != "op") {
-      console.log(cmd[i]);
       ls.stdin.write(cmd[i] + "\n");
     }
   }
@@ -366,18 +344,17 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let out = [];
   let count = 0;
 
-  //log output
-  console.log("test1");
+
   ls.stdout.on("data", function (data, er) {
     if (er) {
-      console.log(er);
+      console.error(er);
     }
-    console.log(data);
+
     count++;
     if (count >= 9) {
       out.push(data);
     }
-    console.log(data);
+
     terminalOutput[id] = out.join("\n");
     if (terminalOutput[id].indexOf("Done") > -1) {
       //replace states[id] with true
@@ -385,7 +362,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   });
 
-  setInterval(function () {
+  setInterval(() => {
     if (states[id] == "false") {
       ls.stdin.write("stop\n");
     }
@@ -393,8 +370,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   eventEmitter.on("writeCmd", function () {
     ls.stdin.write(terminalInput + "\n");
   });
-  ls.on("exit", function (code) {
-    console.log("Server Stopped: exit code " + code);
+  ls.on("exit", () => {
     states[id] = "false";
   });
 
@@ -416,8 +392,6 @@ function readTerminal(id) {
 }
 
 function writeTerminal(id, cmd) {
-  console.log("writing command: " + cmd);
-  x = true;
   terminalInput = cmd;
   eventEmitter.emit("writeCmd");
 }
