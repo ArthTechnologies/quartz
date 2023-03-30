@@ -53,11 +53,9 @@ router.post(`/:id/state/:state`, function (req, res) {
 
       res.status(202).json({ msg: `Success. Server will ${state}.` });
     } else {
-      res
-        .status(404)
-        .json({
-          msg: `Invalid state. Valid states are start, stop, & restart.`,
-        });
+      res.status(404).json({
+        msg: `Invalid state. Valid states are start, stop, & restart.`,
+      });
     }
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
