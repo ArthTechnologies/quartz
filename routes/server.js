@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const accounts = require("../accounts.json");
 const servers = require("../servers.json");
-let techname;
+const files = require("../scripts/files.js");
 const f = require("../scripts/mc.js");
 const s = require("../scripts/stripe.js");
 
@@ -10,8 +10,6 @@ const fs = require("fs");
 
 let stripekey = require("../stores/secrets.json").stripekey;
 const stripe = require("stripe")(stripekey);
-
-let name = "MySurvival Server";
 
 router.get(`/:id`, function (req, res) {
   email = req.headers.email;
