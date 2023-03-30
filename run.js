@@ -43,35 +43,36 @@ if (!fs.existsSync("servers/template/downloading")) {
 }
 const s = require("./scripts/stripe.js");
 
-files.download("java/servers/template/downloading/cx_geyser-spigot_Geyser.jar", "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar");
-files.download("java/servers/template/downloading/cx_floodgate-spigot_Floodgate.jar", "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar");
+files.download(
+  "java/servers/template/downloading/cx_geyser-spigot_Geyser.jar",
+  "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
+);
+files.download(
+  "java/servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
+  "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
+);
 if (!fs.existsSync("java")) {
   fs.mkdirSync("java");
 
-  files.download("java/java19.tar.gz","https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.2%2B7/OpenJDK19U-jdk_x64_linux_hotspot_19.0.2_7.tar.gz");
-  files.download("java/java17.tar.gz","https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz")
-  files.download("java/java11.tar.gz","https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz")
+  files.download(
+    "java/java19.tar.gz",
+    "https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.2%2B7/OpenJDK19U-jdk_x64_linux_hotspot_19.0.2_7.tar.gz"
+  );
+  files.download(
+    "java/java17.tar.gz",
+    "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz"
+  );
+  files.download(
+    "java/java11.tar.gz",
+    "https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz"
+  );
 
   setTimeout(function () {
-    exec("tar -xvf java11.tar.gz", {
-      cwd: "java",
-    });
-  }, 9000);
-
-  setTimeout(function () {
-    exec("tar -xvf java17.tar.gz", {
-      cwd: "java",
-    });
-  }, 9000);
-
-  setTimeout(function () {
-    exec("tar -xvf java19.tar.gz", {
-      cwd: "java",
-    });
+    files.extract("java/java19.tar.gz", "java");
+    files.extract("java/java17.tar.gz", "java");
+    files.extract("java/java11.tar.gz", "java");
   }, 9000);
 }
-
-
 
 // generate public and private key
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {

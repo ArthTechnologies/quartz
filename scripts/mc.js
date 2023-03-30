@@ -67,7 +67,6 @@ function checkServer(id) {
 }
 
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
-
   states[id] = "starting";
 
   // i isNew is undefined, set it to true
@@ -79,13 +78,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   isNew = Boolean(isNew);
 
   if (isNew === false) {
-
     //run checkServers and store it
     software = servers[id].software;
     version = servers[id].version;
     addons = servers[id].addons;
   } else {
-
   }
 
   for (i in cmd) {
@@ -143,7 +140,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       break;
   }
 
-
   switch (version) {
     case "latest":
       version = "1.19.4";
@@ -180,13 +176,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
     let modpack;
 
-    exec(
-      "curl -o " +
-        folder +
-        "/server.jar -LO https://serverjars.com/api/fetchJar/modded/" +
-        s +
-        "/" +
-        version
+    files.download(
+      folder + "/server.jar",
+      "https://serverjars.com/api/fetchJar/modded/" + s + "/" + version
     );
 
     exec(
@@ -202,14 +194,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                   !fs.existsSync(folder + "/overrides/mods") &&
                   fs.existsSync(folder + "/modrinth.index.json")
                 ) {
-
                   modpack = JSON.parse(
                     fs.readFileSync(folder + "/modrinth.index.json")
                   );
 
                   //for each file in modpack.files, download it
                   for (i in modpack.files) {
-                   
                     exec(
                       "curl -o " +
                         folder +
@@ -229,9 +219,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   } else if (s == "forge") {
     const { exec } = require("child_process");
 
-    exec(
-      "cp -r forgelibs/" + version + "/* " + folder + "/"
-    );
+    exec("cp -r forgelibs/" + version + "/* " + folder + "/");
   } else {
     fs.copyFileSync("servers/template/server.jar", folder + "/server.jar");
   }
@@ -246,7 +234,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   for (i in addons) {
     if (addons[i] != undefined && addons[i] != "") {
-
       fs.copyFileSync(
         "servers/template/" + addons[i] + ".zip",
         folder + "/world/datapacks/" + addons[i] + ".zip"
@@ -257,7 +244,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   //change line 49 of folder/server.properties to server-port=if+20000
   let data = fs.readFileSync("servers/template/server.properties", "utf8");
   let result = data.replace(/server-port=25565/g, "server-port=" + port);
-
 
   if (isNew) {
     fs.writeFileSync(folder + "/server.properties", result, "utf8");
@@ -286,7 +272,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   if (s == "forge") {
     ls = exec("./run.sh", { cwd: folder });
   } else {
-
     ls = exec(path + " " + args, { cwd: folder });
   }
 
@@ -344,7 +329,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let out = [];
   let count = 0;
 
-
   ls.stdout.on("data", function (data, er) {
     if (er) {
       console.error(er);
@@ -374,11 +358,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     states[id] = "false";
   });
 
-  exec(
-    "curl -o servers/template/downloading/cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
+  files.download(
+    "java/servers/template/downloading/cx_geyser-spigot_Geyser.jar",
+    "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
   );
-  exec(
-    "curl -o servers/template/downloading/cx_floodgate-spigot_Floodgate.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
+  files.download(
+    "java/servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
+    "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
   );
 }
 function stop(id) {
