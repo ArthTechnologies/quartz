@@ -11,18 +11,24 @@ Documentation can be found [here](https://codeberg.org/arth/quartz/wiki)
 
 Quartz is a backend for Arth Panel, a lightweight self-hosted Minecraft server panel. Quartz is made with Node and Express. For testing purposes, there is an instance of quartz you can use at https://api.arthmc.xyz/
 
-## How to run with docker
-
-1. Download the image from docker hub with the command `sudo docker pull arthmc/quartz:latest`
-2. Run the image with `sudo docker run -p 4000:4000 -e STRIPE-KEY=yourstripekey arthmc/quartz:latest`. To change the port, replace the first 4000 with the port number you want.
-3. **Pocketbase will also need to be installed.** While there is no official docker image, installing it locally is very easy. Just download their executable file, and run `./pocketbase serve --http "0.0.0.0:[port]"`.
-
 ## How to run without docker
+
 1. Grab the source code with `git clone https://codeberg.org/arth/quartz`
 2. Install the packages with `npm i`
 3. Run with `node run`
 
+## How to configure
+
+- stores/settings.json is where you can modify settings.
+- stores/secrets.json is where you can enter your stripe key if you want payments enabled.
+
+## How to run with docker
+
+1. Download the image from docker hub with the command `sudo docker pull arthmc/quartz:latest`
+2. Run the image with `sudo docker run -p 4000:4000 -e STRIPE-KEY=yourstripekey arthmc/quartz:latest`. To change the port, replace the first 4000 with the port number you want.
+
 # Dependencies
+
 - Arth Uses the `curl` command to download plugins and the `convert` command to downscale images. If you want these functionalities, you'll need to install those commands.
 
 # Contributing
@@ -61,6 +67,5 @@ POST /settings
 ✅ Ability to run Minecraft servers with specified versions and softwares  
 ✅ Basic communication with frontend for terminal  
 ✅ Consistent routes  
-❌ Locking a customer's assets behing a password/valid pocketbase token  
-❓ Protecting a customer's assets with end-to-end encryption  
-  
+✅ Locking a customer's assets behing a password
+❓ Protecting a customer's assets with end-to-end encryption
