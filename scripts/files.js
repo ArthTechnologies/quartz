@@ -6,4 +6,11 @@ function extract(archive, dir) {
   exec(`tar -xvf ${archive} -C ${dir}`);
 }
 
-module.exports = { download, extract };
+function write(file, content) {
+  const fs = require("fs");
+  const oldFile = fs.readFileSync(file, "utf8");
+  fs.writeFileSync(`backup/${file}`, oldFile);
+
+  fs.writeFileSync(file, content);
+}
+module.exports = { download, extract, write };

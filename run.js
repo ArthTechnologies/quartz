@@ -12,6 +12,9 @@ exec = require("child_process").exec;
 require("dotenv").config();
 //import /lib/stripe.js
 console.log(process.env.stripe_key);
+if (!fs.existsSync("./backup")) {
+  fs.mkdirSync("backup");
+}
 //if it doesnt exist, write to /lib/store.json
 if (!fs.existsSync("./stores")) {
   fs.mkdirSync("stores");

@@ -242,9 +242,8 @@ router.post(`/new`, function (req, res) {
               if (JSON.stringify(servers).indexOf(req.body.name) > -1) {
                 res
                   .status(409)
-                  .json({ msg: `Faliure: Server name already exists.` });
+                  .json({ success: false, msg: `Sorry, that name is taken.` });
               } else {
-                console.log("");
                 //check the customer's subscriptions and return it
                 stripe.subscriptions.list(
                   {
@@ -301,6 +300,7 @@ router.post(`/new`, function (req, res) {
                         req.body.modpackURL
                       );
                       res.status(202).json({
+                        success: true,
                         msg: `Success: Starting Server`,
                         subscriptions: subs,
                         isCustomer: true,
@@ -308,7 +308,8 @@ router.post(`/new`, function (req, res) {
                       });
                     } else {
                       res.status(200).json({
-                        msg: `Faliure: Insufficient Funds`,
+                        success: false,
+                        msg: `If you want another server, please make a new subscription.`,
                         subscriptions: subs,
                         isCustomer: true,
                       });
@@ -320,7 +321,8 @@ router.post(`/new`, function (req, res) {
               console.log("No customers found.");
 
               res.status(200).json({
-                msg: `Faliure: Please Subscribe`,
+                success: false,
+                msg: `You need to subscribe first.`,
                 subscriptions: 0,
                 isCustomer: false,
               });
@@ -434,7 +436,7 @@ router.delete(`/:id`, function (req, res) {
     f.stop(id);
 
     servers[id] = "deleted";
-    fs.writeFileSync("servers.json", JSON.stringify(servers));
+    files.write("servers.json", JSON.stringify(servers));
     //delete /servers/id
     exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
       if (err) {
