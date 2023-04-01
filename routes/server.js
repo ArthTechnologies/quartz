@@ -224,6 +224,7 @@ router.post(`/new`, function (req, res) {
         true,
         req.body.modpackURL
       );
+      res.status(202).json({ success: true, msg: `Success. Server created.` });
     } else {
       stripe.customers.list(
         {
