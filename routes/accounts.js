@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const { createHash, scryptSync, randomBytes } = require("crypto");
 const { v4: uuidv4 } = require("uuid");
+const files = require("../scripts/files.js");
 
 function hash(input, salt) {
   if (salt == undefined) {
@@ -79,4 +80,26 @@ Router.post("/email/signin/", (req, res) => {
   res.status(200).send(response);
 });
 
+Router.delete("/", (req, res) => {
+  let accounts = require("../accounts.json");
+  email = req.headers.email;
+  password = req.query.password;
+  token = req.headers.token;
+  console.log(accounts[email].password);
+  console.log(hash("password", accounts[email].salt).split(":")[1]);
+
+  if (token == accounts[email].token) {
+    if (
+      accounts[email].password ==
+      hash(password, accounts[email].salt).split(":")[1]
+    ) {
+      delete accounts[email];
+      files.write("accounts.json", JSON.stringify(accounts));
+
+      res.status(200).send({ success: true });
+    } else {
+      res.status(400).send({ success: false, reason: "Incorrect password" });
+    }
+  }
+});
 module.exports = Router;
