@@ -453,4 +453,18 @@ router.delete(`/:id`, function (req, res) {
   }
 });
 
+router.get("/:id/world", function (req, res) {
+  email = req.headers.email;
+  token = req.headers.token;
+  if (token == accounts[email].token) {
+    //zip /servers/id/world and send it to the client
+    id = req.params.id;
+    const exec = require("child_process").exec;
+    exec(`zip -r servers/${id}/world.zip servers/${id}/world`);
+    res.download(`servers/${id}/world.zip`);
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
+});
+
 module.exports = router;
