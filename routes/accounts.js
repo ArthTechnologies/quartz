@@ -110,6 +110,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
   let accounts = require("../accounts.json");
+  let settings = require("../stores/settings.json");
   let password = req.query.password;
   let email = req.query.email;
   let confirmPassword = req.query.confirmPassword;
@@ -118,7 +119,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
   try {
     const creditId = await s.getCreditId(email);
     if (accounts[email].resetAttempts < 5) {
-      if (creditId === last4) {
+      if (creditId === last4 || settings.enableAuth === false) {
         if (password == confirmPassword) {
           if (password.length >= 7) {
             [salt, password] = hash(password).split(":");
