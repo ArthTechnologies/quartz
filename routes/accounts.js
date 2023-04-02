@@ -119,7 +119,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
   try {
     const creditId = await s.getCreditId(email);
     if (accounts[email].resetAttempts < 5) {
-      if (creditId === last4 || settings.enableAuth === false) {
+      if (creditId === last4 || settings.enablePay === false) {
         if (password == confirmPassword) {
           if (password.length >= 7) {
             [salt, password] = hash(password).split(":");
