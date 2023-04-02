@@ -5,41 +5,20 @@ const stripe = require("stripe")(stripekey);
 const express = require("express");
 
 async function getCustomerID(email) {
-  let ret;
-  let ret2;
-  stripe.customers
-    .list(
-      {
-        limit: 100,
-        email: email,
-      },
-      function (err, customers) {
-        if (err) {
-          console.log(err);
-          return "no";
-        } else {
-          if (customers.data.length > 0) {
-            const customer_id = customers.data[0].id;
-            console.log(customer_id);
-            ret = true;
-          } else {
-            console.log("No customers found.");
-            ret = false;
-          }
-        }
-      }
-    )
-    .then(function () {
-      ret2 = true;
-      console.log("response received");
-    });
-
-  setTimeout(function () {
-    if (ret2) {
-      console.log("hi");
-      return ret;
+  try {
+    const customers = await stripe.customers.list({ limit: 100, email: email });
+    if (customers.data.length > 0) {
+      const customer_id = customers.data[0].id;
+      console.log(customer_id);
+      return customer_id;
+    } else {
+      console.log("No customers found.");
+      return null;
     }
-  }, 1000);
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
 }
 
 function checkSubscription(email) {
@@ -65,4 +44,19 @@ function checkSubscription(email) {
     });
   }, 5000);
 }
-module.exports = { getCustomerID, checkSubscription };
+//get the last 4 digits of customer's card ( )
+async function getCreditId(email) {
+  const cid = await getCustomerID(email);
+  try {
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: cid,
+      type: "card",
+    });
+    return paymentMethods.data[0].card.last4;
+  } catch (err) {
+    console.log("Error retrieving customer payment method:", err);
+    return null;
+  }
+}
+
+module.exports = { getCustomerID, checkSubscription, getCreditId };

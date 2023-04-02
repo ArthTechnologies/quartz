@@ -4,7 +4,6 @@ const accounts = require("../accounts.json");
 const servers = require("../servers.json");
 const files = require("../scripts/files.js");
 const f = require("../scripts/mc.js");
-const s = require("../scripts/stripe.js");
 
 const fs = require("fs");
 
