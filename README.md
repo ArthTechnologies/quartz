@@ -9,7 +9,7 @@ Documentation can be found [here](https://codeberg.org/arth/quartz/wiki)
 
 # Quartz
 
-Quartz is a backend for Arth Panel, a lightweight self-hosted Minecraft server panel. Quartz is made with Node and Express. For testing purposes, there is an instance of quartz you can use at https://api.arthmc.xyz/
+Quartz is a backend for Arth Panel, a lightweight self-hosted Minecraft server panel. Quartz is made with Node and Express.
 
 ## How to run without docker
 
