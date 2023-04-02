@@ -137,6 +137,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
           res.status(400).send({ token: -1, reason: "Passwords do not match" });
         }
       } else {
+        accounts[email].resetAttempts++;
         res.status(400).send({
           success: false,
           reason: "Wrong last 4 digits",
@@ -144,9 +145,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
         });
       }
     } else {
-      res
-        .status(400)
-        .send({ success: false, reason: "Too many reset attempts" });
+      res.status(400).send({ success: false, reason: "Too many attempts" });
     }
   } catch (err) {
     console.log(err);
