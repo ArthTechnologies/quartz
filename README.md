@@ -22,10 +22,10 @@ Quartz is a backend for Arth Panel, a lightweight self-hosted Minecraft server p
 - stores/settings.json is where you can modify settings.
 - stores/secrets.json is where you can enter your stripe key if you want payments enabled.
 
-## How to run with docker
+## How to run with docker (Unsupported)
 
 1. Download the image from docker hub with the command `sudo docker pull arthmc/quartz:latest`
-2. Run the image with `sudo docker run -p 4000:4000 -e STRIPE-KEY=yourstripekey arthmc/quartz:latest`. To change the port, replace the first 4000 with the port number you want.
+2. Run the image with `sudo docker run -p 4000:4000 arthmc/quartz:latest`. To change the port, replace the first 4000 with the port number you want.
 
 # Dependencies
 
@@ -45,21 +45,6 @@ To run a dev server, follow the instructions in "how to run without docker"
 
 The main difference between an alternative like pufferpanel or pterodactyl is that it's meant to work in a way so that if an issue were to occur, you could easily just SSH into the machine and run the jar directly in a folder, so you know that your server's uptime is not dependant on a panel someone else made working flawlessly.
 
-## Routes
-
-```
-POST /terminal
-GET /terminal
-GET /panel-key
-GET /server
-DELETE /server
-POST /server
-POST /server/new
-GET /servers
-GET /settings
-POST /settings
-```
-
 # To-do list
 
 ✅ Basic file data storage that stores details about servers.  
@@ -68,4 +53,4 @@ POST /settings
 ✅ Basic communication with frontend for terminal  
 ✅ Consistent routes  
 ✅ Locking a customer's assets behing a password
-❓ Protecting a customer's assets with end-to-end encryption
+❓ Protecting customer assets with end-to-end encryption
