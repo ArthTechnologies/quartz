@@ -1,19 +1,13 @@
-const { stdin } = require("process");
-var events = require('events');
+var events = require("events");
 var eventEmitter = new events.EventEmitter();
 fs = require("fs");
 let states = [];
-let a = [];
-let x = false;
-
+const files = require("./files.js");
+let servers = require("../servers.json");
 let terminalOutput = [];
 let terminalInput = "";
-function checkServers(em) {
-  console.log("Checking servers for " + em);
+function checkServers(accountId) {
   amount = 0;
-
-  a = fs.readFileSync("servers.csv", "utf8");
-  a = a.split("\n");
 
   var n = [];
   var s = [];
@@ -22,35 +16,25 @@ function checkServers(em) {
   var st = [];
   var ids = [];
 
-  for (i in a) {
+  for (i in servers) {
     if (states[i] == undefined) {
       states[i] = "false";
     }
-    if (a[i] != (undefined | "")) {
-      if (a[i].indexOf(em) > 0) {
-        n.push(a[i].split(",")[0]);
-        s.push(a[i].split(",")[1]);
-        v.push(a[i].split(",")[2]);
+    if (servers[i] != (undefined | "")) {
+      if (
+        servers[i].accountId != undefined &&
+        servers[i].accountId == accountId
+      ) {
+        n.push(servers[i].name);
+        s.push(servers[i].software);
+        v.push(servers[i].version);
         st.push(states[i]);
-        //push addons, which start after the first [ and end before the last ]
-        addons.push(a[i].slice(a[i].indexOf("[") + 1, a[i].lastIndexOf("]")));
+
+        addons = servers[i].addons;
+        amount++;
+
+        ids.push(i);
       }
-    }
-
-    v = v.filter(function (el) {
-      return el != null;
-    });
-    s = s.filter(function (el) {
-      return el != null;
-    });
-    n = n.filter(function (el) {
-      return el != "";
-    });
-
-    if (a[i].indexOf(em) > 0) {
-      amount++;
-
-      ids.push(i);
     }
   }
 
@@ -72,27 +56,19 @@ function checkServer(id) {
   if (states[id] == undefined) {
     states[id] = "false";
   }
-  let line;
-  let st = states[id];
-  //line is the idth line in servers.csv
-  line = fs.readFileSync("servers.csv", "utf8").split("\n")[id];
-  //split the line by commas except for commas inside []s
-  let split = line.split(/,(?![^[]*])/);
-  let addons = split[3];
-  //remove []s from addons
-  addons = addons.slice(1, addons.length - 1);
+  let server = servers[id];
 
   return {
-    version: split[2],
-    software: split[1],
-    addons: addons,
-    state: st,
+    version: server.addons,
+    software: server.software,
+    addons: server.addons,
+    state: states[id],
   };
 }
 
-function run(id, software, version, addons, cmd, em, isNew) {
+function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   states[id] = "starting";
-  console.log(states);
+
   // i isNew is undefined, set it to true
   if (isNew == undefined) {
     isNew = true;
@@ -100,26 +76,23 @@ function run(id, software, version, addons, cmd, em, isNew) {
 
   //make sure isNew is a boolean
   isNew = Boolean(isNew);
-  console.log("isNew: " + isNew);
+
   if (isNew === false) {
-    console.log("already created server, grabing data...");
     //run checkServers and store it
-    let servers = checkServer(id);
-    software = servers.software;
-    version = servers.version;
-    addons = servers.addons;
-    addons = addons.split(",");
+    software = servers[id].software;
+    version = servers[id].version;
+    addons = servers[id].addons;
   } else {
-    console.log("creating new server...");
   }
-  console.log("cmds: " + cmd);
+
   for (i in cmd) {
     if (cmd[i] != undefined) {
       cmd[i] = cmd[i].toLowerCase();
     }
   }
-  const path = "../../java/jdk-17.0.5+8/bin/java";
+  let path = "../../java/jdk-17.0.5+8/bin/java";
   const folder = "servers/" + id;
+
   const args = [
     "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Daikars.new.flags=true -Dusing.aikars.flags=https://mcflags.emc.gs -jar server.jar",
   ];
@@ -138,7 +111,7 @@ function run(id, software, version, addons, cmd, em, isNew) {
       c = "proxies";
       break;
     case "quilt":
-      s = "quilt";
+      s = "fabric";
       c = "modded";
       break;
     case "vanilla":
@@ -157,9 +130,9 @@ function run(id, software, version, addons, cmd, em, isNew) {
       s = "fabric";
       c = "modded";
       break;
-    case "mohist":
-      s = "mohist";
-      c = "modded";
+    case "snapshot":
+      s = "snapshot";
+      c = "vanilla";
       break;
     case "spigot":
       s = "spigot";
@@ -167,23 +140,100 @@ function run(id, software, version, addons, cmd, em, isNew) {
       break;
   }
 
-  if (!fs.existsSync(folder)) {
-    fs.mkdirSync(folder);
+  switch (version) {
+    case "latest":
+      version = "1.19.4";
+      path = "../../java/jdk-19.0.2+7/bin/java";
+      break;
+    case "Latest":
+      version = "1.19.4";
+      path = "../../java/jdk-19.0.2+7/bin/java";
+      break;
+    case "1.19.4":
+      path = "../../java/jdk-19.0.2+7/bin/java";
+      break;
+    case "1.18.2":
+      path = "../../java/jdk-17.0.5+8/bin/java";
+      break;
+    case "1.17.1":
+      path = "../../java/jdk-17.0.5+8/bin/java";
+      break;
+    default:
+      path = "../../java/jdk-11.0.18+10/bin/java";
+      break;
   }
 
-  //copy ../servers/template/server.jar to folder
-  fs.copyFileSync("servers/template/server.jar", folder + "/server.jar");
+  if (!fs.existsSync(folder)) {
+    fs.mkdirSync(folder);
+    if (!fs.existsSync(folder + "/mods/")) {
+      fs.mkdirSync(folder + "/mods/");
+    }
+  }
+  if (s == "fabric" || s == "quilt") {
+    const { exec } = require("child_process");
+    if ((version = "latest")) {
+      version = "1.19.4";
+    }
+    let modpack;
+
+    files.download(
+      folder + "/server.jar",
+      "https://serverjars.com/api/fetchJar/modded/" + s + "/" + version
+    );
+
+    exec(
+      "curl -o " + folder + "/modpack.mrpack -LO " + modpackURL,
+      (error, stdout, stderr) => {
+        exec(
+          "unzip " + folder + "/modpack.mrpack" + " -d " + folder,
+          (error, stdout, stderr) => {
+            exec(
+              "cp -r " + folder + "/overrides/* " + folder + "/",
+              (error, stdout, stderr) => {
+                if (
+                  !fs.existsSync(folder + "/overrides/mods") &&
+                  fs.existsSync(folder + "/modrinth.index.json")
+                ) {
+                  modpack = JSON.parse(
+                    fs.readFileSync(folder + "/modrinth.index.json")
+                  );
+
+                  //for each file in modpack.files, download it
+                  for (i in modpack.files) {
+                    exec(
+                      "curl -o " +
+                        folder +
+                        "/" +
+                        modpack.files[i].path +
+                        " -LO " +
+                        modpack.files[i].downloads[0]
+                    );
+                  }
+                }
+              }
+            );
+          }
+        );
+      }
+    );
+  } else if (s == "forge") {
+    const { exec } = require("child_process");
+
+    exec("cp -r forgelibs/" + version + "/* " + folder + "/");
+  } else {
+    fs.copyFileSync("servers/template/server.jar", folder + "/server.jar");
+  }
+
   //run code for each item in addons
   //mkdir folder/world/datapacks
   // if world folder doesnt exist
-  if (!fs.existsSync(folder + "/world")) {
+  if (!fs.existsSync(folder + "/world") && software != "mohist") {
     fs.mkdirSync(folder + "/world");
     fs.mkdirSync(folder + "/world/datapacks");
   }
 
   for (i in addons) {
     if (addons[i] != undefined && addons[i] != "") {
-      console.log("copying " + addons[i] + " to " + folder);
       fs.copyFileSync(
         "servers/template/" + addons[i] + ".zip",
         folder + "/world/datapacks/" + addons[i] + ".zip"
@@ -195,14 +245,13 @@ function run(id, software, version, addons, cmd, em, isNew) {
   let data = fs.readFileSync("servers/template/server.properties", "utf8");
   let result = data.replace(/server-port=25565/g, "server-port=" + port);
 
-  console.log("starting server on port " + port);
- if(isNew) {
-  fs.writeFileSync(folder + "/server.properties", result, "utf8");
- }
+  if (isNew) {
+    fs.writeFileSync(folder + "/server.properties", result, "utf8");
+  }
 
   //add new file eula.txt in folder
   fs.writeFileSync(folder + "/eula.txt", "eula=true");
-  console.log("writing to serverjars");
+
   fs.writeFileSync(
     folder + "/serverjars.properties",
     "category=" +
@@ -219,15 +268,40 @@ function run(id, software, version, addons, cmd, em, isNew) {
     fs.mkdirSync(folder + "/plugins");
   }
   const { exec } = require("child_process");
-  const ls = exec(path + " " + args, { cwd: folder });
-  console.log(folder + "/plugins/Geyser-Spigot.jar");
-  console.log("starting commands are: " + cmd);
+  let ls;
+  if (s == "forge") {
+    ls = exec("./run.sh", { cwd: folder });
+  } else {
+    ls = exec(path + " " + args, { cwd: folder });
+  }
+
   //for every item in the cmd array, run the command
   for (i in cmd) {
     if (cmd[i] != undefined && cmd[i] != "op") {
-      console.log(cmd[i]);
       ls.stdin.write(cmd[i] + "\n");
     }
+  }
+  //if geyser is fully downloaded, copy it to folder
+  if (
+    fs.statSync("servers/template/downloading/cx_geyser-spigot_Geyser.jar")
+      .size > 13000000
+  ) {
+    fs.copyFileSync(
+      "servers/template/downloading/cx_geyser-spigot_Geyser.jar",
+      folder + "/plugins/cx_geyser-spigot_Geyser.jar"
+    );
+  }
+
+  //if floodgate is fully downloaded, copy it to folder
+  if (
+    fs.statSync(
+      "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar"
+    ).size > 10200000
+  ) {
+    fs.copyFileSync(
+      "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
+      folder + "/plugins/cx_floodgate-spigot_Floodgate.jar"
+    );
   }
   //replace line 15 of folder/plugins/Geyser-Spigot/config.yml with "port: " + port
 
@@ -242,33 +316,28 @@ function run(id, software, version, addons, cmd, em, isNew) {
     fs.mkdirSync(folder + "/plugins/Geyser-Spigot");
   }
   fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
-
-  exec(
-    "curl -o cx_geyser-spigot_Geyser.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
-    {
-      cwd: folder + "/plugins",
-    }
+  fs.copyFileSync(
+    "servers/template/downloading/cx_geyser-spigot_Geyser.jar",
+    folder + "/plugins/cx_geyser-spigot_Geyser.jar"
   );
-  exec(
-    "curl -o cx_floodgate-spigot_Floodgate.jar -LO https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
-    {
-      cwd: folder + "/plugins",
-    }
+
+  fs.copyFileSync(
+    "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
+    folder + "/plugins/cx_floodgate-spigot_Floodgate.jar"
   );
 
   let out = [];
   let count = 0;
-  //log output
-  console.log("test1");
+
   ls.stdout.on("data", function (data, er) {
     if (er) {
-      console.log(er);
+      console.error(er);
     }
+
     count++;
     if (count >= 9) {
       out.push(data);
     }
-  
 
     terminalOutput[id] = out.join("\n");
     if (terminalOutput[id].indexOf("Done") > -1) {
@@ -277,22 +346,27 @@ function run(id, software, version, addons, cmd, em, isNew) {
     }
   });
 
-  
-  setInterval(function () {
+  setInterval(() => {
     if (states[id] == "false") {
       ls.stdin.write("stop\n");
     }
-
-  }, 200); 
-  eventEmitter.on('writeCmd', function () {
+  }, 200);
+  eventEmitter.on("writeCmd", function () {
     ls.stdin.write(terminalInput + "\n");
   });
-  ls.on("exit", function (code) {
-    console.log("Server Stopped: exit code " + code);
+  ls.on("exit", () => {
     states[id] = "false";
   });
-}
 
+  files.download(
+    "java/servers/template/downloading/cx_geyser-spigot_Geyser.jar",
+    "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
+  );
+  files.download(
+    "java/servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
+    "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
+  );
+}
 function stop(id) {
   states[id] = "false";
 }
@@ -304,10 +378,8 @@ function readTerminal(id) {
 }
 
 function writeTerminal(id, cmd) {
-  console.log("writing command: " + cmd)
-  x = true;
   terminalInput = cmd;
-  eventEmitter.emit('writeCmd');
+  eventEmitter.emit("writeCmd");
 }
 
 module.exports = {
