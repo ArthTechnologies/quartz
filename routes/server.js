@@ -201,7 +201,7 @@ router.post(`/new`, function (req, res) {
         //console log if ../servers.json exists
         console.log(fs.existsSync("../servers.json") + "servers.json");
         fs.writeFile(
-          "../servers.json",
+          "servers.json",
           JSON.stringify(servers, null, 4),
           (err) => {
             if (err) {
