@@ -32,4 +32,18 @@ router.get(`/`, function (req, res) {
   }
 });
 
+router.get(`/worldgenMods`, function (req, res) {
+  //for each file in worldgen, if it has req.query.version, add filename.split("-")[0] to the returj array
+  let dirArray = fs.readdirSync("servers/template/downloading/worldgen");
+  let returnArray = [];
+  dirArray.forEach((file) => {
+    console.log(file);
+    if (file.includes(req.query.version)) {
+      returnArray.push(file.split("-")[0]);
+    }
+  });
+
+  res.status(200).json(returnArray);
+});
+
 module.exports = router;

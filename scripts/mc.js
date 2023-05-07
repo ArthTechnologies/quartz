@@ -165,21 +165,21 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
+    //fs.writeFileSync(folder + "/world.zip", worldFile);
     if (!fs.existsSync(folder + "/mods/")) {
       fs.mkdirSync(folder + "/mods/");
     }
   }
-  if (s == "fabric" || s == "quilt") {
+  if (c == "modded") {
+    fs.copyFileSync(
+      "servers/template/downloading/" + s + "/" + version + ".jar",
+      folder + "/server.jar"
+    );
     const { exec } = require("child_process");
     if ((version = "latest")) {
       version = "1.19.4";
     }
     let modpack;
-
-    files.download(
-      folder + "/server.jar",
-      "https://serverjars.com/api/fetchJar/modded/" + s + "/" + version
-    );
 
     exec(
       "curl -o " + folder + "/modpack.mrpack -LO " + modpackURL,
@@ -216,10 +216,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         );
       }
     );
-  } else if (s == "forge") {
-    const { exec } = require("child_process");
-
-    exec("cp -r forgelibs/" + version + "/* " + folder + "/");
   } else {
     fs.copyFileSync("servers/template/server.jar", folder + "/server.jar");
   }
@@ -270,7 +266,30 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   const { exec } = require("child_process");
   let ls;
   if (s == "forge") {
-    ls = exec("./run.sh", { cwd: folder });
+    if (isNew) {
+      timeout = 10000;
+      exec(path + " -jar server.jar --installServer", { cwd: folder });
+    } else {
+      timeout = 0;
+    }
+
+    //wait for forge to install
+    setTimeout(() => {
+      //-Dlog4j.configurationFile=consoleconfig.xml
+      //get the forge version from the name of the folder inside /libraries/net/minecraftforge/forge/
+      let forgeVersion = fs
+        .readdirSync(folder + "/libraries/net/minecraftforge/forge/")[0]
+        .substring(0, 16);
+
+      console.log("starting server" + forgeVersion);
+      ls = exec(
+        path +
+          ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/` +
+          forgeVersion +
+          `/unix_args.txt  "$@"`,
+        { cwd: folder }
+      );
+    }, timeout);
   } else {
     ls = exec(path + " " + args, { cwd: folder });
   }

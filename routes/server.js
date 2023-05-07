@@ -125,6 +125,25 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
   }
 });
 
+router.post(`/:id/update/`, function (req, res) {
+  email = req.headers.email;
+  token = req.headers.token;
+  if (token == accounts[email].token) {
+    id = req.params.id;
+    version = req.query.version;
+
+    servers[id].version = version;
+    f.stop(id);
+    //wait 5 seconds
+    setTimeout(function () {
+      f.run(id, undefined, undefined, undefined, undefined, email, false);
+    }, 5000);
+    res.status(202).json({ msg: `Success. Server updated.` });
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
+});
+
 let lastPlugin = "";
 router.post(`/:id/add/:modtype`, function (req, res) {
   email = req.headers.email;

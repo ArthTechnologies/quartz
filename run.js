@@ -42,7 +42,11 @@ if (!fs.existsSync("servers.json")) {
   fs.writeFileSync("servers.json", "{}");
 }
 if (!fs.existsSync("servers/template/downloading")) {
-  fs.mkdirSync("servers/template/downloading");
+  fs.mkdirSync("servers/template/downloading/");
+  fs.mkdirSync("servers/template/downloading/forge");
+  fs.mkdirSync("servers/template/downloading/fabric");
+  fs.mkdirSync("servers/template/downloading/quilt");
+  fs.mkdirSync("servers/template/downloading/worldgen");
 }
 const s = require("./scripts/stripe.js");
 
@@ -54,7 +58,67 @@ files.download(
   "java/servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
   "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
 );
-if (!fs.existsSync("java")) {
+let modVersions = [{ c: "modded", s: "forge", v: "1.19.4" }];
+for (i in modVersions) {
+  console.log(
+    "../servers/template/downloading/" +
+      modVersions[i].s +
+      "/" +
+      modVersions[i].v +
+      ".jar"
+  );
+  files.download(
+    "servers/template/downloading/" +
+      modVersions[i].s +
+      "/" +
+      modVersions[i].v +
+      ".jar",
+    "https://serverjars.com/api/fetchJar/" +
+      modVersions[i].c +
+      "/" +
+      modVersions[i].s +
+      "/" +
+      modVersions[i].v
+  );
+}
+
+//download worlden mods for latest version
+files.GET(
+  "https://launchermeta.mojang.com/mc/game/version_manifest.json",
+  (vdata) => {
+    let version = JSON.parse(vdata).latest.release;
+    let worldgenMods = ["Terralith", "Structory", "Incendium", "Nullscape"];
+    worldgenMods.forEach((wmod) => {
+      files.GET(
+        "https://api.github.com/repos/Stardust-Labs-MC/" +
+          wmod +
+          "/releases/latest",
+        (terraData) => {
+          terraData = JSON.parse(terraData);
+          if (terraData.assets == undefined) {
+            console.log("Rate limit likely reached");
+          } else {
+            terraData.assets.forEach((asset) => {
+              if (asset.name.includes(wmod + "_" + version)) {
+                files.download(
+                  "servers/template/downloading/worldgen/" +
+                    wmod.toLowerCase() +
+                    "-" +
+                    version +
+                    ".zip",
+                  asset.browser_download_url
+                );
+              }
+            });
+          }
+        }
+      );
+    });
+  }
+);
+
+//api.github.com/repos/Stardust-Labs-MC/Terralith/releases/latest
+https: if (!fs.existsSync("java")) {
   fs.mkdirSync("java");
 
   files.download(
@@ -99,16 +163,22 @@ if (!fs.existsSync("public.pem")) {
 app.get("/", (req, res) => {
   res.status(200).sendFile(path.join(__dirname, "index.html"));
 });
+const rateLimit = require("express-rate-limit");
+const limiter = rateLimit({
+  max: 300,
+  windowMs: 1000,
+  message: "Too many request from this IP",
+});
 
 // middlewares
-app.use(express.json(), cors());
+app.use(limiter, express.json(), cors());
 
-// adding routes
 app.use("/server", require("./routes/server"));
 app.use("/servers", require("./routes/servers"));
 app.use("/settings", require("./routes/settings"));
 app.use("/terminal", require("./routes/terminal"));
 app.use("/accounts", require("./routes/accounts"));
+
 // port
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`Listening on Port: ${port}`));

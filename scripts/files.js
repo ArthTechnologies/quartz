@@ -13,4 +13,15 @@ function write(file, content) {
 
   fs.writeFileSync(file, content);
 }
-module.exports = { download, extract, write };
+
+function GET(url, callback) {
+  exec(`curl ` + url, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`);
+      return;
+    }
+    callback(stdout);
+  });
+}
+
+module.exports = { download, extract, write, GET };
