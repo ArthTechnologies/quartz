@@ -20,7 +20,11 @@ if (!fs.existsSync("./stores")) {
   fs.mkdirSync("stores");
   fs.writeFileSync(
     "./stores/secrets.json",
-    '{"stripemode":"test","stripekey":"' + process.env.stripe_key + '"}'
+    '{"pepper":"' +
+      crypto.randomBytes(12).toString("hex") +
+      '","stripekey":"' +
+      process.env.stripe_key +
+      '"}'
   );
 
   fs.writeFileSync(
@@ -170,6 +174,24 @@ const limiter = rateLimit({
   message: "Too many request from this IP",
 });
 
+const security = (req, res, next) => {
+  if (req.url.includes("/accounts/")) {
+    next();
+  } else {
+    console.log(req.url + req.ip);
+
+    accounts = require("./accounts.json");
+
+    if (accounts[req.headers.email].ips.includes(files.getIPID(req.ip))) {
+      next();
+    } else {
+      res.status(403).send({
+        status: "ERROR",
+        error: "IP not allowed",
+      });
+    }
+  }
+};
 // middlewares
 app.use(limiter, express.json(), cors());
 

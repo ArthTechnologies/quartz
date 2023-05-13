@@ -2,19 +2,12 @@ const express = require("express");
 const Router = express.Router();
 const fs = require("fs");
 const s = require("../scripts/stripe.js");
-const { createHash, scryptSync, randomBytes } = require("crypto");
+
 const { v4: uuidv4 } = require("uuid");
 const files = require("../scripts/files.js");
 
-function hash(input, salt) {
-  if (salt == undefined) {
-    salt = randomBytes(12).toString("hex");
-  }
-
-  return salt + ":" + scryptSync(input, salt, 48).toString("hex");
-}
-
 Router.post("/email/signup/", (req, res) => {
+  console.log("hi");
   res.header("Access-Control-Allow-Origin", "*");
 
   let accounts = require("../accounts.json");
@@ -33,7 +26,7 @@ Router.post("/email/signup/", (req, res) => {
     if (password.length >= 7) {
       if (!emailExists) {
         let accountId = uuidv4();
-        [salt, password] = hash(password).split(":");
+        [salt, password] = files.hash(password).split(":");
 
         accounts[email] = {};
         accounts[email].password = password;
@@ -41,6 +34,9 @@ Router.post("/email/signup/", (req, res) => {
         accounts[email].token = uuidv4();
         accounts[email].salt = salt;
         accounts[email].resetAttempts = 0;
+        accounts[email].ips = [];
+        accounts[email].ips.push(files.getIPID(req.ip));
+        console.log("hi");
 
         res
           .status(200)
@@ -69,7 +65,8 @@ Router.post("/email/signin/", (req, res) => {
   let response = {};
 
   let salt = accounts[email].salt;
-  if (accounts[email].password == hash(password, salt).split(":")[1]) {
+  if (accounts[email].password == files.hash(password, salt).split(":")[1]) {
+    accounts[email].ips[req.ip] = files.getIPID(req.ip);
     response = {
       token: accounts[email].token,
       accountId: accounts[email].accountId,
@@ -87,12 +84,12 @@ Router.delete("/email", (req, res) => {
   password = req.query.password;
   token = req.headers.token;
   console.log(req.query);
-  console.log(hash("password", accounts[email].salt).split(":")[1]);
+  console.log(files.hash("password", accounts[email].salt).split(":")[1]);
 
   if (token == accounts[email].token) {
     if (
       accounts[email].password ==
-      hash(password, accounts[email].salt).split(":")[1]
+      files.hash(password, accounts[email].salt).split(":")[1]
     ) {
       delete accounts[email];
       files.write("accounts.json", JSON.stringify(accounts));
@@ -122,7 +119,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
       if (creditId === last4 || settings.enablePay === false) {
         if (password == confirmPassword) {
           if (password.length >= 7) {
-            [salt, password] = hash(password).split(":");
+            [salt, password] = files.hash(password).split(":");
 
             accounts[email].password = password;
             accounts[email].token = uuidv4();
