@@ -182,13 +182,15 @@ const security = (req, res, next) => {
 
     accounts = require("./accounts.json");
 
-    if (accounts[req.headers.email].ips.includes(files.getIPID(req.ip))) {
-      next();
-    } else {
-      res.status(403).send({
-        status: "ERROR",
-        error: "IP not allowed",
-      });
+    if (accounts[req.headers.email] != undefined) {
+      if (accounts[req.headers.email].ips.includes(files.getIPID(req.ip))) {
+        next();
+      } else {
+        res.status(403).send({
+          status: "ERROR",
+          error: "IP not allowed",
+        });
+      }
     }
   }
 };
