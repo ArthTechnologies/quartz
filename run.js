@@ -55,11 +55,11 @@ if (!fs.existsSync("servers/template/downloading")) {
 const s = require("./scripts/stripe.js");
 
 files.download(
-  "java/servers/template/downloading/cx_geyser-spigot_Geyser.jar",
+  "servers/template/downloading/cx_geyser-spigot_Geyser.jar",
   "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
 );
 files.download(
-  "java/servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
+  "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
   "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
 );
 let modVersions = [{ c: "modded", s: "forge", v: "1.19.4" }];
