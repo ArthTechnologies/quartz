@@ -102,6 +102,7 @@ files.GET(
           if (terraData.assets == undefined) {
             console.log("Rate limit likely reached");
           } else {
+            console.log(terraData);
             terraData.assets.forEach((asset) => {
               if (asset.name.includes(wmod + "_" + version)) {
                 files.download(
