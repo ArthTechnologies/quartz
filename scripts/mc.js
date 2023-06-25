@@ -140,7 +140,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       c = "servers";
       break;
   }
-  const settings = require("../settings.json");
+  const settings = require("../stores/settings.json");
   let latestVersion = settings.latestVersion;
   switch (version) {
     case latestVersion:
