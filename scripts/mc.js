@@ -146,6 +146,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     case latestVersion:
       version = latestVersion;
       path = "../../java/jdk-19.0.2+7/bin/java";
+      break;
     case "latest":
       version = "1.19.4";
       path = "../../java/jdk-19.0.2+7/bin/java";
