@@ -133,6 +133,7 @@ router.post(`/:id/update/`, function (req, res) {
     version = req.query.version;
 
     servers[id].version = version;
+    fs.writeFileSync("servers.json", JSON.stringify(servers, null, 2));
     f.stop(id);
     //wait 5 seconds
     setTimeout(function () {
