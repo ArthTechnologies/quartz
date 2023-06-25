@@ -140,8 +140,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       c = "servers";
       break;
   }
-
+  const settings = require("../settings.json");
+  let latestVersion = settings.latestVersion;
   switch (version) {
+    case latestVersion:
+      version = latestVersion;
+      path = "../../java/jdk-19.0.2+7/bin/java";
     case "latest":
       version = "1.19.4";
       path = "../../java/jdk-19.0.2+7/bin/java";

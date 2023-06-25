@@ -34,7 +34,8 @@ if (!fs.existsSync("./stores")) {
       "webLogo": "/images/sitelogo.svg",
       "enableAuth": true,
       "address": "arthmc.xyz",
-      "enablePay": true
+      "enablePay": true,
+      "latestVersion": "1.19.4"
     }`
   );
 }
@@ -91,6 +92,9 @@ files.GET(
   "https://launchermeta.mojang.com/mc/game/version_manifest.json",
   (vdata) => {
     let version = JSON.parse(vdata).latest.release;
+    const settings = require("./stores/settings.json");
+    settings.latestVersion = version;
+    fs.writeFileSync("./stores/settings.json", JSON.stringify(settings));
     let worldgenMods = ["Terralith", "Structory", "Incendium", "Nullscape"];
     worldgenMods.forEach((wmod) => {
       files.GET(
