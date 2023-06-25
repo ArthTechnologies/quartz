@@ -67,6 +67,7 @@ function checkServer(id) {
 }
 
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
+  servers = require("../servers.json");
   states[id] = "starting";
 
   // i isNew is undefined, set it to true
