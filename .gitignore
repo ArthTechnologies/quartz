@@ -1,6 +1,6 @@
 /target
 /node_modules
-/servers/java/17
+/uploads
 /pocketbase/pb_data
 .breakpoints
 .replit

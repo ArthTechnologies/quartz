@@ -39,6 +39,9 @@ if (!fs.existsSync("./stores")) {
     }`
   );
 }
+if (!fs.existsSync("uploads")) {
+  fs.mkdirSync("uploads");
+}
 
 if (!fs.existsSync("accounts.json")) {
   fs.writeFileSync("accounts.json", "{}");

@@ -19,6 +19,7 @@
     "extract-zip": "^2.0.1",
     "extract-zip-relative-path": "^2.0.4",
     "image-size": "^1.0.2",
+    "multer": "^1.4.5-lts.1",
     "node-fetch": "^2.6.7",
     "node-rsa": "^1.1.1",
     "socket.io": "^4.5.2",

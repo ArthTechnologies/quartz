@@ -15,6 +15,28 @@ function hash(input, salt) {
   return salt + ":" + scryptSync(input, salt, 48).toString("hex");
 }
 
+function removeDirectoryRecursive(directoryPath) {
+  if (fs.existsSync(directoryPath)) {
+    fs.readdirSync(directoryPath).forEach((file) => {
+      const curPath = `${directoryPath}/${file}`;
+
+      if (fs.lstatSync(curPath).isDirectory()) {
+        // Recursive call if the file is a directory
+        removeDirectoryRecursive(curPath);
+      } else {
+        // Delete the file
+        fs.unlinkSync(curPath);
+      }
+    });
+
+    // Remove the directory itself
+    fs.rmdirSync(directoryPath);
+    console.log(`Directory "${directoryPath}" removed.`);
+  } else {
+    console.log(`Directory "${directoryPath}" does not exist.`);
+  }
+}
+
 function getIPID(ip) {
   const secrets = require("../stores/secrets.json");
   if (secrets.pepper == undefined) {
@@ -42,4 +64,12 @@ function GET(url, callback) {
   });
 }
 
-module.exports = { hash, download, extract, write, GET, getIPID };
+module.exports = {
+  hash,
+  download,
+  extract,
+  write,
+  GET,
+  getIPID,
+  removeDirectoryRecursive,
+};

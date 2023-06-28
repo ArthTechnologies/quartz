@@ -4,6 +4,8 @@ const accounts = require("../accounts.json");
 const servers = require("../servers.json");
 const files = require("../scripts/files.js");
 const f = require("../scripts/mc.js");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 const fs = require("fs");
 
@@ -479,8 +481,52 @@ router.get("/:id/world", function (req, res) {
     //zip /servers/id/world and send it to the client
     id = req.params.id;
     const exec = require("child_process").exec;
-    exec(`zip -r servers/${id}/world.zip servers/${id}/world`);
-    res.download(`servers/${id}/world.zip`);
+    exec(`zip -r -q -X servers/${id}/world.zip servers/${id}/world`, (err) => {
+      res.header("Content-Type", "application/zip");
+      res.status(200).download(`servers/${id}/world.zip`, "world.zip", () => {
+        //delete the zip file
+        fs.unlinkSync(`servers/${id}/world.zip`);
+      });
+    });
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
+});
+
+router.post("/:id/world", upload.single("file"), function (req, res) {
+  id = req.params.id;
+  email = req.headers.email;
+  token = req.headers.token;
+  if (token == accounts[email].token) {
+    f.stop(req.params.id);
+    //timeout 5s
+    setTimeout(() => {
+      if (!req.file) {
+        files.removeDirectoryRecursive(`servers/${id}/world`);
+        fs.mkdirSync(`servers/${id}/world`);
+        fs.mkdirSync(`servers/${id}/world/datapacks`);
+
+        res.status(200).json({ msg: `No file uploaded, Deleting World.` });
+      } else {
+        files.removeDirectoryRecursive(`servers/${id}/world`);
+        fs.mkdirSync(`servers/${id}/world`);
+        fs.mkdirSync(`servers/${id}/world/datapacks`);
+        //unzip the file and put it in /servers/id/world
+
+        const exec = require("child_process").exec;
+        //wait 5s
+        setTimeout(() => {
+          exec(`unzip -o ${req.file.path} `, (err, stdout, stderr) => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log("unzipped world");
+            }
+          });
+        }, 5000);
+        res.status(200).json({ msg: `Success: Uploaded world.` });
+      }
+    }, 5000);
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
