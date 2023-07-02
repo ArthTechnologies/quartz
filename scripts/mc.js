@@ -182,9 +182,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       folder + "/server.jar"
     );
     const { exec } = require("child_process");
-    if ((version = "latest")) {
-      version = "1.19.4";
-    }
+
     let modpack;
 
     exec(
@@ -224,6 +222,10 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     );
   } else {
     fs.copyFileSync("servers/template/server.jar", folder + "/server.jar");
+    files.download(
+      folder + "/server.jar",
+      "https://api.jarsmc.xyz/jars/" + s + "/" + version
+    );
   }
 
   //run code for each item in addons
@@ -274,11 +276,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   if (s == "forge") {
     if (isNew) {
       timeout = 10000;
-      exec(path + " -jar server.jar --installServer", { cwd: folder });
+      exec(path + " -jar server.jar", { cwd: folder });
     } else {
       timeout = 0;
     }
-
+    let forgeVersion = null;
     //wait for forge to install
     setTimeout(() => {
       //-Dlog4j.configurationFile=consoleconfig.xml
@@ -288,13 +290,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         .substring(0, 16);
 
       console.log("starting server" + forgeVersion);
-      ls = exec(
-        path +
-          ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/` +
-          forgeVersion +
-          `/unix_args.txt  "$@"`,
-        { cwd: folder }
-      );
+      ls = exec("sh run.sh", { cwd: folder });
     }, timeout);
   } else {
     ls = exec(path + " " + args, { cwd: folder });

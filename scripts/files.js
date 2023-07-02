@@ -3,6 +3,12 @@ function download(file, url) {
   exec(`curl -o ${file} -LO ${url}`);
 }
 
+function downloadAsync(file, url, callback) {
+  exec(`curl -o ${file} -LO ${url}`, (error, stdout, stderr) => {
+    callback(stdout);
+  });
+}
+
 function extract(archive, dir) {
   exec(`tar -xvf ${archive} -C ${dir}`);
 }
@@ -72,4 +78,5 @@ module.exports = {
   GET,
   getIPID,
   removeDirectoryRecursive,
+  downloadAsync,
 };

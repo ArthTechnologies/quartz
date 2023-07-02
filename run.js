@@ -49,85 +49,177 @@ if (!fs.existsSync("accounts.json")) {
 if (!fs.existsSync("servers.json")) {
   fs.writeFileSync("servers.json", "{}");
 }
-if (!fs.existsSync("servers/template/downloading")) {
-  fs.mkdirSync("servers/template/downloading/");
-  fs.mkdirSync("servers/template/downloading/forge");
-  fs.mkdirSync("servers/template/downloading/fabric");
-  fs.mkdirSync("servers/template/downloading/quilt");
-  fs.mkdirSync("servers/template/downloading/worldgen");
-}
+
 const s = require("./scripts/stripe.js");
 
 files.download(
-  "servers/template/downloading/cx_geyser-spigot_Geyser.jar",
+  "data/downloads/cx_geyser-spigot_Geyser.jar",
   "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
 );
 files.download(
-  "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
+  "data/downloads/cx_floodgate-spigot_Floodgate.jar",
   "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
 );
 let modVersions = [{ c: "modded", s: "forge", v: "1.19.4" }];
-for (i in modVersions) {
-  console.log(
-    "../servers/template/downloading/" +
-      modVersions[i].s +
-      "/" +
-      modVersions[i].v +
-      ".jar"
-  );
-  files.download(
-    "servers/template/downloading/" +
-      modVersions[i].s +
-      "/" +
-      modVersions[i].v +
-      ".jar",
-    "https://serverjars.com/api/fetchJar/" +
-      modVersions[i].c +
-      "/" +
-      modVersions[i].s +
-      "/" +
-      modVersions[i].v
-  );
+
+if (!fs.existsSync("data")) {
+  fs.mkdirSync("data");
+  fs.mkdirSync("data/downloads");
 }
 
+downloadJars();
+setInterval(() => {
+  downloadJars();
+}, 1000 * 60 * 60 * 12);
+
+function downloadJars() {
+  files.GET("https://api.jarsmc.xyz/jars/arthHosting", (data) => {
+    data = JSON.parse(data);
+    let downloadProgress = [];
+    for (i in data) {
+      for (j in data[i]) {
+        let jar = data[i][j];
+        let extension = "jar";
+        switch (jar.software) {
+          case "terralith":
+          case "structory":
+          case "incendium":
+          case "nullscape":
+            extension = "zip";
+            break;
+        }
+        let c = "";
+        switch (jar.software) {
+          case "paper":
+            c = "servers";
+            break;
+          case "velocity":
+            c = "proxies";
+            break;
+          case "quilt":
+            c = "modded";
+            break;
+          case "vanilla":
+            c = "vanilla";
+            break;
+          case "waterfall":
+            c = "proxies";
+            break;
+          case "forge":
+            c = "modded";
+            break;
+          case "fabric":
+            c = "modded";
+            break;
+          case "snapshot":
+            c = "vanilla";
+            break;
+          case "spigot":
+            c = "servers";
+            break;
+        }
+
+        console.log(jar.version + " " + jar.software);
+        downloadProgress.push(false);
+        files.downloadAsync(
+          "data/downloads/" +
+            jar.software +
+            "-" +
+            jar.version +
+            "." +
+            extension,
+          "https://serverjars.com/api/fetchJar/" +
+            c +
+            "/" +
+            jar.software +
+            "/" +
+            jar.version,
+          (data2) => {
+            if (
+              fs.readFileSync(
+                `data/downloads/${jar.software}-${jar.version}.${extension}`
+              ).length == 26351
+            ) {
+              console.log(
+                "failed to download " +
+                  jar.software +
+                  jar.version +
+                  " from serverjars.com, trying jarsmc.xyz"
+              );
+
+              files.downloadAsync(
+                "data/downloads/" +
+                  jar.software +
+                  "-" +
+                  jar.version +
+                  "." +
+                  extension,
+                "https://api.jarsmc.xyz/jars/" +
+                  jar.software +
+                  "/" +
+                  jar.version,
+                (data3) => {}
+              );
+              return;
+            } else {
+              fs.copyFileSync(
+                `data/downloads/${jar.software}-${jar.version}.${extension}`,
+                `data/${jar.software}-${jar.version}.${extension}`
+              );
+              fs.unlinkSync(
+                `data/downloads/${jar.software}-${jar.version}.${extension}`
+              );
+            }
+          }
+        );
+      }
+    }
+  });
+}
+
+/*downloadWorldgenMods();
+setInterval(() => {
+  downloadWorldgenMods();
+}, 1000 * 60 * 60 * 12);
 //download worlden mods for latest version
-files.GET(
-  "https://launchermeta.mojang.com/mc/game/version_manifest.json",
-  (vdata) => {
-    let version = JSON.parse(vdata).latest.release;
-    const settings = require("./stores/settings.json");
-    settings.latestVersion = version;
-    fs.writeFileSync("./stores/settings.json", JSON.stringify(settings));
-    let worldgenMods = ["Terralith", "Structory", "Incendium", "Nullscape"];
-    worldgenMods.forEach((wmod) => {
-      files.GET(
-        "https://api.github.com/repos/Stardust-Labs-MC/" +
-          wmod +
-          "/releases/latest",
-        (terraData) => {
-          terraData = JSON.parse(terraData);
-          if (terraData.assets == undefined) {
-            console.log("Rate limit likely reached");
-          } else {
-            console.log(terraData);
-            terraData.assets.forEach((asset) => {
-              if (asset.name.includes(wmod + "_" + version)) {
+function downloadWorldgenMods() {
+  const settings = require("./stores/settings.json");
+  let worldgenMods = ["Terralith", "Structory", "Incendium", "Nullscape"];
+  files.GET(
+    "https://launchermeta.mojang.com/mc/game/version_manifest.json",
+    (vdata) => {
+      let version = JSON.parse(vdata).latest.release;
+
+      settings.latestVersion = version;
+      fs.writeFileSync("./stores/settings.json", JSON.stringify(settings));
+
+      worldgenMods.forEach((wmod) => {
+        files.GET(
+          "https://api.github.com/repos/Stardust-Labs-MC/" +
+            wmod +
+            "/releases/latest",
+          (terraData) => {
+            terraData = JSON.parse(terraData);
+            if (terraData.assets == undefined) {
+              console.log("Rate limit likely reached");
+            } else {
+              terraData.assets.forEach((asset) => {
                 files.download(
-                  "servers/template/downloading/worldgen/" +
+                  "data/downloads/" +
                     wmod.toLowerCase() +
                     "-" +
                     version +
                     ".zip",
                   asset.browser_download_url
                 );
-              }
-            });
+              });
+            }
           }
-        }
-      );
-    });
-  }
-);
+        );
+      });
+    }
+  );
+}*/
 
 //api.github.com/repos/Stardust-Labs-MC/Terralith/releases/latest
 https: if (!fs.existsSync("java")) {
