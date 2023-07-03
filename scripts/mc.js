@@ -221,10 +221,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       }
     );
   } else {
-    fs.copyFileSync("servers/template/server.jar", folder + "/server.jar");
-    files.download(
-      folder + "/server.jar",
-      "https://api.jarsmc.xyz/jars/" + s + "/" + version
+    fs.copyFileSync(
+      "data/" + software + "-" + version + ".jar",
+      folder + "/server.jar"
     );
   }
 
@@ -293,7 +292,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       ls = exec("sh run.sh", { cwd: folder });
     }, timeout);
   } else {
-    ls = exec(path + " " + args, { cwd: folder });
+    ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
+      console.log("stdout: " + stdout);
+      console.log("stderr: " + stderr);
+      console.log("error: " + error);
+    });
   }
 
   //for every item in the cmd array, run the command
@@ -302,28 +305,18 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       ls.stdin.write(cmd[i] + "\n");
     }
   }
-  //if geyser is fully downloaded, copy it to folder
-  if (
-    fs.statSync("servers/template/downloading/cx_geyser-spigot_Geyser.jar")
-      .size > 13000000
-  ) {
+
+  if (fs.existsSync("data/geyser-Geyser.jar")) {
     fs.copyFileSync(
-      "servers/template/downloading/cx_geyser-spigot_Geyser.jar",
+      "data/cx_geyser-spigot_Geyser.jar",
       folder + "/plugins/cx_geyser-spigot_Geyser.jar"
     );
-  }
-
-  //if floodgate is fully downloaded, copy it to folder
-  if (
-    fs.statSync(
-      "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar"
-    ).size > 10200000
-  ) {
     fs.copyFileSync(
       "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
       folder + "/plugins/cx_floodgate-spigot_Floodgate.jar"
     );
   }
+
   //replace line 15 of folder/plugins/Geyser-Spigot/config.yml with "port: " + port
 
   var text = fs.readFileSync("servers/template/geyserconfig.yml", "utf8");
@@ -337,24 +330,23 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     fs.mkdirSync(folder + "/plugins/Geyser-Spigot");
   }
   fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
-  fs.copyFileSync(
+
+  fs.copyFile(
     "servers/template/downloading/cx_geyser-spigot_Geyser.jar",
-    folder + "/plugins/cx_geyser-spigot_Geyser.jar"
+    folder + "/plugins/cx_geyser-spigot_Geyser.jar",
+    (err) => {}
   );
 
-  fs.copyFileSync(
+  fs.copyFile(
     "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
-    folder + "/plugins/cx_floodgate-spigot_Floodgate.jar"
+    folder + "/plugins/cx_floodgate-spigot_Floodgate.jar",
+    (err) => {}
   );
 
   let out = [];
   let count = 0;
 
-  ls.stdout.on("data", function (data, er) {
-    if (er) {
-      console.error(er);
-    }
-
+  ls.stdout.on("data", (data) => {
     count++;
     if (count >= 9) {
       out.push(data);

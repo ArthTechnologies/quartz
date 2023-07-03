@@ -52,27 +52,47 @@ if (!fs.existsSync("servers.json")) {
 
 const s = require("./scripts/stripe.js");
 
-files.download(
+files.downloadAsync(
   "data/downloads/cx_geyser-spigot_Geyser.jar",
-  "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
+  "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
+  (data) => {
+    fs.copyFileSync(
+      `data/downloads/cx_geyser-spigot_Geyser.jar`,
+      `data/cx_geyser-spigot_Geyser.jar`
+    );
+    fs.unlinkSync(`data/downloads/cx_geyser-spigot_Geyser.jar`);
+  }
 );
-files.download(
+files.downloadAsync(
   "data/downloads/cx_floodgate-spigot_Floodgate.jar",
-  "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
+  "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
+  (data) => {
+    fs.copyFileSync(
+      `data/downloads/cx_floodgate-spigot_Floodgate.jar`,
+      `data/cx_floodgate-spigot_Floodgate.jar`
+    );
+    fs.unlinkSync(`data/downloads/cx_floodgate-spigot_Floodgate.jar`);
+  }
 );
 let modVersions = [{ c: "modded", s: "forge", v: "1.19.4" }];
 
 if (!fs.existsSync("data")) {
   fs.mkdirSync("data");
   fs.mkdirSync("data/downloads");
+  fs.writeFileSync("stores/data.json", `{"lastUpdate":${Date.now()}}`);
+  downloadJars();
 }
 
-downloadJars();
+const datajson = require("./stores/data.json");
+if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
+  downloadJars();
+}
 setInterval(() => {
   downloadJars();
 }, 1000 * 60 * 60 * 12);
 
 function downloadJars() {
+  fs.writeFileSync("stores/data.json", `{"lastUpdate":${Date.now()}}`);
   files.GET("https://api.jarsmc.xyz/jars/arthHosting", (data) => {
     data = JSON.parse(data);
     let downloadProgress = [];
@@ -158,7 +178,15 @@ function downloadJars() {
                   jar.software +
                   "/" +
                   jar.version,
-                (data3) => {}
+                (data3) => {
+                  fs.copyFileSync(
+                    `data/downloads/${jar.software}-${jar.version}.${extension}`,
+                    `data/${jar.software}-${jar.version}.${extension}`
+                  );
+                  fs.unlinkSync(
+                    `data/downloads/${jar.software}-${jar.version}.${extension}`
+                  );
+                }
               );
               return;
             } else {
