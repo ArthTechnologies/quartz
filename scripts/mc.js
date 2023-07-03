@@ -177,10 +177,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
   if (c == "modded") {
-    fs.copyFileSync(
-      "servers/template/downloading/" + s + "/" + version + ".jar",
-      folder + "/server.jar"
-    );
     const { exec } = require("child_process");
 
     let modpack;
@@ -220,12 +216,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         );
       }
     );
-  } else {
-    fs.copyFileSync(
-      "data/" + software + "-" + version + ".jar",
-      folder + "/server.jar"
-    );
   }
+  fs.copyFileSync(
+    "data/" + software + "-" + version + ".jar",
+    folder + "/server.jar"
+  );
 
   //run code for each item in addons
   //mkdir folder/world/datapacks
@@ -255,16 +250,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   //add new file eula.txt in folder
   fs.writeFileSync(folder + "/eula.txt", "eula=true");
 
-  fs.writeFileSync(
-    folder + "/serverjars.properties",
-    "category=" +
-      c +
-      "\ntype=" +
-      s +
-      "\nversion=" +
-      version +
-      "\nuseHomeDirectory=true"
-  );
   //copy /server/template/Geyser-Spigot.jar to folder/plugins
 
   if (!fs.existsSync(folder + "/plugins")) {
@@ -275,7 +260,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   if (s == "forge") {
     if (isNew) {
       timeout = 10000;
-      exec(path + " -jar server.jar", { cwd: folder });
+      exec(path + " -jar server.jar --installServer", { cwd: folder });
     } else {
       timeout = 0;
     }
@@ -289,7 +274,23 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         .substring(0, 16);
 
       console.log("starting server" + forgeVersion);
-      ls = exec("sh run.sh", { cwd: folder });
+      ls = exec(
+        path +
+          ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/1.20.1-47.0.35/unix_args.txt "$@"`,
+        { cwd: folder }
+      );
+      ls.stdout.on("data", (data) => {
+        count++;
+        if (count >= 9) {
+          out.push(data);
+        }
+
+        terminalOutput[id] = out.join("\n");
+        if (terminalOutput[id].indexOf("Done") > -1) {
+          //replace states[id] with true
+          states[id] = "true";
+        }
+      });
     }, timeout);
   } else {
     ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
