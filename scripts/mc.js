@@ -291,6 +291,17 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
           states[id] = "true";
         }
       });
+      setInterval(() => {
+        if (states[id] == "false") {
+          ls.stdin.write("stop\n");
+        }
+      }, 200);
+      eventEmitter.on("writeCmd", function () {
+        ls.stdin.write(terminalInput + "\n");
+      });
+      ls.on("exit", () => {
+        states[id] = "false";
+      });
     }, timeout);
   } else {
     ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {

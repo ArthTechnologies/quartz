@@ -18,6 +18,7 @@ private.pem
 /servers/template/downloading/*
 /stores/settings.json
 /stores/secrets.json
+/stores/data.json
 accounts.json
 servers.json
 /forgelibs
