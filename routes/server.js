@@ -149,6 +149,7 @@ router.post(`/:id/update/`, function (req, res) {
 
 let lastPlugin = "";
 router.post(`/:id/add/:modtype`, function (req, res) {
+  console.log(req.params.modtype);
   email = req.headers.email;
   token = req.headers.token;
   modtype = req.params.modtype;

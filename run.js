@@ -179,13 +179,19 @@ function downloadJars() {
                   "/" +
                   jar.version,
                 (data3) => {
-                  fs.copyFileSync(
-                    `data/downloads/${jar.software}-${jar.version}.${extension}`,
-                    `data/${jar.software}-${jar.version}.${extension}`
-                  );
-                  fs.unlinkSync(
-                    `data/downloads/${jar.software}-${jar.version}.${extension}`
-                  );
+                  if (
+                    fs.statSync(
+                      `data/downloads/${jar.software}-${jar.version}.${extension}`
+                    ).size > 1000
+                  ) {
+                    fs.copyFileSync(
+                      `data/downloads/${jar.software}-${jar.version}.${extension}`,
+                      `data/${jar.software}-${jar.version}.${extension}`
+                    );
+                    fs.unlinkSync(
+                      `data/downloads/${jar.software}-${jar.version}.${extension}`
+                    );
+                  }
                 }
               );
               return;

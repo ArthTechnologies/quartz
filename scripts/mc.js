@@ -94,12 +94,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let path = "../../java/jdk-17.0.5+8/bin/java";
   const folder = "servers/" + id;
 
-  const args = [
+  let args = [
     "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Daikars.new.flags=true -Dusing.aikars.flags=https://mcflags.emc.gs -jar server.jar",
   ];
   //make a new folder called name using fs
   let s = "paper";
   let c = "servers";
+  let installer = false;
   //make software all lowercase
   software = software.toLowerCase();
   switch (software) {
@@ -114,6 +115,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     case "quilt":
       s = "fabric";
       c = "modded";
+      installer = true;
       break;
     case "vanilla":
       s = "vanilla";
@@ -126,10 +128,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     case "forge":
       s = "forge";
       c = "modded";
+      installer = true;
       break;
     case "fabric":
       s = "fabric";
       c = "modded";
+
       break;
     case "snapshot":
       s = "snapshot";
@@ -140,6 +144,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       c = "servers";
       break;
   }
+
   const settings = require("../stores/settings.json");
   let latestVersion = settings.latestVersion;
   switch (version) {
@@ -168,6 +173,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       path = "../../java/jdk-11.0.18+10/bin/java";
       break;
   }
+  let timeout = 0;
 
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
@@ -181,8 +187,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
     let modpack;
 
-    exec(
-      "curl -o " + folder + "/modpack.mrpack -LO " + modpackURL,
+    files.downloadAsync(
+      folder + "/modpack.mrpack",
+      modpackURL,
       (error, stdout, stderr) => {
         exec(
           "unzip " + folder + "/modpack.mrpack" + " -d " + folder,
@@ -200,13 +207,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
                   //for each file in modpack.files, download it
                   for (i in modpack.files) {
-                    exec(
-                      "curl -o " +
-                        folder +
-                        "/" +
-                        modpack.files[i].path +
-                        " -LO " +
-                        modpack.files[i].downloads[0]
+                    timeout += 1550;
+                    files.downloadAsync(
+                      folder + "/" + modpack.files[i].path,
+                      modpack.files[i].downloads[0],
+                      () => {}
                     );
                   }
                 }
@@ -217,10 +222,20 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       }
     );
   }
-  fs.copyFileSync(
-    "data/" + software + "-" + version + ".jar",
-    folder + "/server.jar"
-  );
+  console.log(software);
+  if (software != "quilt") {
+    fs.copyFileSync(
+      "data/" + software + "-" + version + ".jar",
+      folder + "/server.jar"
+    );
+  } else {
+    fs.copyFileSync("data/" + software + "-0.5.1.jar", folder + "/server.jar");
+    args = [
+      "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Daikars.new.flags=true -Dusing.aikars.flags=https://mcflags.emc.gs -jar server.jar install server " +
+        version +
+        " --download-server",
+    ];
+  }
 
   //run code for each item in addons
   //mkdir folder/world/datapacks
@@ -247,8 +262,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     fs.writeFileSync(folder + "/server.properties", result, "utf8");
   }
 
-  //add new file eula.txt in folder
-  fs.writeFileSync(folder + "/eula.txt", "eula=true");
+  if (software == "quilt") {
+    //add new file eula.txt in folder
+    fs.writeFileSync(folder + "/server/eula.txt", "eula=true");
+  } else {
+    //add new file eula.txt in folder
+    fs.writeFileSync(folder + "/eula.txt", "eula=true");
+  }
 
   //copy /server/template/Geyser-Spigot.jar to folder/plugins
 
@@ -257,28 +277,55 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   }
   const { exec } = require("child_process");
   let ls;
-  if (s == "forge") {
+  if (installer) {
     if (isNew) {
-      timeout = 10000;
-      exec(path + " -jar server.jar --installServer", { cwd: folder });
+      states[id] = "installing";
+      timeout += 10000;
+      if (software == "forge") {
+        exec(path + " -jar server.jar --installServer", { cwd: folder });
+      } else {
+        //quilt
+        exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
+          console.log("stdout: " + stdout);
+          console.log("stderr: " + stderr);
+          console.log("error: " + error);
+        });
+      }
     } else {
       timeout = 0;
     }
-    let forgeVersion = null;
+
     //wait for forge to install
     setTimeout(() => {
+      states[id] = "starting";
       //-Dlog4j.configurationFile=consoleconfig.xml
       //get the forge version from the name of the folder inside /libraries/net/minecraftforge/forge/
-      let forgeVersion = fs
-        .readdirSync(folder + "/libraries/net/minecraftforge/forge/")[0]
-        .substring(0, 16);
+      let forgeVersion = fs.readdirSync(
+        folder + "/libraries/net/minecraftforge/forge/"
+      )[0];
 
-      console.log("starting server" + forgeVersion);
-      ls = exec(
-        path +
-          ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/1.20.1-47.0.35/unix_args.txt "$@"`,
-        { cwd: folder }
+      let execLine = "";
+      let cwd = folder;
+      console.log(forgeVersion);
+      console.log(
+        fs.readdirSync(folder + "/libraries/net/minecraftforge/forge/")[0]
       );
+      if (software == "forge") {
+        execLine =
+          path +
+          ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
+      } else {
+        path = "../" + path;
+        cwd += "/server";
+        execLine = path + " -jar quilt-server-launch.jar nogui";
+      }
+      console.log("yooooooo");
+      ls = exec(execLine, { cwd: cwd }, (error, stdout, stderr) => {
+        console.log("stdout: " + stdout);
+        console.log("stderr: " + stderr);
+        console.log("error: " + error);
+      });
+
       ls.stdout.on("data", (data) => {
         count++;
         if (count >= 9) {
@@ -308,6 +355,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       console.log("stdout: " + stdout);
       console.log("stderr: " + stderr);
       console.log("error: " + error);
+      console.log("path: " + path + " " + args);
     });
   }
 
@@ -358,31 +406,32 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let out = [];
   let count = 0;
 
-  ls.stdout.on("data", (data) => {
-    count++;
-    if (count >= 9) {
-      out.push(data);
-    }
+  if (ls != undefined) {
+    ls.stdout.on("data", (data) => {
+      count++;
+      if (count >= 9) {
+        out.push(data);
+      }
 
-    terminalOutput[id] = out.join("\n");
-    if (terminalOutput[id].indexOf("Done") > -1) {
-      //replace states[id] with true
-      states[id] = "true";
-    }
-  });
+      terminalOutput[id] = out.join("\n");
+      if (terminalOutput[id].indexOf("Done") > -1) {
+        //replace states[id] with true
+        states[id] = "true";
+      }
+    });
 
-  setInterval(() => {
-    if (states[id] == "false") {
-      ls.stdin.write("stop\n");
-    }
-  }, 200);
-  eventEmitter.on("writeCmd", function () {
-    ls.stdin.write(terminalInput + "\n");
-  });
-  ls.on("exit", () => {
-    states[id] = "false";
-  });
-
+    setInterval(() => {
+      if (states[id] == "false") {
+        ls.stdin.write("stop\n");
+      }
+    }, 200);
+    eventEmitter.on("writeCmd", function () {
+      ls.stdin.write(terminalInput + "\n");
+    });
+    ls.on("exit", () => {
+      states[id] = "false";
+    });
+  }
   files.download(
     "java/servers/template/downloading/cx_geyser-spigot_Geyser.jar",
     "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
