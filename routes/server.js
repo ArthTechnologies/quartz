@@ -483,11 +483,10 @@ router.get("/:id/world", function (req, res) {
     id = req.params.id;
     const exec = require("child_process").exec;
     exec(`zip -r -q -X servers/${id}/world.zip servers/${id}/world`, (err) => {
-      console.log("zipped");
       res.header("Content-Type", "application/zip");
-      res.status(200).download(`servers/${id}/world.zip`, "world.zip", () => {
+      res.status(200).send(`servers/${id}/world.zip`, "world.zip", () => {
         //delete the zip file
-        //fs.unlinkSync(`servers/${id}/world.zip`);
+        fs.unlinkSync(`servers/${id}/world.zip`);
       });
     });
   } else {
