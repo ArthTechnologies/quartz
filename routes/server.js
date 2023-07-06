@@ -484,7 +484,7 @@ router.get("/:id/world", function (req, res) {
     const exec = require("child_process").exec;
     exec(`zip -r -q -X servers/${id}/world.zip servers/${id}/world`, (err) => {
       res.header("Content-Type", "application/zip");
-      res.status(200).send(fs.readFileSync(`servers/${id}/world.zip`), () => {
+      res.status(200).sendFile(`servers/${id}/world.zip`, "world.zip", () => {
         //delete the zip file
         fs.unlinkSync(`servers/${id}/world.zip`);
       });
