@@ -207,7 +207,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
                   //for each file in modpack.files, download it
                   for (i in modpack.files) {
-                    timeout += 1550;
                     files.downloadAsync(
                       folder + "/" + modpack.files[i].path,
                       modpack.files[i].downloads[0],
