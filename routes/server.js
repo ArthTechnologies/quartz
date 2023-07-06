@@ -514,6 +514,20 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
         fs.mkdirSync(`servers/${id}/world`);
         fs.mkdirSync(`servers/${id}/world/datapacks`);
 
+        if (req.query.seed != undefined) {
+          //read server.properties, find the line with the seed, replace it with 'seed={req.query.seed}'
+          var text = fs
+            .readFileSync(`servers/${id}/server.properties`)
+            .toString();
+          var textByLine = text.split("\n");
+          var index = textByLine.findIndex((line) =>
+            line.startsWith("level-seed")
+          );
+          textByLine[index] = `level-seed=${req.query.seed}`;
+          var newText = textByLine.join("\n");
+          fs.writeFileSync(`servers/${id}/server.properties`, newText);
+        }
+
         res.status(200).json({ msg: `No file uploaded, Deleting World.` });
       } else {
         files.removeDirectoryRecursive(`servers/${id}/world`);
@@ -522,28 +536,10 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
         //unzip the file and put it in /servers/id/world
 
         const exec = require("child_process").exec;
-        //wait 5s
-        setTimeout(() => {
-          exec(`unzip -o ${req.file.path} `, (err, stdout, stderr) => {
-            if (err) {
-              console.log(err);
-            } else {
-              console.log("unzipped world");
-              //start server back up
-              f.run(
-                id,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                email,
-                false
-              );
-            }
-          });
-        }, 5000);
+
         res.status(200).json({ msg: `Success: Uploaded world.` });
       }
+      f.run(id, undefined, undefined, undefined, undefined, email, false);
     }, 5000);
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
