@@ -34,11 +34,11 @@ router.get(`/`, function (req, res) {
 
 router.get(`/worldgenMods`, function (req, res) {
   //for each file in worldgen, if it has req.query.version, add filename.split("-")[0] to the returj array
-  let dirArray = fs.readdirSync("servers/template/downloading/worldgen");
+  let wmods = ["terralith", "incendium", "nullscape", "structory"];
   let returnArray = [];
-  dirArray.forEach((file) => {
+  wmods.forEach((file) => {
     console.log(file);
-    if (file.includes(req.query.version)) {
+    if (fs.existsSync(`data/${file}-${req.query.version}.jar`)) {
       returnArray.push(file.split("-")[0]);
     }
   });
