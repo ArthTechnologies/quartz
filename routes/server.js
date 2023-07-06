@@ -479,12 +479,12 @@ router.get("/:id/world", function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   if (token == accounts[email].token) {
-    res.header("Content-Length", fs.statSync(`servers/${id}/world.zip`).size);
     //zip /servers/id/world and send it to the client
     id = req.params.id;
     const exec = require("child_process").exec;
     exec(`zip -r -q -X servers/${id}/world.zip servers/${id}/world`, (err) => {
       res.header("Content-Type", "application/zip");
+      res.header("Content-Length", fs.statSync(`servers/${id}/world.zip`).size);
       res.status(200).download(`servers/${id}/world.zip`, "world.zip", () => {
         //delete the zip file
         fs.unlinkSync(`servers/${id}/world.zip`);
