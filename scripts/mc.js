@@ -173,7 +173,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       path = "../../java/jdk-11.0.18+10/bin/java";
       break;
   }
-  let timeout = 0;
+  let doneInstalling = false;
 
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
@@ -279,15 +279,15 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   }
   const { exec } = require("child_process");
   let ls;
+  let interval = 0;
   if (installer) {
     if (isNew) {
+      interval = 500;
       states[id] = "installing";
-      timeout += 20000;
+
       if (software == "forge") {
         exec(path + " -jar server.jar --installServer", { cwd: folder }, () => {
-          console.log(
-            "done installing\ndone installing\ndone installing\ndone installing"
-          );
+          doneInstalling = true;
         });
       } else {
         //quilt
@@ -298,68 +298,70 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         });
       }
     } else {
-      timeout = 0;
+      doneInstalling = true;
     }
 
     //wait for forge to install
-    setTimeout(() => {
-      states[id] = "starting";
-      //-Dlog4j.configurationFile=consoleconfig.xml
-      //get the forge version from the name of the folder inside /libraries/net/minecraftforge/forge/
-      let forgeVersion = fs.readdirSync(
-        folder + "/libraries/net/minecraftforge/forge/"
-      )[0];
+    setInterval(() => {
+      if (doneInstalling) {
+        states[id] = "starting";
+        //-Dlog4j.configurationFile=consoleconfig.xml
+        //get the forge version from the name of the folder inside /libraries/net/minecraftforge/forge/
+        let forgeVersion = fs.readdirSync(
+          folder + "/libraries/net/minecraftforge/forge/"
+        )[0];
 
-      let execLine = "";
-      let cwd = folder;
-      console.log(forgeVersion);
-      console.log(
-        fs.readdirSync(folder + "/libraries/net/minecraftforge/forge/")[0]
-      );
-      if (software == "forge") {
-        execLine =
-          path +
-          ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
+        let execLine = "";
+        let cwd = folder;
+        console.log(forgeVersion);
         console.log(
-          fs.existsSync(folder + "/user_jvm_args.txt") + "jvm exists"
+          fs.readdirSync(folder + "/libraries/net/minecraftforge/forge/")[0]
         );
-        console.log(fs.statSync(folder + "/libraries").size + "size");
-      } else {
-        path = "../" + path;
-        cwd += "/server";
-        execLine = path + " -jar quilt-server-launch.jar nogui";
+        if (software == "forge") {
+          execLine =
+            path +
+            ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
+          console.log(
+            fs.existsSync(folder + "/user_jvm_args.txt") + "jvm exists"
+          );
+          console.log(fs.statSync(folder + "/libraries").size + "size");
+        } else {
+          path = "../" + path;
+          cwd += "/server";
+          execLine = path + " -jar quilt-server-launch.jar nogui";
+        }
+        console.log("yooooooo");
+        ls = exec(execLine, { cwd: cwd }, (error, stdout, stderr) => {
+          console.log("stdout: " + stdout);
+          console.log("stderr: " + stderr);
+          console.log("error: " + error);
+        });
+
+        ls.stdout.on("data", (data) => {
+          count++;
+          if (count >= 9) {
+            out.push(data);
+          }
+
+          terminalOutput[id] = out.join("\n");
+          if (terminalOutput[id].indexOf("Done") > -1) {
+            //replace states[id] with true
+            states[id] = "true";
+          }
+        });
+        setInterval(() => {
+          if (states[id] == "false") {
+            ls.stdin.write("stop\n");
+          }
+        }, 200);
+        eventEmitter.on("writeCmd", function () {
+          ls.stdin.write(terminalInput + "\n");
+        });
+        ls.on("exit", () => {
+          states[id] = "false";
+        });
       }
-      console.log("yooooooo");
-      ls = exec(execLine, { cwd: cwd }, (error, stdout, stderr) => {
-        console.log("stdout: " + stdout);
-        console.log("stderr: " + stderr);
-        console.log("error: " + error);
-      });
-
-      ls.stdout.on("data", (data) => {
-        count++;
-        if (count >= 9) {
-          out.push(data);
-        }
-
-        terminalOutput[id] = out.join("\n");
-        if (terminalOutput[id].indexOf("Done") > -1) {
-          //replace states[id] with true
-          states[id] = "true";
-        }
-      });
-      setInterval(() => {
-        if (states[id] == "false") {
-          ls.stdin.write("stop\n");
-        }
-      }, 200);
-      eventEmitter.on("writeCmd", function () {
-        ls.stdin.write(terminalInput + "\n");
-      });
-      ls.on("exit", () => {
-        states[id] = "false";
-      });
-    }, timeout);
+    }, interval);
   } else {
     ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
       console.log("stdout: " + stdout);
