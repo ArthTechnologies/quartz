@@ -479,18 +479,34 @@ router.get("/:id/world", function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   if (token == accounts[email].token) {
-    //zip /servers/id/world and send it to the client
     id = req.params.id;
     const exec = require("child_process").exec;
-    exec(`zip -r -q -X servers/${id}/world.zip servers/${id}/world`, (err) => {
+    const zipProcess = exec(
+      `zip -r -q -X servers/${id}/world.zip servers/${id}/world`
+    );
+
+    zipProcess.on("exit", () => {
       res.header("Content-Type", "application/zip");
-      res.status(200).sendFile(`servers/${id}/world.zip`, "world.zip", () => {
-        //delete the zip file
+      res.header("Content-Disposition", "attachment; filename=world.zip");
+
+      const fileStream = fs.createReadStream(`servers/${id}/world.zip`);
+      fileStream.pipe(res);
+
+      fileStream.on("end", () => {
+        // Delete the zip file
         fs.unlinkSync(`servers/${id}/world.zip`);
       });
     });
+
+    zipProcess.stderr.on("data", (data) => {
+      // Handle any errors that occur during the zip process
+      console.error(`Error: ${data}`);
+      res
+        .status(500)
+        .json({ msg: "An error occurred while creating the zip file." });
+    });
   } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
+    res.status(401).json({ msg: "Invalid credentials." });
   }
 });
 
