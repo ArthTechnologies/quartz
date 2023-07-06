@@ -530,6 +530,16 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
 
         res.status(200).json({ msg: `No file uploaded, Deleting World.` });
       } else {
+        var text = fs
+          .readFileSync(`servers/${id}/server.properties`)
+          .toString();
+        var textByLine = text.split("\n");
+        var index = textByLine.findIndex((line) =>
+          line.startsWith("level-seed")
+        );
+        textByLine[index] = `level-seed=`;
+        var newText = textByLine.join("\n");
+        fs.writeFileSync(`servers/${id}/server.properties`, newText);
         files.removeDirectoryRecursive(`servers/${id}/world`);
         fs.mkdirSync(`servers/${id}/world`);
         fs.mkdirSync(`servers/${id}/world/datapacks`);
