@@ -548,23 +548,26 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
         const exec = require("child_process").exec;
         //wait 5s
         setTimeout(() => {
-          exec(`unzip -o ${req.file.path} `, (err, stdout, stderr) => {
-            if (err) {
-              console.log(err);
-            } else {
-              console.log("unzipped world");
-              //start server back up
-              f.run(
-                id,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                email,
-                false
-              );
+          exec(
+            `unzip -o ${req.file.path} servers/` + id,
+            (err, stdout, stderr) => {
+              if (err) {
+                console.log(err);
+              } else {
+                console.log("unzipped world");
+                //start server back up
+                f.run(
+                  id,
+                  undefined,
+                  undefined,
+                  undefined,
+                  undefined,
+                  email,
+                  false
+                );
+              }
             }
-          });
+          );
         }, 5000);
 
         res.status(200).json({ msg: `Success: Uploaded world.` });
