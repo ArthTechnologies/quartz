@@ -487,10 +487,7 @@ router.get("/:id/world", function (req, res) {
       { cwd: `servers/${id}/world` },
       (err) => {
         res.setHeader("Content-Type", "application/zip");
-        res.setHeader(
-          "Content-Size",
-          fs.statSync(`servers/${id}/world.zip`).size
-        );
+
         res.setHeader("Content-Disposition", `attachment; filename=world.zip`);
 
         res.status(200).download(`servers/${id}/world.zip`, "world.zip", () => {
