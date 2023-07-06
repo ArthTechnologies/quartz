@@ -284,7 +284,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       states[id] = "installing";
       timeout += 10000;
       if (software == "forge") {
-        exec(path + " -jar server.jar --installServer", { cwd: folder });
+        exec(path + " -jar server.jar --installServer", { cwd: folder }, () => {
+          console.log(
+            "done installing\ndone installing\ndone installing\ndone installing"
+          );
+        });
       } else {
         //quilt
         exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
