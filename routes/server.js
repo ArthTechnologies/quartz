@@ -484,7 +484,7 @@ router.get("/:id/world", function (req, res) {
     const exec = require("child_process").exec;
     exec(
       `zip -r -q -X servers/${id}/world.zip servers/${id}/world`,
-      { cwd: folder },
+      { cwd: `servers/${id}` },
       (err) => {
         res.setHeader("Content-Type", "application/zip");
         res.setHeader(
