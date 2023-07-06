@@ -549,7 +549,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
         //wait 5s
         setTimeout(() => {
           exec(
-            `unzip -o servers/` + id + ` ${req.file.path}`,
+            `unzip -o ${req.file.path} -d servers/` + id + ``,
             (err, stdout, stderr) => {
               if (err) {
                 console.log(err);
