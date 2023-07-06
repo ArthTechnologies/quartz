@@ -319,6 +319,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         console.log(
           fs.existsSync(folder + "/user_jvm_args.txt") + "jvm exists"
         );
+        console.log(fs.statSync(folder + "/libraries").size + "size");
       } else {
         path = "../" + path;
         cwd += "/server";
