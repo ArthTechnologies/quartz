@@ -522,6 +522,16 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               console.log(err);
             } else {
               console.log("unzipped world");
+              //start server back up
+              f.run(
+                id,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                email,
+                false
+              );
             }
           });
         }, 5000);
