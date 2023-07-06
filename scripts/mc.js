@@ -315,7 +315,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
         let execLine = "";
         let cwd = folder;
-        console.log(forgeVersion);
+
         console.log(
           fs.readdirSync(folder + "/libraries/net/minecraftforge/forge/")[0]
         );
@@ -323,16 +323,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
           execLine =
             path +
             ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
-          console.log(
-            fs.existsSync(folder + "/user_jvm_args.txt") + "jvm exists"
-          );
-          console.log(fs.statSync(folder + "/libraries").size + "size");
         } else {
           path = "../" + path;
           cwd += "/server";
           execLine = path + " -jar quilt-server-launch.jar nogui";
         }
-        console.log("yooooooo");
+
         ls = exec(execLine, { cwd: cwd }, (error, stdout, stderr) => {
           console.log("stdout: " + stdout);
           console.log("stderr: " + stderr);
