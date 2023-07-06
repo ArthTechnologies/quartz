@@ -539,7 +539,9 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
 
         res.status(200).json({ msg: `Success: Uploaded world.` });
       }
-      f.run(id, undefined, undefined, undefined, undefined, email, false);
+      setTimeout(() => {
+        f.run(id, undefined, undefined, undefined, undefined, email, false);
+      }, 500);
     }, 5000);
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
