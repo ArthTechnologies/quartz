@@ -211,7 +211,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                     files.downloadAsync(
                       folder + "/" + modpack.files[i].path,
                       modpack.files[i].downloads[0],
-                      () => {}
+                      () => {
+                        console.log("done downloading");
+                      }
                     );
                   }
                 }
@@ -314,6 +316,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         execLine =
           path +
           ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
+        console.log(
+          fs.existsSync(folder + "/user_jvm_args.txt") + "jvm exists"
+        );
       } else {
         path = "../" + path;
         cwd += "/server";
