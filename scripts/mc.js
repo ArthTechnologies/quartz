@@ -4,6 +4,7 @@ fs = require("fs");
 let states = [];
 const files = require("./files.js");
 let servers = require("../servers.json");
+const { time } = require("console");
 let terminalOutput = [];
 let terminalInput = "";
 function checkServers(accountId) {
@@ -299,10 +300,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     } else {
       doneInstalling = true;
     }
+    let timeToLoad = true;
 
     //wait for forge to install
     setInterval(() => {
-      if (doneInstalling) {
+      if (doneInstalling & timeToLoad) {
+        timeToLoad = false;
         states[id] = "starting";
         //-Dlog4j.configurationFile=consoleconfig.xml
         //get the forge version from the name of the folder inside /libraries/net/minecraftforge/forge/
