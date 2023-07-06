@@ -248,7 +248,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   for (i in addons) {
     if (addons[i] != undefined && addons[i] != "") {
       fs.copyFileSync(
-        "servers/template/" + addons[i] + ".zip",
+        "data/" + addons[i] + "-" + version + ".zip",
         folder + "/world/datapacks/" + addons[i] + ".zip"
       );
     }
