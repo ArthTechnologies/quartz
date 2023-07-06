@@ -482,23 +482,19 @@ router.get("/:id/world", function (req, res) {
     //zip /servers/id/world and send it to the client
     id = req.params.id;
     const exec = require("child_process").exec;
-    exec(
-      `zip -r -q -X servers/${id}/world.zip servers/${id}/world`,
-      { cwd: `servers/${id}` },
-      (err) => {
-        res.setHeader("Content-Type", "application/zip");
-        res.setHeader(
-          "Content-Size",
-          fs.statSync(`servers/${id}/world.zip`).size
-        );
-        res.setHeader("Content-Disposition", `attachment; filename=world.zip`);
+    exec(`zip -r -q -X world.zip world`, { cwd: `servers/${id}` }, (err) => {
+      res.setHeader("Content-Type", "application/zip");
+      res.setHeader(
+        "Content-Size",
+        fs.statSync(`servers/${id}/world.zip`).size
+      );
+      res.setHeader("Content-Disposition", `attachment; filename=world.zip`);
 
-        res.status(200).download(`servers/${id}/world.zip`, "world.zip", () => {
-          //delete the zip file
-          fs.unlinkSync(`servers/${id}/world.zip`);
-        });
-      }
-    );
+      res.status(200).download(`servers/${id}/world.zip`, "world.zip", () => {
+        //delete the zip file
+        fs.unlinkSync(`servers/${id}/world.zip`);
+      });
+    });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
