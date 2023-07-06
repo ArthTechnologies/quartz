@@ -282,7 +282,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   if (installer) {
     if (isNew) {
       states[id] = "installing";
-      timeout += 10000;
+      timeout += 20000;
       if (software == "forge") {
         exec(path + " -jar server.jar --installServer", { cwd: folder }, () => {
           console.log(
