@@ -563,7 +563,6 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                   email,
                   false
                 );
-                res.send("Success: Uploaded world");
               }
             }
           );
