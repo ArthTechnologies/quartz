@@ -482,4 +482,5 @@ module.exports = {
   checkServer,
   readTerminal,
   writeTerminal,
+  stopAsync,
 };
