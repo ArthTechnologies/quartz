@@ -452,7 +452,16 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   );
 }
 function stop(id) {
-  states[id] = "false";
+  states[id] = "stopping";
+}
+
+function stopAsync(id, callback) {
+  states[id] = "stopping";
+  setInterval(() => {
+    if (states[id] == "false") {
+      callback();
+    }
+  }, 200);
 }
 
 function readTerminal(id) {
