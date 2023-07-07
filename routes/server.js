@@ -506,9 +506,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   if (token == accounts[email].token) {
-    f.stop(req.params.id);
-    //timeout 5s
-    setTimeout(() => {
+    f.stopAsync(req.params.id, () => {
       if (!req.file) {
         files.removeDirectoryRecursive(`servers/${id}/world`);
         fs.mkdirSync(`servers/${id}/world`);
@@ -572,7 +570,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
 
         res.status(200).json({ msg: `Success: Uploaded world.` });
       }
-    }, 5000);
+    });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
