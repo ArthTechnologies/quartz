@@ -305,6 +305,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     //wait for forge to install
     setInterval(() => {
       if (doneInstalling & timeToLoad) {
+        console.log("going" + isTimeToLoad);
         timeToLoad = false;
         states[id] = "starting";
         //-Dlog4j.configurationFile=consoleconfig.xml
