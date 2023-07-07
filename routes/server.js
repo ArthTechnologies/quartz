@@ -566,9 +566,8 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               }
             }
           );
+          res.status(200).json({ msg: `Success: Uploaded world.` });
         }, 5000);
-
-        res.status(200).json({ msg: `Success: Uploaded world.` });
       }
     });
   } else {
