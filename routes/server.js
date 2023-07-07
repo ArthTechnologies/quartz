@@ -563,7 +563,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                   email,
                   false
                 );
-                res.status(200).json({ msg: `Success: Uploaded world.` });
+                res.send("Success: Uploaded world");
               }
             }
           );
