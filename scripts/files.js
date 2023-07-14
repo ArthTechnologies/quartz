@@ -50,8 +50,8 @@ function getIPID(ip) {
 
   if (secrets.pepper == undefined) {
     secrets.pepper = randomBytes(12).toString("hex");
-    console.log(secrets);
-    fs.writeFileSync("stores/secrets.json", secrets);
+
+    fs.writeFileSync("stores/secrets.json", JSON.stringify(secrets));
   }
   return hash(ip, secrets.pepper).split(":")[1];
 }
