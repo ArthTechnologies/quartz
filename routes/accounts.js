@@ -65,13 +65,8 @@ Router.post("/email/signin/", (req, res) => {
   let response = {};
 
   let salt = accounts[email].salt;
-  let emailExists = accounts[email] != undefined;
-  console.log(emailExists + "em");
 
-  if (
-    accounts[email].password == files.hash(password, salt).split(":")[1] &&
-    emailExists
-  ) {
+  if (accounts[email].password == files.hash(password, salt).split(":")[1]) {
     accounts[email].ips[req.ip] = files.getIPID(req.ip);
     response = {
       token: accounts[email].token,
