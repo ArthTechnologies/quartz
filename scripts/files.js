@@ -1,4 +1,5 @@
 const { createHash, scryptSync, randomBytes } = require("crypto");
+
 function download(file, url) {
   exec(`curl -o ${file} -LO ${url}`);
 }
@@ -50,7 +51,7 @@ function getIPID(ip) {
     secrets.pepper = randomBytes(12).toString("hex");
     fs.writeFileSync("stores/secrets.json", secrets);
   }
-  return hash(ip, require("../stores/secrets.json").pepper).split(":")[1];
+  return hash(ip, secrets.pepper).split(":")[1];
 }
 
 function write(file, content) {
