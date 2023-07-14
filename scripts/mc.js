@@ -432,7 +432,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     });
 
     setInterval(() => {
-      if (states[id] == "false") {
+      if (states[id] == "stopping") {
         ls.stdin.write("stop\n");
       }
     }, 200);
