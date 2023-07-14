@@ -47,9 +47,10 @@ function removeDirectoryRecursive(directoryPath) {
 
 function getIPID(ip) {
   const secrets = require("../stores/secrets.json");
-  console.log(secrets.peper == undefined);
+
   if (secrets.pepper == undefined) {
     secrets.pepper = randomBytes(12).toString("hex");
+    console.log(secrets.peper == undefined);
     fs.writeFileSync("stores/secrets.json", secrets);
   }
   return hash(ip, secrets.pepper).split(":")[1];
