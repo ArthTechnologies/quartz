@@ -377,13 +377,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
 
-  if (fs.existsSync("data/geyser-Geyser.jar")) {
+  if (fs.existsSync("cx_geyser-spigot_Geyser")) {
     fs.copyFileSync(
       "data/cx_geyser-spigot_Geyser.jar",
       folder + "/plugins/cx_geyser-spigot_Geyser.jar"
     );
     fs.copyFileSync(
-      "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
+      "data/cx_floodgate-spigot_Floodgate.jar",
       folder + "/plugins/cx_floodgate-spigot_Floodgate.jar"
     );
   }
