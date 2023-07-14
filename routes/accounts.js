@@ -67,7 +67,7 @@ Router.post("/email/signin/", (req, res) => {
   let salt = accounts[email].salt;
 
   if (accounts[email].password == files.hash(password, salt).split(":")[1]) {
-    console.log("ipid" + files.getIPID(req.ip) + accounts[email].ips);
+    console.log("ipid" + accounts[email].ips);
     /*
     if (accounts[email].ips.indexOf(files.getIPID(req.ip)) == -1) {
       accounts[email].ips.push(files.getIPID(req.ip));
