@@ -377,6 +377,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
 
+  console.log(
+    "OHIEDFWJEWKLJRFLKEJW" + fs.existsSync("data/cx_geyser-spigot_Geyser.jar")
+  );
   if (fs.existsSync("data/cx_geyser-spigot_Geyser.jar")) {
     fs.copyFileSync(
       "data/cx_geyser-spigot_Geyser.jar",
