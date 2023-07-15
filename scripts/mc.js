@@ -368,6 +368,30 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       console.log("error: " + error);
       console.log("path: " + path + " " + args);
     });
+    ls.stdout.on("data", (data) => {
+      count++;
+      if (count >= 9) {
+        out.push(data);
+      }
+
+      terminalOutput[id] = out.join("\n");
+      if (terminalOutput[id].indexOf("Done") > -1) {
+        //replace states[id] with true
+        states[id] = "true";
+      }
+    });
+
+    setInterval(() => {
+      if (states[id] == "stopping") {
+        ls.stdin.write("stop\n");
+      }
+    }, 200);
+    eventEmitter.on("writeCmd", function () {
+      ls.stdin.write(terminalInput + "\n");
+    });
+    ls.on("exit", () => {
+      states[id] = "false";
+    });
   }
 
   //for every item in the cmd array, run the command
