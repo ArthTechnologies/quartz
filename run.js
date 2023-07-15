@@ -52,28 +52,6 @@ if (!fs.existsSync("servers.json")) {
 
 const s = require("./scripts/stripe.js");
 
-files.downloadAsync(
-  "data/downloads/cx_geyser-spigot_Geyser.jar",
-  "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
-  (data) => {
-    fs.copyFileSync(
-      `data/downloads/cx_geyser-spigot_Geyser.jar`,
-      `data/cx_geyser-spigot_Geyser.jar`
-    );
-    fs.unlinkSync(`data/downloads/cx_geyser-spigot_Geyser.jar`);
-  }
-);
-files.downloadAsync(
-  "data/downloads/cx_floodgate-spigot_Floodgate.jar",
-  "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
-  (data) => {
-    fs.copyFileSync(
-      `data/downloads/cx_floodgate-spigot_Floodgate.jar`,
-      `data/cx_floodgate-spigot_Floodgate.jar`
-    );
-    fs.unlinkSync(`data/downloads/cx_floodgate-spigot_Floodgate.jar`);
-  }
-);
 let modVersions = [{ c: "modded", s: "forge", v: "1.19.4" }];
 
 if (!fs.existsSync("data")) {
@@ -93,6 +71,31 @@ setInterval(() => {
 
 function downloadJars() {
   fs.writeFileSync("stores/data.json", `{"lastUpdate":${Date.now()}}`);
+  //geyser
+  files.downloadAsync(
+    "data/downloads/cx_geyser-spigot_Geyser.jar",
+    "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
+    (data) => {
+      fs.copyFileSync(
+        `data/downloads/cx_geyser-spigot_Geyser.jar`,
+        `data/cx_geyser-spigot_Geyser.jar`
+      );
+      fs.unlinkSync(`data/downloads/cx_geyser-spigot_Geyser.jar`);
+    }
+  );
+  files.downloadAsync(
+    "data/downloads/cx_floodgate-spigot_Floodgate.jar",
+    "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
+    (data) => {
+      fs.copyFileSync(
+        `data/downloads/cx_floodgate-spigot_Floodgate.jar`,
+        `data/cx_floodgate-spigot_Floodgate.jar`
+      );
+      fs.unlinkSync(`data/downloads/cx_floodgate-spigot_Floodgate.jar`);
+    }
+  );
+
+  //plugins
   files.GET("https://api.jarsmc.xyz/jars/arthHosting", (data) => {
     data = JSON.parse(data);
     let downloadProgress = [];
