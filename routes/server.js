@@ -508,7 +508,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   if (token == accounts[email].token) {
     let lock = false;
     f.stopAsync(req.params.id, () => {
-      SetTimeout(() => {
+      setTimeout(() => {
         if (!req.file) {
           files.removeDirectoryRecursive(`servers/${id}/world`);
           fs.mkdirSync(`servers/${id}/world`);
