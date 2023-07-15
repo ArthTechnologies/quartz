@@ -517,21 +517,25 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             fs.mkdirSync(`servers/${id}/world`);
             fs.mkdirSync(`servers/${id}/world/datapacks`);
 
-            if (req.query.seed != undefined) {
-              //read server.properties, find the line with the seed, replace it with 'seed={req.query.seed}'
-              var text = fs
-                .readFileSync(`servers/${id}/server.properties`)
-                .toString();
-              var textByLine = text.split("\n");
-              var index = textByLine.findIndex((line) =>
-                line.startsWith("level-seed")
-              );
-              textByLine[index] = `level-seed=${req.query.seed}`;
-              var newText = textByLine.join("\n");
-              console.log("seed" + textByLine[index]);
-              fs.writeFileSync(`servers/${id}/server.properties`, newText);
+            if (req.query.seed == undefined) {
+              req.query.seed = "";
             }
-            setTimeout(() => {
+            //read server.properties, find the line with the seed, replace it with 'seed={req.query.seed}'
+            var text = fs
+              .readFileSync(`servers/${id}/server.properties`)
+              .toString();
+            var textByLine = text.split("\n");
+            var index = textByLine.findIndex((line) =>
+              line.startsWith("level-seed")
+            );
+            textByLine[index] = `level-seed=${req.query.seed}`;
+            var newText = textByLine.join("\n");
+            console.log("seed" + textByLine[index]);
+            fs.writeFile(`servers/${id}/server.properties`, newText, (err) => {
+              if (err) {
+                console.log(err);
+              }
+
               f.run(
                 id,
                 undefined,
@@ -541,7 +545,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                 email,
                 false
               );
-            }, 5000);
+            });
           } else {
             var text = fs
               .readFileSync(`servers/${id}/server.properties`)
