@@ -73,17 +73,17 @@ function downloadJars() {
   fs.writeFileSync("stores/data.json", `{"lastUpdate":${Date.now()}}`);
   //geyser
   files.downloadAsync(
-    "data/downloads/Geyser-Spigot.jar",
+    "data/downloads/cx_geyser-spigot_Geyser.jar",
     "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
     (data) => {
-      if (fs.existsSync(`data/Geyser-Spigot.jar`)) {
-        fs.unlinkSync(`data/Geyser-Spigot.jar`);
+      if (fs.existsSync(`data/cx_geyser-spigot_Geyser.jar`)) {
+        fs.unlinkSync(`data/cx_geyser-spigot_Geyser.jar`);
       }
       fs.copyFileSync(
-        `data/downloads/Geyser-Spigot.jar`,
-        `data/Geyser-Spigot.jar`
+        `data/downloads/cx_geyser-spigot_Geyser.jar`,
+        `data/cx_geyser-spigot_Geyser.jar`
       );
-      fs.unlinkSync(`data/downloads/Geyser-Spigot.jar`);
+      fs.unlinkSync(`data/downloads/cx_geyser-spigot_Geyser.jar`);
     }
   );
   files.downloadAsync(

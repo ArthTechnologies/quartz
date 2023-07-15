@@ -377,11 +377,15 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
 
-  console.log("OHIEDFWJEWKLJRFLKEJW" + fs.existsSync("data/Geyser-Spigot.jar"));
-  if (fs.existsSync("data/Geyser-Spigot.jar")) {
+  console.log(
+    "OHIEDFWJEWKLJRFLKEJW" + fs.existsSync("data/cx_geyser-spigot_Geyser.jar")
+  );
+  if (fs.existsSync("data/cx_geyser-spigot_Geyser.jar")) {
+    fs.unlinkSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar");
+    fs.unlinkSync(folder + "/plugins/cx_floodgate-spigot_Floodgate.jar");
     fs.copyFileSync(
-      "data/Geyser-Spigot.jar",
-      folder + "/plugins/Geyser-Spigot.jar"
+      "data/cx_geyser-spigot_Geyser.jar",
+      folder + "/plugins/cx_geyser-spigot_Geyser.jar"
     );
     fs.copyFileSync(
       "data/cx_floodgate-spigot_Floodgate.jar",
@@ -404,8 +408,8 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
 
   fs.copyFile(
-    "servers/template/downloading/Geyser-Spigot.jar",
-    folder + "/plugins/Geyser-Spigot.jar",
+    "servers/template/downloading/cx_geyser-spigot_Geyser.jar",
+    folder + "/plugins/cx_geyser-spigot_Geyser.jar",
     (err) => {}
   );
 
@@ -445,7 +449,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     });
   }
   files.download(
-    "java/servers/template/downloading/Geyser-Spigot.jar",
+    "java/servers/template/downloading/cx_geyser-spigot_Geyser.jar",
     "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
   );
   files.download(
