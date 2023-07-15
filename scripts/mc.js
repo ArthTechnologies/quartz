@@ -362,6 +362,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       }
     }, interval);
   } else {
+    let count = 0;
     ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
       console.log("stdout: " + stdout);
       console.log("stderr: " + stderr);
