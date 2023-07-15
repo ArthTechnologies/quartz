@@ -165,6 +165,9 @@ function downloadJars() {
             jar.version,
           (data2) => {
             if (
+              fs.existsSync(
+                `data/downloads/${jar.software}-${jar.version}.${extension}`
+              ) &&
               fs.readFileSync(
                 `data/downloads/${jar.software}-${jar.version}.${extension}`
               ).length == 26351
