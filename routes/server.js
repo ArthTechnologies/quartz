@@ -526,6 +526,9 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
           var newText = textByLine.join("\n");
           fs.writeFileSync(`servers/${id}/server.properties`, newText);
         }
+        setTimeout(() => {
+          f.run(id, undefined, undefined, undefined, undefined, email, false);
+        }, 5000);
       } else {
         var text = fs
           .readFileSync(`servers/${id}/server.properties`)
@@ -537,36 +540,37 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
         textByLine[index] = `level-seed=`;
         var newText = textByLine.join("\n");
         fs.writeFileSync(`servers/${id}/server.properties`, newText);
-        files.removeDirectoryRecursive(`servers/${id}/world`);
-        fs.mkdirSync(`servers/${id}/world`);
-        fs.mkdirSync(`servers/${id}/world/datapacks`);
-        //unzip the file and put it in /servers/id/world
+        files.removeDirectoryRecursiveAsync(`servers/${id}/world`, () => {
+          fs.mkdirSync(`servers/${id}/world`);
+          fs.mkdirSync(`servers/${id}/world/datapacks`);
+          //unzip the file and put it in /servers/id/world
 
-        const exec = require("child_process").exec;
-        //wait 5s
-        setTimeout(() => {
-          exec(
-            `unzip -o ${req.file.path} -d servers/` + id + `/world`,
-            (err, stdout, stderr) => {
-              if (err) {
-                console.log(err);
-              } else if (!lock) {
-                console.log("unzipped world");
-                //start server back up
-                f.run(
-                  id,
-                  undefined,
-                  undefined,
-                  undefined,
-                  undefined,
-                  email,
-                  false
-                );
-                lock = true;
+          const exec = require("child_process").exec;
+          //wait 5s
+          setTimeout(() => {
+            exec(
+              `unzip -o ${req.file.path} -d servers/` + id + `/world`,
+              (err, stdout, stderr) => {
+                if (err) {
+                  console.log(err);
+                } else if (!lock) {
+                  console.log("unzipped world");
+                  //start server back up
+                  f.run(
+                    id,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    email,
+                    false
+                  );
+                  lock = true;
+                }
               }
-            }
-          );
-        }, 5000);
+            );
+          }, 5000);
+        });
       }
     });
     res.status(200).json({ msg: `Done` });

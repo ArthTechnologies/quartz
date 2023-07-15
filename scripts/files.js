@@ -47,6 +47,30 @@ function removeDirectoryRecursive(directoryPath) {
   }
 }
 
+function removeDirectoryRecursive(directoryPath) {
+  if (fs.existsSync(directoryPath)) {
+    fs.readdirSync(directoryPath).forEach((file) => {
+      const curPath = `${directoryPath}/${file}`;
+
+      if (fs.lstatSync(curPath).isDirectory()) {
+        // Recursive call if the file is a directory
+        removeDirectoryRecursive(curPath);
+      } else {
+        // Delete the file
+        fs.unlinkSync(curPath);
+      }
+    });
+
+    // Remove the directory itself
+    fs.rmdirSync(directoryPath);
+    console.log(`Directory "${directoryPath}" removed.`);
+    callback();
+  } else {
+    console.log(`Directory "${directoryPath}" does not exist.`);
+    callback();
+  }
+}
+
 function getIPID(ip) {
   const secrets = require("../stores/secrets.json");
 
@@ -85,4 +109,5 @@ module.exports = {
   getIPID,
   removeDirectoryRecursive,
   downloadAsync,
+  removeDirectoryRecursiveAsync,
 };
