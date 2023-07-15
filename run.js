@@ -76,7 +76,9 @@ function downloadJars() {
     "data/downloads/cx_geyser-spigot_Geyser.jar",
     "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
     (data) => {
-      fs.unlinkSync(`data/cx_geyser-spigot_Geyser.jar`);
+      if (fs.existsSync(`data/cx_geyser-spigot_Geyser.jar`)) {
+        fs.unlinkSync(`data/cx_geyser-spigot_Geyser.jar`);
+      }
       fs.copyFileSync(
         `data/downloads/cx_geyser-spigot_Geyser.jar`,
         `data/cx_geyser-spigot_Geyser.jar`
@@ -88,7 +90,9 @@ function downloadJars() {
     "data/downloads/cx_floodgate-spigot_Floodgate.jar",
     "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
     (data) => {
-      fs.unlinkSync(`data/cx_floodgate-spigot_Floodgate.jar`);
+      if (fs.existsSync(`data/cx_floodgate-spigot_Floodgate.jar`)) {
+        fs.unlinkSync(`data/cx_floodgate-spigot_Floodgate.jar`);
+      }
       fs.copyFileSync(
         `data/downloads/cx_floodgate-spigot_Floodgate.jar`,
         `data/cx_floodgate-spigot_Floodgate.jar`
