@@ -507,15 +507,41 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   token = req.headers.token;
   if (token == accounts[email].token) {
     let lock = false;
+    let lock2 = false;
     f.stopAsync(req.params.id, () => {
       setTimeout(() => {
-        if (!req.file) {
-          files.removeDirectoryRecursive(`servers/${id}/world`);
-          fs.mkdirSync(`servers/${id}/world`);
-          fs.mkdirSync(`servers/${id}/world/datapacks`);
+        if (!lock2) {
+          lock2 = true;
+          if (!req.file) {
+            files.removeDirectoryRecursive(`servers/${id}/world`);
+            fs.mkdirSync(`servers/${id}/world`);
+            fs.mkdirSync(`servers/${id}/world/datapacks`);
 
-          if (req.query.seed != undefined) {
-            //read server.properties, find the line with the seed, replace it with 'seed={req.query.seed}'
+            if (req.query.seed != undefined) {
+              //read server.properties, find the line with the seed, replace it with 'seed={req.query.seed}'
+              var text = fs
+                .readFileSync(`servers/${id}/server.properties`)
+                .toString();
+              var textByLine = text.split("\n");
+              var index = textByLine.findIndex((line) =>
+                line.startsWith("level-seed")
+              );
+              textByLine[index] = `level-seed=${req.query.seed}`;
+              var newText = textByLine.join("\n");
+              fs.writeFileSync(`servers/${id}/server.properties`, newText);
+            }
+            setTimeout(() => {
+              f.run(
+                id,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                email,
+                false
+              );
+            }, 5000);
+          } else {
             var text = fs
               .readFileSync(`servers/${id}/server.properties`)
               .toString();
@@ -523,56 +549,42 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             var index = textByLine.findIndex((line) =>
               line.startsWith("level-seed")
             );
-            textByLine[index] = `level-seed=${req.query.seed}`;
+            textByLine[index] = `level-seed=`;
             var newText = textByLine.join("\n");
             fs.writeFileSync(`servers/${id}/server.properties`, newText);
-          }
-          setTimeout(() => {
-            f.run(id, undefined, undefined, undefined, undefined, email, false);
-          }, 5000);
-        } else {
-          var text = fs
-            .readFileSync(`servers/${id}/server.properties`)
-            .toString();
-          var textByLine = text.split("\n");
-          var index = textByLine.findIndex((line) =>
-            line.startsWith("level-seed")
-          );
-          textByLine[index] = `level-seed=`;
-          var newText = textByLine.join("\n");
-          fs.writeFileSync(`servers/${id}/server.properties`, newText);
-          files.removeDirectoryRecursiveAsync(`servers/${id}/world`, () => {
-            fs.mkdirSync(`servers/${id}/world`);
-            fs.mkdirSync(`servers/${id}/world/datapacks`);
-            //unzip the file and put it in /servers/id/world
+            files.removeDirectoryRecursiveAsync(`servers/${id}/world`, () => {
+              fs.mkdirSync(`servers/${id}/world`);
+              fs.mkdirSync(`servers/${id}/world/datapacks`);
+              //unzip the file and put it in /servers/id/world
 
-            const exec = require("child_process").exec;
-            //wait 5s
-            setTimeout(() => {
-              exec(
-                `unzip -o ${req.file.path} -d servers/` + id + `/world`,
-                (err, stdout, stderr) => {
-                  if (err) {
-                    console.log(err);
-                  } else if (!lock) {
-                    console.log("unzipped world");
-                    //start server back up
-                    f.run(
-                      id,
-                      undefined,
-                      undefined,
-                      undefined,
-                      undefined,
-                      email,
-                      false
-                    );
-                    1;
-                    lock = true;
+              const exec = require("child_process").exec;
+              //wait 5s
+              setTimeout(() => {
+                exec(
+                  `unzip -o ${req.file.path} -d servers/` + id + `/world`,
+                  (err, stdout, stderr) => {
+                    if (err) {
+                      console.log(err);
+                    } else if (!lock) {
+                      console.log("unzipped world");
+                      //start server back up
+                      f.run(
+                        id,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        email,
+                        false
+                      );
+                      1;
+                      lock = true;
+                    }
                   }
-                }
-              );
-            }, 5000);
-          });
+                );
+              }, 5000);
+            });
+          }
         }
       }, 2000);
     });
