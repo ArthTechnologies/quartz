@@ -68,6 +68,7 @@ function checkServer(id) {
 }
 
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
+  let out = [];
   servers = require("../servers.json");
   states[id] = "starting";
 
@@ -363,7 +364,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }, interval);
   } else {
     let count = 0;
-    let out = [];
 
     ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
       console.log("stdout: " + stdout);
@@ -449,7 +449,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     (err) => {}
   );
 
-  let out = [];
   let count = 0;
 
   if (ls != undefined) {
