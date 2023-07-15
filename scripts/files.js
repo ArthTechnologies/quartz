@@ -47,7 +47,7 @@ function removeDirectoryRecursive(directoryPath) {
   }
 }
 
-function removeDirectoryRecursiveAsync(directoryPath) {
+function removeDirectoryRecursiveAsync(directoryPath, callback) {
   if (fs.existsSync(directoryPath)) {
     fs.readdirSync(directoryPath).forEach((file) => {
       const curPath = `${directoryPath}/${file}`;
