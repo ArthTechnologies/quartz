@@ -40,8 +40,10 @@ function removeDirectoryRecursive(directoryPath) {
     // Remove the directory itself
     fs.rmdirSync(directoryPath);
     console.log(`Directory "${directoryPath}" removed.`);
+    return;
   } else {
     console.log(`Directory "${directoryPath}" does not exist.`);
+    return;
   }
 }
 
