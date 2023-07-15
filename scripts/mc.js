@@ -406,10 +406,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   if (
     fs.existsSync("data/cx_geyser-spigot_Geyser.jar") &&
-    (fs.existsSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar") ||
-      firstTime)
+    (fs.existsSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar") || isNew)
   ) {
-    if (!firstTime) {
+    if (!isNew) {
       fs.unlinkSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar");
       fs.unlinkSync(folder + "/plugins/cx_floodgate-spigot_Floodgate.jar");
     }
