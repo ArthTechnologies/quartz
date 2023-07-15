@@ -47,14 +47,14 @@ function removeDirectoryRecursive(directoryPath) {
   }
 }
 
-function removeDirectoryRecursive(directoryPath) {
+function removeDirectoryRecursiveAsync(directoryPath) {
   if (fs.existsSync(directoryPath)) {
     fs.readdirSync(directoryPath).forEach((file) => {
       const curPath = `${directoryPath}/${file}`;
 
       if (fs.lstatSync(curPath).isDirectory()) {
         // Recursive call if the file is a directory
-        removeDirectoryRecursive(curPath);
+        removeDirectoryRecursiveAsync(curPath);
       } else {
         // Delete the file
         fs.unlinkSync(curPath);
