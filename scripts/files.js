@@ -64,10 +64,10 @@ function removeDirectoryRecursiveAsync(directoryPath, callback) {
     // Remove the directory itself
     fs.rmdirSync(directoryPath);
     console.log(`Directory "${directoryPath}" removed.`);
-    callback();
+    callback(null);
   } else {
     console.log(`Directory "${directoryPath}" does not exist.`);
-    callback();
+    callback(null);
   }
 }
 
