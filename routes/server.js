@@ -516,7 +516,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             files.removeDirectoryRecursive(`servers/${id}/world`);
             fs.mkdirSync(`servers/${id}/world`);
             fs.mkdirSync(`servers/${id}/world/datapacks`);
-
+            console.log(req.query.seed + "seed");
             if (req.query.seed != undefined) {
               //read server.properties, find the line with the seed, replace it with 'seed={req.query.seed}'
               var text = fs
