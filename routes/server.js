@@ -506,6 +506,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   if (token == accounts[email].token) {
+    let lock = false;
     f.stopAsync(req.params.id, () => {
       if (!req.file) {
         files.removeDirectoryRecursive(`servers/${id}/world`);
@@ -549,7 +550,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             (err, stdout, stderr) => {
               if (err) {
                 console.log(err);
-              } else {
+              } else if (!lock) {
                 console.log("unzipped world");
                 //start server back up
                 f.run(
@@ -561,6 +562,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                   email,
                   false
                 );
+                lock = true;
               }
             }
           );
