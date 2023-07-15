@@ -261,9 +261,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let data = fs.readFileSync("servers/template/server.properties", "utf8");
   let result = data.replace(/server-port=25565/g, "server-port=" + port);
 
-  if (isNew) {
-    fs.writeFileSync(folder + "/server.properties", result, "utf8");
-  }
+  fs.writeFileSync(folder + "/server.properties", result, "utf8");
 
   if (software == "quilt") {
     //add new file eula.txt in folder
