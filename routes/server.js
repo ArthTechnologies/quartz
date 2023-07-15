@@ -525,8 +525,6 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
           var newText = textByLine.join("\n");
           fs.writeFileSync(`servers/${id}/server.properties`, newText);
         }
-
-        res.status(200).json({ msg: `No file uploaded, Deleting World.` });
       } else {
         var text = fs
           .readFileSync(`servers/${id}/server.properties`)
@@ -569,6 +567,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
         }, 5000);
       }
     });
+    res.status(200).json({ msg: `Done` });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
