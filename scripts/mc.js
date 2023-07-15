@@ -377,12 +377,15 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
 
-  console.log(
-    "OHIEDFWJEWKLJRFLKEJW" + fs.existsSync("data/cx_geyser-spigot_Geyser.jar")
-  );
-  if (fs.existsSync("data/cx_geyser-spigot_Geyser.jar")) {
-    fs.unlinkSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar");
-    fs.unlinkSync(folder + "/plugins/cx_floodgate-spigot_Floodgate.jar");
+  if (
+    fs.existsSync("data/cx_geyser-spigot_Geyser.jar") &&
+    (fs.existsSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar") ||
+      firstTime)
+  ) {
+    if (!firstTime) {
+      fs.unlinkSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar");
+      fs.unlinkSync(folder + "/plugins/cx_floodgate-spigot_Floodgate.jar");
+    }
     fs.copyFileSync(
       "data/cx_geyser-spigot_Geyser.jar",
       folder + "/plugins/cx_geyser-spigot_Geyser.jar"
