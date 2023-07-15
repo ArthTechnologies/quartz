@@ -566,6 +566,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                       email,
                       false
                     );
+                    1;
                     lock = true;
                   }
                 }
@@ -573,7 +574,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             }, 5000);
           });
         }
-      }, 500);
+      }, 2000);
     });
     res.status(200).json({ msg: `Done` });
   } else {
