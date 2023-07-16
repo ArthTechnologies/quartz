@@ -695,6 +695,8 @@ router.delete("/:id/proxy/servers", function (req, res) {
             if (!(item.split(" = ")[0] == req.query.name)) {
               servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)});
               
+            } else {
+              config = config.split("\n").splice(i, 1).join("\n");
             }
           } else {
             break;
@@ -704,10 +706,14 @@ router.delete("/:id/proxy/servers", function (req, res) {
 
    
       
-      res.status(200).json(servers);
+
+
+
+
       console.log(servers)
       console.log(fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8"));
-      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, servers);
+      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, config);
+      res.status(200).json(servers);
       
     } else {
       res.status(400).json({ msg: `Not a proxy.` });
