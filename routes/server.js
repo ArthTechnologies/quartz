@@ -696,8 +696,9 @@ router.delete("/:id/proxy/deleteServer", function (req, res) {
       }
 
       servers.splice(servers.indexOf(req.query.name), 1);
-      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, servers);
+      
       res.status(200).json(servers);
+      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, servers);
     } else {
       res.status(400).json({ msg: `Not a proxy.` });
     }
