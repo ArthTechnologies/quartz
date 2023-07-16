@@ -599,7 +599,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   }
 });
 
-router.get("/:id/proxy", function (req, res) {
+router.get("/:id/proxy/servers", function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   if (token == accounts[email].token) {
@@ -632,7 +632,7 @@ router.get("/:id/proxy", function (req, res) {
   }
 });
 
-router.post("/:id/proxy", function (req, res) {
+router.post("/:id/proxy/servers", function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   if (token == accounts[email].token) {
@@ -670,7 +670,7 @@ router.post("/:id/proxy", function (req, res) {
   }
 });
 
-router.delete("/:id/proxy", function (req, res) {
+router.delete("/:id/proxy/servers", function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   if (token == accounts[email].token) {
