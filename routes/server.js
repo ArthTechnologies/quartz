@@ -682,20 +682,24 @@ router.delete("/:id/proxy/servers", function (req, res) {
       }
       
       );
+
+
       console.log(index);
       let servers = [];
       for (i in config.split("\n")) {
         if (i > index + 2) {
           if (config.split("\n")[i].indexOf(" = ") > -1) {
             let item = config.split("\n")[i];
-            servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)});
+            if (!item.split(" = ")[0] == req.query.name) {
+              servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)});
+            }
           } else {
             break;
           }
         }
       }
 
-      servers[servers.indexOf(req.query.name)] = null;
+   
       
       res.status(200).json(servers);
       fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, servers);
