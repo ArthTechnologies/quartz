@@ -600,132 +600,124 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
 });
 
 router.get("/:id/proxy/servers", function (req, res) {
-  email = req.headers.email;
-  token = req.headers.token;
-  if (token == accounts[email].token) {
-    if (f.checkServer(req.params.id).software == "velocity") {
+  let email = req.headers.email;
+  let token = req.headers.token;
+  if (token === accounts[email].token) {
+    if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8");
       
       let index = config.split("\n").findIndex((line) => {
         return line.startsWith("[servers]");
-      }
+      });
       
-      );
       console.log(index);
       let servers = [];
-      for (i in config.split("\n")) {
-        if (i > index + 2) {
-          if (config.split("\n")[i].indexOf(" = ") > -1) {
-            let item = config.split("\n")[i];
-            servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)});
-          } else {
-            break;
-          }
+      let lines = config.split("\n");
+      for (let i = index + 2; i < lines.length; i++) {
+        if (lines[i].indexOf(" = ") > -1) {
+          let item = lines[i];
+          servers.push({
+            name: item.split(" = ")[0],
+            ip: item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)
+          });
+        } else {
+          break;
         }
       }
       console.log(servers);
       res.status(200).json(servers);
     } else {
-      res.status(400).json({ msg: `Not a proxy.` });
+      res.status(400).json({ msg: "Not a proxy." });
     }
   } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
+    res.status(401).json({ msg: "Invalid credentials." });
   }
 });
 
 router.post("/:id/proxy/servers", function (req, res) {
-  email = req.headers.email;
-  token = req.headers.token;
-  if (token == accounts[email].token) {
-    if (f.checkServer(req.params.id).software == "velocity") {
+  let email = req.headers.email;
+  let token = req.headers.token;
+  if (token === accounts[email].token) {
+    if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8");
       
       let index = config.split("\n").findIndex((line) => {
         return line.startsWith("[servers]");
-      }
+      });
       
-      );
       console.log(index);
       let servers = [];
       
       let newConfig = config.split("\n");
-      for (i in config.split("\n")) {
-        if (i > index + 2) {
-          if (config.split("\n")[i].indexOf(" = ") > -1) {
-            let item = config.split("\n")[i];
-            servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)});
-            newConfig.splice(index + 2, 0, `${req.query.name} = "${req.query.ip}"`);
-          } else {
-            break;
-          }
+      for (let i = index + 2; i < newConfig.length; i++) {
+        if (newConfig[i].indexOf(" = ") > -1) {
+          let item = newConfig[i];
+          servers.push({
+            name: item.split(" = ")[0],
+            ip: item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)
+          });
+          newConfig.splice(index + 2, 0, `${req.query.name} = "${req.query.ip}"`);
+          break;
+        } else {
+          break;
         }
       }
 
-      
-      if (servers.indexOf(req.query.name) == -1) {
-        servers.push({name:req.query.name, ip:req.query.ip});
+      if (servers.findIndex(server => server.name === req.query.name) === -1) {
+        servers.push({ name: req.query.name, ip: req.query.ip });
       }
       res.status(200).json(servers);
       fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig.join("\n"));
     } else {
-      res.status(400).json({ msg: `Not a proxy.` });
+      res.status(400).json({ msg: "Not a proxy." });
     }
   } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
+    res.status(401).json({ msg: "Invalid credentials." });
   }
 });
 
 router.delete("/:id/proxy/servers", function (req, res) {
-  email = req.headers.email;
-  token = req.headers.token;
-  if (token == accounts[email].token) {
-    if (f.checkServer(req.params.id).software == "velocity") {
+  let email = req.headers.email;
+  let token = req.headers.token;
+  if (token === accounts[email].token) {
+    if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8");
       
       let index = config.split("\n").findIndex((line) => {
         return line.startsWith("[servers]");
-      }
+      });
       
-      );
-
-
       console.log(config);
       let servers = [];
-      for (i in config.split("\n")) {
-        if (i > index + 2 && config.split("\n")[i] != undefined) {
-
-          if (config.split("\n")[i].indexOf(" = ") > -1) {
-            let item = config.split("\n")[i];
-            console.log(!(item.split(" = ")[0] == req.query.name));
-            if (!(item.split(" = ")[0] == req.query.name)) {
-              servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)});
-              
-            } else {
-              config = config.split("\n").splice(i, 1).join("\n");
-            }
+      let lines = config.split("\n");
+      for (let i = index + 2; i < lines.length && lines[i] !== undefined; i++) {
+        if (lines[i].indexOf(" = ") > -1) {
+          let item = lines[i];
+          if (item.split(" = ")[0] !== req.query.name) {
+            servers.push({
+              name: item.split(" = ")[0],
+              ip: item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)
+            });
           } else {
-            break;
+            lines.splice(i, 1);
+            i--;
           }
+        } else {
+          break;
         }
       }
-
-   
       
-
-
-
-
-      console.log(servers)
+      console.log(servers);
       console.log(fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8"));
-      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, config);
+      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, lines.join("\n"));
       res.status(200).json(servers);
-      
     } else {
-      res.status(400).json({ msg: `Not a proxy.` });
+      res.status(400).json({ msg: "Not a proxy." });
     }
   } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
+    res.status(401).json({ msg: "Invalid credentials." });
   }
 });
+
 
 module.exports = router;
