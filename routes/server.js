@@ -647,22 +647,26 @@ router.post("/:id/proxy/servers", function (req, res) {
       );
       console.log(index);
       let servers = [];
+      
+      let newConfig = config.split("\n");
       for (i in config.split("\n")) {
         if (i > index + 2) {
           if (config.split("\n")[i].indexOf(" = ") > -1) {
             let item = config.split("\n")[i];
             servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)});
+            newConfig.splice(index + 2, 0, `${req.query.name} = "${req.query.ip}"`);
           } else {
             break;
           }
         }
       }
+
       
       if (servers.indexOf(req.query.name) == -1) {
         servers.push({name:req.query.name, ip:req.query.ip});
       }
       res.status(200).json(servers);
-      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, servers);
+      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig.join("\n"));
     } else {
       res.status(400).json({ msg: `Not a proxy.` });
     }
