@@ -258,7 +258,15 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   }
   let port = 10000 + parseInt(id);
   //change line 49 of folder/server.properties to server-port=if+20000
-  let data = fs.readFileSync("servers/template/server.properties", "utf8");
+  let data;
+  if (isNew) {
+    data = fs.readFileSync("servers/template/server.properties", "utf8");
+  } else {
+    data = fs.readFileSync(
+      "servers/" + software + "/server.properties",
+      "utf8"
+    );
+  }
   let result = data.replace(/server-port=25565/g, "server-port=" + port);
 
   fs.writeFileSync(folder + "/server.properties", result, "utf8");
