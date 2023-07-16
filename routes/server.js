@@ -605,7 +605,7 @@ router.post("/:id/proxy/setServers", function (req, res) {
   if (token == accounts[email].token) {
     if (f.checkServer(req.params.id).software == "velocity") {
       let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`);
-
+      console.log(config);
       let index = config.Split("\n").findIndex((line) => {
         return line.startsWith("[servers]");
       }
