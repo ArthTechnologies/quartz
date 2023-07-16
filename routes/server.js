@@ -618,6 +618,8 @@ router.get("/:id/proxy/getServers", function (req, res) {
           if (!config.split("\n")[i].startsWith("  ")) {
             let item = config.split("\n")[i];
             servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1]});
+          } else {
+            break;
           }
         }
       }
