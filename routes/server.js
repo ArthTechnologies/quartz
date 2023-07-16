@@ -690,7 +690,7 @@ router.delete("/:id/proxy/servers", function (req, res) {
         if (i > index + 2) {
           if (config.split("\n")[i].indexOf(" = ") > -1) {
             let item = config.split("\n")[i];
-            console.log(item.split(" = ")[0]);
+            console.log(!item.split(" = ")[0] == req.query.name);
             if (!item.split(" = ")[0] == req.query.name) {
               servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)});
               
