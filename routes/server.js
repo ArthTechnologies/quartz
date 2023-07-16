@@ -692,6 +692,7 @@ router.delete("/:id/proxy/servers", function (req, res) {
             let item = config.split("\n")[i];
             if (!item.split(" = ")[0] == req.query.name) {
               servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)});
+              console.log(servers);
             }
           } else {
             break;
