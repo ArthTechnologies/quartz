@@ -695,7 +695,7 @@ router.delete("/:id/proxy/servers", function (req, res) {
         }
       }
 
-      servers.splice(servers.indexOf(req.query.name), 1);
+      servers[servers.indexOf(req.query.name)] = null;
       
       res.status(200).json(servers);
       fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, servers);
