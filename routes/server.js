@@ -632,4 +632,78 @@ router.get("/:id/proxy/getServers", function (req, res) {
   }
 });
 
+router.post("/:id/proxy/addServer", function (req, res) {
+  email = req.headers.email;
+  token = req.headers.token;
+  if (token == accounts[email].token) {
+    if (f.checkServer(req.params.id).software == "velocity") {
+      let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8");
+      
+      let index = config.split("\n").findIndex((line) => {
+        return line.startsWith("[servers]");
+      }
+      
+      );
+      console.log(index);
+      let servers = [];
+      for (i in config.split("\n")) {
+        if (i > index + 2) {
+          if (config.split("\n")[i].indexOf(" = ") > -1) {
+            let item = config.split("\n")[i];
+            servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)});
+          } else {
+            break;
+          }
+        }
+      }
+
+      if (servers.indexOf(req.query.name) == -1) {
+        servers.push({name:req.query.name, ip:req.query.ip});
+      }
+      res.status(200).json(servers);
+      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, servers);
+    } else {
+      res.status(400).json({ msg: `Not a proxy.` });
+    }
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
+});
+
+router.delete("/:id/proxy/deleteServer", function (req, res) {
+  email = req.headers.email;
+  token = req.headers.token;
+  if (token == accounts[email].token) {
+    if (f.checkServer(req.params.id).software == "velocity") {
+      let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8");
+      
+      let index = config.split("\n").findIndex((line) => {
+        return line.startsWith("[servers]");
+      }
+      
+      );
+      console.log(index);
+      let servers = [];
+      for (i in config.split("\n")) {
+        if (i > index + 2) {
+          if (config.split("\n")[i].indexOf(" = ") > -1) {
+            let item = config.split("\n")[i];
+            servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)});
+          } else {
+            break;
+          }
+        }
+      }
+
+      servers.splice(servers.indexOf(req.query.name), 1);
+      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, servers);
+      res.status(200).json(servers);
+    } else {
+      res.status(400).json({ msg: `Not a proxy.` });
+    }
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
+});
+
 module.exports = router;
