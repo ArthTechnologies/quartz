@@ -656,7 +656,7 @@ router.post("/:id/proxy/servers", function (req, res) {
           }
         }
       }
-
+      console.log(servers);
       if (servers.indexOf(req.query.name) == -1) {
         servers.push({name:req.query.name, ip:req.query.ip});
       }
