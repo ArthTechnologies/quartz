@@ -407,24 +407,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
 
-  if (
-    fs.existsSync("data/cx_geyser-spigot_Geyser.jar") &&
-    (fs.existsSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar") || isNew)
-  ) {
-    if (!isNew) {
-      fs.unlinkSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar");
-      fs.unlinkSync(folder + "/plugins/cx_floodgate-spigot_Floodgate.jar");
-    }
-    fs.copyFileSync(
-      "data/cx_geyser-spigot_Geyser.jar",
-      folder + "/plugins/cx_geyser-spigot_Geyser.jar"
-    );
-    fs.copyFileSync(
-      "data/cx_floodgate-spigot_Floodgate.jar",
-      folder + "/plugins/cx_floodgate-spigot_Floodgate.jar"
-    );
-  }
-
   //replace line 15 of folder/plugins/Geyser-Spigot/config.yml with "port: " + port
 
   var text = fs.readFileSync("servers/template/geyserconfig.yml", "utf8");
@@ -433,34 +415,44 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   text = textByLine.join("\n");
 
-  //create /plugins/Geyser-Spigot/
-  if (!fs.existsSync(folder + "/plugins/Geyser-Spigot")) {
-    fs.mkdirSync(folder + "/plugins/Geyser-Spigot");
+  if (software == "paper" || software == "spigot") {
+    if (
+      fs.existsSync("data/cx_geyser-spigot_Geyser.jar") &&
+      (fs.existsSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar") || isNew)
+    ) {
+      if (!isNew) {
+        fs.unlinkSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar");
+        fs.unlinkSync(folder + "/plugins/cx_floodgate-spigot_Floodgate.jar");
+      }
+      fs.copyFileSync(
+        "data/cx_geyser-spigot_Geyser.jar",
+        folder + "/plugins/cx_geyser-spigot_Geyser.jar"
+      );
+      fs.copyFileSync(
+        "data/cx_floodgate-spigot_Floodgate.jar",
+        folder + "/plugins/cx_floodgate-spigot_Floodgate.jar"
+      );
+    }
+    //create /plugins/Geyser-Spigot/
+    if (!fs.existsSync(folder + "/plugins/Geyser-Spigot")) {
+      fs.mkdirSync(folder + "/plugins/Geyser-Spigot");
+    }
+    fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
+
+    fs.copyFile(
+      "servers/template/downloading/cx_geyser-spigot_Geyser.jar",
+      folder + "/plugins/cx_geyser-spigot_Geyser.jar",
+      (err) => {}
+    );
+
+    fs.copyFile(
+      "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
+      folder + "/plugins/cx_floodgate-spigot_Floodgate.jar",
+      (err) => {}
+    );
   }
-  fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
-
-  fs.copyFile(
-    "servers/template/downloading/cx_geyser-spigot_Geyser.jar",
-    folder + "/plugins/cx_geyser-spigot_Geyser.jar",
-    (err) => {}
-  );
-
-  fs.copyFile(
-    "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
-    folder + "/plugins/cx_floodgate-spigot_Floodgate.jar",
-    (err) => {}
-  );
 
   let count = 0;
-
-  files.download(
-    "java/servers/template/downloading/cx_geyser-spigot_Geyser.jar",
-    "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar"
-  );
-  files.download(
-    "java/servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
-    "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar"
-  );
 }
 function stop(id) {
   states[id] = "stopping";
