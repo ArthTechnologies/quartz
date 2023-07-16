@@ -704,7 +704,7 @@ router.delete("/:id/proxy/servers", function (req, res) {
    
       
       res.status(200).json(servers);
-      console.log("test")
+      console.log(servers)
       fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, servers);
     } else {
       res.status(400).json({ msg: `Not a proxy.` });
