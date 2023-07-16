@@ -617,7 +617,7 @@ router.get("/:id/proxy/getServers", function (req, res) {
         if (i > index + 2) {
           if (config.split("\n")[i].indexOf(" = ") > -1) {
             let item = config.split("\n")[i];
-            servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1].substring(0, item.split(" = ")[1].length - 1)});
+            servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)});
           } else {
             break;
           }
