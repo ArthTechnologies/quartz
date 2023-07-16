@@ -530,7 +530,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             );
             textByLine[index] = `level-seed=${req.query.seed}`;
             var newText = textByLine.join("\n");
-            console.log("seed" + textByLine[index]);
+            console.log("seed\n" + newText);
             fs.writeFile(`servers/${id}/server.properties`, newText, (err) => {
               if (err) {
                 console.log(err);
