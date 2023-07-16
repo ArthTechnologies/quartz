@@ -262,10 +262,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   if (isNew) {
     data = fs.readFileSync("servers/template/server.properties", "utf8");
   } else {
-    data = fs.readFileSync(
-      "servers/" + software + "/server.properties",
-      "utf8"
-    );
+    data = fs.readFileSync("servers/" + id + "/server.properties", "utf8");
   }
   let result = data.replace(/server-port=25565/g, "server-port=" + port);
 
