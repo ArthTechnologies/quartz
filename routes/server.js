@@ -599,7 +599,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   }
 });
 
-router.post("/:id/proxy/setServers", function (req, res) {
+router.get("/:id/proxy/getServers", function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   if (token == accounts[email].token) {
@@ -612,12 +612,16 @@ router.post("/:id/proxy/setServers", function (req, res) {
       
       );
       console.log(index);
+      let servers = [];
       for (i in config.split("\n")) {
-        if (i > index) {
-          console.log(config.split("\n")[i]);
+        if (i > index + 2) {
+          if (!config.split("\n")[i].startsWith("  ")) {
+            let item = config.split("\n")[i];
+            servers.push({name:item.split(" = ")[0], ip:item.split(" = ")[1]});
+          }
         }
       }
-      res.status(200).json({ msg: `Done` });
+      res.status(200).json(servers);
     } else {
       res.status(400).json({ msg: `Not a proxy.` });
     }
