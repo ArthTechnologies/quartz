@@ -614,6 +614,7 @@ router.get("/:id/proxy/servers", function (req, res) {
       let servers = [];
       let lines = config.split("\n");
       for (let i = index + 2; i < lines.length; i++) {
+        console.log(lines[i]);
         if (lines[i].indexOf(" = ") > -1) {
           let item = lines[i];
           servers.push({
