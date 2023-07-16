@@ -599,4 +599,30 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   }
 });
 
+router.post("/:id/proxy/setServers", function (req, res) {
+  email = req.headers.email;
+  token = req.headers.token;
+  if (token == accounts[email].token) {
+    if (f.checkServer(req.params.id).software == "velocity") {
+      let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`);
+
+      let index = config.split("\n").findIndex((line) => {
+        return line.startsWith("[servers]");
+      }
+      
+      );
+      for (i in config.split("\n")) {
+        if (i > index) {
+          console.log(config.split("\n")[i]);
+        }
+      }
+
+    } else {
+      res.status(400).json({ msg: `Not a proxy.` });
+    }
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
+});
+
 module.exports = router;
