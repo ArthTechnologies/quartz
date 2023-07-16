@@ -606,14 +606,14 @@ router.post("/:id/proxy/setServers", function (req, res) {
     if (f.checkServer(req.params.id).software == "velocity") {
       let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8");
       console.log(config);
-      let index = config.Split("\n").findIndex((line) => {
+      let index = config.split("\n").findIndex((line) => {
         return line.startsWith("[servers]");
       }
       
       );
-      for (i in config.Split("\n")) {
+      for (i in config.split("\n")) {
         if (i > index) {
-          console.log(config.Split("\n")[i]);
+          console.log(config.split("\n")[i]);
         }
       }
 
