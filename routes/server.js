@@ -689,10 +689,11 @@ router.delete("/:id/proxy/servers", function (req, res) {
       );
 
 
-      console.log(index);
+      
       let servers = [];
       for (i in config.split("\n")) {
         if (i > index + 2) {
+          console.log(config.split("\n")[i]);
           if (config.split("\n")[i].indexOf(" = ") > -1) {
             let item = config.split("\n")[i];
             console.log(!(item.split(" = ")[0] == req.query.name));
