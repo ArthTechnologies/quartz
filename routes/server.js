@@ -536,6 +536,10 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                 console.log(err);
               }
 
+              console.log(
+                "seed2" + fs.readFileSync(`servers/${id}/server.properties`)
+              );
+
               f.run(
                 id,
                 undefined,
