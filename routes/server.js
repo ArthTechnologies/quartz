@@ -692,7 +692,7 @@ router.delete("/:id/proxy/servers", function (req, res) {
       console.log(config);
       let servers = [];
       for (i in config.split("\n")) {
-        if (i > index + 2) {
+        if (i > index + 2 && config.split("\n")[i] != undefined) {
 
           if (config.split("\n")[i].indexOf(" = ") > -1) {
             let item = config.split("\n")[i];
