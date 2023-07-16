@@ -604,7 +604,7 @@ router.post("/:id/proxy/setServers", function (req, res) {
   token = req.headers.token;
   if (token == accounts[email].token) {
     if (f.checkServer(req.params.id).software == "velocity") {
-      let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`);
+      let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8");
       console.log(config);
       let index = config.Split("\n").findIndex((line) => {
         return line.startsWith("[servers]");
