@@ -605,7 +605,7 @@ router.post("/:id/proxy/setServers", function (req, res) {
   if (token == accounts[email].token) {
     if (f.checkServer(req.params.id).software == "velocity") {
       let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8");
-      console.log(config);
+      console.log(index);
       let index = config.split("\n").findIndex((line) => {
         return line.startsWith("[servers]");
       }
@@ -616,7 +616,7 @@ router.post("/:id/proxy/setServers", function (req, res) {
           console.log(config.split("\n")[i]);
         }
       }
-
+      res.status(200).json({ msg: `Done` });
     } else {
       res.status(400).json({ msg: `Not a proxy.` });
     }
