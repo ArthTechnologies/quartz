@@ -623,6 +623,7 @@ router.get("/:id/proxy/servers", function (req, res) {
           }
         }
       }
+      console.log(servers);
       res.status(200).json(servers);
     } else {
       res.status(400).json({ msg: `Not a proxy.` });
@@ -656,7 +657,7 @@ router.post("/:id/proxy/servers", function (req, res) {
           }
         }
       }
-      console.log(servers);
+      
       if (servers.indexOf(req.query.name) == -1) {
         servers.push({name:req.query.name, ip:req.query.ip});
       }
