@@ -696,7 +696,7 @@ router.post("/:id/proxy/servers", function (req, res) {
             "\n" +
             newConfig.slice(i, newConfig.length);
 
-          console.log(newConfig);
+          console.log(newConfig.join("\n"));
           break;
         }
       }
