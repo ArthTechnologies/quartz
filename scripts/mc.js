@@ -5,6 +5,7 @@ let states = [];
 const files = require("./files.js");
 let servers = require("../servers.json");
 const { time } = require("console");
+const { randomBytes } = require("crypto");
 let terminalOutput = [];
 let terminalInput = "";
 function checkServers(accountId) {
@@ -278,6 +279,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     );
 
     fs.writeFileSync(folder + "/velocity.toml", result, "utf8");
+
+    if (!fs.existsSync(folder + "/forwarding.secret")) {
+      let secret = randomBytes(12).toString("hex");
+      fs.writeFileSync(folder + "/forwarding.secret", secret, "utf8");
+    }
   } else {
     if (isNew) {
       data = fs.readFileSync("servers/template/server.properties", "utf8");
