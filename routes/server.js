@@ -603,7 +603,6 @@ router.get("/:id/proxy/secret", function (req, res) {
   let email = req.headers.email;
   let token = req.headers.token;
   if (token === accounts[email].token) {
-    console.log(f.checkServer(req.params.id));
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       res.status(200).json({
         secret: fs.readFileSync(
