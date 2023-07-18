@@ -471,7 +471,7 @@ router.get(`/:id/getInfo`, function (req, res) {
     let desc = "";
     id = req.params.id;
 
-    if (software == "velocity") {
+    if (f.checkServer(id).software == "velocity") {
       var text = fs.readFileSync(`servers/${id}/velocity.toml`).toString();
       var textByLine = text.split("\n");
       desc = textByLine[9].split("=")[1];
