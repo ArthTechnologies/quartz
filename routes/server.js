@@ -635,7 +635,7 @@ router.get("/:id/proxy/servers", function (req, res) {
       console.log(index);
       let servers = [];
       let lines = config.split("\n");
-      for (let i = index + 2; i < lines.length; i++) {
+      for (let i = index; i < lines.length; i++) {
         console.log(lines[i]);
         if (lines[i].indexOf(" = ") > -1) {
           let item = lines[i];
@@ -677,7 +677,7 @@ router.post("/:id/proxy/servers", function (req, res) {
       let servers = [];
 
       let newConfig = config.split("\n");
-      for (let i = index + 2; i < newConfig.length; i++) {
+      for (let i = index; i < newConfig.length; i++) {
         if (newConfig[i].indexOf(" = ") > -1) {
           let item = newConfig[i];
           servers.push({
@@ -733,7 +733,7 @@ router.delete("/:id/proxy/servers", function (req, res) {
       console.log(config);
       let servers = [];
       let lines = config.split("\n");
-      for (let i = index + 2; i < lines.length && lines[i] !== undefined; i++) {
+      for (let i = index; i < lines.length && lines[i] !== undefined; i++) {
         if (lines[i].indexOf(" = ") > -1) {
           let item = lines[i];
           if (item.split(" = ")[0] !== req.query.name) {
