@@ -752,7 +752,31 @@ router.post("/:id/proxy/servers", function (req, res) {
         servers.push({ name: req.query.name, ip: req.query.ip });
       }
       fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig);
-      res.status(200).json(servers);
+
+      if (req.query.ip.split(":")[0] == "arthmc.xyz") {
+        let subserverId = req.query.ip.split(":")[1];
+        if (servers[subserverId].accountId == accounts[email].accountId) {
+          let paperGlobal = fs.readFileSync(
+            `servers/${req.params.id}/config/paper-global.yml`,
+            "utf8"
+          );
+
+          paperGlobal = paperGlobal.replace(
+            /secret: ""/g,
+            `secret: "${req.query.secret}"`
+          );
+
+          fs.writeFileSync(
+            `servers/${req.params.id}/config/paper-global.yml`,
+            paperGlobal
+          );
+          res.status(200).json(servers);
+        } else {
+          res.state(400).json({ msg: "You don't own this subserver." });
+        }
+      } else {
+        res.status(200).json(servers);
+      }
     } else {
       res.status(400).json({ msg: "Not a proxy." });
     }
