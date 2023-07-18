@@ -477,7 +477,7 @@ router.get(`/:id/getInfo`, function (req, res) {
       desc = textByLine[8].split("=")[1];
 
       //cut off the quotes
-      desc = desc.substring(1, desc.length - 1);
+      desc = desc.substring(2, desc.length - 1);
     } else {
       var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
       var textByLine = text.split("\n");
