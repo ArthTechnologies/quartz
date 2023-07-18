@@ -652,9 +652,9 @@ router.get("/:id/proxy/info", function (req, res) {
       let lines = config.split("\n");
       for (i in lines) {
         console.log(lines[i]);
-        if (lines[i].includes("try = [")) {
+        /*if (lines[i].includes("try = [")) {
           lobbyName = lines[i + 1].split('"')[1];
-        }
+        } */
       }
       res.status(200).json({
         secret: fs.readFileSync(
