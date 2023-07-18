@@ -686,13 +686,15 @@ router.post("/:id/proxy/servers", function (req, res) {
               .split(" = ")[1]
               .substring(1, item.split(" = ")[1].length - 1),
           });
-          newConfig.splice(
-            index + 2,
-            0,
-            `${req.query.name} = "${req.query.ip}"`
-          );
-          break;
         } else {
+          newConfig =
+            newConfig.slice(0, i) +
+            "\n" +
+            req.query.name +
+            " = " +
+            req.query.ip +
+            "\n" +
+            newConfig.slice(i, newConfig.length);
           break;
         }
       }
