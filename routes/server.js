@@ -775,6 +775,21 @@ router.post("/:id/proxy/servers", function (req, res) {
             `servers/${subserverId}/config/paper-global.yml`,
             paperGlobal
           );
+
+          let serverProperties = fs.readFileSync(
+            `servers/${subserverId}/server.properties`,
+            "utf8"
+          );
+
+          serverProperties = serverProperties.replace(
+            /online-mode=true/g,
+            `online-mode=false`
+          );
+
+          fs.writeFileSync(
+            `servers/${subserverId}/server.properties`,
+            serverProperties
+          );
           res.status(200).json(servers);
         } else {
           res.state(400).json({ msg: "You don't own this subserver." });
