@@ -389,13 +389,22 @@ router.post(`/:id/setInfo`, function (req, res) {
     id = req.params.id;
     iconUrl = req.body.icon;
     desc = req.body.desc;
-    //set line 33 of server.properties in the server folder to "motd=" + desc
-    var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
-    var textByLine = text.split("\n");
-    textByLine[32] = `motd=${desc}`;
-    text = textByLine.join("\n");
-    console.log(desc + " " + iconUrl);
-    fs.writeFileSync(`servers/${id}/server.properties`, text);
+    if (f.checkServer(id).software == "velocity") {
+      var text = fs.readFileSync(`servers/${id}/velocity.toml`).toString();
+      var textByLine = text.split("\n");
+      textByLine[9] = `motd = "${desc}"`;
+      text = textByLine.join("\n");
+
+      fs.writeFileSync(`servers/${id}/velocity.toml`, text);
+    } else {
+      //set line 33 of server.properties in the server folder to "motd=" + desc
+      var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
+      var textByLine = text.split("\n");
+      textByLine[32] = `motd=${desc}`;
+      text = textByLine.join("\n");
+      console.log(desc + " " + iconUrl);
+      fs.writeFileSync(`servers/${id}/server.properties`, text);
+    }
 
     files.download(`servers/${id}/server-icon.png`, iconUrl);
 
@@ -462,9 +471,15 @@ router.get(`/:id/getInfo`, function (req, res) {
     let desc = "";
     id = req.params.id;
 
-    var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
-    var textByLine = text.split("\n");
-    desc = textByLine[32].split("=")[1];
+    if (software == "velocity") {
+      var text = fs.readFileSync(`servers/${id}/velocity.toml`).toString();
+      var textByLine = text.split("\n");
+      desc = textByLine[9].split("=")[1];
+    } else {
+      var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
+      var textByLine = text.split("\n");
+      desc = textByLine[32].split("=")[1];
+    }
 
     if (fs.existsSync(`servers/${id}/iconurl.txt`)) {
       iconUrl = fs.readFileSync(`servers/${id}/iconurl.txt`).toString();
