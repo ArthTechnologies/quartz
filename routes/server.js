@@ -762,7 +762,7 @@ router.post("/:id/proxy/servers", function (req, res) {
           accounts[email].accountId
         ) {
           let paperGlobal = fs.readFileSync(
-            `servers/${req.params.id}/config/paper-global.yml`,
+            `servers/${subserverId}/config/paper-global.yml`,
             "utf8"
           );
 
