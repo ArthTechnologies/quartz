@@ -171,7 +171,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     case "1.17.1":
       path = "../../java/jdk-17.0.5+8/bin/java";
       break;
-    case "3.2.0"
+    case "3.2.0":
       path = "../../java/jdk-17.0.5+8/bin/java";
     default:
       path = "../../java/jdk-11.0.18+10/bin/java";
