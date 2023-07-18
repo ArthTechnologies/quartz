@@ -271,8 +271,8 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       `bind = "0.0.0.0:${port}"`
     );
 
-    paperGlobal = fs.readFileSync("servers/template/paper-global.toml", "utf8");
-    fs.writeFileSync(folder + "/config/paper-global.toml", paperGlobal, "utf8");
+    paperGlobal = fs.readFileSync("servers/template/paper-global.yml", "utf8");
+    fs.writeFileSync(folder + "/config/paper-global.yml", paperGlobal, "utf8");
     fs.writeFileSync(folder + "/velocity.toml", result, "utf8");
   } else {
     if (isNew) {
