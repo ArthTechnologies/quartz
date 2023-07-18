@@ -650,12 +650,10 @@ router.get("/:id/proxy/info", function (req, res) {
         "utf8"
       );
       let lines = config.split("\n");
-      for (i in lines) {
-        console.log(lines[i]);
-        /*if (lines[i].includes("try = [")) {
-          lobbyName = lines[i + 1].split('"')[1];
-        } */
-      }
+      let index = lines.findIndex((line) => {
+        return line.includes("try = [");
+      });
+      lobbyName = lines[index + 1].split('"')[1];
       res.status(200).json({
         secret: fs.readFileSync(
           `servers/${req.params.id}/forwarding.secret`,
