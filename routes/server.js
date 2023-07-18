@@ -670,6 +670,34 @@ router.get("/:id/proxy/info", function (req, res) {
   }
 });
 
+router.post("/:id/proxy/info", function (req, res) {
+  let email = req.headers.email;
+  let token = req.headers.token;
+  if (
+    token === accounts[email].token &&
+    servers[req.params.id].accountId == accounts[email].accountId
+  ) {
+    if (f.checkServer(req.params.id)["software"] === "velocity") {
+      let config = fs.readFileSync(
+        `servers/${req.params.id}/velocity.toml`,
+        "utf8"
+      );
+      let lines = config.split("\n");
+      let index = lines.findIndex((line) => {
+        return line.includes("try = [");
+      });
+      lines[index + 1] = `  "${req.body.lobbyName}"`;
+      let newConfig = lines.join("\n");
+      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig);
+      res.status(200).json({ msg: "Done" });
+    } else {
+      res.status(400).json({ msg: "Not a proxy." });
+    }
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
 router.get("/:id/proxy/servers", function (req, res) {
   let email = req.headers.email;
   let token = req.headers.token;
