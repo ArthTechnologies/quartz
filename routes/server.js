@@ -17,7 +17,7 @@ router.get(`/:id`, function (req, res) {
   token = req.headers.token;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
@@ -32,7 +32,7 @@ router.post(`/:id/state/:state`, function (req, res) {
   token = req.headers.token;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     state = req.params.state;
     id = req.params.id;
@@ -73,7 +73,7 @@ router.delete(`/:id/:modtype`, function (req, res) {
   modtype = req.params.modtype;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     id = req.params.id;
     pluginId = req.query.pluginId;
@@ -104,7 +104,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
   modtype = req.params.modtype;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     let platforms = [];
     let names = [];
@@ -144,7 +144,7 @@ router.post(`/:id/update/`, function (req, res) {
   token = req.headers.token;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     id = req.params.id;
     version = req.query.version;
@@ -170,7 +170,7 @@ router.post(`/:id/add/:modtype`, function (req, res) {
   modtype = req.params.modtype;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
@@ -207,7 +207,7 @@ router.post(`/new`, function (req, res) {
   token = req.headers.token;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     let amount = f.checkServers(accounts[email].accountId).amount;
     //add cors header
@@ -384,7 +384,7 @@ router.post(`/:id/setInfo`, function (req, res) {
   token = req.headers.token;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     id = req.params.id;
     iconUrl = req.body.icon;
@@ -455,7 +455,7 @@ router.get(`/:id/getInfo`, function (req, res) {
   token = req.headers.token;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     //send the motd and iconUrl
     let iconUrl = "/images/placeholder.webp";
@@ -482,7 +482,7 @@ router.delete(`/:id`, function (req, res) {
   token = req.headers.token;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     res.header("Access-Control-Allow-Origin", "*");
     id = req.params.id;
@@ -510,7 +510,7 @@ router.get("/:id/world", function (req, res) {
   token = req.headers.token;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     //zip /servers/id/world and send it to the client
     id = req.params.id;
@@ -540,7 +540,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   token = req.headers.token;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     let lock = false;
     let lock2 = false;
@@ -640,7 +640,7 @@ router.get("/:id/proxy/secret", function (req, res) {
   let token = req.headers.token;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       res.status(200).json({
@@ -662,7 +662,7 @@ router.get("/:id/proxy/servers", function (req, res) {
   let token = req.headers.token;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(
@@ -706,7 +706,7 @@ router.post("/:id/proxy/servers", function (req, res) {
   let token = req.headers.token;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(
@@ -766,7 +766,7 @@ router.delete("/:id/proxy/servers", function (req, res) {
   let token = req.headers.token;
   if (
     token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].id
+    servers[req.params.id].accountId == accounts[email].accountId
   ) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(
