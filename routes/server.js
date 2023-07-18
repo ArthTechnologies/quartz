@@ -690,9 +690,9 @@ router.post("/:id/proxy/servers", function (req, res) {
           newConfig =
             newConfig.slice(0, i).join("\n") +
             "\n" +
-            `"${req.query.name}"` +
+            req.query.name +
             " = " +
-            req.query.ip +
+            `"${req.query.ip}"` +
             "\n" +
             newConfig.slice(i, newConfig.length).join("\n");
 
