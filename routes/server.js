@@ -696,7 +696,7 @@ router.post("/:id/proxy/servers", function (req, res) {
             "\n" +
             newConfig.slice(i, newConfig.length);
 
-          console.log(newConfig.join("\n"));
+          console.log(newConfig);
           break;
         }
       }
@@ -706,11 +706,8 @@ router.post("/:id/proxy/servers", function (req, res) {
       ) {
         servers.push({ name: req.query.name, ip: req.query.ip });
       }
+      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig);
       res.status(200).json(servers);
-      fs.writeFileSync(
-        `servers/${req.params.id}/velocity.toml`,
-        newConfig.join("\n")
-      );
     } else {
       res.status(400).json({ msg: "Not a proxy." });
     }
