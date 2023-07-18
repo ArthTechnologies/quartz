@@ -599,6 +599,27 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   }
 });
 
+router.get("/:id/proxy/secret", function (req, res) {
+  let email = req.headers.email;
+  let token = req.headers.token;
+  if (token === accounts[email].token) {
+    if (f.checkServer(req.params.id)["software"] === "velocity") {
+      res
+        .status(200)
+        .json({
+          secret: fs.readFileSync(
+            `servers/${req.params.id}/forwarding.secret`,
+            "utf8"
+          ),
+        });
+    } else {
+      res.status(400).json({ msg: "Not a proxy." });
+    }
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
 router.get("/:id/proxy/servers", function (req, res) {
   let email = req.headers.email;
   let token = req.headers.token;
