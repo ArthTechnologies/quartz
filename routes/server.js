@@ -686,7 +686,7 @@ router.post("/:id/proxy/info", function (req, res) {
       let index = lines.findIndex((line) => {
         return line.includes("try = [");
       });
-      lines[index + 1] = `  "${req.body.lobbyName}"`;
+      lines[index + 1] = `  "${req.query.lobbyName}"`;
       let newConfig = lines.join("\n");
       fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig);
       res.status(200).json({ msg: "Done" });
