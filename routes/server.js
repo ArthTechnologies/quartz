@@ -652,7 +652,7 @@ router.get("/:id/proxy/info", function (req, res) {
       let lines = config.split("\n");
       for (i in lines) {
         if (lines[i].includes("try = [")) {
-          console.log(lines[i + 1]);
+          console.log(lines[i]);
           lobbyName = lines[i + 1].split('"')[1];
         }
       }
