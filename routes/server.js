@@ -756,7 +756,7 @@ router.post("/:id/proxy/servers", function (req, res) {
       if (
         req.query.ip.split(":")[0] == require("../stores/settings.json").address
       ) {
-        let subserverId = req.query.ip.split(":")[1];
+        let subserverId = parseInt(req.query.ip.split(":")[1]) - 10000;
         if (
           require("../servers.json")[subserverId].accountId ==
           accounts[email].accountId
