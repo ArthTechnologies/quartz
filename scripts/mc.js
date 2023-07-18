@@ -177,6 +177,10 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       path = "../../java/jdk-11.0.18+10/bin/java";
       break;
   }
+
+  if (software == "velocity") {
+    path = "../../java/jdk-17.0.5+8/bin/java";
+  }
   let doneInstalling = false;
 
   if (!fs.existsSync(folder)) {
