@@ -8,6 +8,7 @@ const { time } = require("console");
 const { randomBytes } = require("crypto");
 let terminalOutput = [];
 let terminalInput = "";
+
 function checkServers(accountId) {
   amount = 0;
 
