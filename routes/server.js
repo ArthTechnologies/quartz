@@ -772,7 +772,7 @@ router.post("/:id/proxy/servers", function (req, res) {
           );
 
           fs.writeFileSync(
-            `servers/${req.params.id}/config/paper-global.yml`,
+            `servers/${subserverId}/config/paper-global.yml`,
             paperGlobal
           );
           res.status(200).json(servers);
