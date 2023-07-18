@@ -259,27 +259,32 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let port = 10000 + parseInt(id);
   //change line 49 of folder/server.properties to server-port=if+20000
   let data;
- if (software == "velocity") {
-  if (isNew) {
-    data = fs.readFileSync("servers/template/velocity.toml", "utf8");
+  if (software == "velocity") {
+    if (isNew) {
+      data = fs.readFileSync("servers/template/velocity.toml", "utf8");
+    } else {
+      data = fs.readFileSync("servers/" + id + "/velocity.toml", "utf8");
+    }
+
+    let result = data.replace(
+      /bind = "0.0.0.0:25577"/g,
+      `bind = "0.0.0.0:${port}"`
+    );
+
+    paperGlobal = fs.readFileSync("servers/template/paper-global.toml", "utf8");
+    fs.writeFileSync(folder + "/config/paper-global.toml", paperGlobal, "utf8");
+    fs.writeFileSync(folder + "/velocity.toml", result, "utf8");
   } else {
-    data = fs.readFileSync("servers/" + id + "/velocity.toml", "utf8");
+    if (isNew) {
+      data = fs.readFileSync("servers/template/server.properties", "utf8");
+    } else {
+      data = fs.readFileSync("servers/" + id + "/server.properties", "utf8");
+    }
+
+    let result = data.replace(/server-port=25565/g, "server-port=" + port);
+
+    fs.writeFileSync(folder + "/server.properties", result, "utf8");
   }
-
-  let result = data.replace(/bind = "0.0.0.0:25577"/g, `bind = "0.0.0.0:${port}"`);
-
-  fs.writeFileSync(folder + "/velocity.toml", result, "utf8");
- } else {
-  if (isNew) {
-    data = fs.readFileSync("servers/template/server.properties", "utf8");
-  } else {
-    data = fs.readFileSync("servers/" + id + "/server.properties", "utf8");
-  }
- 
-  let result = data.replace(/server-port=25565/g, "server-port=" + port);
-
-  fs.writeFileSync(folder + "/server.properties", result, "utf8");
-}
 
   if (software == "quilt") {
     //add new file eula.txt in folder

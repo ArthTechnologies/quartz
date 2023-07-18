@@ -604,12 +604,15 @@ router.get("/:id/proxy/servers", function (req, res) {
   let token = req.headers.token;
   if (token === accounts[email].token) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
-      let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8");
-      
+      let config = fs.readFileSync(
+        `servers/${req.params.id}/velocity.toml`,
+        "utf8"
+      );
+
       let index = config.split("\n").findIndex((line) => {
         return line.startsWith("[servers]");
       });
-      
+
       console.log(index);
       let servers = [];
       let lines = config.split("\n");
@@ -619,7 +622,9 @@ router.get("/:id/proxy/servers", function (req, res) {
           let item = lines[i];
           servers.push({
             name: item.split(" = ")[0],
-            ip: item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)
+            ip: item
+              .split(" = ")[1]
+              .substring(1, item.split(" = ")[1].length - 1),
           });
         } else {
           break;
@@ -640,35 +645,49 @@ router.post("/:id/proxy/servers", function (req, res) {
   let token = req.headers.token;
   if (token === accounts[email].token) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
-      let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8");
-      
+      let config = fs.readFileSync(
+        `servers/${req.params.id}/velocity.toml`,
+        "utf8"
+      );
+
       let index = config.split("\n").findIndex((line) => {
         return line.startsWith("[servers]");
       });
-      
+
       console.log(index);
       let servers = [];
-      
+
       let newConfig = config.split("\n");
       for (let i = index + 2; i < newConfig.length; i++) {
         if (newConfig[i].indexOf(" = ") > -1) {
           let item = newConfig[i];
           servers.push({
             name: item.split(" = ")[0],
-            ip: item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)
+            ip: item
+              .split(" = ")[1]
+              .substring(1, item.split(" = ")[1].length - 1),
           });
-          newConfig.splice(index + 2, 0, `${req.query.name} = "${req.query.ip}"`);
+          newConfig.splice(
+            index + 2,
+            0,
+            `${req.query.name} = "${req.query.ip}"`
+          );
           break;
         } else {
           break;
         }
       }
 
-      if (servers.findIndex(server => server.name === req.query.name) === -1) {
+      if (
+        servers.findIndex((server) => server.name === req.query.name) === -1
+      ) {
         servers.push({ name: req.query.name, ip: req.query.ip });
       }
       res.status(200).json(servers);
-      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig.join("\n"));
+      fs.writeFileSync(
+        `servers/${req.params.id}/velocity.toml`,
+        newConfig.join("\n")
+      );
     } else {
       res.status(400).json({ msg: "Not a proxy." });
     }
@@ -682,12 +701,15 @@ router.delete("/:id/proxy/servers", function (req, res) {
   let token = req.headers.token;
   if (token === accounts[email].token) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
-      let config = fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8");
-      
+      let config = fs.readFileSync(
+        `servers/${req.params.id}/velocity.toml`,
+        "utf8"
+      );
+
       let index = config.split("\n").findIndex((line) => {
         return line.startsWith("[servers]");
       });
-      
+
       console.log(config);
       let servers = [];
       let lines = config.split("\n");
@@ -697,7 +719,9 @@ router.delete("/:id/proxy/servers", function (req, res) {
           if (item.split(" = ")[0] !== req.query.name) {
             servers.push({
               name: item.split(" = ")[0],
-              ip: item.split(" = ")[1].substring(1, item.split(" = ")[1].length - 1)
+              ip: item
+                .split(" = ")[1]
+                .substring(1, item.split(" = ")[1].length - 1),
             });
           } else {
             lines.splice(i, 1);
@@ -707,10 +731,15 @@ router.delete("/:id/proxy/servers", function (req, res) {
           break;
         }
       }
-      
+
       console.log(servers);
-      console.log(fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8"));
-      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, lines.join("\n"));
+      console.log(
+        fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8")
+      );
+      fs.writeFileSync(
+        `servers/${req.params.id}/velocity.toml`,
+        lines.join("\n")
+      );
       res.status(200).json(servers);
     } else {
       res.status(400).json({ msg: "Not a proxy." });
@@ -719,6 +748,5 @@ router.delete("/:id/proxy/servers", function (req, res) {
     res.status(401).json({ msg: "Invalid credentials." });
   }
 });
-
 
 module.exports = router;
