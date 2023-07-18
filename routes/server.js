@@ -651,8 +651,8 @@ router.get("/:id/proxy/info", function (req, res) {
       );
       let lines = config.split("\n");
       for (i in lines) {
+        console.log(lines[i]);
         if (lines[i].includes("try = [")) {
-          console.log(lines[i + 2]);
           lobbyName = lines[i + 1].split('"')[1];
         }
       }
