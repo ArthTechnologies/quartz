@@ -635,7 +635,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   }
 });
 
-router.get("/:id/proxy/secret", function (req, res) {
+router.get("/:id/proxy/info", function (req, res) {
   let email = req.headers.email;
   let token = req.headers.token;
   if (
@@ -643,11 +643,24 @@ router.get("/:id/proxy/secret", function (req, res) {
     servers[req.params.id].accountId == accounts[email].accountId
   ) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
+      let lobbyName;
+
+      let config = fs.readFileSync(
+        `servers/${req.params.id}/velocity.toml`,
+        "utf8"
+      );
+      let lines = config.split("\n");
+      for (i in lines) {
+        if (lines[i].includes("try = [")) {
+          lobbyName = lines[i + 1].split('"')[1];
+        }
+      }
       res.status(200).json({
         secret: fs.readFileSync(
           `servers/${req.params.id}/forwarding.secret`,
           "utf8"
         ),
+        lobbyName: lobbyName,
       });
     } else {
       res.status(400).json({ msg: "Not a proxy." });
