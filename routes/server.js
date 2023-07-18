@@ -753,7 +753,9 @@ router.post("/:id/proxy/servers", function (req, res) {
       }
       fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig);
 
-      if (req.query.ip.split(":")[0] == "arthmc.xyz") {
+      if (
+        req.query.ip.split(":")[0] == require("../stores/settings.json").address
+      ) {
         let subserverId = req.query.ip.split(":")[1];
         if (servers[subserverId].accountId == accounts[email].accountId) {
           let paperGlobal = fs.readFileSync(
