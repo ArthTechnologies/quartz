@@ -392,7 +392,7 @@ router.post(`/:id/setInfo`, function (req, res) {
     if (f.checkServer(id).software == "velocity") {
       var text = fs.readFileSync(`servers/${id}/velocity.toml`).toString();
       var textByLine = text.split("\n");
-      textByLine[9] = `motd = "${desc}"`;
+      textByLine[8] = `motd = "${desc}"`;
       text = textByLine.join("\n");
 
       fs.writeFileSync(`servers/${id}/velocity.toml`, text);
@@ -474,7 +474,7 @@ router.get(`/:id/getInfo`, function (req, res) {
     if (f.checkServer(id).software == "velocity") {
       var text = fs.readFileSync(`servers/${id}/velocity.toml`).toString();
       var textByLine = text.split("\n");
-      desc = textByLine[9].split("=")[1];
+      desc = textByLine[8].split("=")[1];
     } else {
       var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
       var textByLine = text.split("\n");
