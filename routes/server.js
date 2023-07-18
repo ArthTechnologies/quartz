@@ -757,7 +757,10 @@ router.post("/:id/proxy/servers", function (req, res) {
         req.query.ip.split(":")[0] == require("../stores/settings.json").address
       ) {
         let subserverId = req.query.ip.split(":")[1];
-        if (servers[subserverId].accountId == accounts[email].accountId) {
+        if (
+          require("../servers.json")[subserverId].accountId ==
+          accounts[email].accountId
+        ) {
           let paperGlobal = fs.readFileSync(
             `servers/${req.params.id}/config/paper-global.yml`,
             "utf8"
