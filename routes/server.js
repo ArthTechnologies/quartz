@@ -688,13 +688,13 @@ router.post("/:id/proxy/servers", function (req, res) {
           });
         } else {
           newConfig =
-            newConfig.slice(0, i) +
+            newConfig.slice(0, i).join("\n") +
             "\n" +
             req.query.name +
             " = " +
             req.query.ip +
             "\n" +
-            newConfig.slice(i, newConfig.length);
+            newConfig.slice(i, newConfig.length).join("\n");
 
           console.log(newConfig);
           break;
