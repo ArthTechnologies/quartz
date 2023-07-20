@@ -288,6 +288,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   } else {
     if (isNew) {
       data = fs.readFileSync("servers/template/server.properties", "utf8");
+      data = data.replace(/spawn-protection=16/g, `spawn-protection=0`);
     } else {
       data = fs.readFileSync("servers/" + id + "/server.properties", "utf8");
     }
