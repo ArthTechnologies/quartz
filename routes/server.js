@@ -919,4 +919,55 @@ router.delete("/:id/proxy/servers", function (req, res) {
   }
 });
 
+router.get("/:id/files", function (req, res) {
+  let email = req.headers.email;
+  let token = req.headers.token;
+  
+  if (
+    token === accounts[email].token &&
+    servers[req.params.id].accountId == accounts[email].accountId
+  ) {
+    if (fs.existsSync(`servers/${req.params.id}/`)) {
+      let files = [];
+      
+      function scanDirRecursive(directoryPath) {
+        fs.readdirSync(directoryPath).forEach((file) => {
+          const fullPath = `${directoryPath}/${file}`;
+          if (fs.lstatSync(fullPath).isDirectory()) {
+            files.push([file, scanDirRecursive(fullPath)]);
+          } else {
+            files.push(file);
+          }
+        });
+      }
+
+      scanDirRecursive(`servers/${req.params.id}`);
+      res.status(200).json(files);
+    } else {
+      res.status(200).json([]);
+    }
+  }
+});
+
+router.post("/:id/files", function (req, res) {
+  let email = req.headers.email;
+  let token = req.headers.token;
+  if (
+    token === accounts[email].token &&
+    servers[req.params.id].accountId == accounts[email].accountId &&
+    fs.existsSync(`servers/${req.params.id}/`)
+  ) {
+    if (req.query.text !== undefined && fs.existsSync(`servers/${req.params.id}/${req.query.path}`)) {
+      fs.writeFileSync(
+        `servers/${req.params.id}/${req.query.path}`,
+        req.query.tezt
+      );
+    }
+    res.status(200).json({ msg: "Done" });
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
+
 module.exports = router;
