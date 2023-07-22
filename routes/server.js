@@ -928,21 +928,9 @@ router.get("/:id/files", function (req, res) {
     servers[req.params.id].accountId == accounts[email].accountId
   ) {
     if (fs.existsSync(`servers/${req.params.id}/`)) {
-      let files = [];
       
-      function scanDirRecursive(directoryPath) {
-        fs.readdirSync(directoryPath).forEach((file) => {
-          const fullPath = `${directoryPath}/${file}`;
-          if (fs.lstatSync(fullPath).isDirectory()) {
-            files.push([file, scanDirRecursive(fullPath)]);
-          } else {
-            files.push(file);
-          }
-        });
-      }
 
-      scanDirRecursive(`servers/${req.params.id}`);
-      res.status(200).json(files);
+      res.status(200).json(files.readFilesRecursive(`servers/${req.params.id}/`));
     } else {
       res.status(200).json([]);
     }
