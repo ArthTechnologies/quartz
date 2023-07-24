@@ -506,10 +506,10 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       );
     }
     //create /plugins/Geyser-Spigot/
-    if (!fs.existsSync(folder + "/plugins/Geyser-Spigot")) {
-      fs.mkdirSync(folder + "/plugins/Geyser-Spigot");
+    if (!fs.existsSync(folder + "/plugins/Geyser-Velocity")) {
+      fs.mkdirSync(folder + "/plugins/Geyser-Velocity");
     }
-    fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
+    fs.writeFileSync(folder + "/plugins/Geyser-Velocity/config.yml", text);
 
     fs.copyFile(
       "servers/template/downloading/cx_geyser-velocity_Geyser.jar",
