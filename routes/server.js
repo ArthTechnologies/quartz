@@ -199,6 +199,7 @@ router.post(`/:id/add/:modtype`, function (req, res) {
 });
 
 router.post(`/new`, function (req, res) {
+  console.log("test9")
   console.log(req.body.accountId);
 
   console.log(req.body.version);
@@ -209,7 +210,7 @@ router.post(`/new`, function (req, res) {
     token === accounts[email].token &&
     servers[req.params.id].accountId == accounts[email].accountId
   ) {
-    console.log("test9")
+
     let amount = f.checkServers(accounts[email].accountId).amount;
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
