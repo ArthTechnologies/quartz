@@ -143,6 +143,7 @@ function simplifyTerminal(terminal) {
         break;
       case line.includes("java.base/jdk.internal.reflect"):
         terminalLines.splice(index, 1);
+        terminalLines.splice(index, 1);
         break;
       case (line == "[to be removed"):
         terminalLines.splice(index, 1);
