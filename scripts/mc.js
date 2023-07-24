@@ -234,12 +234,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     );
   }
   console.log(software);
+  console.log("test9")
   if (software != "quilt") {
     fs.copyFileSync(
       "data/" + software + "-" + version + ".jar",
       folder + "/server.jar"
     );
-    console.log("test9")
+
   } else {
     fs.copyFileSync("data/" + software + "-0.5.1.jar", folder + "/server.jar");
     args = [
