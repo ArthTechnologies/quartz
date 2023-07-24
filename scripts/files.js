@@ -132,7 +132,7 @@ function simplifyTerminal(terminal) {
   }
 
   terminalLines.forEach((line, index) => {
-   if (line.split("]: ")[1].length != 2) {
+   if (line.split("]: ").length != 2) {
     console.log(line.split("]: ").length);
    }
     switch(true) {
