@@ -135,20 +135,20 @@ function simplifyTerminal(terminal) {
 
     switch(true) {
       case line.includes("The timings profiler"):
-        terminalLines[index] = "";
+        terminalLines.splice(index, 1);
         break;
       case line.includes("***********"):
         console.log(line.includes("***********"));
-        terminalLines[index] = "";
+        terminalLines.splice(index, 1);
         break;
       case line.includes("had been replaced by \njava.base"):
-        terminalLines[index] = "";
+        terminalLines.splice(index, 1);
         break;
       case line.includes("Loaded plugin geyser"):
-        terminalLines[index] = line.split("]: ")[0] + "Launching Geyser";
+        terminalLines[index] = line.split("]: ")[0] + "]: Launching Geyser";
         break;
-      case line.split("]: ")[1] == "[geyser]: ":
-        terminalLines[index] = "";
+      case line.split("]: ")[1] == "":
+        terminalLines.splice(index, 1);
         break;
     }
 
