@@ -132,22 +132,22 @@ function simplifyTerminal(terminal) {
   }
 
   terminalLines.forEach((line, index) => {
-    console.log(line.includes("***********"));
-    switch(line) {
-      case line.includes("The timings profiler"):
-        terminalLines[index] = "";
-        break;
-      case line.includes("***********"):
 
+    switch(line) {
+      case includes("The timings profiler"):
         terminalLines[index] = "";
         break;
-      case line.includes("had been replaced by \njava.base"):
+      case includes("***********"):
+        console.log(line);
         terminalLines[index] = "";
         break;
-      case line.includes("Loaded plugin geyser"):
+      case includes("had been replaced by \njava.base"):
+        terminalLines[index] = "";
+        break;
+      case includes("Loaded plugin geyser"):
         terminalLines[index] = line.split("]: ")[0] + "Launching Geyser";
         break;
-      case line.split("]: ")[1] == "[geyser]: ":
+      case split("]: ")[1] == "[geyser]: ":
         terminalLines[index] = "";
         break;
     }
