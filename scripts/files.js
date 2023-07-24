@@ -139,11 +139,14 @@ function simplifyTerminal(terminal) {
         break;
       case line.includes("Paper: Using"):
           terminalLines.splice(index, 1);
+          terminalLines.splice(index, 1);
           break;
       case line.includes("Server permissions file"):
             terminalLines.splice(index, 1);
             break;
-            
+      case line.includes("There's a new Geyser update available"):
+            terminalLines[index] = line.split("]: ")[0] + "]: Geyser has an update available. It will arrive in our database within 12 hours if it hasn't already. Restart to apply it.";
+            break;
       case line.includes("The timings profiler"):
         terminalLines.splice(index, 1);
         break;
