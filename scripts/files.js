@@ -133,21 +133,21 @@ function simplifyTerminal(terminal) {
 
   terminalLines.forEach((line, index) => {
 
-    switch(line) {
-      case includes("The timings profiler"):
+    switch(true) {
+      case line.includes("The timings profiler"):
         terminalLines[index] = "";
         break;
-      case includes("***********"):
-        console.log(line);
+      case line.includes("***********"):
+        console.log(line.includes("***********"));
         terminalLines[index] = "";
         break;
-      case includes("had been replaced by \njava.base"):
+      case line.includes("had been replaced by \njava.base"):
         terminalLines[index] = "";
         break;
-      case includes("Loaded plugin geyser"):
+      case line.includes("Loaded plugin geyser"):
         terminalLines[index] = line.split("]: ")[0] + "Launching Geyser";
         break;
-      case split("]: ")[1] == "[geyser]: ":
+      case line.split("]: ")[1] == "[geyser]: ":
         terminalLines[index] = "";
         break;
     }
