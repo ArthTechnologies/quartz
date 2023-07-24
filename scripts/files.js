@@ -154,7 +154,7 @@ function simplifyTerminal(terminal) {
         terminalLines[index] = line.split("]: ")[0] + "]: Loading Geyser";
         terminalLines.splice(index -1, 1);
         terminalLines.splice(index, 1);
-        console.log(terminalLines[index]);
+        terminalLines.splice(index, 1);
 
     }
 
