@@ -137,6 +137,12 @@ function simplifyTerminal(terminal) {
       case line.includes("This server is running"):
         terminalLines.splice(index, 1);
         break;
+      case line.includes("SERVER IS RUNNING IN OFFLINE"):
+        terminalLines.splice(index, 1);
+        terminalLines.splice(index, 1);
+        terminalLines.splice(index, 1);
+        terminalLines.splice(index, 1);
+        break;
       case line.includes("Paper: Using"):
           terminalLines.splice(index, 1);
           terminalLines.splice(index, 1);
