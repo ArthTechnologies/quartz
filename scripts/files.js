@@ -123,6 +123,39 @@ function GET(url, callback) {
   });
 }
 
+function simplifyTerminal(terminal) {
+  
+  terminalLines = terminal.split("\n[");
+
+  terminalLines.forEach((line, index) => {
+    switch(line) {
+      case line.includes("The timings profiler"):
+        terminalLines[index] = "";
+        break;
+      case line.includes("***********"):
+        terminalLines[index] = "";
+        break;
+      case line.includes("had been replaced by \njava.base"):
+        terminalLines[index] = "";
+        break;
+      case line.includes("Loaded plugin geyser"):
+        terminalLines[index] = line.split("]: ")[0] + "Launching Geyser";
+        break;
+      case line.split("]: ")[1] == "[geyser]: ":
+        terminalLines[index] = "";
+        break;
+    }
+
+
+      
+
+    });
+
+
+  
+
+  return terminalLines.join("\n[");
+}
 module.exports = {
   hash,
   download,
@@ -134,4 +167,5 @@ module.exports = {
   downloadAsync,
   removeDirectoryRecursiveAsync,
   readFilesRecursive,
+  simplifyTerminal
 };
