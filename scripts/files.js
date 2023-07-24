@@ -124,7 +124,7 @@ function GET(url, callback) {
 }
 
 function simplifyTerminal(terminal) {
-  
+  console.log(terminal);
   terminalLines = terminal.split("\n[");
 
   terminalLines.forEach((line, index) => {
