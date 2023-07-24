@@ -495,7 +495,8 @@ router.get(`/:id/getInfo`, function (req, res) {
       );
 
       secret = secretLines[index].split(":")[1].trim();
-
+      //cut quotes off of secret
+      secret = secret.substring(1, secret.length - 1);
 
     }
 
