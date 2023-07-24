@@ -134,6 +134,16 @@ function simplifyTerminal(terminal) {
   terminalLines.forEach((line, index) => {
 
     switch(true) {
+      case line.includes("This server is running"):
+        terminalLines.splice(index, 1);
+        break;
+      case line.includes("Paper: Using"):
+          terminalLines.splice(index, 1);
+          break;
+      case line.includes("Server permissions file"):
+            terminalLines.splice(index, 1);
+            break;
+            
       case line.includes("The timings profiler"):
         terminalLines.splice(index, 1);
         break;
