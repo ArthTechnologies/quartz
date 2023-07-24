@@ -209,6 +209,7 @@ router.post(`/new`, function (req, res) {
     token === accounts[email].token &&
     servers[req.params.id].accountId == accounts[email].accountId
   ) {
+    console.log("test9")
     let amount = f.checkServers(accounts[email].accountId).amount;
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
@@ -224,7 +225,7 @@ router.post(`/new`, function (req, res) {
       addons: req.body.addons,
       accountId: accounts[email].accountId,
     };
-    console.log("test9")
+
     let cid = "";
     if (
       (stripekey.indexOf("sk") == -1) |
