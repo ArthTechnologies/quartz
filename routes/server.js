@@ -843,6 +843,10 @@ router.post("/:id/proxy/servers", function (req, res) {
             /secret: ""/g,
             `secret: "${req.query.secret}"`
           );
+          paperGlobal = paperGlobal.replace(
+            /secret: ''/g,
+            `secret: "${req.query.secret}"`
+          );
 
           fs.writeFileSync(
             `servers/${subserverId}/config/paper-global.yml`,
