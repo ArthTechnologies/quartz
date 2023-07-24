@@ -144,12 +144,15 @@ function simplifyTerminal(terminal) {
       case line.includes("java.base/jdk.internal.reflect"):
         terminalLines.splice(index, 1);
         break;
+      case line.includes("to be removed"):
+        terminalLines.splice(index, 1);
+        break;
       case line.includes("Loaded plugin geyser"):
         terminalLines[index] = line.split("]: ")[0] + "]: Launching Geyser";
         break;
       case line.includes("Loading Geyser version"):
         terminalLines[index] = line.split("]: ")[0] + "]: Loading Geyser";
-        terminalLines[index + 1] = "***********";
+        terminalLines[index + 1] = "to be removed";
         terminalLines.splice(index -1, 1);
     }
 
