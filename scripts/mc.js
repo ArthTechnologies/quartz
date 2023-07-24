@@ -299,7 +299,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       "servers/template/paper-global.yml",
       "utf8"
     );
-    fs.writeFileSync(folder + "/config/paper-global.yml", paperGlobal, "utf8");
+    fs.writeFileSync(folder + "/paper-global.yml", paperGlobal, "utf8");
     let result = data.replace(/server-port=25565/g, "server-port=" + port);
 
     fs.writeFileSync(folder + "/server.properties", result, "utf8");
