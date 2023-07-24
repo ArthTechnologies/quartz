@@ -132,9 +132,7 @@ function simplifyTerminal(terminal) {
   }
 
   terminalLines.forEach((line, index) => {
-   if (line.split("]: ").length != 2) {
-    console.log(line.split("]: ").length);
-   }
+
     switch(true) {
       case line.includes("The timings profiler"):
         terminalLines.splice(index, 1);
@@ -149,7 +147,7 @@ function simplifyTerminal(terminal) {
       case line.includes("Loaded plugin geyser"):
         terminalLines[index] = line.split("]: ")[0] + "]: Launching Geyser";
         break;
-      case line.split("]: ")[1] == null:
+      case line.split("]: ").length == 1:
         terminalLines.splice(index, 1);
         break;
     }
