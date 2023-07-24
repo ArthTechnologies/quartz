@@ -224,6 +224,7 @@ router.post(`/new`, function (req, res) {
       addons: req.body.addons,
       accountId: accounts[email].accountId,
     };
+    console.log("test9")
     let cid = "";
     if (
       (stripekey.indexOf("sk") == -1) |
@@ -256,7 +257,7 @@ router.post(`/new`, function (req, res) {
           }
         );
       }
-      console.log("test9")
+
       f.run(
         id,
         req.body.software,
