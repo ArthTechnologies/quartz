@@ -141,15 +141,16 @@ function simplifyTerminal(terminal) {
 
         terminalLines.splice(index, 1);
         break;
-      case line.includes("had been replaced by \njava.base"):
+      case line.includes("java.base/jdk.internal.reflect"):
         terminalLines.splice(index, 1);
         break;
       case line.includes("Loaded plugin geyser"):
         terminalLines[index] = line.split("]: ")[0] + "]: Launching Geyser";
         break;
-      case line.split("]: ").length == 1:
-        terminalLines.splice(index, 1);
-        break;
+      case line.includes("Loading Geyser version"):
+        terminalLines[index] = line.split("]: ")[0] + "]: Loading Geyser";
+        terminalLines.splice(index + 1, 1);
+        terminalLines.splice(index - 1, 1);
     }
 
 
