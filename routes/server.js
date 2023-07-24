@@ -485,7 +485,7 @@ router.get(`/:id/getInfo`, function (req, res) {
       var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
       var textByLine = text.split("\n");
       desc = textByLine[32].split("=")[1];
-      secret = fs.readFileSync(`servers/${id}/config/paper-global.yml`);
+      secret = fs.readFileSync(`servers/${id}/config/paper-global.yml`, "utf8");
 
       let secretLines = secret.split("\n");
 
