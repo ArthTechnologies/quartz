@@ -144,7 +144,7 @@ function simplifyTerminal(terminal) {
       case line.includes("java.base/jdk.internal.reflect"):
         terminalLines.splice(index, 1);
         break;
-      case line.includes("to be removed"):
+      case (line == "[to be removed"):
         terminalLines.splice(index, 1);
         break;
       case line.includes("Loaded plugin geyser"):
