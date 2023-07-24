@@ -254,7 +254,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   //run code for each item in addons
   //mkdir folder/world/datapacks
   // if world folder doesnt exist
-  if (!fs.existsSync(folder + "/world") && software != "mohist") {
+  if (!fs.existsSync(folder + "/world/datapacks") && software != "mohist") {
     fs.mkdirSync(folder + "/world");
     fs.mkdirSync(folder + "/world/datapacks");
   }
