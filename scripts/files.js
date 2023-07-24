@@ -131,57 +131,57 @@ function simplifyTerminal(terminal) {
     terminalLines = terminal.split("\n[");
   }
 
-  terminalLines.forEach((line, index) => {
-
+  for (let i = terminalLines.length - 1; i >= 0; i--) {
+    let line = terminalLines[i];
     switch(true) {
       case line.includes("This server is running"):
-        terminalLines.splice(index, 1);
+        terminalLines.splice(i, 1);
         break;
       case line.includes("SERVER IS RUNNING IN OFFLINE"):
-        terminalLines.splice(index, 1);
-        terminalLines.splice(index, 1);
-        terminalLines.splice(index, 1);
-        terminalLines.splice(index, 1);
+        terminalLines.splice(i, 1);
+        terminalLines.splice(i, 1);
+        terminalLines.splice(i, 1);
+        terminalLines.splice(i, 1);
         break;
       case line.includes("Paper: Using"):
-          terminalLines.splice(index, 1);
-          terminalLines.splice(index, 1);
+          terminalLines.splice(i, 1);
+          terminalLines.splice(i, 1);
           break;
       case line.includes("Server permissions file"):
-            terminalLines.splice(index, 1);
+            terminalLines.splice(i, 1);
             break;
       case line.includes("There's a new Geyser update available"):
-            terminalLines[index] = line.split("]: ")[0] + "]: Geyser has an update available. It will arrive in our database within 12 hours if it hasn't already. Restart to apply it.";
+            terminalLines[i] = line.split("]: ")[0] + "]: Geyser has an update available. It will arrive in our database within 12 hours if it hasn't already. Restart to apply it.";
             break;
       case line.includes("The timings profiler"):
-        terminalLines.splice(index, 1);
+        terminalLines.splice(i, 1);
         break;
       case line.includes("***********"):
 
-        terminalLines.splice(index, 1);
+        terminalLines.splice(i, 1);
         break;
       case line.includes("java.base/jdk.internal.reflect"):
-        terminalLines.splice(index, 1);
-        terminalLines.splice(index, 1);
+        terminalLines.splice(i, 1);
+        terminalLines.splice(i, 1);
         break;
       case (line == "[to be removed"):
-        terminalLines.splice(index, 1);
+        terminalLines.splice(i, 1);
         break;
       case line.includes("Loaded plugin geyser"):
-        terminalLines[index] = line.split("]: ")[0] + "]: Launching Geyser";
+        terminalLines[i] = line.split("]: ")[0] + "]: Launching Geyser";
         break;
       case line.includes("Loading Geyser version"):
-        terminalLines[index] = line.split("]: ")[0] + "]: Loading Geyser";
-        terminalLines.splice(index -1, 1);
-        terminalLines.splice(index, 1);
-        terminalLines.splice(index, 1);
+        terminalLines[i] = line.split("]: ")[0] + "]: Loading Geyser";
+        terminalLines.splice(i -1, 1);
+        terminalLines.splice(i, 1);
+        terminalLines.splice(i, 1);
 
     }
 
 
       
 
-    });
+    }
 
 
   
