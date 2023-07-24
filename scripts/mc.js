@@ -484,6 +484,41 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       folder + "/plugins/cx_floodgate-spigot_Floodgate.jar",
       (err) => {}
     );
+  } else if (software == "velocity") {
+    if (
+      fs.existsSync("data/cx_geyser-velocity_Geyser.jar") &&
+      (fs.existsSync(folder + "/plugins/cx_geyser-velocity_Geyser.jar") || isNew)
+    ) {
+      if (!isNew) {
+        fs.unlinkSync(folder + "/plugins/cx_geyser-velocity_Geyser.jar");
+        fs.unlinkSync(folder + "/plugins/cx_floodgate-velocity_Floodgate.jar");
+      }
+      fs.copyFileSync(
+        "data/cx_geyser-velocity_Geyser.jar",
+        folder + "/plugins/cx_geyser-velocity_Geyser.jar"
+      );
+      fs.copyFileSync(
+        "data/cx_floodgate-velocity_Floodgate.jar",
+        folder + "/plugins/cx_floodgate-velocity_Floodgate.jar"
+      );
+    }
+    //create /plugins/Geyser-Spigot/
+    if (!fs.existsSync(folder + "/plugins/Geyser-Spigot")) {
+      fs.mkdirSync(folder + "/plugins/Geyser-Spigot");
+    }
+    fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
+
+    fs.copyFile(
+      "servers/template/downloading/cx_geyser-velocity_Geyser.jar",
+      folder + "/plugins/cx_geyser-velocity_Geyser.jar",
+      (err) => {}
+    );
+
+    fs.copyFile(
+      "servers/template/downloading/cx_floodgate-velocity_Floodgate.jar",
+      folder + "/plugins/cx_floodgate-velocity_Floodgate.jar",
+      (err) => {}
+    );
   }
 
   let count = 0;

@@ -100,6 +100,34 @@ function downloadJars() {
       fs.unlinkSync(`data/downloads/cx_floodgate-spigot_Floodgate.jar`);
     }
   );
+  files.downloadAsync(
+    "data/downloads/cx_geyser-velocity_Geyser.jar",
+    "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/velocity/build/libs/Geyser-Velocity.jar",
+    (data) => {
+      if (fs.existsSync(`data/cx_geyser-velocity_Geyser.jar`)) {
+        fs.unlinkSync(`data/cx_geyser-velocity_Geyser.jar`);
+      }
+      fs.copyFileSync(
+        `data/downloads/cx_geyser-velocity_Geyser.jar`,
+        `data/cx_geyser-velocity_Geyser.jar`
+      );
+      fs.unlinkSync(`data/downloads/cx_geyser-velocity_Geyser.jar`);
+    }
+  );
+  files.downloadAsync(
+    "data/downloads/cx_floodgate-velocity_Floodgate.jar",
+    "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/velocity/build/libs/floodgate-velocity.jar",
+    (data) => {
+      if (fs.existsSync(`data/cx_floodgate-velocity_Floodgate.jar`)) {
+        fs.unlinkSync(`data/cx_floodgate-velocity_Floodgate.jar`);
+      }
+      fs.copyFileSync(
+        `data/downloads/cx_floodgate-velocity_Floodgate.jar`,
+        `data/cx_floodgate-velocity_Floodgate.jar`
+      );
+      fs.unlinkSync(`data/downloads/cx_floodgate-velocity_Floodgate.jar`);
+    }
+  );
 
   //plugins
   files.GET("https://api.jarsmc.xyz/jars/arthHosting", (data) => {
