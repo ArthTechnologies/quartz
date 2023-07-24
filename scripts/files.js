@@ -132,13 +132,13 @@ function simplifyTerminal(terminal) {
   }
 
   terminalLines.forEach((line, index) => {
-
+    console.log(line.includes("***********"));
     switch(line) {
       case line.includes("The timings profiler"):
         terminalLines[index] = "";
         break;
       case line.includes("***********"):
-        console.log(line);
+
         terminalLines[index] = "";
         break;
       case line.includes("had been replaced by \njava.base"):
