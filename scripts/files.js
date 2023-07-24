@@ -147,7 +147,7 @@ function simplifyTerminal(terminal) {
       case line.includes("Loaded plugin geyser"):
         terminalLines[index] = line.split("]: ")[0] + "]: Launching Geyser";
         break;
-      case line.split("]: ")[1] == "":
+      case line.split("]: ")[1] == undefined:
         terminalLines.splice(index, 1);
         break;
     }
