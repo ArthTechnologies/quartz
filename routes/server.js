@@ -199,13 +199,14 @@ router.post(`/:id/add/:modtype`, function (req, res) {
 });
 
 router.post(`/new`, function (req, res) {
-  console.log("test9")
+
   console.log(req.body.accountId);
 
   console.log(req.body.version);
   email = req.headers.email;
 
   token = req.headers.token;
+  console.log("test9")
   if (
     token === accounts[email].token &&
     servers[req.params.id].accountId == accounts[email].accountId
