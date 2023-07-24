@@ -471,6 +471,7 @@ router.get(`/:id/getInfo`, function (req, res) {
     //send the motd and iconUrl
     let iconUrl = "/images/placeholder.webp";
     let desc = "";
+    let secret;
     id = req.params.id;
 
     if (f.checkServer(id).software == "velocity") {
@@ -484,6 +485,18 @@ router.get(`/:id/getInfo`, function (req, res) {
       var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
       var textByLine = text.split("\n");
       desc = textByLine[32].split("=")[1];
+      secret = fs.readFileSync(`servers/${id}/config/paper-global.yml`);
+
+      let secretLines = secret.split("\n");
+
+      let index = secretLines.findIndex((line) => {
+        return line.includes("secret:");
+      }
+      );
+
+      secret = secretLines[index].split(":")[1].trim();
+
+
     }
 
     if (fs.existsSync(`servers/${id}/iconurl.txt`)) {
@@ -491,7 +504,7 @@ router.get(`/:id/getInfo`, function (req, res) {
     }
     res
       .status(200)
-      .json({ msg: `Success: Got server info`, iconUrl: iconUrl, desc: desc });
+      .json({ msg: `Success: Got server info`, iconUrl: iconUrl, desc: desc, secret: secret });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
