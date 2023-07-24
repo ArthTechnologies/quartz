@@ -206,12 +206,13 @@ router.post(`/new`, function (req, res) {
   email = req.headers.email;
 
   token = req.headers.token;
-
+  console.log("test9" + token === accounts[email].token &&
+  servers[req.params.id].accountId == accounts[email].accountId)
   if (
     token === accounts[email].token &&
     servers[req.params.id].accountId == accounts[email].accountId
   ) {
-    console.log("test9")
+
     let amount = f.checkServers(accounts[email].accountId).amount;
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
