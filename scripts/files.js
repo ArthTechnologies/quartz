@@ -140,7 +140,7 @@ function simplifyTerminal(terminal) {
         terminalLines.splice(index, 1);
         break;
       case line.includes("***********"):
-        console.log(line.includes("***********"));
+
         terminalLines.splice(index, 1);
         break;
       case line.includes("had been replaced by \njava.base"):
