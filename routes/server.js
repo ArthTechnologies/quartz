@@ -256,7 +256,7 @@ router.post(`/new`, function (req, res) {
           }
         );
       }
-
+      console.log("test9")
       f.run(
         id,
         req.body.software,
