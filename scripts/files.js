@@ -132,7 +132,9 @@ function simplifyTerminal(terminal) {
   }
 
   terminalLines.forEach((line, index) => {
+   if (line.split("]: ")[1].length != 2) {
     console.log(line.split("]: ").length);
+   }
     switch(true) {
       case line.includes("The timings profiler"):
         terminalLines.splice(index, 1);
