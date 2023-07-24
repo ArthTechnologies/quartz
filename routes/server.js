@@ -206,7 +206,8 @@ router.post(`/new`, function (req, res) {
   email = req.headers.email;
 
   token = req.headers.token;
-  console.log("test9" + (token === accounts[email].token))
+  console.log("test9" + (
+  servers[req.params.id].accountId))
   if (
     token === accounts[email].token &&
     servers[req.params.id].accountId == accounts[email].accountId
