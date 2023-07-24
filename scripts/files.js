@@ -152,8 +152,9 @@ function simplifyTerminal(terminal) {
         break;
       case line.includes("Loading Geyser version"):
         terminalLines[index] = line.split("]: ")[0] + "]: Loading Geyser";
-        terminalLines[index + 1] = "to be removed";
         terminalLines.splice(index -1, 1);
+        terminalLines.splice(index, 1);
+
     }
 
 
