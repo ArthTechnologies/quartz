@@ -47,11 +47,10 @@ router.post(`/:id/state/:state`, function (req, res) {
           f.stop(id);
           break;
         case "restart":
-          f.stop(id);
-          //wait 5 seconds
-          setTimeout(function () {
+          f.stopAsync(id, () => {
+          
             f.run(id, undefined, undefined, undefined, undefined, email, false);
-          }, 5000);
+          });
           break;
         default:
       }
