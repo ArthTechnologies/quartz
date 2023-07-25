@@ -517,7 +517,7 @@ router.get(`/:id/getInfo`, function (req, res) {
     }
     res
       .status(200)
-      .json({ msg: `Success: Got server info`, iconUrl: iconUrl, desc: desc, secret: secret });
+      .json({ msg: `Success: Got server info`, iconUrl: iconUrl, desc: desc, secret: secret, proxiesEnabled:proxiesEnabled });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
