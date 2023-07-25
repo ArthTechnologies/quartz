@@ -140,9 +140,12 @@ function simplifyTerminal(terminal) {
       case line.includes("Incorrect Key"):
         terminalLines.splice(i, 1);
         break;
-        case line.includes("Assets URL"):
+        case line.includes("union:/"):
           terminalLines.splice(i, 1);
           break;
+          case line.includes("mojand/Yggdrasil"):
+            terminalLines.splice(i, 1);
+            break;
       case line.includes("This server is running"):
         terminalLines.splice(i, 1);
         break;
