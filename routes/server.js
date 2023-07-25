@@ -501,9 +501,9 @@ router.get(`/:id/getInfo`, function (req, res) {
       })].split("=")[1].trim();
 
       if (onlineMode == "true") {
-        proxiesEnabled = true;
-      } else {
         proxiesEnabled = false;
+      } else {
+        proxiesEnabled = true;
       }
 
       secret = secretLines[index].split(":")[1].trim();
