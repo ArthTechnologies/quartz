@@ -144,7 +144,7 @@ function simplifyTerminal(terminal) {
         terminalLines.splice(i, 1);
         break;
       case line.includes("Couldn't load server icon"):
-        terminalLines[i] = terminalLines[index].split("]: ")[0] + "]: Couldn't load server icon. It may be too large.";
+        terminalLines[i] = terminalLines[i].split("]: ")[0] + "]: Couldn't load server icon. It may be too large.";
         break;
       case line.includes("Paper: Using"):
           terminalLines.splice(i, 1);
@@ -189,7 +189,7 @@ function simplifyTerminal(terminal) {
 
   
 
-  return terminalLines.join("\n[");
+  return "["+terminalLines.join("\n[");
 }
 module.exports = {
   hash,
