@@ -12,7 +12,7 @@ let terminalInput = "";
 function proxiesToggle(id, toggle, secret) {
   if (toggle) {
     let paperGlobal = fs.readFileSync(
-      `servers/${subserverId}/config/paper-global.yml`,
+      `servers/${id}/config/paper-global.yml`,
       "utf8"
     );
 
@@ -26,12 +26,12 @@ function proxiesToggle(id, toggle, secret) {
     );
 
     fs.writeFileSync(
-      `servers/${subserverId}/config/paper-global.yml`,
+      `servers/${id}/config/paper-global.yml`,
       paperGlobal
     );
 
     let serverProperties = fs.readFileSync(
-      `servers/${subserverId}/server.properties`,
+      `servers/${id}/server.properties`,
       "utf8"
     );
 
@@ -41,12 +41,12 @@ function proxiesToggle(id, toggle, secret) {
     );
 
     fs.writeFileSync(
-      `servers/${subserverId}/server.properties`,
+      `servers/${id}/server.properties`,
       serverProperties
     );
   } else {
     let paperGlobal = fs.readFileSync(
-      `servers/${subserverId}/config/paper-global.yml`,
+      `servers/${id}/config/paper-global.yml`,
       "utf8"
     );
 
@@ -57,12 +57,12 @@ function proxiesToggle(id, toggle, secret) {
     paperGlobal = paperGlobalLines.join("\n");
 
     fs.writeFileSync(
-      `servers/${subserverId}/config/paper-global.yml`,
+      `servers/${id}/config/paper-global.yml`,
       paperGlobal
     );
 
     let serverProperties = fs.readFileSync(
-      `servers/${subserverId}/server.properties`,
+      `servers/${id}/server.properties`,
       "utf8"
     );
 
@@ -72,7 +72,7 @@ function proxiesToggle(id, toggle, secret) {
     );
 
     fs.writeFileSync(
-      `servers/${subserverId}/server.properties`,
+      `servers/${id}/server.properties`,
       serverProperties
     );
   }
