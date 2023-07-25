@@ -399,7 +399,7 @@ router.post(`/:id/setInfo`, function (req, res) {
 
       fs.writeFileSync(`servers/${id}/velocity.toml`, text);
     } else {
-      f.proxiesToggle(subserverId, req.body.proxiesEnabled, req.body.fSecret);
+      f.proxiesToggle(req.params.id, req.body.proxiesEnabled, req.body.fSecret);
       //set line 33 of server.properties in the server folder to "motd=" + desc
       var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
       var textByLine = text.split("\n");
