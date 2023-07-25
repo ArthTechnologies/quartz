@@ -47,6 +47,7 @@ function proxiesToggle(id, toggle, secret) {
       serverProperties
     );
   } else {
+    console.log("DEBUG LOGG")
     let paperGlobal = fs.readFileSync(
       `servers/${id}/config/paper-global.yml`,
       "utf8"
