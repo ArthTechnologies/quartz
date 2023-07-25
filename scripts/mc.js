@@ -9,6 +9,74 @@ const { randomBytes } = require("crypto");
 let terminalOutput = [];
 let terminalInput = "";
 
+function proxiesToggle(id, toggle, secret) {
+  if (toggle) {
+    let paperGlobal = fs.readFileSync(
+      `servers/${subserverId}/config/paper-global.yml`,
+      "utf8"
+    );
+
+    paperGlobal = paperGlobal.replace(
+      /secret: ""/g,
+      `secret: "${secret}"`
+    );
+    paperGlobal = paperGlobal.replace(
+      /secret: ''/g,
+      `secret: "${secret}"`
+    );
+
+    fs.writeFileSync(
+      `servers/${subserverId}/config/paper-global.yml`,
+      paperGlobal
+    );
+
+    let serverProperties = fs.readFileSync(
+      `servers/${subserverId}/server.properties`,
+      "utf8"
+    );
+
+    serverProperties = serverProperties.replace(
+      /online-mode=true/g,
+      `online-mode=false`
+    );
+
+    fs.writeFileSync(
+      `servers/${subserverId}/server.properties`,
+      serverProperties
+    );
+  } else {
+    let paperGlobal = fs.readFileSync(
+      `servers/${subserverId}/config/paper-global.yml`,
+      "utf8"
+    );
+
+    let index = paperGlobal.split("\n").indexOf("secret: " );
+    let paperGlobalLines = paperGlobal.split("\n");
+    
+    paperGlobalLines[index] == "secret: " + secret;
+    paperGlobal = paperGlobalLines.join("\n");
+
+    fs.writeFileSync(
+      `servers/${subserverId}/config/paper-global.yml`,
+      paperGlobal
+    );
+
+    let serverProperties = fs.readFileSync(
+      `servers/${subserverId}/server.properties`,
+      "utf8"
+    );
+
+    serverProperties = serverProperties.replace(
+      /online-mode=false/g,
+      `online-mode=true`
+    );
+
+    fs.writeFileSync(
+      `servers/${subserverId}/server.properties`,
+      serverProperties
+    );
+  }
+}
 function checkServers(accountId) {
   amount = 0;
 

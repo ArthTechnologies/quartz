@@ -399,6 +399,7 @@ router.post(`/:id/setInfo`, function (req, res) {
 
       fs.writeFileSync(`servers/${id}/velocity.toml`, text);
     } else {
+      f.proxiesToggle(subserverId, req.body.proxiesEnabled, req.body.fSecret);
       //set line 33 of server.properties in the server folder to "motd=" + desc
       var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
       var textByLine = text.split("\n");
@@ -472,6 +473,7 @@ router.get(`/:id/getInfo`, function (req, res) {
     let iconUrl = "/images/placeholder.webp";
     let desc = "";
     let secret;
+    let proxiesEnabled;
     id = req.params.id;
 
     if (f.checkServer(id).software == "velocity") {
@@ -493,6 +495,16 @@ router.get(`/:id/getInfo`, function (req, res) {
         return line.includes("secret:");
       }
       );
+
+      let onlineMode = textByLine[textByLine.findIndex((line) => {
+        return line.includes("online-mode");
+      })].split("=")[1].trim();
+
+      if (onlineMode == "true") {
+        proxiesEnabled = true;
+      } else {
+        proxiesEnabled = false;
+      }
 
       secret = secretLines[index].split(":")[1].trim();
       //cut quotes off of secret
@@ -835,39 +847,7 @@ router.post("/:id/proxy/servers", function (req, res) {
           require("../servers.json")[subserverId].accountId ==
           accounts[email].accountId
         ) {
-          let paperGlobal = fs.readFileSync(
-            `servers/${subserverId}/config/paper-global.yml`,
-            "utf8"
-          );
-
-          paperGlobal = paperGlobal.replace(
-            /secret: ""/g,
-            `secret: "${req.query.secret}"`
-          );
-          paperGlobal = paperGlobal.replace(
-            /secret: ''/g,
-            `secret: "${req.query.secret}"`
-          );
-
-          fs.writeFileSync(
-            `servers/${subserverId}/config/paper-global.yml`,
-            paperGlobal
-          );
-
-          let serverProperties = fs.readFileSync(
-            `servers/${subserverId}/server.properties`,
-            "utf8"
-          );
-
-          serverProperties = serverProperties.replace(
-            /online-mode=true/g,
-            `online-mode=false`
-          );
-
-          fs.writeFileSync(
-            `servers/${subserverId}/server.properties`,
-            serverProperties
-          );
+          f.proxiesToggle(subserverId, true, req.query.secret);
           res.status(200).json(servers);
         } else {
           res.state(400).json({ msg: "You don't own this subserver." });
