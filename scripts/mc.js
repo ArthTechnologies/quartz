@@ -11,6 +11,7 @@ let terminalInput = "";
 
 function proxiesToggle(id, toggle, secret) {
   if (toggle) {
+    console.log("DEBUG LOG")
     let paperGlobal = fs.readFileSync(
       `servers/${id}/config/paper-global.yml`,
       "utf8"
@@ -65,7 +66,7 @@ function proxiesToggle(id, toggle, secret) {
       `servers/${id}/server.properties`,
       "utf8"
     );
-      console.log("DEBUG LOG")
+
     serverProperties = serverProperties.replace(
       /online-mode=false/g,
       `online-mode=true`
