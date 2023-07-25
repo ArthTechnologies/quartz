@@ -189,7 +189,7 @@ function simplifyTerminal(terminal) {
 
   
 
-  return "["+terminalLines.join("\n[");
+  return terminalLines.join("\n[");
 }
 module.exports = {
   hash,
