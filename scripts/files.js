@@ -143,7 +143,7 @@ function simplifyTerminal(terminal) {
         case line.includes("union:/"):
           terminalLines.splice(i, 1);
           break;
-          case line.includes("mojand/Yggdrasil"):
+          case line.includes("mojang/Yggdrasil"):
             terminalLines.splice(i, 1);
             break;
       case line.includes("This server is running"):
