@@ -11,7 +11,7 @@ let terminalInput = "";
 
 function proxiesToggle(id, toggle, secret) {
   console.log("DEBUG LOG" + toggle)
-  if (toggle) {
+  if (toggle == true) {
 
     let paperGlobal = fs.readFileSync(
       `servers/${id}/config/paper-global.yml`,
