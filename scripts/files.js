@@ -134,6 +134,15 @@ function simplifyTerminal(terminal) {
   for (let i = terminalLines.length - 1; i >= 0; i--) {
     let line = terminalLines[i];
     switch(true) {
+      case line.includes("is missing mods.toml"):
+        terminalLines.splice(i, 1);
+        break;
+      case line.includes("Incorrect Key"):
+        terminalLines.splice(i, 1);
+        break;
+        case line.includes("Assets URL"):
+          terminalLines.splice(i, 1);
+          break;
       case line.includes("This server is running"):
         terminalLines.splice(i, 1);
         break;
