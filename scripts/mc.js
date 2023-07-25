@@ -10,7 +10,7 @@ let terminalOutput = [];
 let terminalInput = "";
 
 function proxiesToggle(id, toggle, secret) {
-  console.log("DEBUG LOG" + toggle)
+\
   if (toggle == true) {
 
     let paperGlobal = fs.readFileSync(
@@ -47,7 +47,7 @@ function proxiesToggle(id, toggle, secret) {
       serverProperties
     );
   } else {
-    console.log("DEBUG LOGG")
+)
     let paperGlobal = fs.readFileSync(
       `servers/${id}/config/paper-global.yml`,
       "utf8"
