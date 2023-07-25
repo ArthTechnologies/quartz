@@ -65,7 +65,7 @@ function proxiesToggle(id, toggle, secret) {
       `servers/${id}/server.properties`,
       "utf8"
     );
-
+      console.log("DEBUG LOG")
     serverProperties = serverProperties.replace(
       /online-mode=false/g,
       `online-mode=true`
