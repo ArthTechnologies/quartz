@@ -10,6 +10,7 @@ let terminalOutput = [];
 let terminalInput = "";
 
 function proxiesToggle(id, toggle, secret) {
+  console.log("DEBUG LOG" + toggle)
   if (toggle) {
 
     let paperGlobal = fs.readFileSync(
