@@ -629,4 +629,5 @@ module.exports = {
   readTerminal,
   writeTerminal,
   stopAsync,
+  proxiesToggle
 };
