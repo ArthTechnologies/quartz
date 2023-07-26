@@ -257,7 +257,7 @@ function downloadJars() {
         downloadFromJarsMC();
       }
     }
-  });
+  }
 }
 
 /*downloadWorldgenMods();
