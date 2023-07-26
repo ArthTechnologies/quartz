@@ -259,6 +259,7 @@ function downloadJars() {
     }
   }
 });
+}
 
 /*downloadWorldgenMods();
 setInterval(() => {
