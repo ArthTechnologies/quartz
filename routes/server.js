@@ -143,9 +143,11 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
       return a.name.localeCompare(b.name);
     });
 
-    modpack.files.sort((a, b) => {
-      return a.modpack.files[0].downloads[0].split("/")[4].name.localeCompare(b.modpack.files[0].downloads[0].split("/")[4].name);
-    });
+    if (modpack.files != undefined) {
+      modpack.files.sort((a, b) => {
+        return a.modpack.files[0].downloads[0].split("/")[4].name.localeCompare(b.modpack.files[0].downloads[0].split("/")[4].name);
+      });
+    }
 
     res.status(200).json({mods:mods, modpack:modpack});
   } else {
