@@ -143,7 +143,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
       return a.name.localeCompare(b.name);
     });
 
-    res.status(200).json({mods});
+    res.status(200).json({mods:mods, modpack:modpack});
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
