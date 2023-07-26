@@ -178,6 +178,39 @@ function downloadJars() {
 
         console.log(jar.version + " " + jar.software);
         downloadProgress.push(false);
+        function downloadFromJarsMC() {
+          files.downloadAsync(
+            "data/downloads/" +
+              jar.software +
+              "-" +
+              jar.version +
+              "." +
+              extension,
+            "https://api.jarsmc.xyz/jars/" +
+              jar.software +
+              "/" +
+              jar.version,
+            (data3) => {
+              if (
+                fs.statSync(
+                  `data/downloads/${jar.software}-${jar.version}.${extension}`
+                ).size > 1000
+              ) {
+                fs.copyFileSync(
+                  `data/downloads/${jar.software}-${jar.version}.${extension}`,
+                  `data/${jar.software}-${jar.version}.${extension}`
+                );
+                fs.unlinkSync(
+                  `data/downloads/${jar.software}-${jar.version}.${extension}`
+                );
+              }
+            }
+          );
+        }
+
+        //forge needs to download from JarsMC because serverjars always has the 
+        //latest version, which is not always the recommended version.
+        if(software != "forge") {
         files.downloadAsync(
           "data/downloads/" +
             jar.software +
@@ -207,33 +240,7 @@ function downloadJars() {
                   " from serverjars.com, trying jarsmc.xyz"
               );
 
-              files.downloadAsync(
-                "data/downloads/" +
-                  jar.software +
-                  "-" +
-                  jar.version +
-                  "." +
-                  extension,
-                "https://api.jarsmc.xyz/jars/" +
-                  jar.software +
-                  "/" +
-                  jar.version,
-                (data3) => {
-                  if (
-                    fs.statSync(
-                      `data/downloads/${jar.software}-${jar.version}.${extension}`
-                    ).size > 1000
-                  ) {
-                    fs.copyFileSync(
-                      `data/downloads/${jar.software}-${jar.version}.${extension}`,
-                      `data/${jar.software}-${jar.version}.${extension}`
-                    );
-                    fs.unlinkSync(
-                      `data/downloads/${jar.software}-${jar.version}.${extension}`
-                    );
-                  }
-                }
-              );
+             downloadFromJarsMC();
               return;
             } else {
               fs.copyFileSync(
@@ -246,6 +253,8 @@ function downloadJars() {
             }
           }
         );
+      } else {
+        downloadFromJarsMC();
       }
     }
   });
