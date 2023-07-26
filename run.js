@@ -254,6 +254,7 @@ function downloadJars() {
           }
         );
       } else {
+        console.log("SOFTWARE FORGE")
         downloadFromJarsMC();
       }
     }
