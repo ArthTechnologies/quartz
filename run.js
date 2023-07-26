@@ -210,7 +210,7 @@ function downloadJars() {
 
         //forge needs to download from JarsMC because serverjars always has the 
         //latest version, which is not always the recommended version.
-        if(software != "forge") {
+        if(jar.software != "forge") {
         files.downloadAsync(
           "data/downloads/" +
             jar.software +
