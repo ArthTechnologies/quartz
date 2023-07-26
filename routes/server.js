@@ -105,9 +105,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     token === accounts[email].token &&
     servers[req.params.id].accountId == accounts[email].accountId
   ) {
-    let platforms = [];
-    let names = [];
-    let ids = [];
+    let mods = [];
     let id = req.params.id;
     let modpack;
     if (fs.existsSync(`servers/${id}/modrinth.index.json`)) {
@@ -116,23 +114,36 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
 
     fs.readdirSync(`servers/${id}/${modtype}`).forEach((file) => {
       if (file.startsWith("gh_")) {
-        platforms.push(file.split("_")[0]);
-
-        ids.push(file.split("_")[1] + "/" + file.split("_")[2]);
-        names.push(file.split("_")[3].replace(".jar", ""));
+        mods.push({
+          platform: file.split("_")[0],
+          id: file.split("_")[1] + "/" + file.split("_")[2],
+          name: file.split("_")[3].replace(".jar", ""),
+        })
       } else if (file.startsWith("lr_")) {
-        platforms.push(file.split("_")[0]);
 
-        ids.push(file.split("_")[1]);
-        names.push(file.split("_")[2].replace(".jar", ""));
+        mods.push({
+          platform: file.split("_")[0],
+          id: file.split("_")[1],
+          name: file.split("_")[2].replace(".jar", ""),
+        });
+        
       } else if (file.startsWith("cx_")) {
-        platforms.push(file.split("_")[0]);
-        ids.push(file.split("_")[1]);
-        names.push(file.split("_")[2].replace(".jar", ""));
+
+        mods.push({
+          platform: file.split("_")[0],
+          id: file.split("_")[1],
+          name: file.split("_")[2].replace(".jar", ""),
+        });
+
       }
     });
 
-    res.status(200).json({ platforms, names, ids, modpack });
+    //sort mods by name
+    mods.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    });
+
+    res.status(200).json({mods});
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
