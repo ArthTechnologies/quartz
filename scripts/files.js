@@ -123,7 +123,7 @@ function GET(url, callback) {
   });
 }
 
-function simplifyTerminal(terminal) {
+function simplifyTerminal(terminal, software) {
   let terminalLines;
   if (terminal == undefined) {
     return "";
@@ -197,7 +197,7 @@ function simplifyTerminal(terminal) {
       
 
     }
-    if (terminalLines[0] != "") {
+    if (terminalLines[0] != "" && software != "velocity") {
       return "["+terminalLines.join("\n[");
     }
 

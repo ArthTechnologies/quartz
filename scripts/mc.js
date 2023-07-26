@@ -614,7 +614,7 @@ function stopAsync(id, callback) {
 function readTerminal(id) {
   let ret = terminalOutput[id];
 
-  ret = files.simplifyTerminal(ret);
+  ret = files.simplifyTerminal(ret, servers[id].software);
 
   return ret;
 }
