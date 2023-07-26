@@ -145,7 +145,9 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
 
     if (modpack.files != undefined) {
       modpack.files.sort((a, b) => {
-        return a.modpack.files[0].downloads[0].split("/")[4].name.localeCompare(b.modpack.files[0].downloads[0].split("/")[4].name);
+        const nameA = a.downloads[0].split("/")[4].name;
+        const nameB = b.downloads[0].split("/")[4].name;
+        return nameA.localeCompare(nameB);
       });
     }
 
