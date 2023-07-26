@@ -197,7 +197,7 @@ function simplifyTerminal(terminal) {
       
 
     }
-    if (terminalLines[0] != "" && !terminalLines.charAt(0).includes("[")) {
+    if (terminalLines[0] != "" && !terminal.charAt(0).includes("[")) {
       return "["+terminalLines.join("\n[");
     }
 
