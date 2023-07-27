@@ -970,7 +970,7 @@ router.get("/:id/file/:path", function (req, res) {
       } else {
         res
           .status(200)
-          .readFileSync(`servers/${req.params.id}/${req.params.path}`);
+          .json{(`servers/${req.params.id}/${req.params.path}`)};
       }
     } else {
       res.status(200).json([]);
