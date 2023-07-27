@@ -48,7 +48,6 @@ router.post(`/:id/state/:state`, function (req, res) {
           break;
         case "restart":
           f.stopAsync(id, () => {
-          
             f.run(id, undefined, undefined, undefined, undefined, email, false);
           });
           break;
@@ -118,23 +117,19 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           platform: file.split("_")[0],
           id: file.split("_")[1] + "/" + file.split("_")[2],
           name: file.split("_")[3].replace(".jar", ""),
-        })
+        });
       } else if (file.startsWith("lr_")) {
-
         mods.push({
           platform: file.split("_")[0],
           id: file.split("_")[1],
           name: file.split("_")[2].replace(".jar", ""),
         });
-        
       } else if (file.startsWith("cx_")) {
-
         mods.push({
           platform: file.split("_")[0],
           id: file.split("_")[1],
           name: file.split("_")[2].replace(".jar", ""),
         });
-
       }
     });
 
@@ -151,7 +146,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
       });
     }
 
-    res.status(200).json({mods:mods, modpack:modpack});
+    res.status(200).json({ mods: mods, modpack: modpack });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
@@ -217,17 +212,13 @@ router.post(`/:id/add/:modtype`, function (req, res) {
 });
 
 router.post(`/new`, function (req, res) {
-
   console.log(req.body.accountId);
 
   console.log(req.body.version);
   email = req.headers.email;
 
   token = req.headers.token;
-  if (
-    token === accounts[email].token
-  ) {
-
+  if (token === accounts[email].token) {
     let amount = f.checkServers(accounts[email].accountId).amount;
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
@@ -417,7 +408,6 @@ router.post(`/:id/setInfo`, function (req, res) {
 
       fs.writeFileSync(`servers/${id}/velocity.toml`, text);
     } else {
-
       f.proxiesToggle(req.params.id, req.body.proxiesEnabled, req.body.fSecret);
       //set line 33 of server.properties in the server folder to "motd=" + desc
       var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
@@ -512,12 +502,15 @@ router.get(`/:id/getInfo`, function (req, res) {
 
       let index = secretLines.findIndex((line) => {
         return line.includes("secret:");
-      }
-      );
+      });
 
-      let onlineMode = textByLine[textByLine.findIndex((line) => {
-        return line.includes("online-mode");
-      })].split("=")[1].trim();
+      let onlineMode = textByLine[
+        textByLine.findIndex((line) => {
+          return line.includes("online-mode");
+        })
+      ]
+        .split("=")[1]
+        .trim();
 
       if (onlineMode == "true") {
         proxiesEnabled = false;
@@ -528,15 +521,18 @@ router.get(`/:id/getInfo`, function (req, res) {
       secret = secretLines[index].split(":")[1].trim();
       //cut quotes off of secret
       secret = secret.substring(1, secret.length - 1);
-
     }
 
     if (fs.existsSync(`servers/${id}/iconurl.txt`)) {
       iconUrl = fs.readFileSync(`servers/${id}/iconurl.txt`).toString();
     }
-    res
-      .status(200)
-      .json({ msg: `Success: Got server info`, iconUrl: iconUrl, desc: desc, secret: secret, proxiesEnabled:proxiesEnabled });
+    res.status(200).json({
+      msg: `Success: Got server info`,
+      iconUrl: iconUrl,
+      desc: desc,
+      secret: secret,
+      proxiesEnabled: proxiesEnabled,
+    });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
@@ -941,15 +937,41 @@ router.delete("/:id/proxy/servers", function (req, res) {
 router.get("/:id/files", function (req, res) {
   let email = req.headers.email;
   let token = req.headers.token;
-  
+
   if (
     token === accounts[email].token &&
     servers[req.params.id].accountId == accounts[email].accountId
   ) {
     if (fs.existsSync(`servers/${req.params.id}/`)) {
-      
+      res
+        .status(200)
+        .json(files.readFilesRecursive(`servers/${req.params.id}/`));
+    } else {
+      res.status(200).json([]);
+    }
+  }
+});
 
-      res.status(200).json(files.readFilesRecursive(`servers/${req.params.id}/`));
+router.get("/:id/file/:path", function (req, res) {
+  let email = req.headers.email;
+  let token = req.headers.token;
+
+  if (
+    token === accounts[email].token &&
+    servers[req.params.id].accountId == accounts[email].accountId
+  ) {
+    if (fs.existsSync(`servers/${req.params.id}/${req.params.path}`)) {
+      if (
+        fs
+          .lstatSync(`servers/${req.params.id}/${req.params.path}`)
+          .isDirectory()
+      ) {
+        res.status(200).json({ msg: "This is a directory." });
+      } else {
+        res
+          .status(200)
+          .readFileSync(`servers/${req.params.id}/${req.params.path}`);
+      }
     } else {
       res.status(200).json([]);
     }
@@ -964,7 +986,10 @@ router.post("/:id/files", function (req, res) {
     servers[req.params.id].accountId == accounts[email].accountId &&
     fs.existsSync(`servers/${req.params.id}/`)
   ) {
-    if (req.query.text !== undefined && fs.existsSync(`servers/${req.params.id}/${req.query.path}`)) {
+    if (
+      req.query.text !== undefined &&
+      fs.existsSync(`servers/${req.params.id}/${req.query.path}`)
+    ) {
       fs.writeFileSync(
         `servers/${req.params.id}/${req.query.path}`,
         req.query.tezt
@@ -975,6 +1000,5 @@ router.post("/:id/files", function (req, res) {
     res.status(401).json({ msg: "Invalid credentials." });
   }
 });
-
 
 module.exports = router;
