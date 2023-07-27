@@ -36,9 +36,9 @@ function readFilesRecursive(directoryPath) {
     const curPath = `${directoryPath}/${file}`;
     if (fs.lstatSync(curPath).isDirectory()) {
       const subDir = readFilesRecursive(curPath);
-      result.push([file, subDir]);
+      result.push([file + ":" + directoryPath, subDir]);
     } else {
-      result.push(file);
+      result.push(file + ":" + directoryPath);
     }
   });
 
@@ -127,25 +127,25 @@ function simplifyTerminal(terminal, software) {
   let terminalLines;
   if (terminal == undefined) {
     return "";
-  }else {
+  } else {
     terminalLines = terminal.split("\n[");
   }
 
   for (let i = terminalLines.length - 1; i >= 0; i--) {
     let line = terminalLines[i];
-    switch(true) {
+    switch (true) {
       case line.includes("is missing mods.toml"):
         terminalLines.splice(i, 1);
         break;
       case line.includes("Incorrect Key"):
         terminalLines.splice(i, 1);
         break;
-        case line.includes("union:/"):
-          terminalLines.splice(i, 1);
-          break;
-          case line.includes("mojang/Yggdrasil"):
-            terminalLines.splice(i, 1);
-            break;
+      case line.includes("union:/"):
+        terminalLines.splice(i, 1);
+        break;
+      case line.includes("mojang/Yggdrasil"):
+        terminalLines.splice(i, 1);
+        break;
       case line.includes("This server is running"):
         terminalLines.splice(i, 1);
         break;
@@ -156,30 +156,33 @@ function simplifyTerminal(terminal, software) {
         terminalLines.splice(i, 1);
         break;
       case line.includes("Couldn't load server icon"):
-        terminalLines[i] = terminalLines[i].split("]: ")[0] + "]: Couldn't load server icon. It may be too large.";
+        terminalLines[i] =
+          terminalLines[i].split("]: ")[0] +
+          "]: Couldn't load server icon. It may be too large.";
         break;
       case line.includes("Paper: Using"):
-          terminalLines.splice(i, 1);
-          terminalLines.splice(i, 1);
-          break;
+        terminalLines.splice(i, 1);
+        terminalLines.splice(i, 1);
+        break;
       case line.includes("Server permissions file"):
-            terminalLines.splice(i, 1);
-            break;
+        terminalLines.splice(i, 1);
+        break;
       case line.includes("There's a new Geyser update available"):
-            terminalLines[i] = line.split("]: ")[0] + "]: Geyser has an update available. It will arrive in our database within 12 hours if it hasn't already. Restart to apply it.";
-            break;
+        terminalLines[i] =
+          line.split("]: ")[0] +
+          "]: Geyser has an update available. It will arrive in our database within 12 hours if it hasn't already. Restart to apply it.";
+        break;
       case line.includes("The timings profiler"):
         terminalLines.splice(i, 1);
         break;
       case line.includes("***********"):
-
         terminalLines.splice(i, 1);
         break;
       case line.includes("java.base/jdk.internal.reflect"):
         terminalLines.splice(i, 1);
         terminalLines.splice(i, 1);
         break;
-      case (line == "[to be removed"):
+      case line == "[to be removed":
         terminalLines.splice(i, 1);
         break;
       case line.includes("Loaded plugin geyser"):
@@ -187,21 +190,14 @@ function simplifyTerminal(terminal, software) {
         break;
       case line.includes("Loading Geyser version"):
         terminalLines[i] = line.split("]: ")[0] + "]: Loading Geyser";
-        terminalLines.splice(i -1, 1);
+        terminalLines.splice(i - 1, 1);
         terminalLines.splice(i, 1);
         terminalLines.splice(i, 1);
-
     }
-
-
-      
-
-    }
-    if (terminalLines[0] != "" && software != "velocity") {
-      return "["+terminalLines.join("\n[");
-    }
-
-  
+  }
+  if (terminalLines[0] != "" && software != "velocity") {
+    return "[" + terminalLines.join("\n[");
+  }
 
   return terminalLines.join("\n[");
 }
@@ -216,5 +212,5 @@ module.exports = {
   downloadAsync,
   removeDirectoryRecursiveAsync,
   readFilesRecursive,
-  simplifyTerminal
+  simplifyTerminal,
 };
