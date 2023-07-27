@@ -138,7 +138,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
       return a.name.localeCompare(b.name);
     });
 
-    if (modpack.files != undefined) {
+    if (modpack != undefined) {
       modpack.files.sort((a, b) => {
         const nameA = a.path.split("/")[1];
         const nameB = b.path.split("/")[1];
