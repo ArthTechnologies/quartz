@@ -965,6 +965,8 @@ router.get("/:id/file/:path", function (req, res) {
       if (fs.lstatSync(`servers/${req.params.id}/${path}`).isDirectory()) {
         res.status(200).json({ msg: "This is a directory." });
       } else {
+        let fileextension = path.split(".")[path.split(".").length - 1];
+        console.log(fileextension);
         res
           .status(200)
           .json(fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8"));
