@@ -34,11 +34,12 @@ function readFilesRecursive(directoryPath) {
 
   files.forEach((file) => {
     const curPath = `${directoryPath}/${file}`;
+    let filePath = curPath.split("/").slice(1).join("/");
     if (fs.lstatSync(curPath).isDirectory()) {
       const subDir = readFilesRecursive(curPath);
-      result.push([file + ":" + directoryPath, subDir]);
+      result.push([file + ":" + filePath, subDir]);
     } else {
-      result.push(file + ":" + directoryPath);
+      result.push(file + ":" + filePath);
     }
   });
 
