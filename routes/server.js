@@ -965,11 +965,27 @@ router.get("/:id/file/:path", function (req, res) {
       if (fs.lstatSync(`servers/${req.params.id}/${path}`).isDirectory()) {
         res.status(200).json({ msg: "This is a directory." });
       } else {
-        let fileextension = path.split(".")[path.split(".").length - 1];
-        console.log(fileextension);
-        res
-          .status(200)
-          .json(fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8"));
+        let extension = path.split(".")[path.split(".").length - 1];
+
+        if (extension == "png" || extension == "jepg" || extension == "svg") {
+          res.status(200).json({ msg: "Image files can't be edited." });
+        } else if (
+          extension == "jar" ||
+          extension == "exe" ||
+          extension == "sh"
+        ) {
+          res
+            .status(200)
+            .json({ msg: "Binary files can't be edited or viewed." });
+        } else if (
+          fs.statSync(`servers/${req.params.id}/${path}`).size > 500000
+        ) {
+          res.status(200).json({ msg: "File too large." });
+        } else {
+          res
+            .status(200)
+            .json(fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8"));
+        }
       }
     } else {
       res.status(200).json([]);
