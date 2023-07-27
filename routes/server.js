@@ -991,7 +991,7 @@ router.get("/:id/file/:path", function (req, res) {
   }
 });
 
-router.post("/:id/files", function (req, res) {
+router.post("/:id/file/:path", function (req, res) {
   let email = req.headers.email;
   let token = req.headers.token;
   if (
@@ -999,14 +999,15 @@ router.post("/:id/files", function (req, res) {
     servers[req.params.id].accountId == accounts[email].accountId &&
     fs.existsSync(`servers/${req.params.id}/`)
   ) {
+    let path = req.params.path;
+    if (req.params.path.includes("/")) {
+      path = req.params.path.split("*").join("/");
+    }
     if (
       req.query.text !== undefined &&
-      fs.existsSync(`servers/${req.params.id}/${req.query.path}`)
+      fs.existsSync(`servers/${req.params.id}/${path}`)
     ) {
-      fs.writeFileSync(
-        `servers/${req.params.id}/${req.query.path}`,
-        req.query.tezt
-      );
+      fs.writeFileSync(`servers/${req.params.id}/${path}`, req.query.text);
     }
     res.status(200).json({ msg: "Done" });
   } else {
