@@ -960,22 +960,14 @@ router.get("/:id/file/:path", function (req, res) {
     token === accounts[email].token &&
     servers[req.params.id].accountId == accounts[email].accountId
   ) {
-    if (fs.existsSync(`servers/${req.params.id}/${req.params.path}`)) {
-      if (
-        fs
-          .lstatSync(`servers/${req.params.id}/${req.params.path}`)
-          .isDirectory()
-      ) {
+    let path = req.params.path.split("*").join("/");
+    if (fs.existsSync(`servers/${req.params.id}/${path}`)) {
+      if (fs.lstatSync(`servers/${req.params.id}/${path}`).isDirectory()) {
         res.status(200).json({ msg: "This is a directory." });
       } else {
         res
           .status(200)
-          .json(
-            fs.readFileSync(
-              `servers/${req.params.id}/${req.params.path}`,
-              "utf8"
-            )
-          );
+          .json(fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8"));
       }
     } else {
       res.status(200).json([]);
