@@ -1011,6 +1011,7 @@ router.post("/:id/file/:path", function (req, res) {
       res.status(200).json({ msg: "Done" });
     } else {
       console.log(fs.existsSync(`servers/${req.params.id}/${path}`));
+      console.log(path);
       res.status(400).json({ msg: "Invalid request." });
     }
   } else {
