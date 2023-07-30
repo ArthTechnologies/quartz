@@ -338,7 +338,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     let result = data
       .replace(/bind = "0.0.0.0:25577"/g, `bind = "0.0.0.0:${port}"`)
       .replace(
-        /player-info-forwarding-mode = "none"/g,
+        /player-info-forwarding-mode = "NONE"/g,
         `player-info-forwarding-mode = "modern"`
       );
 
