@@ -10,27 +10,22 @@ let terminalOutput = [];
 let terminalInput = "";
 
 function proxiesToggle(id, toggle, secret) {
-
   if (toggle == true) {
-
     let paperGlobal = fs.readFileSync(
       `servers/${id}/config/paper-global.yml`,
       "utf8"
     );
 
-    paperGlobal = paperGlobal.replace(
-      /secret: ""/g,
-      `secret: "${secret}"`
-    );
-    paperGlobal = paperGlobal.replace(
-      /secret: ''/g,
-      `secret: "${secret}"`
-    );
+    paperGlobal = paperGlobal.replace(/secret: ""/g, `secret: "${secret}"`);
+    paperGlobal = paperGlobal.replace(/secret: ''/g, `secret: "${secret}"`);
 
-    fs.writeFileSync(
-      `servers/${id}/config/paper-global.yml`,
-      paperGlobal
-    );
+    //set the line after 'velocity:' to 'enabled: true'
+    let index = paperGlobal.split("\n").indexOf("velocity:");
+    let paperGlobalLines = paperGlobal.split("\n");
+    paperGlobalLines[index + 1] = "  enabled: true";
+    paperGlobal = paperGlobalLines.join("\n");
+
+    fs.writeFileSync(`servers/${id}/config/paper-global.yml`, paperGlobal);
 
     let serverProperties = fs.readFileSync(
       `servers/${id}/server.properties`,
@@ -42,27 +37,25 @@ function proxiesToggle(id, toggle, secret) {
       `online-mode=false`
     );
 
-    fs.writeFileSync(
-      `servers/${id}/server.properties`,
-      serverProperties
-    );
+    fs.writeFileSync(`servers/${id}/server.properties`, serverProperties);
   } else {
-
     let paperGlobal = fs.readFileSync(
       `servers/${id}/config/paper-global.yml`,
       "utf8"
     );
 
-    let index = paperGlobal.split("\n").indexOf("secret: " );
+    let index = paperGlobal.split("\n").indexOf("secret: ");
     let paperGlobalLines = paperGlobal.split("\n");
-    
+
     paperGlobalLines[index] == "secret: " + secret;
     paperGlobal = paperGlobalLines.join("\n");
 
-    fs.writeFileSync(
-      `servers/${id}/config/paper-global.yml`,
-      paperGlobal
-    );
+    //set the line after 'velocity:' to 'enabled: false'
+    let index2 = paperGlobal.split("\n").indexOf("velocity:");
+    paperGlobalLines[index2 + 1] = "  enabled: false";
+    paperGlobal = paperGlobalLines.join("\n");
+
+    fs.writeFileSync(`servers/${id}/config/paper-global.yml`, paperGlobal);
 
     let serverProperties = fs.readFileSync(
       `servers/${id}/server.properties`,
@@ -74,10 +67,7 @@ function proxiesToggle(id, toggle, secret) {
       `online-mode=true`
     );
 
-    fs.writeFileSync(
-      `servers/${id}/server.properties`,
-      serverProperties
-    );
+    fs.writeFileSync(`servers/${id}/server.properties`, serverProperties);
   }
 }
 function checkServers(accountId) {
@@ -141,7 +131,6 @@ function checkServer(id) {
 }
 
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
-
   let out = [];
   servers = require("../servers.json");
   states[id] = "starting";
@@ -312,7 +301,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       "data/" + software + "-" + version + ".jar",
       folder + "/server.jar"
     );
-
   } else {
     fs.copyFileSync("data/" + software + "-0.5.1.jar", folder + "/server.jar");
     args = [
@@ -562,7 +550,8 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   } else if (software == "velocity") {
     if (
       fs.existsSync("data/cx_geyser-velocity_Geyser.jar") &&
-      (fs.existsSync(folder + "/plugins/cx_geyser-velocity_Geyser.jar") || isNew)
+      (fs.existsSync(folder + "/plugins/cx_geyser-velocity_Geyser.jar") ||
+        isNew)
     ) {
       if (!isNew) {
         fs.unlinkSync(folder + "/plugins/cx_geyser-velocity_Geyser.jar");
@@ -632,5 +621,5 @@ module.exports = {
   readTerminal,
   writeTerminal,
   stopAsync,
-  proxiesToggle
+  proxiesToggle,
 };
