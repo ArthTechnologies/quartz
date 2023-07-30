@@ -20,9 +20,9 @@ function proxiesToggle(id, toggle, secret) {
     paperGlobal = paperGlobal.replace(/secret: ''/g, `secret: "${secret}"`);
 
     //set the line after 'velocity:' to 'enabled: true'
-    let index = paperGlobal.split("\n").indexOf("vel");
-    console.log(index);
     let paperGlobalLines = paperGlobal.split("\n");
+    let index = paperGlobalLines.indexOf("  velocity:");
+    console.log(index);
     paperGlobalLines[index + 1] = "  enabled: true";
     paperGlobal = paperGlobalLines.join("\n");
 
