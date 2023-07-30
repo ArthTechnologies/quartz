@@ -1008,8 +1008,10 @@ router.post("/:id/file/:path", function (req, res) {
       fs.existsSync(`servers/${req.params.id}/${path}`)
     ) {
       fs.writeFileSync(`servers/${req.params.id}/${path}`, req.query.text);
+      res.status(200).json({ msg: "Done" });
+    } else {
+      res.status(400).json({ msg: "Invalid request." });
     }
-    res.status(200).json({ msg: "Done" });
   } else {
     res.status(401).json({ msg: "Invalid credentials." });
   }
