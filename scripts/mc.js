@@ -335,10 +335,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       data = fs.readFileSync("servers/" + id + "/velocity.toml", "utf8");
     }
 
-    let result = data.replace(
-      /bind = "0.0.0.0:25577"/g,
-      `bind = "0.0.0.0:${port}"`
-    );
+    let result = data
+      .replace(/bind = "0.0.0.0:25577"/g, `bind = "0.0.0.0:${port}"`)
+      .replace(
+        /player-info-forwarding-mode = "none"/g,
+        `player-info-forwarding-mode = "modern"`
+      );
 
     fs.writeFileSync(folder + "/velocity.toml", result, "utf8");
 
