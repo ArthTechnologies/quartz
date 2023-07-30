@@ -1007,6 +1007,7 @@ router.post("/:id/file/:path", function (req, res) {
       req.body !== undefined &&
       fs.existsSync(`servers/${req.params.id}/${path}`)
     ) {
+      console.log(req.body);
       fs.writeFileSync(
         `servers/${req.params.id}/${path}`,
         JSON.stringify(req.body)
