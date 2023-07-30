@@ -1004,13 +1004,12 @@ router.post("/:id/file/:path", function (req, res) {
       path = req.params.path.split("*").join("/");
     }
     if (
-      req.body !== undefined &&
+      req.body.content !== undefined &&
       fs.existsSync(`servers/${req.params.id}/${path}`)
     ) {
-      console.log(req.body.content);
       fs.writeFileSync(
         `servers/${req.params.id}/${path}`,
-        JSON.stringify(req.body)
+        JSON.stringify(req.body.content)
       );
       res.status(200).json({ msg: "Done" });
     } else {
