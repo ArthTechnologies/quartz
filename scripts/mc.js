@@ -22,7 +22,7 @@ function proxiesToggle(id, toggle, secret) {
     //set the line after 'velocity:' to 'enabled: true'
     let paperGlobalLines = paperGlobal.split("\n");
     let index = paperGlobalLines.indexOf("  velocity:");
-    paperGlobalLines[index + 1] = "  enabled: true";
+    paperGlobalLines[index + 1] = "    enabled: true";
     paperGlobal = paperGlobalLines.join("\n");
 
     fs.writeFileSync(`servers/${id}/config/paper-global.yml`, paperGlobal);
@@ -48,11 +48,10 @@ function proxiesToggle(id, toggle, secret) {
     let paperGlobalLines = paperGlobal.split("\n");
 
     paperGlobalLines[index] == "secret: " + secret;
-    paperGlobal = paperGlobalLines.join("\n");
 
     //set the line after 'velocity:' to 'enabled: false'
-    let index2 = paperGlobal.split("\n").indexOf("velocity:");
-    paperGlobalLines[index2 + 1] = "  enabled: false";
+    let index2 = paperGlobalLines.indexOf("  velocity:");
+    paperGlobalLines[index2 + 1] = "    enabled: false";
     paperGlobal = paperGlobalLines.join("\n");
 
     fs.writeFileSync(`servers/${id}/config/paper-global.yml`, paperGlobal);
