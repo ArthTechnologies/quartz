@@ -1004,11 +1004,10 @@ router.post("/:id/file/:path", function (req, res) {
       path = req.params.path.split("*").join("/");
     }
     if (
-      req.query.text !== undefined &&
+      req.body !== undefined &&
       fs.existsSync(`servers/${req.params.id}/${path}`)
     ) {
-      fs.writeFileSync(`servers/${req.params.id}/${path}`, req.query.text);
-      console.log(req.query.text);
+      fs.writeFileSync(`servers/${req.params.id}/${path}`, req.body);
       res.status(200).json({ msg: "Done" });
     } else {
       res.status(400).json({ msg: "Invalid request." });
