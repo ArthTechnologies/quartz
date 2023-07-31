@@ -155,6 +155,7 @@ function simplifyTerminal(terminal, software) {
         terminalLines.splice(i, 1);
         terminalLines.splice(i, 1);
         terminalLines.splice(i, 1);
+        terminalLines.splice(i, 1);
         break;
       case line.includes("Couldn't load server icon"):
         terminalLines[i] =
