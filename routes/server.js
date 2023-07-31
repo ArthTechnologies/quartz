@@ -1003,9 +1003,14 @@ router.post("/:id/file/:path", function (req, res) {
     if (req.params.path.includes("*")) {
       path = req.params.path.split("*").join("/");
     }
+    let extension = path.split(".")[path.split(".").length - 1];
     if (
       req.body.content !== undefined &&
-      fs.existsSync(`servers/${req.params.id}/${path}`)
+      fs.existsSync(`servers/${req.params.id}/${path}`) &&
+      (extension == "yml" ||
+        extension == "yaml" ||
+        extension == "json" ||
+        extension == "toml")
     ) {
       fs.writeFileSync(`servers/${req.params.id}/${path}`, req.body.content);
       res.status(200).json({ msg: "Done" });
