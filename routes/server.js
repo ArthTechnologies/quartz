@@ -6,6 +6,7 @@ const files = require("../scripts/files.js");
 const f = require("../scripts/mc.js");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
+const data = require("../stores/data.json");
 
 const fs = require("fs");
 
@@ -239,7 +240,9 @@ router.post(`/new`, function (req, res) {
     if (
       (stripekey.indexOf("sk") == -1) |
         (accounts[email].bypassStripe == true) &&
-      (settings.maxServers >= id || settings.maxServers == undefined)
+      (settings.maxServers >= data.numServers ||
+        settings.maxServers == undefined ||
+        data.numServers == undefined)
     ) {
       if (
         em !== "noemail" &&
@@ -289,7 +292,7 @@ router.post(`/new`, function (req, res) {
         req.body.modpackURL
       );
       res.status(202).json({ success: true, msg: `Success. Server created.` });
-    } else if (settings.maxServers < id) {
+    } else if (settings.maxServers < data.numServers) {
       res
         .status(400)
         .json({ success: false, msg: "Maxiumum servers reached." });
@@ -348,8 +351,8 @@ router.post(`/new`, function (req, res) {
                             numServers++;
                           }
                         }
-                        const datajson = require("../stores/data.json");
-                        datajson.numServers = numServers;
+
+                        data.numServers = numServers;
                         fs.writeFileSync(
                           "data.json",
                           JSON.stringify(datajson, null, 2)
