@@ -58,7 +58,10 @@ let modVersions = [{ c: "modded", s: "forge", v: "1.19.4" }];
 if (!fs.existsSync("data")) {
   fs.mkdirSync("data");
   fs.mkdirSync("data/downloads");
-  fs.writeFileSync("stores/data.json", `{"lastUpdate":${Date.now()}}`);
+  fs.writeFileSync(
+    "stores/data.json",
+    `{"lastUpdate":${Date.now()},"numServers":0}`
+  );
   downloadJars();
 }
 
@@ -71,7 +74,9 @@ setInterval(() => {
 }, 1000 * 60 * 60 * 12);
 
 function downloadJars() {
-  fs.writeFileSync("stores/data.json", `{"lastUpdate":${Date.now()}}`);
+  const datajson = require("./stores/data.json");
+  datajson.lastUpdate = Date.now();
+  fs.writeFileSync("stores/data.json", datajson);
   //geyser
   files.downloadAsync(
     "data/downloads/cx_geyser-spigot_Geyser.jar",

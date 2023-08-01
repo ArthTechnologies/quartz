@@ -253,6 +253,15 @@ router.post(`/new`, function (req, res) {
         servers[id].version = req.body.version;
         servers[id].addons = req.body.addons;
         servers[id].accountId = accounts[email].accountId;
+        let numServers = 0;
+        for (i in servers) {
+          if (servers[i] != "deleted") {
+            numServers++;
+          }
+        }
+        const datajson = require("../stores/data.json");
+        datajson.numServers = numServers;
+        fs.writeFileSync("data.json", JSON.stringify(datajson, null, 2));
         console.log(JSON.stringify(servers) + "servers.json");
         //console log if ../servers.json exists
         console.log(fs.existsSync("../servers.json") + "servers.json");
@@ -333,6 +342,18 @@ router.post(`/new`, function (req, res) {
                         servers[id].version = req.body.version;
                         servers[id].addons = req.body.addons;
                         servers[id].accountId = accounts[email].accountId;
+                        let numServers = 0;
+                        for (i in servers) {
+                          if (servers[i] != "deleted") {
+                            numServers++;
+                          }
+                        }
+                        const datajson = require("../stores/data.json");
+                        datajson.numServers = numServers;
+                        fs.writeFileSync(
+                          "data.json",
+                          JSON.stringify(datajson, null, 2)
+                        );
                         console.log(JSON.stringify(servers[id]));
                         console.log(
                           "servers.json" + fs.existsSync("../servers.json")
