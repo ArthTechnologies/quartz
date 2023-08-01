@@ -5,7 +5,7 @@ const settings = require("../stores/settings.json");
 
 Router.get("/", (req, res) => {
   res.status(200).json({
-    maxServers: settings,
+    maxServers: settings.maxServers,
     numServer: Object.keys(settings).length - 1,
   });
 });
