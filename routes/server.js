@@ -281,7 +281,9 @@ router.post(`/new`, function (req, res) {
       );
       res.status(202).json({ success: true, msg: `Success. Server created.` });
     } else if (settings.maxServers < id) {
-      res.status(400).json({ msg: "Maxiumum servers reached." });
+      res
+        .status(400)
+        .json({ success: false, msg: "Maxiumum servers reached." });
     } else {
       stripe.customers.list(
         {
