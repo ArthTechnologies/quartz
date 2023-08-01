@@ -387,6 +387,7 @@ app.use("/servers", require("./routes/servers"));
 app.use("/settings", require("./routes/settings"));
 app.use("/terminal", require("./routes/terminal"));
 app.use("/accounts", require("./routes/accounts"));
+app.use("/node", require("./routes/node"));
 
 // port
 const port = process.env.PORT || 4000;
