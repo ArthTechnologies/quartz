@@ -9,3 +9,5 @@ Router.get("/", (req, res) => {
     numServer: Object.keys(settings).length - 1,
   });
 });
+
+module.exports = Router;
