@@ -248,7 +248,7 @@ router.post(`/new`, function (req, res) {
     if (
       (stripekey.indexOf("sk") == -1) |
         (accounts[email].bypassStripe == true) &&
-      (settings.maxServers >= data.numServers ||
+      (settings.maxServers > data.numServers ||
         settings.maxServers == undefined ||
         data.numServers == undefined)
     ) {
