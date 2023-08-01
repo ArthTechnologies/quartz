@@ -35,7 +35,8 @@ if (!fs.existsSync("./stores")) {
       "enableAuth": true,
       "address": "arthmc.xyz",
       "enablePay": true,
-      "latestVersion": "1.19.4"
+      "latestVersion": "1.19.4",
+      "maxServers": 8
     }`
   );
 }

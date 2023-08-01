@@ -238,7 +238,8 @@ router.post(`/new`, function (req, res) {
     let cid = "";
     if (
       (stripekey.indexOf("sk") == -1) |
-      (accounts[email].bypassStripe == true)
+        (accounts[email].bypassStripe == true) &&
+      (settings.maxServers <= id || settings.maxServers == undefined)
     ) {
       if (
         em !== "noemail" &&
@@ -279,6 +280,8 @@ router.post(`/new`, function (req, res) {
         req.body.modpackURL
       );
       res.status(202).json({ success: true, msg: `Success. Server created.` });
+    } else if (settings.maxServers > id) {
+      res.status(400).json({ msg: "Maxiumum servers reached." });
     } else {
       stripe.customers.list(
         {
