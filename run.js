@@ -76,7 +76,7 @@ setInterval(() => {
 function downloadJars() {
   const datajson = require("./stores/data.json");
   datajson.lastUpdate = Date.now();
-  fs.writeFileSync("stores/data.json", datajson);
+  fs.writeFileSync("stores/data.json", JSON.stringify(datajson));
   //geyser
   files.downloadAsync(
     "data/downloads/cx_geyser-spigot_Geyser.jar",
