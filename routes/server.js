@@ -292,7 +292,7 @@ router.post(`/new`, function (req, res) {
         req.body.modpackURL
       );
       res.status(202).json({ success: true, msg: `Success. Server created.` });
-    } else if (settings.maxServers < data.numServers) {
+    } else if (settings.maxServers <= data.numServers) {
       res
         .status(400)
         .json({ success: false, msg: "Maxiumum servers reached." });
