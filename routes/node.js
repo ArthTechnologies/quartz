@@ -3,6 +3,7 @@ const Router = express.Router();
 const fs = require("fs");
 const settings = require("../stores/settings.json");
 const data = require("../stores/data.json");
+const servers = require("../servers.json");
 
 Router.get("/", (req, res) => {
   let numServers = 0;
