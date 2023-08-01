@@ -222,7 +222,7 @@ router.post(`/new`, function (req, res) {
     let amount = f.checkServers(accounts[email].accountId).amount;
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
-
+    const settings = require("../stores/settings.json");
     var id = Object.keys(servers).length;
 
     em = req.query.email;
