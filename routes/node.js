@@ -28,6 +28,8 @@ Router.get("/secrets", (req, res) => {
     res
       .status(200)
       .json({ servers: servers, accounts: require("../accounts.json") });
+  } else {
+    res.status(401).json({ msg: "Invalid forwarding secret." });
   }
 });
 
