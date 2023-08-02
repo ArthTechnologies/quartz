@@ -5,7 +5,7 @@ const settings = require("../stores/settings.json");
 const data = require("../stores/data.json");
 const servers = require("../servers.json");
 const files = require("../scripts/files.js");
-const secrets = require("../secrets.json");
+const secrets = require("../stores/secrets.json");
 
 Router.get("/", (req, res) => {
   let numServers = 0;
