@@ -4,7 +4,7 @@ const fs = require("fs");
 const settings = require("../stores/settings.json");
 const data = require("../stores/data.json");
 const servers = require("../servers.json");
-const files = require("../files.js");
+const files = require("../scripts/files.js");
 const secrets = require("../secrets.json");
 
 Router.get("/", (req, res) => {
