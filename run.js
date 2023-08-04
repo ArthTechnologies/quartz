@@ -228,7 +228,7 @@ function downloadJars() {
                 jar.version +
                 "." +
                 extension,
-              "https://api.jarsmc.xyz/jars/" + jar.software + "/" + jar.version,
+              jarsMcUrl + "jars/" + jar.software + "/" + jar.version,
               (data3) => {
                 if (
                   fs.statSync(
@@ -276,7 +276,7 @@ function downloadJars() {
                     "failed to download " +
                       jar.software +
                       jar.version +
-                      " from serverjars.com, trying jarsmc.xyz"
+                      " from serverjars.com, trying jarsmc"
                   );
 
                   downloadFromJarsMC();
