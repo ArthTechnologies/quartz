@@ -2,9 +2,6 @@ const express = require("express");
 const router = express.Router();
 const fs = require("fs");
 
-//To-DO: This route needs to be locked behind some kind of admin system, otherwise anyone could remotely change the panel's settings.
-
-/*
 //import settings.json
 let settings = require("../stores/settings.json");
 
@@ -39,6 +36,9 @@ router.get(`/`, function (req, res) {
   res.json(settings);
 });
 
+//To-DO: This route needs to be locked behind some kind of admin system, otherwise anyone could remotely change the panel's settings.
+
+/*
 router.post(`/`, function (req, res) {
   var keyMatch = true;
   //add cors header
