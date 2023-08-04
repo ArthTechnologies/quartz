@@ -16,10 +16,6 @@ router.get(`/`, function (req, res) {
     //set email to the email in the request
     accountId = req.query.accountId;
 
-    //if servers.csv isnt blank, run checkServers
-
-    //wait for checkServers to finish
-
     function delay(time) {
       return new Promise((resolve) => setTimeout(resolve, time));
     }

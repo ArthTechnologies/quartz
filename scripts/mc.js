@@ -3,7 +3,6 @@ var eventEmitter = new events.EventEmitter();
 fs = require("fs");
 let states = [];
 const files = require("./files.js");
-let servers = require("../servers.json");
 const { time } = require("console");
 const { randomBytes } = require("crypto");
 let terminalOutput = [];
@@ -119,7 +118,7 @@ function checkServer(id) {
   if (states[id] == undefined) {
     states[id] = "false";
   }
-  let server = servers[id];
+  let server = server;
 
   return {
     version: server.addons,
@@ -130,8 +129,8 @@ function checkServer(id) {
 }
 
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
+  let server = require("../servers/" + id + "/server.json");
   let out = [];
-  servers = require("../servers.json");
   states[id] = "starting";
 
   // i isNew is undefined, set it to true
@@ -144,9 +143,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   if (isNew === false) {
     //run checkServers and store it
-    software = servers[id].software;
-    version = servers[id].version;
-    addons = servers[id].addons;
+    software = server.software;
+    version = server.version;
+    addons = server.addons;
   } else {
   }
 
@@ -602,9 +601,10 @@ function stopAsync(id, callback) {
 }
 
 function readTerminal(id) {
+  let server = require("../servers/" + req.params.id + "/server.json");
   let ret = terminalOutput[id];
 
-  ret = files.simplifyTerminal(ret, servers[id].software);
+  ret = files.simplifyTerminal(ret, server.software);
 
   return ret;
 }
