@@ -90,7 +90,7 @@ function checkServer(id) {
 }
 
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
-  console.log(id);
+  console.log(fs.readFileSync("servers/" + id + "/server.json"));
   let server = require("../servers/" + id + "/server.json");
   let out = [];
   states[id] = "starting";
