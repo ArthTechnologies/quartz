@@ -324,6 +324,9 @@ router.post(`/new`, function (req, res) {
                       server.addons = req.body.addons;
                       server.accountId = account.accountId;
 
+                      if (!fs.existsSync("servers/" + id)) {
+                        fs.mkdirSync("servers/" + id);
+                      }
                       fs.writeFile(
                         "servers/" + id + "/server.json",
                         JSON.stringify(server, null, 4),
