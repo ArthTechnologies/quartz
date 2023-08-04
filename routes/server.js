@@ -544,6 +544,7 @@ router.delete(`/:id`, function (req, res) {
     } else {
       deleteServer();
     }
+    res.status(200).json({ msg: `Deleted server` });
 
     function deleteServer() {
       console.log("deleting " + id);
@@ -559,7 +560,6 @@ router.delete(`/:id`, function (req, res) {
 
       //delete /servers/id
       exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
-        res.status(200).json({ msg: `Deleted server` });
         if (err) {
           console.log(err);
         } else {
