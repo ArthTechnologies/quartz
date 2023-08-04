@@ -61,12 +61,11 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
     for (j in oldServers) {
       if (oldServers[j].accountId == oldAccounts[i].accountId) {
         newAccount.servers.push(oldServers[j]);
+        fs.writeFileSync(
+          `servers/${j}/server.json`,
+          JSON.stringify(oldServers[j])
+        );
       }
-
-      fs.writeFileSync(
-        `servers/${j}/server.json`,
-        JSON.stringify(oldServers[j])
-      );
     }
     fs.writeFileSync(`accounts/${i}.json`, JSON.stringify(newAccount));
   }
