@@ -250,12 +250,19 @@ router.post(`/new`, function (req, res) {
         server.version = req.body.version;
         server.addons = req.body.addons;
         server.accountId = account.accountId;
+        server.id = id;
         if (!fs.existsSync("servers/" + id)) {
           fs.mkdirSync("servers/" + id);
         }
         fs.writeFileSync(
           "servers/" + id + "/server.json",
           JSON.stringify(server, null, 4)
+        );
+
+        account.servers.push(server);
+        fs.writeFileSync(
+          "accounts/" + email + ".json",
+          JSON.stringify(account, null, 4)
         );
       }
 
@@ -317,21 +324,19 @@ router.post(`/new`, function (req, res) {
                       server.version = req.body.version;
                       server.addons = req.body.addons;
                       server.accountId = account.accountId;
-
+                      server.id = id;
                       if (!fs.existsSync("servers/" + id)) {
                         fs.mkdirSync("servers/" + id);
                       }
-
-                      fs.writeFile(
+                      fs.writeFileSync(
                         "servers/" + id + "/server.json",
-                        JSON.stringify(server, null, 4),
-                        (err) => {
-                          if (err) {
-                            console.error(err);
-                            return;
-                          }
-                          console.log("File has been created");
-                        }
+                        JSON.stringify(server, null, 4)
+                      );
+
+                      account.servers.push(server);
+                      fs.writeFileSync(
+                        "accounts/" + email + ".json",
+                        JSON.stringify(account, null, 4)
                       );
                     }
                     f.run(
