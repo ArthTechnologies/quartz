@@ -559,12 +559,11 @@ router.delete(`/:id`, function (req, res) {
 
       //delete /servers/id
       exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
+        res.status(200).json({ msg: `Deleted server` });
         if (err) {
           console.log(err);
-          res.status(500).json({ msg: `Internal server error.` });
         } else {
           console.log("deleted server");
-          res.status(200).json({ msg: `Success: Deleted server` });
         }
       });
     }
