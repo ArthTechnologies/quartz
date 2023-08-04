@@ -91,7 +91,7 @@ function checkServer(id) {
 
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let server = require("../servers/" + id + "/server.json");
-  console.log("server.sjon: " + server);
+  console.log("server.json: " + server);
   let out = [];
   states[id] = "starting";
 
