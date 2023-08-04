@@ -44,9 +44,28 @@ if (!fs.existsSync("uploads")) {
   fs.mkdirSync("uploads");
 }
 
-if (!fs.existsSync("accounts.json")) {
-  fs.writeFileSync("accounts.json", "{}");
+if (!fs.existsSync("accounts")) {
+  fs.mkdirSync("accounts");
 }
+
+//Migration from old file-based accounts format to new folder-based one
+if (fs.existsSync("accounts.json")) {
+  const oldAccounts = require("./accounts.json");
+  for (i in oldAccounts) {
+    let newAccount = {};
+    newAccount = oldAccounts[i];
+    //newAccount email == oldAccount's json key
+    newAccount.email = i;
+    fs.writeFileSync(
+      `accounts/${oldAccounts[i].accountId}.json`,
+      JSON.stringify(newAccount)
+    );
+  }
+
+  fs.copyFileSync("accounts.json", "backup/accounts.json");
+  fs.unlinkSync("accounts.json");
+}
+
 if (!fs.existsSync("servers.json")) {
   fs.writeFileSync("servers.json", "{}");
 }
