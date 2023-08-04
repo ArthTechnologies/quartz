@@ -538,7 +538,15 @@ router.delete(`/:id`, function (req, res) {
   if (token === account.token && server.accountId == account.accountId) {
     res.header("Access-Control-Allow-Origin", "*");
     id = req.params.id;
-    f.stopAsync(id, () => {
+    if (f.getState(id) == "true") {
+      f.stopAsync(id, () => {
+        deleteServer();
+      });
+    } else {
+      deleteServer();
+    }
+
+    function deleteServer() {
       console.log("deleting " + id);
       account.servers.findIndex = function () {
         for (var i = 0; i < this.length; i++) {
@@ -558,9 +566,8 @@ router.delete(`/:id`, function (req, res) {
           console.log("deleted server");
         }
       });
-
-      res.status(202).json({ msg: `Request recieved.` });
-    });
+    }
+    res.status(202).json({ msg: `Request recieved.` });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
