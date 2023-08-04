@@ -215,7 +215,7 @@ router.post(`/new`, function (req, res) {
     res.header("Access-Control-Allow-Origin", "*");
     const settings = require("../stores/settings.json");
     //1 is subtracted because of the "template" subdirectory
-    var id = fs.readdirSync("servers").length - 1;
+    var id = fs.readdirSync("servers").length;
     const datajson = require("../stores/data.json");
     datajson.numServers = id;
     fs.writeFileSync("data.json", JSON.stringify(datajson, null, 2));
