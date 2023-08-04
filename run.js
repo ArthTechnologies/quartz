@@ -37,7 +37,7 @@ if (!fs.existsSync("./stores")) {
       "enablePay": true,
       "latestVersion": "1.19.4",
       "maxServers": 8,
-      "jarsMcUrl": "https://jarsmc.xyz/",
+      "jarsMcUrl": "https://api.jarsmc.xyz/",
     }`
   );
 } else {
@@ -162,7 +162,7 @@ function downloadJars() {
       fs.unlinkSync(`data/downloads/cx_floodgate-velocity_Floodgate.jar`);
     }
   );
-  let jarsMcUrl = "https://jarsmc.xyz/";
+  let jarsMcUrl = "https://api.jarsmc.xyz/";
   if (fs.existsSync("stores/settings.json")) {
     const settings = require("./stores/settings.json");
     if (settings.jarsMcUrl != undefined) {
@@ -172,6 +172,7 @@ function downloadJars() {
 
   //plugins
   files.GET(jarsMcUrl + "jars/arthHosting", (data) => {
+    console.log(data);
     if (!data.includes("html")) {
       data = JSON.parse(data);
       let downloadProgress = [];
