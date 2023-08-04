@@ -64,7 +64,7 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
       }
 
       fs.writeFileSync(
-        `servers/${i}/server.json`,
+        `servers/${j}/server.json`,
         JSON.stringify(oldServers[j])
       );
     }
