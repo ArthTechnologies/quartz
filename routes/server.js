@@ -216,14 +216,8 @@ router.post(`/new`, function (req, res) {
     const settings = require("../stores/settings.json");
     //1 is subtracted because of the "template" subdirectory
     var id = fs.readdirSync("servers").length - 1;
-    let numServers = 0;
-    for (i in servers) {
-      if (servers[i] != "deleted") {
-        numServers++;
-      }
-    }
     const datajson = require("../stores/data.json");
-    datajson.numServers = numServers;
+    datajson.numServers = id;
     fs.writeFileSync("data.json", JSON.stringify(datajson, null, 2));
     em = req.query.email;
 
@@ -542,8 +536,16 @@ router.delete(`/:id`, function (req, res) {
     id = req.params.id;
     f.stop(id);
 
-    server = "deleted";
-    files.write("servers/" + id + "/server.json", JSON.stringify(server));
+    account.servers.findIndex = function () {
+      for (var i = 0; i < this.length; i++) {
+        if (account.servers[i].id == id) {
+          return i;
+        }
+      }
+    };
+    account.servers.splice(account.servers.findIndex(), 1);
+    fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
+
     //delete /servers/id
     exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
       if (err) {
