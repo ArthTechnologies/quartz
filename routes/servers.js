@@ -9,7 +9,7 @@ router.get(`/`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
-  if (token === account.token && server.accountId == account.accountId) {
+  if (token === account.token) {
     //if req.body.email is "noemail" return 404
     if (req.query.email == ("noemail" | "undefined")) {
       //res.status(404).json({ msg: `Invalid email.` });
