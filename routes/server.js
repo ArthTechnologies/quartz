@@ -565,6 +565,7 @@ router.delete(`/:id`, function (req, res) {
         } else {
           console.log("deleted server");
         }
+        return;
       });
     }
   } else {
