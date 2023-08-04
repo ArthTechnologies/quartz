@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const f = require("../scripts/mc.js");
-const accounts = require("../accounts.json");
 
 router.get("/:id", (req, res) => {
   email = req.headers.email;
