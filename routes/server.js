@@ -281,6 +281,7 @@ router.post(`/new`, function (req, res) {
         .status(400)
         .json({ success: false, msg: "Maxiumum servers reached." });
     } else {
+      console.log("debug");
       stripe.customers.list(
         {
           limit: 100,
@@ -317,7 +318,6 @@ router.post(`/new`, function (req, res) {
                       req.body.version !== "undefined" &&
                       req.body.name !== "undefined"
                     ) {
-                      console.log("debug");
                       /*
                       server = {};
                       server.name = req.body.name;
