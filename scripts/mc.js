@@ -80,6 +80,7 @@ function checkServer(id) {
     states[id] = "false";
   }
   let server = require("../servers/" + id + "/server.json");
+  console.log(server);
 
   return {
     version: server.addons,
