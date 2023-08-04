@@ -3,19 +3,12 @@ const Router = express.Router();
 const fs = require("fs");
 const settings = require("../stores/settings.json");
 const data = require("../stores/data.json");
-const servers = require("../servers.json");
 const files = require("../scripts/files.js");
 const secrets = require("../stores/secrets.json");
 
 Router.get("/", (req, res) => {
-  let numServers = 0;
-  for (i in servers) {
-    if (servers[i] != "deleted") {
-      numServers++;
-    }
-  }
-
-  data.numServers = numServers;
+  //1 is subtracted because of the "template" subdirectory
+  data.numServers = fs.readdirSync("servers").length - 1;
   fs.writeFileSync("data.json", JSON.stringify(data, null, 2));
   res.status(200).json({
     maxServers: settings.maxServers,
@@ -23,6 +16,7 @@ Router.get("/", (req, res) => {
   });
 });
 
+/*
 Router.get("/secrets", (req, res) => {
   if (files.hash(req.query.forwardingSecret) == secrets.forwardingSecret) {
     res
@@ -31,6 +25,6 @@ Router.get("/secrets", (req, res) => {
   } else {
     res.status(401).json({ msg: "Invalid forwarding secret." });
   }
-});
+});*/
 
 module.exports = Router;

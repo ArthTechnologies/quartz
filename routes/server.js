@@ -214,7 +214,8 @@ router.post(`/new`, function (req, res) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
     const settings = require("../stores/settings.json");
-    var id = fs.readdirSync("servers").length;
+    //1 is subtracted because of the "template" subdirectory
+    var id = fs.readdirSync("servers").length - 1;
     let numServers = 0;
     for (i in servers) {
       if (servers[i] != "deleted") {
