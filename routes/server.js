@@ -562,12 +562,13 @@ router.delete(`/:id`, function (req, res) {
       exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
         if (err) {
           console.log(err);
+          res.status(500).json({ msg: `Internal server error.` });
         } else {
           console.log("deleted server");
+          res.status(200).json({ msg: `Success: Deleted server` });
         }
       });
     }
-    res.status(202).json({ msg: `Request recieved.` });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
