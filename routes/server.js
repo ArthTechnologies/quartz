@@ -540,11 +540,12 @@ router.delete(`/:id`, function (req, res) {
     if (f.getState(id) == "true") {
       f.stopAsync(id, () => {
         deleteServer();
+        res.status(200).json({ msg: `Deleted server` });
       });
     } else {
       deleteServer();
+      res.status(200).json({ msg: `Deleted server` });
     }
-    res.status(200).json({ msg: `Deleted server` });
 
     function deleteServer() {
       console.log("deleting " + id);
