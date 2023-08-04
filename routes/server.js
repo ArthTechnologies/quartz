@@ -539,6 +539,7 @@ router.delete(`/:id`, function (req, res) {
     res.header("Access-Control-Allow-Origin", "*");
     id = req.params.id;
     f.stopAsync(id, () => {
+      console.log("deleting " + id);
       account.servers.findIndex = function () {
         for (var i = 0; i < this.length; i++) {
           if (account.servers[i].id == id) {
