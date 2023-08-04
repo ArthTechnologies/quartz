@@ -536,7 +536,6 @@ router.delete(`/:id`, function (req, res) {
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
   if (token === account.token && server.accountId == account.accountId) {
-    res.header("Access-Control-Allow-Origin", "*");
     id = req.params.id;
     if (f.getState(id) == "true") {
       f.stopAsync(id, () => {
