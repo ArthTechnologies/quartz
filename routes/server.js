@@ -262,10 +262,13 @@ router.post(`/new`, function (req, res) {
               return;
             }
             console.log("File has been created");
+            console.log(
+              "servers.json" + require("../servers/" + id + "/server.json")
+            );
           }
         );
       }
-      console.log("servers.json" + require("servers/" + id + "/server.json"));
+
       f.run(
         id,
         req.body.software,
