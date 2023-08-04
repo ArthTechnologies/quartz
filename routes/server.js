@@ -265,7 +265,9 @@ router.post(`/new`, function (req, res) {
           }
         );
       }
-
+      console.log(
+        "servers.json" + require("../servers/" + id + "/server.json")
+      );
       f.run(
         id,
         req.body.software,
