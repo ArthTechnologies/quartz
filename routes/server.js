@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const accounts = require("../accounts.json");
 const servers = require("../servers.json");
 const files = require("../scripts/files.js");
 const f = require("../scripts/mc.js");
@@ -16,10 +15,9 @@ const stripe = require("stripe")(stripekey);
 router.get(`/:id`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
     id = req.params.id;
@@ -31,10 +29,9 @@ router.get(`/:id`, function (req, res) {
 router.post(`/:id/state/:state`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     state = req.params.state;
     id = req.params.id;
     token = req.headers.token;
@@ -69,16 +66,15 @@ router.post(`/:id/state/:state`, function (req, res) {
 router.delete(`/:id/:modtype`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
-  modtype = req.params.modtype;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     id = req.params.id;
     pluginId = req.query.pluginId;
     pluginPlatform = req.query.pluginPlatform;
     pluginName = req.query.pluginName;
     token = req.headers.token;
+    modtype = req.params.modtype;
 
     const fs = require("fs");
 
@@ -97,14 +93,12 @@ router.delete(`/:id/:modtype`, function (req, res) {
 });
 
 router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
-  const fs = require("fs");
   email = req.headers.email;
   token = req.headers.token;
-  modtype = req.params.modtype;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
+    let modtype = req.params.modtype;
     let mods = [];
     let id = req.params.id;
     let modpack;
@@ -156,10 +150,9 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
 router.post(`/:id/update/`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     id = req.params.id;
     version = req.query.version;
 
@@ -178,14 +171,11 @@ router.post(`/:id/update/`, function (req, res) {
 
 let lastPlugin = "";
 router.post(`/:id/add/:modtype`, function (req, res) {
-  console.log(req.params.modtype);
   email = req.headers.email;
   token = req.headers.token;
-  modtype = req.params.modtype;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
     id = req.params.id;
@@ -193,6 +183,7 @@ router.post(`/:id/add/:modtype`, function (req, res) {
     pluginId = req.query.id;
     pluginName = req.query.name;
     pluginName = pluginName.replace(/\//g, "-");
+    modtype = req.params.modtype;
     if (
       pluginUrl.startsWith("https://cdn.modrinth.com/data/") |
       pluginUrl.startsWith("https://github.com/")
@@ -213,14 +204,11 @@ router.post(`/:id/add/:modtype`, function (req, res) {
 });
 
 router.post(`/new`, function (req, res) {
-  console.log(req.body.accountId);
-
-  console.log(req.body.version);
   email = req.headers.email;
-
   token = req.headers.token;
-  if (token === accounts[email].token) {
-    let amount = f.checkServers(accounts[email].accountId).amount;
+  account = require("../accounts/" + email + ".json");
+  if (token === account.token) {
+    let amount = f.checkServers(account.accountId).amount;
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
     const settings = require("../stores/settings.json");
@@ -241,13 +229,12 @@ router.post(`/new`, function (req, res) {
       software: req.body.software,
       version: req.body.version,
       addons: req.body.addons,
-      accountId: accounts[email].accountId,
+      accountId: account.accountId,
     };
 
     let cid = "";
     if (
-      (stripekey.indexOf("sk") == -1) |
-        (accounts[email].bypassStripe == true) &&
+      (stripekey.indexOf("sk") == -1) | (account.bypassStripe == true) &&
       (settings.maxServers > data.numServers ||
         settings.maxServers == undefined ||
         data.numServers == undefined)
@@ -263,7 +250,7 @@ router.post(`/new`, function (req, res) {
         servers[id].software = req.body.software;
         servers[id].version = req.body.version;
         servers[id].addons = req.body.addons;
-        servers[id].accountId = accounts[email].accountId;
+        servers[id].accountId = account.accountId;
 
         console.log(JSON.stringify(servers) + "servers.json");
         //console log if ../servers.json exists
@@ -344,7 +331,7 @@ router.post(`/new`, function (req, res) {
                         servers[id].software = req.body.software;
                         servers[id].version = req.body.version;
                         servers[id].addons = req.body.addons;
-                        servers[id].accountId = accounts[email].accountId;
+                        servers[id].accountId = account.accountId;
 
                         console.log(JSON.stringify(servers[id]));
                         console.log(
@@ -411,10 +398,9 @@ router.post(`/new`, function (req, res) {
 router.post(`/:id/setInfo`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     id = req.params.id;
     iconUrl = req.body.icon;
     desc = req.body.desc;
@@ -492,10 +478,9 @@ router.post(`/:id/setInfo`, function (req, res) {
 router.get(`/:id/getInfo`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     //send the motd and iconUrl
     let iconUrl = "/images/placeholder.webp";
     let desc = "";
@@ -559,10 +544,9 @@ router.get(`/:id/getInfo`, function (req, res) {
 router.delete(`/:id`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     res.header("Access-Control-Allow-Origin", "*");
     id = req.params.id;
     f.stop(id);
@@ -587,10 +571,9 @@ router.delete(`/:id`, function (req, res) {
 router.get("/:id/world", function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     //zip /servers/id/world and send it to the client
     id = req.params.id;
     const exec = require("child_process").exec;
@@ -617,10 +600,9 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   id = req.params.id;
   email = req.headers.email;
   token = req.headers.token;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     let lock = false;
     let lock2 = false;
     f.stopAsync(req.params.id, () => {
@@ -715,12 +697,11 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
 });
 
 router.get("/:id/proxy/info", function (req, res) {
-  let email = req.headers.email;
-  let token = req.headers.token;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  email = req.headers.email;
+  token = req.headers.token;
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       let lobbyName;
 
@@ -749,12 +730,11 @@ router.get("/:id/proxy/info", function (req, res) {
 });
 
 router.post("/:id/proxy/info", function (req, res) {
-  let email = req.headers.email;
-  let token = req.headers.token;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  email = req.headers.email;
+  token = req.headers.token;
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(
         `servers/${req.params.id}/velocity.toml`,
@@ -777,12 +757,11 @@ router.post("/:id/proxy/info", function (req, res) {
 });
 
 router.get("/:id/proxy/servers", function (req, res) {
-  let email = req.headers.email;
-  let token = req.headers.token;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  email = req.headers.email;
+  token = req.headers.token;
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(
         `servers/${req.params.id}/velocity.toml`,
@@ -821,12 +800,11 @@ router.get("/:id/proxy/servers", function (req, res) {
 });
 
 router.post("/:id/proxy/servers", function (req, res) {
-  let email = req.headers.email;
-  let token = req.headers.token;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  email = req.headers.email;
+  token = req.headers.token;
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(
         `servers/${req.params.id}/velocity.toml`,
@@ -877,8 +855,7 @@ router.post("/:id/proxy/servers", function (req, res) {
       ) {
         let subserverId = parseInt(req.query.ip.split(":")[1]) - 10000;
         if (
-          require("../servers.json")[subserverId].accountId ==
-          accounts[email].accountId
+          require("../servers.json")[subserverId].accountId == account.accountId
         ) {
           f.proxiesToggle(subserverId, true, req.query.secret);
           res.status(200).json(servers);
@@ -897,12 +874,11 @@ router.post("/:id/proxy/servers", function (req, res) {
 });
 
 router.delete("/:id/proxy/servers", function (req, res) {
-  let email = req.headers.email;
-  let token = req.headers.token;
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  email = req.headers.email;
+  token = req.headers.token;
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(
         `servers/${req.params.id}/velocity.toml`,
@@ -953,13 +929,11 @@ router.delete("/:id/proxy/servers", function (req, res) {
 });
 
 router.get("/:id/files", function (req, res) {
-  let email = req.headers.email;
-  let token = req.headers.token;
-
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  email = req.headers.email;
+  token = req.headers.token;
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     if (fs.existsSync(`servers/${req.params.id}/`)) {
       res
         .status(200)
@@ -971,13 +945,11 @@ router.get("/:id/files", function (req, res) {
 });
 
 router.get("/:id/file/:path", function (req, res) {
-  let email = req.headers.email;
-  let token = req.headers.token;
-
-  if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId
-  ) {
+  email = req.headers.email;
+  token = req.headers.token;
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
+  if (token === account.token && server.accountId == account.accountId) {
     let path = req.params.path.split("*").join("/");
     if (fs.existsSync(`servers/${req.params.id}/${path}`)) {
       if (fs.lstatSync(`servers/${req.params.id}/${path}`).isDirectory()) {
@@ -1010,11 +982,13 @@ router.get("/:id/file/:path", function (req, res) {
 });
 
 router.post("/:id/file/:path", function (req, res) {
-  let email = req.headers.email;
-  let token = req.headers.token;
+  email = req.headers.email;
+  token = req.headers.token;
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + ".json");
   if (
-    token === accounts[email].token &&
-    servers[req.params.id].accountId == accounts[email].accountId &&
+    token === account.token &&
+    server.accountId == account.accountId &&
     fs.existsSync(`servers/${req.params.id}/`)
   ) {
     let path = req.params.path;
