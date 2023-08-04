@@ -69,21 +69,6 @@ function proxiesToggle(id, toggle, secret) {
   }
 }
 
-
-  names = n;
-  softwares = s;
-  versions = v;
-  return {
-    names: names,
-    amount: amount,
-    versions: versions,
-    softwares: softwares,
-    addons: addons,
-    states: st,
-    ids: ids,
-  };
-}
-
 function checkServer(id) {
   if (states[id] == undefined) {
     states[id] = "false";
