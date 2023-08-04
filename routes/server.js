@@ -317,6 +317,7 @@ router.post(`/new`, function (req, res) {
                       req.body.version !== "undefined" &&
                       req.body.name !== "undefined"
                     ) {
+                      console.log("debug");
                       /*
                       server = {};
                       server.name = req.body.name;
