@@ -554,8 +554,9 @@ function stop(id) {
 
 function stopAsync(id, callback) {
   states[id] = "stopping";
-  setInterval(() => {
-    if (states[id] == "false") {
+  const intervalId = setInterval(() => {
+    if (states[id] === "false") {
+      clearInterval(intervalId); // Clear the interval once the condition is met
       callback();
     }
   }, 200);
