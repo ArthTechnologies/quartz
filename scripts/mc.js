@@ -69,11 +69,14 @@ function proxiesToggle(id, toggle, secret) {
   }
 }
 
+function getState(id) {
+  return states[id];
+}
 function checkServer(id) {
   if (states[id] == undefined) {
     states[id] = "false";
   }
-  let server = server;
+  let server = require("/servers/" + id + "/server.json");
 
   return {
     version: server.addons,
@@ -576,4 +579,5 @@ module.exports = {
   writeTerminal,
   stopAsync,
   proxiesToggle,
+  getState,
 };

@@ -16,7 +16,10 @@ router.get(`/`, function (req, res) {
     }
     //set email to the email in the request
     accountId = req.query.accountId;
-
+    for (i in servers) {
+      servers[i].id = i;
+      servers[i].state = f.getState(i);
+    }
     res.status(200).json(account.servers);
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
