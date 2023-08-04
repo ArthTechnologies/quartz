@@ -230,6 +230,7 @@ router.post(`/new`, function (req, res) {
     };
 
     let cid = "";
+    console.log(settings.maxServers + " " + data.numServers);
     if (
       (stripekey.indexOf("sk") == -1) | (account.bypassStripe == true) &&
       (settings.maxServers > data.numServers ||
