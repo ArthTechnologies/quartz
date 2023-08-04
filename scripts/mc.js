@@ -561,7 +561,7 @@ function stopAsync(id, callback) {
 }
 
 function readTerminal(id) {
-  let server = require("../servers/" + req.params.id + "/server.json");
+  let server = require("../servers/" + id + "/server.json");
   let ret = terminalOutput[id];
 
   ret = files.simplifyTerminal(ret, server.software);
