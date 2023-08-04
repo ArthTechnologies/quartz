@@ -54,12 +54,8 @@ if (fs.existsSync("accounts.json")) {
   for (i in oldAccounts) {
     let newAccount = {};
     newAccount = oldAccounts[i];
-    //newAccount email == oldAccount's json key
     newAccount.email = i;
-    fs.writeFileSync(
-      `accounts/${oldAccounts[i].accountId}.json`,
-      JSON.stringify(newAccount)
-    );
+    fs.writeFileSync(`accounts/${i}.json`, JSON.stringify(newAccount));
   }
 
   fs.copyFileSync("accounts.json", "backup/accounts.json");
