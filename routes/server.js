@@ -220,8 +220,8 @@ router.post(`/new`, function (req, res) {
     serverFolders = serverFolders.sort((a, b) => a - b);
     var id = parseInt(serverFolders[serverFolders.length - 1]) + 1;
     const datajson = require("../stores/data.json");
-    datajson.numServers = id;
-    fs.writeFileSync("data.json", JSON.stringify(datajson, null, 2));
+    datajson.numServers = serverFolders.length;
+    fs.writeFileSync("stores/data.json", JSON.stringify(datajson, null, 2));
     em = req.query.email;
 
     var store = {
