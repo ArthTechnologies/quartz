@@ -166,143 +166,137 @@ function downloadJars() {
   if (fs.existsSync("stores/settings.json")) {
     jarsMcUrl = require("./stores/settings.json").jarsMcUrl;
   }
-  if 
+
   //plugins
-  files.GET(
-    jarsMcUrl + "jars/arthHosting",
-    (data) => {
-      if (!data.includes("html")) {
-        data = JSON.parse(data);
-        let downloadProgress = [];
-        for (i in data) {
-          for (j in data[i]) {
-            let jar = data[i][j];
-            let extension = "jar";
-            switch (jar.software) {
-              case "terralith":
-              case "structory":
-              case "incendium":
-              case "nullscape":
-                extension = "zip";
-                break;
-            }
-            let c = "";
-            switch (jar.software) {
-              case "paper":
-                c = "servers";
-                break;
-              case "velocity":
-                c = "proxies";
-                break;
-              case "quilt":
-                c = "modded";
-                break;
-              case "vanilla":
-                c = "vanilla";
-                break;
-              case "waterfall":
-                c = "proxies";
-                break;
-              case "forge":
-                c = "modded";
-                break;
-              case "fabric":
-                c = "modded";
-                break;
-              case "snapshot":
-                c = "vanilla";
-                break;
-              case "spigot":
-                c = "servers";
-                break;
-            }
+  files.GET(jarsMcUrl + "jars/arthHosting", (data) => {
+    if (!data.includes("html")) {
+      data = JSON.parse(data);
+      let downloadProgress = [];
+      for (i in data) {
+        for (j in data[i]) {
+          let jar = data[i][j];
+          let extension = "jar";
+          switch (jar.software) {
+            case "terralith":
+            case "structory":
+            case "incendium":
+            case "nullscape":
+              extension = "zip";
+              break;
+          }
+          let c = "";
+          switch (jar.software) {
+            case "paper":
+              c = "servers";
+              break;
+            case "velocity":
+              c = "proxies";
+              break;
+            case "quilt":
+              c = "modded";
+              break;
+            case "vanilla":
+              c = "vanilla";
+              break;
+            case "waterfall":
+              c = "proxies";
+              break;
+            case "forge":
+              c = "modded";
+              break;
+            case "fabric":
+              c = "modded";
+              break;
+            case "snapshot":
+              c = "vanilla";
+              break;
+            case "spigot":
+              c = "servers";
+              break;
+          }
 
-            console.log(jar.version + " " + jar.software);
-            downloadProgress.push(false);
-            function downloadFromJarsMC() {
-              files.downloadAsync(
-                "data/downloads/" +
-                  jar.software +
-                  "-" +
-                  jar.version +
-                  "." +
-                  extension,
-                "https://api.jarsmc.xyz/jars/" +
-                  jar.software +
-                  "/" +
-                  jar.version,
-                (data3) => {
-                  if (
-                    fs.statSync(
-                      `data/downloads/${jar.software}-${jar.version}.${extension}`
-                    ).size > 1000
-                  ) {
-                    fs.copyFileSync(
-                      `data/downloads/${jar.software}-${jar.version}.${extension}`,
-                      `data/${jar.software}-${jar.version}.${extension}`
-                    );
-                    fs.unlinkSync(
-                      `data/downloads/${jar.software}-${jar.version}.${extension}`
-                    );
-                  }
+          console.log(jar.version + " " + jar.software);
+          downloadProgress.push(false);
+          function downloadFromJarsMC() {
+            files.downloadAsync(
+              "data/downloads/" +
+                jar.software +
+                "-" +
+                jar.version +
+                "." +
+                extension,
+              "https://api.jarsmc.xyz/jars/" + jar.software + "/" + jar.version,
+              (data3) => {
+                if (
+                  fs.statSync(
+                    `data/downloads/${jar.software}-${jar.version}.${extension}`
+                  ).size > 1000
+                ) {
+                  fs.copyFileSync(
+                    `data/downloads/${jar.software}-${jar.version}.${extension}`,
+                    `data/${jar.software}-${jar.version}.${extension}`
+                  );
+                  fs.unlinkSync(
+                    `data/downloads/${jar.software}-${jar.version}.${extension}`
+                  );
                 }
-              );
-            }
+              }
+            );
+          }
 
-            //forge needs to download from JarsMC because serverjars always has the
-            //latest version, which is not always the recommended version.
-            if (jar.software != "forge") {
-              files.downloadAsync(
-                "data/downloads/" +
-                  jar.software +
-                  "-" +
-                  jar.version +
-                  "." +
-                  extension,
-                "https://serverjars.com/api/fetchJar/" +
-                  c +
-                  "/" +
-                  jar.software +
-                  "/" +
-                  jar.version,
-                (data2) => {
-                  if (
-                    !fs.existsSync(
-                      `data/downloads/${jar.software}-${jar.version}.${extension}`
-                    ) ||
-                    fs.readFileSync(
-                      `data/downloads/${jar.software}-${jar.version}.${extension}`
-                    ).length == 26351
-                  ) {
-                    console.log(
-                      "failed to download " +
-                        jar.software +
-                        jar.version +
-                        " from serverjars.com, trying jarsmc.xyz"
-                    );
+          //forge needs to download from JarsMC because serverjars always has the
+          //latest version, which is not always the recommended version.
+          if (jar.software != "forge") {
+            files.downloadAsync(
+              "data/downloads/" +
+                jar.software +
+                "-" +
+                jar.version +
+                "." +
+                extension,
+              "https://serverjars.com/api/fetchJar/" +
+                c +
+                "/" +
+                jar.software +
+                "/" +
+                jar.version,
+              (data2) => {
+                if (
+                  !fs.existsSync(
+                    `data/downloads/${jar.software}-${jar.version}.${extension}`
+                  ) ||
+                  fs.readFileSync(
+                    `data/downloads/${jar.software}-${jar.version}.${extension}`
+                  ).length == 26351
+                ) {
+                  console.log(
+                    "failed to download " +
+                      jar.software +
+                      jar.version +
+                      " from serverjars.com, trying jarsmc.xyz"
+                  );
 
-                    downloadFromJarsMC();
-                    return;
-                  } else {
-                    fs.copyFileSync(
-                      `data/downloads/${jar.software}-${jar.version}.${extension}`,
-                      `data/${jar.software}-${jar.version}.${extension}`
-                    );
-                    fs.unlinkSync(
-                      `data/downloads/${jar.software}-${jar.version}.${extension}`
-                    );
-                  }
+                  downloadFromJarsMC();
+                  return;
+                } else {
+                  fs.copyFileSync(
+                    `data/downloads/${jar.software}-${jar.version}.${extension}`,
+                    `data/${jar.software}-${jar.version}.${extension}`
+                  );
+                  fs.unlinkSync(
+                    `data/downloads/${jar.software}-${jar.version}.${extension}`
+                  );
                 }
-              );
-            } else {
-              console.log("SOFTWARE FORGE");
-              downloadFromJarsMC();
-            }
+              }
+            );
+          } else {
+            console.log("SOFTWARE FORGE");
+            downloadFromJarsMC();
           }
         }
       }
     }
-  );
+  });
 }
 
 /*downloadWorldgenMods();
