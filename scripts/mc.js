@@ -68,37 +68,7 @@ function proxiesToggle(id, toggle, secret) {
     fs.writeFileSync(`servers/${id}/server.properties`, serverProperties);
   }
 }
-function checkServers(accountId) {
-  amount = 0;
 
-  var n = [];
-  var s = [];
-  var v = [];
-  var addons = [];
-  var st = [];
-  var ids = [];
-
-  for (i in servers) {
-    if (states[i] == undefined) {
-      states[i] = "false";
-    }
-    if (servers[i] != (undefined | "")) {
-      if (
-        servers[i].accountId != undefined &&
-        servers[i].accountId == accountId
-      ) {
-        n.push(servers[i].name);
-        s.push(servers[i].software);
-        v.push(servers[i].version);
-        st.push(states[i]);
-
-        addons = servers[i].addons;
-        amount++;
-
-        ids.push(i);
-      }
-    }
-  }
 
   names = n;
   softwares = s;
@@ -142,7 +112,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   isNew = Boolean(isNew);
 
   if (isNew === false) {
-    //run checkServers and store it
     software = server.software;
     version = server.version;
     addons = server.addons;
@@ -615,7 +584,6 @@ function writeTerminal(id, cmd) {
 }
 
 module.exports = {
-  checkServers,
   run,
   stop,
   checkServer,

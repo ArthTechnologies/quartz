@@ -210,7 +210,7 @@ router.post(`/new`, function (req, res) {
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   if (token === account.token) {
-    let amount = f.checkServers(account.accountId).amount;
+    let amount = account.servers.length;
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
     const settings = require("../stores/settings.json");
