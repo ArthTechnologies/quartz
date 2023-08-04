@@ -266,7 +266,7 @@ router.post(`/new`, function (req, res) {
         );
       }
 
-      /*f.run(
+      f.run(
         id,
         req.body.software,
         req.body.version,
@@ -275,7 +275,7 @@ router.post(`/new`, function (req, res) {
         undefined,
         true,
         req.body.modpackURL
-      );*/
+      );
       res.status(202).json({ success: true, msg: `Success. Server created.` });
     } else if (settings.maxServers <= data.numServers) {
       res
