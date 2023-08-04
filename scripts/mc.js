@@ -70,6 +70,9 @@ function proxiesToggle(id, toggle, secret) {
 }
 
 function getState(id) {
+  if (states[id] == undefined) {
+    states[id] = "false";
+  }
   return states[id];
 }
 function checkServer(id) {
