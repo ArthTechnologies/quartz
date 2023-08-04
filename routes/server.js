@@ -327,6 +327,7 @@ router.post(`/new`, function (req, res) {
                       if (!fs.existsSync("servers/" + id)) {
                         fs.mkdirSync("servers/" + id);
                       }
+                      /*
                       fs.writeFile(
                         "servers/" + id + "/server.json",
                         JSON.stringify(server, null, 4),
@@ -337,7 +338,7 @@ router.post(`/new`, function (req, res) {
                           }
                           console.log("File has been created");
                         }
-                      );
+                      );*/
                     }
                     /*f.run(
                       id,
