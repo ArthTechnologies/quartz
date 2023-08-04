@@ -266,7 +266,7 @@ router.post(`/new`, function (req, res) {
         );
       }
 
-      f.run(
+      /*f.run(
         id,
         req.body.software,
         req.body.version,
@@ -275,7 +275,7 @@ router.post(`/new`, function (req, res) {
         undefined,
         true,
         req.body.modpackURL
-      );
+      );*/
       res.status(202).json({ success: true, msg: `Success. Server created.` });
     } else if (settings.maxServers <= data.numServers) {
       res
@@ -318,7 +318,6 @@ router.post(`/new`, function (req, res) {
                       req.body.version !== "undefined" &&
                       req.body.name !== "undefined"
                     ) {
-                      /*
                       server = {};
                       server.name = req.body.name;
                       server.software = req.body.software;
@@ -329,7 +328,7 @@ router.post(`/new`, function (req, res) {
                       if (!fs.existsSync("servers/" + id)) {
                         fs.mkdirSync("servers/" + id);
                       }
-                      
+
                       fs.writeFile(
                         "servers/" + id + "/server.json",
                         JSON.stringify(server, null, 4),
@@ -340,9 +339,9 @@ router.post(`/new`, function (req, res) {
                           }
                           console.log("File has been created");
                         }
-                      );*/
+                      );
                     }
-                    /*f.run(
+                    f.run(
                       id,
                       req.body.software,
                       req.body.version,
@@ -351,7 +350,7 @@ router.post(`/new`, function (req, res) {
                       undefined,
                       true,
                       req.body.modpackURL
-                    );*/
+                    );
                     res.status(202).json({
                       success: true,
                       msg: `Success: Starting Server`,
