@@ -164,7 +164,10 @@ function downloadJars() {
   );
   let jarsMcUrl = "https://jarsmc.xyz/";
   if (fs.existsSync("stores/settings.json")) {
-    jarsMcUrl = require("./stores/settings.json").jarsMcUrl;
+    const settings = require("./stores/settings.json");
+    if (settings.jarsMcUrl != undefined) {
+      jarsMcUrl = settings.jarsMcUrl;
+    }
   }
 
   //plugins
