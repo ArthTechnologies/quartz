@@ -17,8 +17,7 @@ router.get(`/`, function (req, res) {
     //set email to the email in the request
     accountId = req.query.accountId;
     for (i in account.servers) {
-      account.servers[i].id = i;
-      account.servers[i].state = f.getState(i);
+      account.servers[i].state = f.getState(account.servers[i].id);
     }
     res.status(200).json(account.servers);
   } else {

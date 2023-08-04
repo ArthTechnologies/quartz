@@ -60,6 +60,7 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
     newAccount.email = i;
     for (j in oldServers) {
       if (oldServers[j].accountId == oldAccounts[i].accountId) {
+        oldServers[j].id = j;
         newAccount.servers.push(oldServers[j]);
         fs.writeFileSync(
           `servers/${j}/server.json`,
@@ -74,10 +75,6 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
   fs.unlinkSync("accounts.json");
   fs.copyFileSync("servers.json", "backup/servers.json");
   fs.unlinkSync("servers.json");
-}
-
-if (!fs.existsSync("servers.json")) {
-  fs.writeFileSync("servers.json", "{}");
 }
 
 const s = require("./scripts/stripe.js");
