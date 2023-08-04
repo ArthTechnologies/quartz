@@ -79,7 +79,7 @@ function checkServer(id) {
   if (states[id] == undefined) {
     states[id] = "false";
   }
-  let server = require("/servers/" + id + "/server.json");
+  let server = require("../servers/" + id + "/server.json");
 
   return {
     version: server.addons,
