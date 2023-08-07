@@ -869,6 +869,29 @@ router.post("/:id/proxy/servers", function (req, res) {
           account.accountId
         ) {
           f.proxiesToggle(subserverId, true, req.query.secret);
+          f.stopAsync(subserverId, () => {
+            f.run(
+              subserverId,
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              email,
+              false
+            );
+          });
+          f.stopAsync(req.params.id, () => {
+            f.run(
+              req.params.id,
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              email,
+              false
+            );
+          });
+
           res.status(200).json(servers);
         } else {
           res.state(400).json({ msg: "You don't own this subserver." });
