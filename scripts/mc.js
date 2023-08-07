@@ -568,7 +568,7 @@ function readTerminal(id) {
   let server = require("../servers/" + id + "/server.json");
   let ret = terminalOutput[id];
 
-  ret = files.simplifyTerminal(ret, server.software);
+  //ret = files.simplifyTerminal(ret, server.software);
 
   return ret;
 }
