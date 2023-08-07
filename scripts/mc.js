@@ -420,7 +420,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         });
         ls.on("exit", () => {
           states[id] = "false";
-          console.log("test out" + out);
+          terminalOutput[id] = out.join("\n");
         });
       }
     }, interval);
@@ -456,7 +456,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     });
     ls.on("exit", () => {
       states[id] = "false";
-      console.log("test out" + out);
+      terminalOutput[id] = out.join("\n");
     });
   }
 
