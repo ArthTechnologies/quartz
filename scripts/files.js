@@ -195,6 +195,7 @@ function simplifyTerminal(terminal, software) {
         terminalLines.splice(i - 1, 1);
         terminalLines.splice(i, 1);
         terminalLines.splice(i, 1);
+        break;
     }
   }
   if (terminalLines[0] != "" && software != "velocity") {
