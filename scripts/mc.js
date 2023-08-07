@@ -421,7 +421,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         ls.on("exit", () => {
           states[id] = "false";
           terminalOutput[id] = out.join("\n");
-          console.log("DEBUGDEBUGDEBUG" + terminalOutput
+          console.log("DEBUGDEBUGDEBUG" + terminalOutput[id]);
         });
       }
     }, interval);
