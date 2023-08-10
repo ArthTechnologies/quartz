@@ -623,6 +623,8 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             files.removeDirectoryRecursive(`servers/${id}/world`);
             fs.mkdirSync(`servers/${id}/world`);
             fs.mkdirSync(`servers/${id}/world/datapacks`);
+            files.removeDirectoryRecursive(`servers/${id}/world_nether`);
+            files.removeDirectoryRecursive(`servers/${id}/world_the_end`);
 
             if (req.query.seed == undefined) {
               req.query.seed = "";
@@ -667,6 +669,8 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             files.removeDirectoryRecursiveAsync(`servers/${id}/world`, () => {
               fs.mkdirSync(`servers/${id}/world`);
               fs.mkdirSync(`servers/${id}/world/datapacks`);
+              files.removeDirectoryRecursive(`servers/${id}/world_nether`);
+              files.removeDirectoryRecursive(`servers/${id}/world_the_end`);
               //unzip the file and put it in /servers/id/world
 
               const exec = require("child_process").exec;
