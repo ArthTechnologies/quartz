@@ -555,13 +555,17 @@ function stop(id) {
 }
 
 function stopAsync(id, callback) {
-  states[id] = "stopping";
-  const intervalId = setInterval(() => {
-    if (states[id] === "false") {
-      clearInterval(intervalId); // Clear the interval once the condition is met
-      callback();
-    }
-  }, 200);
+  if (states[id] == "false") {
+    callback();
+  } else {
+    states[id] = "stopping";
+    const intervalId = setInterval(() => {
+      if (states[id] === "false") {
+        clearInterval(intervalId); // Clear the interval once the condition is met
+        callback();
+      }
+    }, 200);
+  }
 }
 
 function readTerminal(id) {
