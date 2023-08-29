@@ -8,7 +8,10 @@ const f = require("../scripts/mc.js");
 router.get(`/`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
-  account = require("../accounts/" + email + ".json");
+  //prevents a crash that has occurred
+  if (email != undefined) {
+    account = require("../accounts/" + email + ".json");
+  }
   if (token === account.token) {
     //if req.body.email is "noemail" return 404
     if (req.query.email == ("noemail" | "undefined")) {
