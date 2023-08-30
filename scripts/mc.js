@@ -3,7 +3,7 @@ var eventEmitter = new events.EventEmitter();
 fs = require("fs");
 let states = [];
 const files = require("./files.js");
-const { time } = require("console");
+const { time, Console } = require("console");
 const { randomBytes } = require("crypto");
 let terminalOutput = [];
 let terminalInput = "";
@@ -237,6 +237,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
                   //for each file in modpack.files, download it
                   for (i in modpack.files) {
+                    console.error("downloading " + modpack.files[i].path)
                     files.downloadAsync(
                       folder + "/" + modpack.files[i].path,
                       modpack.files[i].downloads[0],
