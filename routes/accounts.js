@@ -7,19 +7,16 @@ const { v4: uuidv4 } = require("uuid");
 const files = require("../scripts/files.js");
 
 Router.post("/email/signup/", (req, res) => {
-  console.log("hi");
   res.header("Access-Control-Allow-Origin", "*");
 
-  let accounts = require("../accounts.json");
+  let account = {};
   let emailExists = false;
   let password = req.query.password;
   let email = req.query.email;
   let confirmPassword = req.query.confirmPassword;
 
-  for (i in accounts) {
-    if (i == email) {
-      emailExists = true;
-    }
+  if (fs.existsSync("accounts/" + email + ".json")) {
+    emailExists = true;
   }
 
   if (password == confirmPassword) {
@@ -28,19 +25,15 @@ Router.post("/email/signup/", (req, res) => {
         let accountId = uuidv4();
         [salt, password] = files.hash(password).split(":");
 
-        accounts[email] = {};
-        accounts[email].password = password;
-        accounts[email].accountId = accountId;
-        accounts[email].token = uuidv4();
-        accounts[email].salt = salt;
-        accounts[email].resetAttempts = 0;
-        accounts[email].ips = [];
-        accounts[email].ips.push(files.getIPID(req.ip));
-        console.log("hi");
+        account.password = password;
+        account.accountId = accountId;
+        account.token = uuidv4();
+        account.salt = salt;
+        account.resetAttempts = 0;
+        account.ips = [];
+        account.ips.push(files.getIPID(req.ip));
 
-        res
-          .status(200)
-          .send({ token: accounts[email].token, accountId: accountId });
+        res.status(200).send({ token: account.token, accountId: accountId });
       } else {
         res.status(400).send({ token: -1, reason: "Email already exists" });
       }
@@ -50,29 +43,33 @@ Router.post("/email/signup/", (req, res) => {
   } else {
     res.status(400).send({ token: -1, reason: "Passwords do not match" });
   }
-  //write accounts.json
-  fs.writeFileSync("accounts.json", JSON.stringify(accounts, null, 4), {
-    encoding: "utf8",
-  });
+  //write account file
+  fs.writeFileSync(
+    "accounts/" + email + ".json",
+    JSON.stringify(accounts, null, 4),
+    {
+      encoding: "utf8",
+    }
+  );
 });
 
 Router.post("/email/signin/", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
-  let accounts = require("../accounts.json");
   let password = req.query.password;
   let email = req.query.email;
+  let account = require("../accounts/" + email + ".json");
   let response = {};
 
-  let salt = accounts[email].salt;
+  let salt = account.salt;
 
-  if (accounts[email].password == files.hash(password, salt).split(":")[1]) {
-    if (accounts[email].ips.indexOf(files.getIPID(req.ip)) == -1) {
-      accounts[email].ips.push(files.getIPID(req.ip));
+  if (account.password == files.hash(password, salt).split(":")[1]) {
+    if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
+      account.ips.push(files.getIPID(req.ip));
     }
     response = {
-      token: accounts[email].token,
-      accountId: accounts[email].accountId,
+      token: account.token,
+      accountId: account.accountId,
     };
   } else {
     response = { token: -1, reason: "Incorrect email or password" };
@@ -82,20 +79,14 @@ Router.post("/email/signin/", (req, res) => {
 });
 
 Router.delete("/email", (req, res) => {
-  let accounts = require("../accounts.json");
   email = req.headers.email;
   password = req.query.password;
   token = req.headers.token;
-  console.log(req.query);
-  console.log(files.hash("password", accounts[email].salt).split(":")[1]);
+  let account = require("../accounts/" + email + ".json");
 
-  if (token == accounts[email].token) {
-    if (
-      accounts[email].password ==
-      files.hash(password, accounts[email].salt).split(":")[1]
-    ) {
-      delete accounts[email];
-      files.write("accounts.json", JSON.stringify(accounts));
+  if (token == account.token) {
+    if (account.password == files.hash(password, account.salt).split(":")[1]) {
+      fs.unlinkSync("accounts/" + email + ".json");
 
       res.status(200).send({ success: true });
     } else {
@@ -109,24 +100,24 @@ Router.delete("/email", (req, res) => {
 Router.post("/email/resetPassword/", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
-  let accounts = require("../accounts.json");
   let settings = require("../stores/settings.json");
   let password = req.query.password;
   let email = req.query.email;
   let confirmPassword = req.query.confirmPassword;
   let last4 = req.query.last4;
+  let account = require("../accounts/" + email + ".json");
 
   try {
     const creditId = await s.getCreditId(email);
-    if (accounts[email].resetAttempts < 5) {
+    if (account.resetAttempts < 5) {
       if (creditId === last4 || settings.enablePay === false) {
         if (password == confirmPassword) {
           if (password.length >= 7) {
             [salt, password] = files.hash(password).split(":");
 
-            accounts[email].password = password;
-            accounts[email].token = uuidv4();
-            accounts[email].salt = salt;
+            account.password = password;
+            account.token = uuidv4();
+            account.salt = salt;
 
             res.status(200).send({ success: true });
           } else {
@@ -138,11 +129,11 @@ Router.post("/email/resetPassword/", async (req, res) => {
           res.status(400).send({ token: -1, reason: "Passwords do not match" });
         }
       } else {
-        accounts[email].resetAttempts++;
+        account.resetAttempts++;
         res.status(400).send({
           success: false,
           reason: "Wrong last 4 digits",
-          attempts: accounts[email].resetAttempts,
+          attempts: account.resetAttempts,
         });
       }
     } else {
@@ -153,10 +144,15 @@ Router.post("/email/resetPassword/", async (req, res) => {
     res.status(500).send({ success: false, reason: "An error occurred" });
   }
 
-  //write accounts.json
-  fs.writeFileSync("accounts.json", JSON.stringify(accounts, null, 4), {
-    encoding: "utf8",
-  });
+  //write account file
+  fs.writeFileSync(
+    "accounts/" + email + ".json",
+    JSON.stringify(account, null, 4),
+
+    {
+      encoding: "utf8",
+    }
+  );
 });
 
 module.exports = Router;

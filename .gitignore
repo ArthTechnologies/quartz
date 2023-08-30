@@ -1,6 +1,7 @@
 /target
 /node_modules
 /uploads
+/accounts
 /pocketbase/pb_data
 .breakpoints
 .replit

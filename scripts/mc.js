@@ -3,34 +3,28 @@ var eventEmitter = new events.EventEmitter();
 fs = require("fs");
 let states = [];
 const files = require("./files.js");
-let servers = require("../servers.json");
 const { time } = require("console");
 const { randomBytes } = require("crypto");
 let terminalOutput = [];
 let terminalInput = "";
 
 function proxiesToggle(id, toggle, secret) {
-
   if (toggle == true) {
-
     let paperGlobal = fs.readFileSync(
       `servers/${id}/config/paper-global.yml`,
       "utf8"
     );
 
-    paperGlobal = paperGlobal.replace(
-      /secret: ""/g,
-      `secret: "${secret}"`
-    );
-    paperGlobal = paperGlobal.replace(
-      /secret: ''/g,
-      `secret: "${secret}"`
-    );
+    paperGlobal = paperGlobal.replace(/secret: ""/g, `secret: "${secret}"`);
+    paperGlobal = paperGlobal.replace(/secret: ''/g, `secret: "${secret}"`);
 
-    fs.writeFileSync(
-      `servers/${id}/config/paper-global.yml`,
-      paperGlobal
-    );
+    //set the line after 'velocity:' to 'enabled: true'
+    let paperGlobalLines = paperGlobal.split("\n");
+    let index = paperGlobalLines.indexOf("  velocity:");
+    paperGlobalLines[index + 1] = "    enabled: true";
+    paperGlobal = paperGlobalLines.join("\n");
+
+    fs.writeFileSync(`servers/${id}/config/paper-global.yml`, paperGlobal);
 
     let serverProperties = fs.readFileSync(
       `servers/${id}/server.properties`,
@@ -42,27 +36,24 @@ function proxiesToggle(id, toggle, secret) {
       `online-mode=false`
     );
 
-    fs.writeFileSync(
-      `servers/${id}/server.properties`,
-      serverProperties
-    );
+    fs.writeFileSync(`servers/${id}/server.properties`, serverProperties);
   } else {
-
     let paperGlobal = fs.readFileSync(
       `servers/${id}/config/paper-global.yml`,
       "utf8"
     );
 
-    let index = paperGlobal.split("\n").indexOf("secret: " );
+    let index = paperGlobal.split("\n").indexOf("secret: ");
     let paperGlobalLines = paperGlobal.split("\n");
-    
+
     paperGlobalLines[index] == "secret: " + secret;
+
+    //set the line after 'velocity:' to 'enabled: false'
+    let index2 = paperGlobalLines.indexOf("  velocity:");
+    paperGlobalLines[index2 + 1] = "    enabled: false";
     paperGlobal = paperGlobalLines.join("\n");
 
-    fs.writeFileSync(
-      `servers/${id}/config/paper-global.yml`,
-      paperGlobal
-    );
+    fs.writeFileSync(`servers/${id}/config/paper-global.yml`, paperGlobal);
 
     let serverProperties = fs.readFileSync(
       `servers/${id}/server.properties`,
@@ -74,63 +65,21 @@ function proxiesToggle(id, toggle, secret) {
       `online-mode=true`
     );
 
-    fs.writeFileSync(
-      `servers/${id}/server.properties`,
-      serverProperties
-    );
+    fs.writeFileSync(`servers/${id}/server.properties`, serverProperties);
   }
 }
-function checkServers(accountId) {
-  amount = 0;
 
-  var n = [];
-  var s = [];
-  var v = [];
-  var addons = [];
-  var st = [];
-  var ids = [];
-
-  for (i in servers) {
-    if (states[i] == undefined) {
-      states[i] = "false";
-    }
-    if (servers[i] != (undefined | "")) {
-      if (
-        servers[i].accountId != undefined &&
-        servers[i].accountId == accountId
-      ) {
-        n.push(servers[i].name);
-        s.push(servers[i].software);
-        v.push(servers[i].version);
-        st.push(states[i]);
-
-        addons = servers[i].addons;
-        amount++;
-
-        ids.push(i);
-      }
-    }
+function getState(id) {
+  if (states[id] == undefined) {
+    states[id] = "false";
   }
-
-  names = n;
-  softwares = s;
-  versions = v;
-  return {
-    names: names,
-    amount: amount,
-    versions: versions,
-    softwares: softwares,
-    addons: addons,
-    states: st,
-    ids: ids,
-  };
+  return states[id];
 }
-
 function checkServer(id) {
   if (states[id] == undefined) {
     states[id] = "false";
   }
-  let server = servers[id];
+  let server = require("../servers/" + id + "/server.json");
 
   return {
     version: server.addons,
@@ -141,9 +90,9 @@ function checkServer(id) {
 }
 
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
-
+  let server = require("../servers/" + id + "/server.json");
+  console.log("server.json: " + server);
   let out = [];
-  servers = require("../servers.json");
   states[id] = "starting";
 
   // i isNew is undefined, set it to true
@@ -155,10 +104,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   isNew = Boolean(isNew);
 
   if (isNew === false) {
-    //run checkServers and store it
-    software = servers[id].software;
-    version = servers[id].version;
-    addons = servers[id].addons;
+    software = server.software;
+    version = server.version;
+    addons = server.addons;
   } else {
   }
 
@@ -312,7 +260,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       "data/" + software + "-" + version + ".jar",
       folder + "/server.jar"
     );
-
   } else {
     fs.copyFileSync("data/" + software + "-0.5.1.jar", folder + "/server.jar");
     args = [
@@ -348,10 +295,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       data = fs.readFileSync("servers/" + id + "/velocity.toml", "utf8");
     }
 
-    let result = data.replace(
-      /bind = "0.0.0.0:25577"/g,
-      `bind = "0.0.0.0:${port}"`
-    );
+    let result = data
+      .replace(/bind = "0.0.0.0:25577"/g, `bind = "0.0.0.0:${port}"`)
+      .replace(
+        /player-info-forwarding-mode = "NONE"/g,
+        `player-info-forwarding-mode = "modern"`
+      );
 
     fs.writeFileSync(folder + "/velocity.toml", result, "utf8");
 
@@ -471,6 +420,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         });
         ls.on("exit", () => {
           states[id] = "false";
+          terminalOutput[id] = out.join("\n");
         });
       }
     }, interval);
@@ -506,6 +456,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     });
     ls.on("exit", () => {
       states[id] = "false";
+      terminalOutput[id] = out.join("\n");
     });
   }
 
@@ -562,7 +513,8 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   } else if (software == "velocity") {
     if (
       fs.existsSync("data/cx_geyser-velocity_Geyser.jar") &&
-      (fs.existsSync(folder + "/plugins/cx_geyser-velocity_Geyser.jar") || isNew)
+      (fs.existsSync(folder + "/plugins/cx_geyser-velocity_Geyser.jar") ||
+        isNew)
     ) {
       if (!isNew) {
         fs.unlinkSync(folder + "/plugins/cx_geyser-velocity_Geyser.jar");
@@ -603,19 +555,25 @@ function stop(id) {
 }
 
 function stopAsync(id, callback) {
-  states[id] = "stopping";
-  setInterval(() => {
-    if (states[id] == "false") {
-      callback();
-    }
-  }, 200);
+  if (states[id] == "false") {
+    callback();
+  } else {
+    states[id] = "stopping";
+    const intervalId = setInterval(() => {
+      if (states[id] === "false") {
+        clearInterval(intervalId); // Clear the interval once the condition is met
+        callback();
+      }
+    }, 200);
+  }
 }
 
 function readTerminal(id) {
+  let server = require("../servers/" + id + "/server.json");
   let ret = terminalOutput[id];
 
-  ret = files.simplifyTerminal(ret, servers[id].software);
-
+  ret = files.simplifyTerminal(ret, server.software);
+  console.log(ret);
   return ret;
 }
 
@@ -625,12 +583,12 @@ function writeTerminal(id, cmd) {
 }
 
 module.exports = {
-  checkServers,
   run,
   stop,
   checkServer,
   readTerminal,
   writeTerminal,
   stopAsync,
-  proxiesToggle
+  proxiesToggle,
+  getState,
 };
