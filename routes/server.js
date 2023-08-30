@@ -139,6 +139,17 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           return nameA.localeCompare(nameB);
         });
       }
+      for (i in modpack.files) {
+        if (modpack.files[i].path.includes("\\")) {
+          modpack.files[i].path = modpack.files[i].path.replace(
+            /\\/g,
+            "/"
+          );
+        }
+        if (!fs.existsSync(`servers/${id}/`+modpack.files[i].path)) {
+          modpack.files.splice(i, 1);
+        }
+      }
     }
 
 
