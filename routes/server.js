@@ -132,15 +132,16 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
       mods.sort((a, b) => {
         return a.name.localeCompare(b.name);
       });
+      if (modpack != undefined) {
+        modpack.files.sort((a, b) => {
+          const nameA = a.path.split("/")[1];
+          const nameB = b.path.split("/")[1];
+          return nameA.localeCompare(nameB);
+        });
+      }
     }
 
-    if (modpack != undefined) {
-      modpack.files.sort((a, b) => {
-        const nameA = a.path.split("/")[1];
-        const nameB = b.path.split("/")[1];
-        return nameA.localeCompare(nameB);
-      });
-    }
+
 
     res.status(200).json({ mods: mods, modpack: modpack });
   } else {
