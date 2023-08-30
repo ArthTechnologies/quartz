@@ -228,7 +228,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
               "cp -r " + folder + "/overrides/* " + folder + "/",
               (error, stdout, stderr) => {
                 if (
-                  !fs.existsSync(folder + "/overrides/mods") &&
+                  
                   fs.existsSync(folder + "/modrinth.index.json")
                 ) {
                   modpack = JSON.parse(
