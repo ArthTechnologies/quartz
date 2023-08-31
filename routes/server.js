@@ -134,10 +134,10 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     }
     });
 
-
+    console.log("test1234567");
     //sort mods by name if there are any
     if (mods.length > 0) {
-      console.log("test1234567");
+
       mods.sort((a, b) => {
         return a.name.localeCompare(b.name);
       });
