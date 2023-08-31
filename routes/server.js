@@ -107,6 +107,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     }
 
     fs.readdirSync(`servers/${id}/${modtype}`).forEach((file) => {
+      console.log(file)
       if (file.startsWith("gh_")) {
         mods.push({
           platform: file.split("_")[0],
