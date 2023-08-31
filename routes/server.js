@@ -132,6 +132,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
         })
       }
     });
+    console.log(mods);
 
     //sort mods by name if there are any
     if (mods.length > 0) {
