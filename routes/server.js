@@ -142,7 +142,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
         return a.name.localeCompare(b.name);
       });
 
-      console.log(unknownMods);
+      console.log("test1234567");
 
       //add unknownMods array to the end of mods
       for (i in unknownMods) {
