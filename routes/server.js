@@ -142,6 +142,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
 
       //add unknownMods array to the end of mods
       for (i in unknownMods) {
+        console.log(unknownMods[i]);
         mods.push(unknownMods[i]);
       }
 
