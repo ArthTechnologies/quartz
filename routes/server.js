@@ -137,12 +137,12 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
 
     //sort mods by name if there are any
     if (mods.length > 0) {
-
+      console.log("test1234567");
       mods.sort((a, b) => {
         return a.name.localeCompare(b.name);
       });
 
-      console.log("test1234567");
+
 
       //add unknownMods array to the end of mods
       for (i in unknownMods) {
