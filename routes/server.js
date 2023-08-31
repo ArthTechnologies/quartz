@@ -111,12 +111,14 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           platform: file.split("_")[0],
           id: file.split("_")[1] + "/" + file.split("_")[2],
           name: file.split("_")[3].replace(".jar", ""),
+          filename: file,
         });
       } else if (file.startsWith("lr_")) {
         mods.push({
           platform: file.split("_")[0],
           id: file.split("_")[1],
           name: file.split("_")[2].replace(".jar", ""),
+          filename: file,
         });
       } else if (file.startsWith("cx_")) {
         mods.push({
@@ -124,7 +126,11 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           id: file.split("_")[1],
           name: file.split("_")[2].replace(".jar", ""),
         });
-      }
+      } else {
+        mods.push({
+          filename: file,
+      });
+    }
     });
 
 
