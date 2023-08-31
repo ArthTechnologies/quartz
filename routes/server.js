@@ -124,6 +124,12 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           id: file.split("_")[1],
           name: file.split("_")[2].replace(".jar", ""),
         });
+      } else {
+        mods.push({
+          platform: "cx",
+          id: "-1",
+          name: file
+        })
       }
     });
 
