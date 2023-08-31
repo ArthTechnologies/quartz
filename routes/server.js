@@ -124,15 +124,9 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           id: file.split("_")[1],
           name: file.split("_")[2].replace(".jar", ""),
         });
-      } else {
-        mods.push({
-          platform: "cx",
-          id: "-1",
-          name: file.replace(".jar", ""),
-        })
       }
     });
-    console.log(mods);
+
 
     //sort mods by name if there are any
     if (mods.length > 0) {
