@@ -99,6 +99,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
   if (token === account.token && server.accountId == account.accountId) {
     let modtype = req.params.modtype;
     let mods = [];
+    let unknownMods = [];
     let id = req.params.id;
     let modpack;
     if (fs.existsSync(`servers/${id}/modrinth.index.json`)) {
@@ -127,9 +128,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           name: file.split("_")[2].replace(".jar", ""),
         });
       } else {
-        mods.push({
-          filename: file,
-      });
+        unknownMods.push(file);
     }
     });
 
@@ -137,15 +136,15 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     //sort mods by name if there are any
     if (mods.length > 0) {
 
-      //sort mods if they have the name property
       mods.sort((a, b) => {
-        if (a.name != undefined && b.name != undefined) {
-          console.log(a.name + " " + b.name)
-          return a.name.localeCompare(b.name);
-        } else {
-          return 0;
-        }
+        return a.name.localeCompare(b.name);
       });
+
+      //add unknownMods array to the end of mods
+      for (i in unknownMods) {
+        mods.push(unknownMods[i]);
+      }
+
       if (modpack != undefined) {
         modpack.files.sort((a, b) => {
           const nameA = a.path.split("/")[1];
