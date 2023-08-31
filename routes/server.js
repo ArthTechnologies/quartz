@@ -140,10 +140,11 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
         return a.name.localeCompare(b.name);
       });
 
+      console.log(unknownMods);
+
       //add unknownMods array to the end of mods
       for (i in unknownMods) {
-        console.log(unknownMods[i]);
-        mods.push(unknownMods[i]);
+        mods.push({filename:unknownMods[i]});
       }
 
       if (modpack != undefined) {
