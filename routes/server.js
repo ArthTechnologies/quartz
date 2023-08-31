@@ -134,7 +134,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     }
     });
 
-    console.log("test1234567" + mods.length);
+
     //sort mods by name if there are any
     if (mods.length > 0) {
 
@@ -144,10 +144,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
 
 
 
-      //add unknownMods array to the end of mods
-      for (i in unknownMods) {
-        mods.push({filename:unknownMods[i]});
-      }
+
 
       if (modpack != undefined) {
         modpack.files.sort((a, b) => {
@@ -169,7 +166,10 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
       }
     }
 
-
+      //add unknownMods array to the end of mods
+      for (i in unknownMods) {
+        mods.push({filename:unknownMods[i]});
+      }
 
     res.status(200).json({ mods: mods, modpack: modpack });
   } else {
