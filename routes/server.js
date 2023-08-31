@@ -136,8 +136,14 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
 
     //sort mods by name if there are any
     if (mods.length > 0) {
+      
+      //sort mods if they have the name property
       mods.sort((a, b) => {
-        return a.name.localeCompare(b.name);
+        if (a.name != undefined && b.name != undefined) {
+          return a.name.localeCompare(b.name);
+        } else {
+          return 0;
+        }
       });
       if (modpack != undefined) {
         modpack.files.sort((a, b) => {
