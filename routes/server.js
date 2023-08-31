@@ -128,7 +128,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
         mods.push({
           platform: "cx",
           id: "-1",
-          name: file
+          name: file.replace(".jar", ""),
         })
       }
     });
