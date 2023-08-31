@@ -130,6 +130,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
         });
       } else {
         unknownMods.push(file);
+        console.log(unknownMods);
     }
     });
 
