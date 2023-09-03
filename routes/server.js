@@ -1116,6 +1116,8 @@ router.delete("/:id/file/:path", function (req, res) {
     ) {
       fs.unlinkSync(`servers/${req.params.id}/${path}`);
       res.status(200).json({ msg: "Done" });
+    } else {
+      res.status(400).json({ msg: "Invalid request." });
     }
   } else {
     res.status(401).json({ msg: "Invalid credentials." });
