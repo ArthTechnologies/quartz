@@ -1087,4 +1087,40 @@ router.post("/:id/file/:path", function (req, res) {
   }
 });
 
+router.delete("/:id/file/:path", function (req, res) {
+  email = req.headers.email;
+  token = req.headers.token;
+  account = require("../accounts/" + email + ".json");
+  server = require(`../servers/${req.params.id}/server.json`);  
+  if (
+    token === account.token &&
+    server.accountId == account.accountId &&
+    fs.existsSync(`servers/${req.params.id}/`)
+  ) {
+    let path = req.params.path;
+    if (req.params.path.includes("*")) {
+      path = req.params.path.split("*").join("/");
+    }
+    let extension = path.split(".")[path.split(".").length - 1];
+    let filename = path.split("/")[path.split("/").length - 1];
+    if (
+      fs.existsSync(`servers/${req.params.id}/${path}`) &&
+      (extension == "yml" ||
+        extension == "yaml" ||
+        extension == "json" ||
+        extension == "toml" ||
+        extension =="jar") &&
+      filename != "server.json" &&
+      filename != "velocity.toml" &&
+      filename != "modrinth.index.json"
+    ) {
+      fs.unlinkSync(`servers/${req.params.id}/${path}`);
+      res.status(200).json({ msg: "Done" });
+    }
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
+
 module.exports = router;
