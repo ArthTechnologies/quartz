@@ -142,12 +142,12 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
       });
     }
     if (mods.length > 0) {
-      if (modpack != undefined) {
-        /*modpack.files.sort((a, b) => {
+      if (modpack != undefined && modpack.files.length > 1) {
+        modpack.files.sort((a, b) => {
           const nameA = a.path.split("/")[1];
           const nameB = b.path.split("/")[1];
           return nameA.localeCompare(nameB);
-        });*/
+        });
       }
       for (i in modpack.files) {
         if (modpack.files[i].path.includes("\\")) {
