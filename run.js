@@ -37,7 +37,7 @@ if (!fs.existsSync("./stores")) {
       "enablePay": true,
       "latestVersion": "1.19.4",
       "maxServers": 8,
-      "jarsMcUrl": "https://api.jarsmc.xyz/",
+      "jarsMcUrl": "https://api.jarsmc.xyz/"
     }`
   );
 } else {
