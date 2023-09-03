@@ -134,13 +134,13 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     }
     });
 
-
+    /*
     //sort mods by name if there are any
     if (mods.length > 1) {
       mods.sort((a, b) => {
         return a.name.localeCompare(b.name);
       });
-    }
+    }*/
     if (mods.length > 0) {
       if (modpack != undefined) {
         modpack.files.sort((a, b) => {
