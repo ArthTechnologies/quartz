@@ -134,20 +134,20 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     }
     });
 
-    /*
+
     //sort mods by name if there are any
     if (mods.length > 1) {
       mods.sort((a, b) => {
         return a.name.localeCompare(b.name);
       });
-    }*/
+    }
     if (mods.length > 0) {
       if (modpack != undefined) {
-        modpack.files.sort((a, b) => {
+        /*modpack.files.sort((a, b) => {
           const nameA = a.path.split("/")[1];
           const nameB = b.path.split("/")[1];
           return nameA.localeCompare(nameB);
-        });
+        });*/
       }
       for (i in modpack.files) {
         if (modpack.files[i].path.includes("\\")) {
