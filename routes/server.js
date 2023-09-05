@@ -141,8 +141,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
         return a.name.localeCompare(b.name);
       });
     }
-    /*
-    if (mods.length > 0) {
+    if (modpack.files.length > 0) {
 
       for (i in modpack.files) {
         if (modpack.files[i].path.includes("\\")) {
@@ -156,13 +155,13 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
         }
       }
     }
-*/
+
       //add unknownMods array to the end of mods
       for (i in unknownMods) {
         mods.push({filename:unknownMods[i]});
       }
 
-    res.status(200).json({msg:"debug"});
+    res.status(200).json({ mods: mods, modpack: modpack });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
