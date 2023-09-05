@@ -127,6 +127,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           platform: file.split("_")[0],
           id: file.split("_")[1],
           name: file.split("_")[2].replace(".jar", ""),
+          filename: file,
         });
       } else if (!fs.statSync(`servers/${id}/${modtype}/${file}`).isDirectory()) { 
         unknownMods.push(file);
