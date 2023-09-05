@@ -141,6 +141,8 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
         return a.name.localeCompare(b.name);
       });
     }
+    
+    if(modpack != undefined){
     if (modpack.files.length > 0) {
 
       for (i in modpack.files) {
@@ -155,6 +157,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
         }
       }
     }
+  }
 
       //add unknownMods array to the end of mods
       for (i in unknownMods) {
