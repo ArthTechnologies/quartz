@@ -1016,7 +1016,7 @@ router.get("/:id/file/:path", function (req, res) {
     let path = req.params.path.split("*").join("/");
     if (fs.existsSync(`servers/${req.params.id}/${path}`)) {
       if (fs.lstatSync(`servers/${req.params.id}/${path}`).isDirectory()) {
-        res.status(200).json({ msg: "This is a directory." });
+        res.status(200).json(fs.readdirSync(`servers/${req.params.id}/${path}`));
       } else {
         let extension = path.split(".")[path.split(".").length - 1];
 
