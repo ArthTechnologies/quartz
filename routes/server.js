@@ -645,6 +645,13 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
         if (!lock2) {
           lock2 = true;
           if (!req.file) {
+            let worldgenMods = req.query.worldgenMods.join(",");
+            const serverJson = require(`../servers/${id}/server.json`);
+            serverJson.addons = worldgenMods;
+            fs.writeFileSync( 
+              `servers/${id}/server.json`,
+              JSON.stringify(serverJson, null, 2)
+            );
             files.removeDirectoryRecursive(`servers/${id}/world`);
             fs.mkdirSync(`servers/${id}/world`);
             fs.mkdirSync(`servers/${id}/world/datapacks`);
