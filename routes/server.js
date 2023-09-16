@@ -670,6 +670,10 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               line.startsWith("level-seed")
             );
             textByLine[index] = `level-seed=${req.query.seed}`;
+            var index2 = textByLine.findIndex((line) =>
+              line.startsWith("level-type")
+            );
+            textByLine[index2] = `level-type=minecraft:${req.query.worldType}`;
             var newText = textByLine.join("\n");
 
             fs.writeFile(`servers/${id}/server.properties`, newText, (err) => {
