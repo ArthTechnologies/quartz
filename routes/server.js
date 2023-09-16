@@ -645,7 +645,10 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
         if (!lock2) {
           lock2 = true;
           if (!req.file) {
-            let worldgenMods = req.query.worldgenMods.join(",");
+            let worldgenMods = [];
+            if (req.query.worldgenMods != undefined) {
+              worldgenMods = req.query.worldgenMods.join(",");
+            }
             const serverJson = require(`../servers/${id}/server.json`);
             serverJson.addons = worldgenMods;
             fs.writeFileSync( 
