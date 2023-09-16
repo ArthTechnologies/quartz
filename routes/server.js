@@ -646,7 +646,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
           lock2 = true;
           if (!req.file) {
             let worldgenMods = [];
-            if (req.query.worldgenMods != undefined) {
+            if (req.query.worldgenMods.indexOf(",") == -1) {
               worldgenMods = req.query.worldgenMods.join(",");
             }
             const serverJson = require(`../servers/${id}/server.json`);
