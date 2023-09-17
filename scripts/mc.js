@@ -436,10 +436,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     let count = 0;
 
     ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
-      console.log("stdout: " + stdout);
-      console.log("stderr: " + stderr);
-      console.log("error: " + error);
-      console.log("path: " + path + " " + args);
+
     });
     ls.stdout.on("data", (data) => {
       count++;
@@ -581,7 +578,7 @@ function readTerminal(id) {
   let ret = terminalOutput[id];
 
   ret = files.simplifyTerminal(ret, server.software);
-  console.log(ret);
+
   return ret;
 }
 
