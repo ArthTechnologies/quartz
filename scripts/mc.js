@@ -417,19 +417,10 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
             states[id] = "true";
           }
         });
-        let count = 0;
         setInterval(() => {
-
+          
           if (states[id] == "stopping") {
-            count++;
-            if (count < 35 * 5) {
-            
-              ls.stdin.write("stop\n");
-              count = 0;
-            } else {
-              ls.kill();
-              count = 0;
-            }
+            ls.stdin.write("stop\n");
           }
         }, 200);
         eventEmitter.on("writeCmd", function () {
