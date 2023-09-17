@@ -640,11 +640,14 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   if (token === account.token && server.accountId == account.accountId) {
     let lock = false;
     let lock2 = false;
+    console.log("before stopping");
     f.stopAsync(req.params.id, () => {
+      console.log("after stopping");
       setTimeout(() => {
         if (!lock2) {
           lock2 = true;
           if (!req.file) {
+            console.log("no file");
             let worldgenMods = [];
             console.log(req.query.worldgenMods);
             if (req.query.worldgenMods.indexOf(",") > -1) {
@@ -698,6 +701,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               );
             });
           } else {
+            console.log("yes file");
             var text = fs
               .readFileSync(`servers/${id}/server.properties`)
               .toString();
