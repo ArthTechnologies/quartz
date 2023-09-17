@@ -419,13 +419,16 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         });
         let count = 0;
         setInterval(() => {
-          count++;
+
           if (states[id] == "stopping") {
+            count++;
             if (count < 35 * 5) {
             
               ls.stdin.write("stop\n");
+              count = 0;
             } else {
               ls.kill();
+              count = 0;
             }
           }
         }, 200);
