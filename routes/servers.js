@@ -42,4 +42,8 @@ router.get(`/worldgenMods`, function (req, res) {
   res.status(200).json(returnArray);
 });
 
+router.get(`/jars`, function (req, res) {
+  res.json(require("../data/index.json"));
+});
+
 module.exports = router;
