@@ -43,7 +43,14 @@ router.get(`/worldgenMods`, function (req, res) {
 });
 
 router.get(`/jars`, function (req, res) {
-  res.json(require("../data/index.json"));
+  let returnArray = [];
+  fs.readdirSync("data").forEach((file) => {
+    if (file.includes(".jar")) {
+      returnArray.push(file);
+    }
+  }
+  );
+  res.status(200).json(returnArray);
 });
 
 module.exports = router;
