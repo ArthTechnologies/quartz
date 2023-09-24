@@ -1183,8 +1183,7 @@ router.get("/:id/storageInfo", function (req, res) {
     let used = files.folderSizeRecursive(`servers/${req.params.id}/`);
 
     if (fs.existsSync(`stores/settings.json`) && require(`../stores/settings.json`).serverStorageLimit !== undefined) {  
-      let serverJson = require(`../servers/${req.params.id}/server.json`);
-      limit = serverJson.serverStorageLimit;
+      limit = require(`../stores/settings.json`).serverStorageLimit;
     }
 
     res.status(200).json({ used: used, limit: limit });
