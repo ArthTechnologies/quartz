@@ -1090,7 +1090,8 @@ router.post("/:id/file/:path", function (req, res) {
         extension == "toml") &&
       filename != "server.json" &&
       filename != "velocity.toml" &&
-      filename != "modrinth.index.json"
+      filename != "modrinth.index.json" &&
+      filename != "config.yml"
     ) {
       fs.writeFileSync(`servers/${req.params.id}/${path}`, req.body.content);
       res.status(200).json({ msg: "Done" });
