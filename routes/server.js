@@ -1170,4 +1170,29 @@ router.post("/:id/rename/", function (req, res) {
   }
 });
 
+router.get("/:id/storageInfo", function (req, res) {
+  let email = req.headers.email;
+  let token = req.headers.token;
+  let account = require("../accounts/" + email + ".json");
+  if (
+    token === account.token &&
+    server.accountId == account.accountId &&
+    fs.existsSync(`servers/${req.params.id}/`)
+  ) {
+    let limit = -1;
+    let used = fs.statSync(`servers/${req.params.id}/`).size;
+
+    if (fs.existsSync(`servers/${req.params.id}/server.json`)) {  
+      let serverJson = require(`../servers/${req.params.id}/server.json`);
+      limit = serverJson.storageLimit;
+    }
+
+    res.status(200).json({ used: used, limit: limit });
+
+
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
 module.exports = router;
