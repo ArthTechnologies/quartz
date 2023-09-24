@@ -421,6 +421,17 @@ router.post(`/:id/setInfo`, function (req, res) {
     id = req.params.id;
     iconUrl = req.body.icon;
     desc = req.body.desc;
+
+    if (req.body.automaticStartup) {
+      let dataJson = require("../stores/data.json");
+      if(dataJson.serversWithAutomaticStartup == undefined){
+        dataJson.serversWithAutomaticStartup = [];
+      }
+      if (!dataJson.serversWithAutomaticStartup.includes(id)) {
+        dataJson.serversWithAutomaticStartup.push(id);
+      }
+      fs.writeFileSync("stores/data.json", JSON.stringify(dataJson, null, 2));
+    }
     if (f.checkServer(id).software == "velocity") {
       var text = fs.readFileSync(`servers/${id}/velocity.toml`).toString();
       var textByLine = text.split("\n");
