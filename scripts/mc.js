@@ -339,7 +339,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
     let result = data;
     if (!server.adminServer) {
-    let result = result.replace(/server-port=25565/g, "server-port=" + port);
+     result = result.replace(/server-port=25565/g, "server-port=" + port);
     }
 
     fs.writeFileSync(folder + "/server.properties", result, "utf8");
