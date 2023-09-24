@@ -303,13 +303,21 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     } else {
       data = fs.readFileSync("servers/" + id + "/velocity.toml", "utf8");
     }
-
-    let result = data
+    let result;
+    if (server.adminServer) {
+       result = data
+      .replace(
+        /player-info-forwarding-mode = "NONE"/g,
+        `player-info-forwarding-mode = "modern"`
+      );
+    } else {
+       result = data
       .replace(/bind = "0.0.0.0:25577"/g, `bind = "0.0.0.0:${port}"`)
       .replace(
         /player-info-forwarding-mode = "NONE"/g,
         `player-info-forwarding-mode = "modern"`
       );
+    }
 
     fs.writeFileSync(folder + "/velocity.toml", result, "utf8");
 
@@ -329,8 +337,10 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     } else {
       data = fs.readFileSync("servers/" + id + "/server.properties", "utf8");
     }
-
-    let result = data.replace(/server-port=25565/g, "server-port=" + port);
+    let result = data;
+    if (!server.adminServer) {
+    let result = result.replace(/server-port=25565/g, "server-port=" + port);
+    }
 
     fs.writeFileSync(folder + "/server.properties", result, "utf8");
   }
