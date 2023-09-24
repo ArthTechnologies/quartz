@@ -563,6 +563,7 @@ router.get(`/:id/getInfo`, function (req, res) {
       desc: desc,
       secret: secret,
       proxiesEnabled: proxiesEnabled,
+      automaticStartup: data.serversWithAutomaticStartup.includes(id),
     });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
