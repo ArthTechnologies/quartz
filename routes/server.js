@@ -1140,5 +1140,34 @@ router.delete("/:id/file/:path", function (req, res) {
   }
 });
 
+router.post("/:id/rename/", function (req, res) {
+  let email = req.headers.email;
+  let token = req.headers.token;
+  let account = require("../accounts/" + email + ".json");
+  if (
+    token === account.token &&
+    server.accountId == account.accountId &&
+    fs.existsSync(`servers/${req.params.id}/`)
+  ) {
+    server = require(`../servers/${req.params.id}/server.json`);
+    server.name = req.query.newName;
+    fs.writeFileSync(
+      `servers/${req.params.id}/server.json`,
+      JSON.stringify(server, null, 2)
+    );
+
+    account = require("../accounts/" + email + ".json");
+    account.servers[account.servers.findIndex((server) => {
+      return server.id == req.params.id;
+    })].name = req.query.newName;
+    fs.writeFileSync(
+      `accounts/${email}.json`,
+      JSON.stringify(account, null, 2)
+    );
+    res.status(200).json({ msg: "Done" });
+  } else {  
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
 
 module.exports = router;
