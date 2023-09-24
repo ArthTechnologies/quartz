@@ -21,11 +21,12 @@ function proxiesToggle(id, toggle, secret) {
     let paperGlobalLines = paperGlobal.split("\n");
     let index = paperGlobalLines.indexOf("  velocity:");
     paperGlobalLines[index + 1] = "    enabled: true";
-    paperGlobal = paperGlobalLines.join("\n");
     let secretIndex = paperGlobalLines.findIndex((line) => {
       return line.includes("secret:");
     });
     paperGlobalLines[secretIndex] = "secret: " + secret;
+    paperGlobal = paperGlobalLines.join("\n");
+
 
     fs.writeFileSync(`servers/${id}/config/paper-global.yml`, paperGlobal);
 
