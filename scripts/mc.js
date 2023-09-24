@@ -15,14 +15,15 @@ function proxiesToggle(id, toggle, secret) {
       "utf8"
     );
 
-    paperGlobal = paperGlobal.replace(/secret: ""/g, `secret: "${secret}"`);
-    paperGlobal = paperGlobal.replace(/secret: ''/g, `secret: "${secret}"`);
+
 
     //set the line after 'velocity:' to 'enabled: true'
     let paperGlobalLines = paperGlobal.split("\n");
     let index = paperGlobalLines.indexOf("  velocity:");
     paperGlobalLines[index + 1] = "    enabled: true";
     paperGlobal = paperGlobalLines.join("\n");
+    let secretIndex = paperGlobalLines.indexOf("secret: ");
+    paperGlobalLines[secretIndex] = "secret: " + secret;
 
     fs.writeFileSync(`servers/${id}/config/paper-global.yml`, paperGlobal);
 
