@@ -23,6 +23,26 @@ function hash(input, salt) {
   return salt + ":" + scryptSync(input, salt, 48).toString("hex");
 }
 
+function folderSizeRecursive(directoryPath) {
+  if (!fs.existsSync(directoryPath)) {
+    console.log(`Directory "${directoryPath}" does not exist.`);
+    return;
+  }
+
+  let bytes = 0;
+  const files = fs.readdirSync(directoryPath);
+  files.forEach((file) => {
+    const curPath = `${directoryPath}/${file}`;
+
+    if (fs.lstatSync(curPath).isDirectory()) {
+      bytes += folderSizeRecursive(curPath);
+    } else {
+      bytes += fs.statSync(curPath).size;
+    }
+  });
+  return bytes;
+}
+
 function readFilesRecursive(directoryPath) {
   if (!fs.existsSync(directoryPath)) {
     console.log(`Directory "${directoryPath}" does not exist.`);
@@ -216,4 +236,5 @@ module.exports = {
   removeDirectoryRecursiveAsync,
   readFilesRecursive,
   simplifyTerminal,
+  folderSizeRecursive
 };
