@@ -114,6 +114,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           id: file.split("_")[1] + "/" + file.split("_")[2],
           name: file.split("_")[3].replace(".jar", ""),
           filename: file,
+          date: fs.statSync(`servers/${id}/${modtype}/${file}`).mtimeMs,
         });
       } else if (file.startsWith("lr_")) {
         mods.push({
@@ -121,6 +122,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           id: file.split("_")[1],
           name: file.split("_")[2].replace(".jar", ""),
           filename: file,
+          date: fs.statSync(`servers/${id}/${modtype}/${file}`).mtimeMs,
         });
       } else if (file.startsWith("cx_")) {
         mods.push({
@@ -128,9 +130,10 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           id: file.split("_")[1],
           name: file.split("_")[2].replace(".jar", ""),
           filename: file,
+          date: fs.statSync(`servers/${id}/${modtype}/${file}`).mtimeMs,
         });
       } else if (!fs.statSync(`servers/${id}/${modtype}/${file}`).isDirectory()) { 
-        unknownMods.push(file);
+        unknownMods.push({filename:file,date:fs.statSync(`servers/${id}/${modtype}/${file}`).mtimeMs});
         console.log(unknownMods);
     }
     });
@@ -162,7 +165,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
 
       //add unknownMods array to the end of mods
       for (i in unknownMods) {
-        mods.push({filename:unknownMods[i]});
+        mods.push(unknownMods[i]);
       }
 
     res.status(200).json({ mods: mods, modpack: modpack });
