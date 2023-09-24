@@ -557,13 +557,20 @@ router.get(`/:id/getInfo`, function (req, res) {
     if (fs.existsSync(`servers/${id}/iconurl.txt`)) {
       iconUrl = fs.readFileSync(`servers/${id}/iconurl.txt`).toString();
     }
+
+    let automaticStartup = false;
+    if (data.serversWithAutomaticStartup != undefined) {
+      if (data.serversWithAutomaticStartup.includes(id)) {
+        automaticStartup = true;
+      }
+    }
     res.status(200).json({
       msg: `Success: Got server info`,
       iconUrl: iconUrl,
       desc: desc,
       secret: secret,
       proxiesEnabled: proxiesEnabled,
-      automaticStartup: data.serversWithAutomaticStartup.includes(id),
+      automaticStartup: automaticStartup
     });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
