@@ -431,6 +431,13 @@ app.use("/terminal", require("./routes/terminal"));
 app.use("/accounts", require("./routes/accounts"));
 app.use("/node", require("./routes/node"));
 
+const data = require("./stores/data.json");
+const f = require("./scripts/mc.js");
+data.serversWithAutomaticStartup.forEach((server) => {
+  let id = server.split(":")[0];
+  let email = server.split(":")[1];
+  f.run(id, undefined, undefined, undefined, undefined, email, false);
+});
 // port
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`Listening on Port: ${port}`));

@@ -424,11 +424,12 @@ router.post(`/:id/setInfo`, function (req, res) {
 
     if (req.body.automaticStartup) {
       let dataJson = require("../stores/data.json");
+      let server = id + ":" + email;
       if(dataJson.serversWithAutomaticStartup == undefined){
         dataJson.serversWithAutomaticStartup = [];
       }
-      if (!dataJson.serversWithAutomaticStartup.includes(id)) {
-        dataJson.serversWithAutomaticStartup.push(id);
+      if (!dataJson.serversWithAutomaticStartup.includes(server)) {
+        dataJson.serversWithAutomaticStartup.push(server);
       }
       fs.writeFileSync("stores/data.json", JSON.stringify(dataJson, null, 2));
     }
@@ -560,7 +561,7 @@ router.get(`/:id/getInfo`, function (req, res) {
 
     let automaticStartup = false;
     if (data.serversWithAutomaticStartup != undefined) {
-      if (data.serversWithAutomaticStartup.includes(id)) {
+      if (data.serversWithAutomaticStartup.includes(id+":"+email)) {
         automaticStartup = true;
       }
     }
