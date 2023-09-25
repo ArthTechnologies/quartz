@@ -22,7 +22,7 @@ function proxiesToggle(id, toggle, secret) {
     let secretIndex = paperGlobalLines.findIndex((line) => {
       return line.includes("    secret:");
     });
-    paperGlobalLines[secretIndex] = "secret: " + secret;
+    paperGlobalLines[secretIndex] = "    secret: " + secret;
     let index = paperGlobalLines.indexOf("  velocity:");
     paperGlobalLines[index + 1] = "    enabled: true";
 
@@ -51,7 +51,7 @@ function proxiesToggle(id, toggle, secret) {
     let index = paperGlobal.split("\n").indexOf("secret: ");
     let paperGlobalLines = paperGlobal.split("\n");
 
-    paperGlobalLines[index] == "secret: " + secret;
+    paperGlobalLines[index] == "    secret: " + secret;
 
     //set the line after 'velocity:' to 'enabled: false'
     let index2 = paperGlobalLines.indexOf("  velocity:");
