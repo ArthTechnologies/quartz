@@ -334,11 +334,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     if (isNew) {
       data = fs.readFileSync("servers/template/server.properties", "utf8");
       data = data.replace(/spawn-protection=16/g, `spawn-protection=0`);
-      let paperGlobal = fs.readFileSync(
-        "servers/template/paper-global.yml",
-        "utf8"
-      );
-      fs.writeFileSync(folder + "/paper-global.yml", paperGlobal, "utf8");
+      if (software == "paper") {
+        let paperGlobal = fs.readFileSync(
+          "servers/template/paper-global.yml",
+          "utf8"
+        );
+        fs.writeFileSync(folder + "/config/paper-global.yml", paperGlobal, "utf8");
+      }
     } else {
       data = fs.readFileSync("servers/" + id + "/server.properties", "utf8");
     }
