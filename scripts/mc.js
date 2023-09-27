@@ -403,9 +403,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         let execLine = "";
         let cwd = folder;
 
-        console.log(
-          fs.readdirSync(folder + "/libraries/net/minecraftforge/forge/")[0]
-        );
         if (software == "forge") {
           let forgeVersion = fs.readdirSync(
             folder + "/libraries/net/minecraftforge/forge/"
