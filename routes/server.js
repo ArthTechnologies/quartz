@@ -644,18 +644,22 @@ router.get("/:id/world", function (req, res) {
   if (token === account.token && server.accountId == account.accountId) {
     //zip /servers/id/world and send it to the client
     id = req.params.id;
+    let path = "servers/" + id;
+    if (server.software == "quilt") {
+      path += "/server";
+    }
     const exec = require("child_process").exec;
     exec(
       `zip -r -q -X ../world.zip .`,
-      { cwd: `servers/${id}/world` },
+      { cwd: `${path}/world` },
       (err) => {
         res.setHeader("Content-Type", "application/zip");
 
         res.setHeader("Content-Disposition", `attachment; filename=world.zip`);
 
-        res.status(200).download(`servers/${id}/world.zip`, "world.zip", () => {
+        res.status(200).download(`${path}/world.zip`, "world.zip", () => {
           //delete the zip file
-          fs.unlinkSync(`servers/${id}/world.zip`);
+          fs.unlinkSync(`${path}/world.zip`);
         });
       }
     );
