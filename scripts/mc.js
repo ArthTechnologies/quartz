@@ -382,6 +382,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
     //wait for forge to install
     setInterval(() => {
+      console.log(doneInstalling + " " + timeToLoad)
       if (doneInstalling & timeToLoad) {
         timeToLoad = false;
         states[id] = "starting";
