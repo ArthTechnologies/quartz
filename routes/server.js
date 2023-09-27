@@ -604,27 +604,30 @@ router.delete(`/:id`, function (req, res) {
     }
 
     function deleteServer() {
-      console.log("deleting " + id);
-      account.servers.findIndex = function () {
-        for (var i = 0; i < this.length; i++) {
-          if (account.servers[i].id == id) {
-            return i;
+      fs.writeFileSync(`servers/${id}/deleting.txt`, "deleting");
+      //if the server isnt already being deleted
+      if (!fs.existsSync(`servers/${id}/deleting.txt`)) {
+        account.servers.findIndex = function () {
+          for (var i = 0; i < this.length; i++) {
+            if (account.servers[i].id == id) {
+              return i;
+            }
           }
-        }
-      };
-      account.servers.splice(account.servers.findIndex(), 1);
-      fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
-
-      //delete /servers/id
-      exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("deleted server");
-        }
-
-        return;
-      });
+        };
+        account.servers.splice(account.servers.findIndex(), 1);
+        fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
+  
+        //delete /servers/id
+        exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("deleted server");
+          }
+  
+          return;
+        });
+      }
     }
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
