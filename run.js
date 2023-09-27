@@ -97,9 +97,11 @@ if (!fs.existsSync("data")) {
 const datajson = require("./stores/data.json");
 if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
   downloadJars();
+  getLatestVersion();
 }
 setInterval(() => {
   downloadJars();
+  getLatestVersion();
 }, 1000 * 60 * 60 * 12);
 
 function downloadJars() {
@@ -304,49 +306,28 @@ function downloadJars() {
   });
 }
 
-/*downloadWorldgenMods();
-setInterval(() => {
-  downloadWorldgenMods();
-}, 1000 * 60 * 60 * 12);
-//download worlden mods for latest version
-function downloadWorldgenMods() {
-  const settings = require("./stores/settings.json");
-  let worldgenMods = ["Terralith", "Structory", "Incendium", "Nullscape"];
+function getLatestVersion() {
   files.GET(
     "https://launchermeta.mojang.com/mc/game/version_manifest.json",
     (vdata) => {
       let version = JSON.parse(vdata).latest.release;
-
+      const settings = require("./stores/settings.json");
       settings.latestVersion = version;
       fs.writeFileSync("./stores/settings.json", JSON.stringify(settings));
+      return version;
+    });
+}
 
-      worldgenMods.forEach((wmod) => {
-        files.GET(
-          "https://api.github.com/repos/Stardust-Labs-MC/" +
-            wmod +
-            "/releases/latest",
-          (terraData) => {
-            terraData = JSON.parse(terraData);
-            if (terraData.assets == undefined) {
-              console.log("Rate limit likely reached");
-            } else {
-              terraData.assets.forEach((asset) => {
-                files.download(
-                  "data/downloads/" +
-                    wmod.toLowerCase() +
-                    "-" +
-                    version +
-                    ".zip",
-                  asset.browser_download_url
-                );
-              });
-            }
-          }
-        );
-      });
-    }
-  );
-}*/
+//This handles commands from the terminal
+process.stdin.setEncoding('utf8');
+
+process.stdout.write('Please enter something: ');
+
+process.stdin.on('data', (data) => {
+  const input = data.trim(); // Remove leading/trailing whitespace
+  console.log(`You entered: ${input}`);
+  process.exit(); // Optionally, you can exit the program after processing the input
+});
 
 //api.github.com/repos/Stardust-Labs-MC/Terralith/releases/latest
 if (!fs.existsSync("java")) {
