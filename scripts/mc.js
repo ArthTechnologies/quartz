@@ -398,9 +398,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         states[id] = "starting";
         //-Dlog4j.configurationFile=consoleconfig.xml
         //get the forge version from the name of the folder inside /libraries/net/minecraftforge/forge/
-        let forgeVersion = fs.readdirSync(
-          folder + "/libraries/net/minecraftforge/forge/"
-        )[0];
+
 
         let execLine = "";
         let cwd = folder;
@@ -409,6 +407,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
           fs.readdirSync(folder + "/libraries/net/minecraftforge/forge/")[0]
         );
         if (software == "forge") {
+          let forgeVersion = fs.readdirSync(
+            folder + "/libraries/net/minecraftforge/forge/"
+          )[0];
           execLine =
             path +
             ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
