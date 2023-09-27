@@ -102,11 +102,16 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     let unknownMods = [];
     let id = req.params.id;
     let modpack;
-    if (fs.existsSync(`servers/${id}/modrinth.index.json`)) {
-      modpack = require(`../servers/${id}/modrinth.index.json`);
+
+    const path = "servers/" + id;
+    if (server.software == "quilt") {
+      path += "/server";
+    }
+    if (fs.existsSync(`${path}/modrinth.index.json`)) {
+      modpack = require(`../${path}/modrinth.index.json`);
     }
 
-    fs.readdirSync(`servers/${id}/${modtype}`).forEach((file) => {
+    fs.readdirSync(`${path}/${modtype}`).forEach((file) => {
       console.log(file)
       if (file.startsWith("gh_")) {
         mods.push({
@@ -114,7 +119,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           id: file.split("_")[1] + "/" + file.split("_")[2],
           name: file.split("_")[3].replace(".jar", ""),
           filename: file,
-          date: fs.statSync(`servers/${id}/${modtype}/${file}`).mtimeMs,
+          date: fs.statSync(`${path}/${modtype}/${file}`).mtimeMs,
         });
       } else if (file.startsWith("lr_")) {
         mods.push({
@@ -122,7 +127,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           id: file.split("_")[1],
           name: file.split("_")[2].replace(".jar", ""),
           filename: file,
-          date: fs.statSync(`servers/${id}/${modtype}/${file}`).mtimeMs,
+          date: fs.statSync(`${path}/${modtype}/${file}`).mtimeMs,
         });
       } else if (file.startsWith("cx_")) {
         mods.push({
@@ -130,10 +135,10 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           id: file.split("_")[1],
           name: file.split("_")[2].replace(".jar", ""),
           filename: file,
-          date: fs.statSync(`servers/${id}/${modtype}/${file}`).mtimeMs,
+          date: fs.statSync(`${path}/${modtype}/${file}`).mtimeMs,
         });
-      } else if (!fs.statSync(`servers/${id}/${modtype}/${file}`).isDirectory()) { 
-        unknownMods.push({filename:file,date:fs.statSync(`servers/${id}/${modtype}/${file}`).mtimeMs});
+      } else if (!fs.statSync(`${path}/${modtype}/${file}`).isDirectory()) { 
+        unknownMods.push({filename:file,date:fs.statSync(`${path}/${modtype}/${file}`).mtimeMs});
         console.log(unknownMods);
     }
     });
@@ -156,7 +161,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
             "/"
           );
         }
-        if (!fs.existsSync(`servers/${id}/`+modpack.files[i].path)) {
+        if (!fs.existsSync(`${path}/`+modpack.files[i].path)) {
           modpack.files.splice(i, 1);
         }
       }
