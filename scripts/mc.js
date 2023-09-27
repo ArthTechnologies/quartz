@@ -345,13 +345,10 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     fs.writeFileSync(folder + "/server.properties", result, "utf8");
   }
 
-  if (software == "quilt") {
-    //add new file eula.txt in folder
-    fs.writeFileSync(folder + "/server/eula.txt", "eula=true");
-  } else {
+
     //add new file eula.txt in folder
     fs.writeFileSync(folder + "/eula.txt", "eula=true");
-  }
+
 
   //copy /server/template/Geyser-Spigot.jar to folder/plugins
 
@@ -372,7 +369,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         });
       } else {
         //quilt
-        exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
+        exec(path + " " + args, { cwd: "servers/"+id }, (error, stdout, stderr) => {
         });
       }
     } else {
