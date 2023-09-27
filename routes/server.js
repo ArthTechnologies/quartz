@@ -103,7 +103,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     let id = req.params.id;
     let modpack;
 
-    const path = "servers/" + id;
+    let path = "servers/" + id;
     if (server.software == "quilt") {
       path += "/server";
     }
