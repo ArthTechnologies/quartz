@@ -592,6 +592,7 @@ router.delete(`/:id`, function (req, res) {
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
   if (token === account.token && server.accountId == account.accountId) {
+    
     id = req.params.id;
     if (f.getState(id) == "true") {
       f.stopAsync(id, () => {
@@ -604,9 +605,10 @@ router.delete(`/:id`, function (req, res) {
     }
 
     function deleteServer() {
-      fs.writeFileSync(`servers/${id}/deleting.txt`, "deleting");
+
       //if the server isnt already being deleted
       if (!fs.existsSync(`servers/${id}/deleting.txt`)) {
+        fs.writeFileSync(`servers/${id}/deleting.txt`, "deleting");
         account.servers.findIndex = function () {
           for (var i = 0; i < this.length; i++) {
             if (account.servers[i].id == id) {
