@@ -401,7 +401,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
             ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
         } else {
           path = "../" + path;
-          cwd = "servers/"+id;
           execLine = path + " -jar quilt-server-launch.jar nogui";
         }
 
