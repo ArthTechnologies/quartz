@@ -96,7 +96,6 @@ function checkServer(id) {
 
 function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let server = require("../servers/" + id + "/server.json");
-  console.log("server.json: " + server);
   let out = [];
   states[id] = "starting";
 
@@ -248,7 +247,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                       folder + "/" + modpack.files[i].path,
                       modpack.files[i].downloads[0],
                       () => {
-                        console.log("done downloading");
                       }
                     );
                   }
@@ -260,7 +258,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       }
     );
   }
-  console.log(software);
 
   if (software != "quilt") {
     if (fs.existsSync("data/" + software + "-" + version + ".jar")){
@@ -375,9 +372,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       } else {
         //quilt
         exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
-          console.log("stdout: " + stdout);
-          console.log("stderr: " + stderr);
-          console.log("error: " + error);
         });
       }
     } else {
@@ -388,7 +382,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     //wait for forge to install
     setInterval(() => {
       if (doneInstalling & timeToLoad) {
-        console.log("going" + timeToLoad);
         timeToLoad = false;
         states[id] = "starting";
         //-Dlog4j.configurationFile=consoleconfig.xml
@@ -412,9 +405,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         }
 
         ls = exec(execLine, { cwd: cwd }, (error, stdout, stderr) => {
-          console.log("stdout: " + stdout);
-          console.log("stderr: " + stderr);
-          console.log("error: " + error);
         });
 
         ls.stdout.on("data", (data) => {
