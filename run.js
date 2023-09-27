@@ -10,8 +10,6 @@ const files = require("./scripts/files.js");
 
 exec = require("child_process").exec;
 require("dotenv").config();
-//import /lib/stripe.js
-console.log(process.env.stripe_key);
 if (!fs.existsSync("./backup")) {
   fs.mkdirSync("backup");
 }
@@ -175,7 +173,6 @@ function downloadJars() {
 
   //plugins
   files.GET(jarsMcUrl + "jars/arthHosting", (data) => {
-    console.log(data);
     if (!data.includes("html")) {
       data = JSON.parse(data);
       let downloadProgress = [];
@@ -222,7 +219,6 @@ function downloadJars() {
               break;
           }
 
-          console.log(jar.version + " " + jar.software);
           downloadProgress.push(false);
           function downloadFromJarsMC() {
             files.downloadAsync(
@@ -276,13 +272,6 @@ function downloadJars() {
                     `data/downloads/${jar.software}-${jar.version}.${extension}`
                   ).length == 26351
                 ) {
-                  console.log(
-                    "failed to download " +
-                      jar.software +
-                      jar.version +
-                      " from serverjars.com, trying jarsmc"
-                  );
-
                   downloadFromJarsMC();
                   return;
                 } else {
@@ -297,7 +286,6 @@ function downloadJars() {
               }
             );
           } else {
-            console.log("SOFTWARE FORGE");
             downloadFromJarsMC();
           }
         }
@@ -321,12 +309,26 @@ function getLatestVersion() {
 //This handles commands from the terminal
 process.stdin.setEncoding('utf8');
 
-process.stdout.write('Please enter something: ');
+process.stdout.write('Welcome to the terminal!\nType "help" for a list of commands.\n');
 
 process.stdin.on('data', (data) => {
   const input = data.trim(); // Remove leading/trailing whitespace
-  console.log(`You entered: ${input}`);
-  process.exit(); // Optionally, you can exit the program after processing the input
+  switch (input) {
+    case 'stop':
+    case 'end':
+    case 'exit':
+      process.exit(0);
+    case 'help':
+      console.log('Commands:\nstop\nend\nexit\nhelp\nrefresh - downloads the latest jars, and gets the latest version. This automatically runs every 12 hours.\n');
+      break;
+    case 'refresh':
+      getLatestVersion();
+      downloadJars();
+      console.log("downloading latest jars, and getting latest version");
+      break;  
+    default:
+      console.log('Unknown command. Type "help" for a list of commands.');
+  }
 });
 
 //api.github.com/repos/Stardust-Labs-MC/Terralith/releases/latest
@@ -394,7 +396,7 @@ const security = (req, res, next) => {
   if (req.url.includes("/accounts/")) {
     next();
   } else {
-    console.log(req.url + req.ip);
+
 
     accounts = require("./accounts.json");
 
