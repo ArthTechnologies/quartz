@@ -373,6 +373,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
           console.log(error);
           console.log(stdout);
           console.log(stderr);
+          doneInstalling = true;
         });
       }
     } else {
