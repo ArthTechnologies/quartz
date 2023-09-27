@@ -370,6 +370,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       } else {
         //quilt
         exec(path + " " + args, { cwd: "servers/"+id }, (error, stdout, stderr) => {
+          console.log(error);
+          console.log(stdout);
+          console.log(stderr);
         });
       }
     } else {
