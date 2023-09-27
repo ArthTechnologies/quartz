@@ -402,6 +402,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         }
 
         ls = exec(execLine, { cwd: cwd }, (error, stdout, stderr) => {
+          console.log(error);
+          console.log(stdout);
+          console.log(stderr);
         });
 
         ls.stdout.on("data", (data) => {
