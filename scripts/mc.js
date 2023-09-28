@@ -5,6 +5,7 @@ let states = [];
 const files = require("./files.js");
 const { time, Console } = require("console");
 const { randomBytes } = require("crypto");
+const { stat } = require("fs");
 let terminalOutput = [];
 let terminalInput = "";
 
@@ -442,11 +443,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     let count = 0;
 
     ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
-      out.push(stdout);
-      out.push(stderr);
-      out.push(error);
-
-      console.log(stdout);
+    
+      terminalOutput[id] = stdout;
+      states[id] = "false";
 
     });
     ls.stdout.on("data", (data) => {
