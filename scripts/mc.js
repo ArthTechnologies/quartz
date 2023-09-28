@@ -442,7 +442,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     let count = 0;
 
     ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
-
+      out.push(stdout);
     });
     ls.stdout.on("data", (data) => {
       count++;
