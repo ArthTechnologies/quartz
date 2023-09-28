@@ -56,6 +56,7 @@ router.get(`/jars`, function (req, res) {
 
 router.get(`/jarsIndex`, function (req, res) {
   let index = files.getIndex();
+  console.log(index)
   index.otherSoftwares = [index.spigot, index.waterfall, index.mohist, index.geyser, index.floodgate];
 
   index.spigot = null;
