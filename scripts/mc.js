@@ -445,9 +445,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       out.push(stdout);
       out.push(stderr);
       out.push(error);
-      console.log(error);
+
       console.log(stdout);
-      console.log(stderr);
+
     });
     ls.stdout.on("data", (data) => {
       count++;
