@@ -233,7 +233,7 @@ function getIndex() {
 
     // Process the sorted files
     sortedFiles.forEach((file) => {
-      if (file != "index.json") {
+      if (file != "downloads") {
         let software = file.split("-")[0];
         let version = "";
         if (file.includes(".jar")) {
