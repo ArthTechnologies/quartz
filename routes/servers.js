@@ -57,12 +57,12 @@ router.get(`/jars`, function (req, res) {
 router.get(`/jarsIndex`, function (req, res) {
   let index = files.getIndex();
   console.log(index)
-  index.otherSoftwares = [index.waterfall, index.mohist, index.geyser, index.floodgate];
+  index.otherSoftwares = [index.terralith, index.incendium, index.nullscape, index.structory];
 
-  index.waterfall = null;
-  index.mohist = null;
-  index.geyser = null;
-  index.floodgate = null;
+  index.terralith = null;
+  index.incendium = null;
+  index.nullscape = null;
+  index.structory = null;
   res.status(200).json(index);
 }
 );
