@@ -443,6 +443,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
     ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
       out.push(stdout);
+      out.push(stderr);
     });
     ls.stdout.on("data", (data) => {
       count++;
