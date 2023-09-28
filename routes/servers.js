@@ -4,6 +4,7 @@ const fs = require("fs");
 let email = "";
 
 const f = require("../scripts/mc.js");
+const files = require("../scripts/files.js");
 
 router.get(`/`, function (req, res) {
   email = req.headers.email;
@@ -52,5 +53,18 @@ router.get(`/jars`, function (req, res) {
   );
   res.status(200).json(returnArray);
 });
+
+router.get(`/jarsIndex`, function (req, res) {
+  let index = files.getIndex();
+  index.otherSoftwares = [index.spigot, index.waterfall, index.mohist, index.geyser, index.floodgate];
+
+  index.spigot = null;
+  index.waterfall = null;
+  index.mohist = null;
+  index.geyser = null;
+  index.floodgate = null;
+  res.status(200).json(index);
+}
+);
 
 module.exports = router;

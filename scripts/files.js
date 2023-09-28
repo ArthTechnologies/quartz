@@ -224,6 +224,39 @@ function simplifyTerminal(terminal, software) {
 
   return terminalLines.join("\n[");
 }
+
+function getIndex() {
+  let index = {};
+  exec("ls -1 data | sort -r -V", (error, stdout, stderr) => {
+    // Split the sorted file names into an array
+    const sortedFiles = stdout.trim().split("\n");
+
+    // Process the sorted files
+    sortedFiles.forEach((file) => {
+      if (file != "index.json") {
+        let software = file.split("-")[0];
+        let version = "";
+        if (file.includes(".jar")) {
+          console.log(file);
+          version = file.split("-")[1].split(".jar")[0];
+        } else {
+          version = file.split("-")[1].split(".zip")[0];
+        }
+        if (index[software] == undefined) {
+          index[software] = [];
+        }
+        index[software].push({
+          version: version,
+          link: `jars/${software}/${version}`,
+          date: fs.statSync("./data/" + file).mtime,
+          software: software,
+        });
+      }
+    });
+
+    return index;
+  });
+}
 module.exports = {
   hash,
   download,
@@ -236,5 +269,6 @@ module.exports = {
   removeDirectoryRecursiveAsync,
   readFilesRecursive,
   simplifyTerminal,
-  folderSizeRecursive
+  folderSizeRecursive,
+  getIndex
 };
