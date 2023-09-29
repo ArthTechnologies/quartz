@@ -256,6 +256,7 @@ function getIndex() {
     });
     
   });
+  console.log(index);
   return index;
 }
 module.exports = {
