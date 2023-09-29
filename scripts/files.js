@@ -232,7 +232,25 @@ function getIndex(callback) {
     const sortedFiles = stdout.trim().split("\n");
     // Process the sorted files
     sortedFiles.forEach((file) => {
-      if (file != "downloads") {
+      switch (file) {
+        case "downloads":
+          break;
+        case "cx_geyser-velocity_Geyser.jar":
+          file = "geyser-velocity.jar";
+          break;
+        case "cx_geyser-spigot_Geyser.jar":
+          file = "geyser-spigot.jar";
+          break;
+        case "cx_floodgate-velocity_Floodgate.jar":
+          file = "floodgate-velocity.jar";
+          break;
+        case "cx_floodgate-spigot_Floodgate.jar":
+          file = "floodgate-spigot.jar";
+          break;
+        default:
+        
+      
+      {
         let software = file.split("-")[0];
         let version = "";
         if (file.includes(".jar")) {
@@ -253,6 +271,7 @@ function getIndex(callback) {
         });
         
       }
+    }
     });
     callback(index);
   });
