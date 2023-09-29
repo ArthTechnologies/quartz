@@ -233,24 +233,22 @@ function getIndex(callback) {
     // Process the sorted files
     sortedFiles.forEach((file) => {
       switch (file) {
-        case "downloads":
-          break;
         case "cx_geyser-velocity_Geyser.jar":
           file = "geyser-velocity.jar";
-          
+          break;
         case "cx_geyser-spigot_Geyser.jar":
           file = "geyser-spigot.jar";
-          
+          break;
         case "cx_floodgate-velocity_Floodgate.jar":
           file = "floodgate-velocity.jar";
-          
+          break;
         case "cx_floodgate-spigot_Floodgate.jar":
           file = "floodgate-spigot.jar";
-          
-        default:
+          break;
+      }
         
       
-      {
+      if (file.includes("-")) {
         let software = file.split("-")[0];
         let version = "";
         if (file.includes(".jar")) {
