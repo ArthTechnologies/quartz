@@ -251,7 +251,9 @@ function getIndex() {
           date: fs.statSync("./data/" + file).mtime,
           software: software,
         });
-        console.log(index[software]);
+        if (software == "incendium") {
+          console.log(index[software]);
+        }
       }
     });
 
