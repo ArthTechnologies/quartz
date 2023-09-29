@@ -230,7 +230,6 @@ function getIndex() {
   exec("ls -1 data | sort -r -V", (error, stdout, stderr) => {
     // Split the sorted file names into an array
     const sortedFiles = stdout.trim().split("\n");
-    console.log(sortedFiles);
     // Process the sorted files
     sortedFiles.forEach((file) => {
       if (file != "downloads") {
@@ -245,6 +244,7 @@ function getIndex() {
         if (index[software] == undefined) {
           index[software] = [];
         }
+        console.log(software + " " + version)
         index[software].push({
           version: version,
           link: `jars/${software}/${version}`,
