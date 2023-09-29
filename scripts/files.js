@@ -227,7 +227,7 @@ function simplifyTerminal(terminal, software) {
 
 function getIndex() {
   let index = {};
-  exec("ls -1 data | sort -r -V", (error, stdout, stderr) => {
+  return exec("ls -1 data | sort -r -V", (error, stdout, stderr) => {
     // Split the sorted file names into an array
     const sortedFiles = stdout.trim().split("\n");
     // Process the sorted files
@@ -254,10 +254,9 @@ function getIndex() {
         
       }
     });
-    
+    return index;
   });
-  console.log(index);
-  return index;
+
 }
 module.exports = {
   hash,
