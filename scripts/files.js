@@ -272,7 +272,7 @@ function getIndex(callback) {
         });
         
       }
-    }
+    
     });
     callback(index);
   });
