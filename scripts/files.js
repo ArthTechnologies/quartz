@@ -254,7 +254,7 @@ function getIndex() {
         
       }
     });
-    return index;
+    //return index;
   });
 }
 module.exports = {
