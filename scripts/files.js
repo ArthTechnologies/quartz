@@ -237,16 +237,16 @@ function getIndex(callback) {
           break;
         case "cx_geyser-velocity_Geyser.jar":
           file = "geyser-velocity.jar";
-          break;
+          
         case "cx_geyser-spigot_Geyser.jar":
           file = "geyser-spigot.jar";
-          break;
+          
         case "cx_floodgate-velocity_Floodgate.jar":
           file = "floodgate-velocity.jar";
-          break;
+          
         case "cx_floodgate-spigot_Floodgate.jar":
           file = "floodgate-spigot.jar";
-          break;
+          
         default:
         
       
