@@ -254,7 +254,6 @@ function getIndex() {
         
       }
     });
-    console.log(index);
     return index;
   });
 }
