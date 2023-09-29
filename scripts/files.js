@@ -262,11 +262,14 @@ function getIndex(callback) {
         if (index[software] == undefined) {
           index[software] = [];
         }
-
+        let date;
+        if (fs.existsSync("./data/" + file)) {
+          date = fs.statSync("./data/" + file).mtime;
+        }
         index[software].push({
           version: version,
           link: `jars/${software}/${version}`,
-          date: fs.statSync("./data/" + file).mtime,
+          date: date,
           software: software,
         });
         
