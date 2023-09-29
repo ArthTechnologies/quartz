@@ -225,9 +225,9 @@ function simplifyTerminal(terminal, software) {
   return terminalLines.join("\n[");
 }
 
-function getIndex() {
+function getIndex(callback) {
   let index = {};
-  return exec("ls -1 data | sort -r -V", (error, stdout, stderr) => {
+  exec("ls -1 data | sort -r -V", (error, stdout, stderr) => {
     // Split the sorted file names into an array
     const sortedFiles = stdout.trim().split("\n");
     // Process the sorted files
@@ -254,7 +254,7 @@ function getIndex() {
         
       }
     });
-    return index;
+    callback(index);
   });
 
 }

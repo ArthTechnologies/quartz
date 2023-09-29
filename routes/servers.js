@@ -55,7 +55,7 @@ router.get(`/jars`, function (req, res) {
 });
 
 router.get(`/jarsIndex`, function (req, res) {
-  let index = files.getIndex();
+  files.getIndex((index) => {
   index.otherSoftwares = [index.terralith, index.incendium, index.nullscape, index.structory];
 
   index.terralith = null;
@@ -63,6 +63,7 @@ router.get(`/jarsIndex`, function (req, res) {
   index.nullscape = null;
   index.structory = null;
   res.status(200).json(index);
+  });
 }
 );
 
