@@ -244,18 +244,14 @@ function getIndex() {
         if (index[software] == undefined) {
           index[software] = [];
         }
-        console.log({
-          version: version,
-          link: `jars/${software}/${version}`,
-          date: fs.statSync("./data/" + file).mtime,
-          software: software,
-        })
+
         index[software].push({
           version: version,
           link: `jars/${software}/${version}`,
           date: fs.statSync("./data/" + file).mtime,
           software: software,
         });
+        console.log(index[software]);
       }
     });
 
