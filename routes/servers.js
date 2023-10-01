@@ -46,7 +46,7 @@ router.get(`/worldgenMods`, function (req, res) {
 router.get(`/jars`, function (req, res) {
   let returnArray = [];
   fs.readdirSync("data").forEach((file) => {
-    if (file.includes(".jar")) {
+    if (file.includes(".jar") || file.includes(".zip")) {
       returnArray.push(file);
     }
   }

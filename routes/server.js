@@ -193,6 +193,7 @@ router.post(`/:id/update/`, function (req, res) {
       "servers/" + id + "/server.json",
       JSON.stringify(server, null, 2)
     );
+    account.servers[account.servers.findIndex((e) => e.id == id)].version = version;
     f.stop(id);
     //wait 5 seconds
     setTimeout(function () {
