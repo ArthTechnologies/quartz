@@ -194,11 +194,9 @@ router.post(`/:id/update/`, function (req, res) {
       JSON.stringify(server, null, 2)
     );
     account.servers[account.servers.findIndex((e) => e.id == id)].version = version;
-    f.stop(id);
-    //wait 5 seconds
-    setTimeout(function () {
+    f.stopAsync(id, () => {
       f.run(id, undefined, undefined, undefined, undefined, email, false);
-    }, 5000);
+    });
     res.status(202).json({ msg: `Success. Server updated.` });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
