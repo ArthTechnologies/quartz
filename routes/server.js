@@ -544,7 +544,7 @@ router.get(`/:id/getInfo`, function (req, res) {
     } else {
       var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
       var textByLine = text.split("\n");
-      let index = secretLines.findIndex((line) => {
+      let index = textByLine.findIndex((line) => {
         return line.includes("motd");
       });
       desc = textByLine[index].split("=")[1];
