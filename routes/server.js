@@ -444,7 +444,10 @@ router.post(`/:id/setInfo`, function (req, res) {
     if (f.checkServer(id).software == "velocity") {
       var text = fs.readFileSync(`servers/${id}/velocity.toml`).toString();
       var textByLine = text.split("\n");
-      textByLine[8] = `motd = "${desc}"`;
+      let index = textByLine.findIndex((line) => {
+        return line.includes("motd");
+      });
+      textByLine[index] = `motd = "${desc}"`;
       text = textByLine.join("\n");
 
       fs.writeFileSync(`servers/${id}/velocity.toml`, text);
@@ -453,9 +456,11 @@ router.post(`/:id/setInfo`, function (req, res) {
       //set line 33 of server.properties in the server folder to "motd=" + desc
       var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
       var textByLine = text.split("\n");
-      textByLine[32] = `motd=${desc}`;
+      let index = textByLine.findIndex((line) => {
+        return line.includes("motd");
+      });
+      textByLine[index] = `motd=${desc}`;
       text = textByLine.join("\n");
-      console.log(desc + " " + iconUrl);
       fs.writeFileSync(`servers/${id}/server.properties`, text);
     }
 
@@ -528,19 +533,25 @@ router.get(`/:id/getInfo`, function (req, res) {
     if (f.checkServer(id).software == "velocity") {
       var text = fs.readFileSync(`servers/${id}/velocity.toml`).toString();
       var textByLine = text.split("\n");
-      desc = textByLine[8].split("=")[1];
+      let index = textByLine.findIndex((line) => {
+        return line.includes("motd");
+      });
+      desc = textByLine[index].split("=")[1];
 
       //cut off the quotes
       desc = desc.substring(2, desc.length - 1);
     } else {
       var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
       var textByLine = text.split("\n");
-      desc = textByLine[32].split("=")[1];
+      let index = secretLines.findIndex((line) => {
+        return line.includes("motd");
+      });
+      desc = textByLine[index].split("=")[1];
       secret = fs.readFileSync(`servers/${id}/config/paper-global.yml`, "utf8");
 
       let secretLines = secret.split("\n");
 
-      let index = secretLines.findIndex((line) => {
+      let index2 = secretLines.findIndex((line) => {
         return line.includes("secret:");
       });
 
@@ -558,7 +569,7 @@ router.get(`/:id/getInfo`, function (req, res) {
         proxiesEnabled = true;
       }
 
-      secret = secretLines[index].split(":")[1].trim();
+      secret = secretLines[index2].split(":")[1].trim();
       //cut quotes off of secret
       secret = secret.substring(1, secret.length - 1);
     }
