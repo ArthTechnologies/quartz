@@ -431,17 +431,26 @@ router.post(`/:id/setInfo`, function (req, res) {
     iconUrl = req.body.icon;
     desc = req.body.desc;
 
-    if (req.body.automaticStartup) {
+    //setting automaticStartup
       let dataJson = require("../stores/data.json");
       let server = id + ":" + email;
       if(dataJson.serversWithAutomaticStartup == undefined){
         dataJson.serversWithAutomaticStartup = [];
       }
+    if (req.body.automaticStartup) {
       if (!dataJson.serversWithAutomaticStartup.includes(server)) {
         dataJson.serversWithAutomaticStartup.push(server);
       }
       fs.writeFileSync("stores/data.json", JSON.stringify(dataJson, null, 2));
+    } else {
+      
+      if (dataJson.serversWithAutomaticStartup.includes(server)) {
+        dataJson.serversWithAutomaticStartup.splice(dataJson.serversWithAutomaticStartup.indexOf(server),1);
+      }
+      fs.writeFileSync("stores/data.json", JSON.stringify(dataJson, null, 2));
     }
+
+    //setting description
     if (f.checkServer(id).software == "velocity") {
       var text = fs.readFileSync(`servers/${id}/velocity.toml`).toString();
       var textByLine = text.split("\n");
@@ -454,7 +463,6 @@ router.post(`/:id/setInfo`, function (req, res) {
       fs.writeFileSync(`servers/${id}/velocity.toml`, text);
     } else {
       f.proxiesToggle(req.params.id, req.body.proxiesEnabled, req.body.fSecret);
-      //set line 33 of server.properties in the server folder to "motd=" + desc
       var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
       var textByLine = text.split("\n");
       let index = textByLine.findIndex((line) => {
