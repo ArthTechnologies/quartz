@@ -88,7 +88,7 @@ function checkServer(id) {
   let server = require("../servers/" + id + "/server.json");
 
   return {
-    version: server.addons,
+    version: server.version,
     software: server.software,
     addons: server.addons,
     state: states[id],
