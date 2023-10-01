@@ -423,11 +423,18 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
             states[id] = "true";
           }
         });
-        setInterval(() => {
+        let count = 0;
+        let intervalID = setInterval(() => {
           
           if (states[id] == "stopping") {
+            if (count < 5 * 24) {
             ls.stdin.write("stop\n");
+            count++;
+          }else {
+            ls.kill();
+            clearInterval(intervalID);
           }
+        } 
         }, 200);
         eventEmitter.on("writeCmd", function () {
           ls.stdin.write(terminalInput + "\n");
@@ -460,10 +467,18 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       }
     });
 
-    setInterval(() => {
+    let count = 0;
+    let intervalID = setInterval(() => {
+      
       if (states[id] == "stopping") {
+        if (count < 5 * 24) {
         ls.stdin.write("stop\n");
+        count++;
+      }else {
+        ls.kill();
+        clearInterval(intervalID);
       }
+    } 
     }, 200);
     eventEmitter.on("writeCmd", function () {
       ls.stdin.write(terminalInput + "\n");
