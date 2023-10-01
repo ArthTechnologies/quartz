@@ -120,8 +120,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
 
-  fs.writeFileSync(folder + "/eula.txt", "eula=true");
-
   let path = "../../java/jdk-17.0.5+8/bin/java";
   let folder = "servers/" + id;
   if (software == "quilt") {folder = "servers/" + id + "/server"}
@@ -132,6 +130,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let s = "paper";
   let c = "servers";
   let installer = false;
+
+  fs.writeFileSync(folder + "/eula.txt", "eula=true");
+  
   //make software all lowercase
   software = software.toLowerCase();
   switch (software) {
