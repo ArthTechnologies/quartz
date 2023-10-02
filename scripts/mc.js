@@ -215,7 +215,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       fs.mkdirSync(folder + "/mods/");
     }
   }
-  console.log("cjeqwkjklqwj");
+
   if (c == "modded") {
     const { exec } = require("child_process");
 
@@ -279,7 +279,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         " --download-server",
     ];
   }
-
+  console.log("cjeqwkjklqwj");
   //run code for each item in addons
   //mkdir folder/world/datapacks
   // if world folder doesnt exist
