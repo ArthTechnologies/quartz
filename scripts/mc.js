@@ -132,6 +132,57 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let installer = false;
 
   fs.writeFileSync(folder + "/eula.txt", "eula=true");
+  let data;
+  if (software == "velocity") {
+    if (isNew) {
+      data = fs.readFileSync("servers/template/velocity.toml", "utf8");
+    } else {
+      data = fs.readFileSync("servers/" + id + "/velocity.toml", "utf8");
+    }
+    let result;
+    if (server.adminServer) {
+       result = data
+      .replace(
+        /player-info-forwarding-mode = "NONE"/g,
+        `player-info-forwarding-mode = "modern"`
+      );
+    } else {
+       result = data
+      .replace(/bind = "0.0.0.0:25577"/g, `bind = "0.0.0.0:${port}"`)
+      .replace(
+        /player-info-forwarding-mode = "NONE"/g,
+        `player-info-forwarding-mode = "modern"`
+      );
+    }
+
+    fs.writeFileSync(folder + "/velocity.toml", result, "utf8");
+
+    if (!fs.existsSync(folder + "/forwarding.secret")) {
+      let secret = randomBytes(12).toString("hex");
+      fs.writeFileSync(folder + "/forwarding.secret", secret, "utf8");
+    }
+  } else {
+    if (isNew) {
+      data = fs.readFileSync("servers/template/server.properties", "utf8");
+      data = data.replace(/spawn-protection=16/g, `spawn-protection=0`);
+      if (software == "paper") {
+        let paperGlobal = fs.readFileSync(
+          "servers/template/paper-global.yml",
+          "utf8"
+        );
+        fs.writeFileSync(folder + "/config/paper-global.yml", paperGlobal, "utf8");
+      }
+    } else {
+        data = fs.readFileSync(folder+"/server.properties", "utf8");
+
+    }
+    let result = data;
+    if (!server.adminServer) {
+     result = result.replace(/server-port=25565/g, "server-port=" + port);
+    }
+
+    fs.writeFileSync(folder + "/server.properties", result, "utf8");
+  }
   
   //make software all lowercase
   software = software.toLowerCase();
@@ -296,58 +347,8 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
   let port = 10000 + parseInt(id);
-  //change line 49 of folder/server.properties to server-port=if+20000
-  let data;
-  if (software == "velocity") {
-    if (isNew) {
-      data = fs.readFileSync("servers/template/velocity.toml", "utf8");
-    } else {
-      data = fs.readFileSync("servers/" + id + "/velocity.toml", "utf8");
-    }
-    let result;
-    if (server.adminServer) {
-       result = data
-      .replace(
-        /player-info-forwarding-mode = "NONE"/g,
-        `player-info-forwarding-mode = "modern"`
-      );
-    } else {
-       result = data
-      .replace(/bind = "0.0.0.0:25577"/g, `bind = "0.0.0.0:${port}"`)
-      .replace(
-        /player-info-forwarding-mode = "NONE"/g,
-        `player-info-forwarding-mode = "modern"`
-      );
-    }
 
-    fs.writeFileSync(folder + "/velocity.toml", result, "utf8");
-
-    if (!fs.existsSync(folder + "/forwarding.secret")) {
-      let secret = randomBytes(12).toString("hex");
-      fs.writeFileSync(folder + "/forwarding.secret", secret, "utf8");
-    }
-  } else {
-    if (isNew) {
-      data = fs.readFileSync("servers/template/server.properties", "utf8");
-      data = data.replace(/spawn-protection=16/g, `spawn-protection=0`);
-      if (software == "paper") {
-        let paperGlobal = fs.readFileSync(
-          "servers/template/paper-global.yml",
-          "utf8"
-        );
-        fs.writeFileSync(folder + "/config/paper-global.yml", paperGlobal, "utf8");
-      }
-    } else {
-        data = fs.readFileSync(folder+"/server.properties", "utf8");
-
-    }
-    let result = data;
-    if (!server.adminServer) {
-     result = result.replace(/server-port=25565/g, "server-port=" + port);
-    }
-
-    fs.writeFileSync(folder + "/server.properties", result, "utf8");
-  }
+  
 
 
     
