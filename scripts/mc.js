@@ -215,7 +215,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       fs.mkdirSync(folder + "/mods/");
     }
   }
-  debug.log("cjeqwkjklqwj");
+  console.log("cjeqwkjklqwj");
   if (c == "modded") {
     const { exec } = require("child_process");
 
