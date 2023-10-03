@@ -715,7 +715,6 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             }
             const serverJson = require(`../servers/${id}/server.json`);
             serverJson.addons = worldgenMods;
-            console.log(worldgenMods)
             fs.writeFileSync( 
               `servers/${id}/server.json`,
               JSON.stringify(serverJson, null, 2)
