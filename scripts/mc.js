@@ -279,7 +279,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         " --download-server",
     ];
   }
-  console.log("cjeqwkjklqwj");
+
   //run code for each item in addons
   //mkdir folder/world/datapacks
   // if world folder doesnt exist
@@ -296,6 +296,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       );
     }
   }
+  console.log("cjeqwkjklqwj");
   let port = 10000 + parseInt(id);
 
   let data;
