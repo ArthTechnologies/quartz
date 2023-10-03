@@ -179,7 +179,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
   }
 });
 
-router.post(`/:id/update/`, function (req, res) {
+router.post(`/:id/version/`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
