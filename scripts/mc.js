@@ -296,7 +296,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       );
     }
   }
-  console.log("cjeqwkjklqwj");
+
   let port = 10000 + parseInt(id);
 
   let data;
@@ -337,6 +337,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
           "servers/template/paper-global.yml",
           "utf8"
         );
+        if (!fs.existsSync(folder+"/config")) {
+          fs.mkdirSync(folder+"/config");
+        }
         fs.writeFileSync(folder + "/config/paper-global.yml", paperGlobal, "utf8");
       }
     } else {
