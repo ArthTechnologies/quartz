@@ -13,6 +13,10 @@ require("dotenv").config();
 if (!fs.existsSync("./backup")) {
   fs.mkdirSync("backup");
 }
+if (!fs.existsSync("./backup/disabledServers")) {
+  fs.mkdirSync("backup/disabledServers");
+}
+
 //if it doesnt exist, write to /lib/store.json
 if (!fs.existsSync("./stores")) {
   fs.mkdirSync("stores");
@@ -96,10 +100,12 @@ const datajson = require("./stores/data.json");
 if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
   downloadJars();
   getLatestVersion();
+  verifySubscriptions();
 }
 setInterval(() => {
   downloadJars();
   getLatestVersion();
+  verifySubscriptions();
 }, 1000 * 60 * 60 * 12);
 
 function downloadJars() {
@@ -306,6 +312,36 @@ function getLatestVersion() {
     });
 }
 
+function verifySubscriptions() {
+  const accounts = fs.readdirSync("accounts");
+  for (i in accounts) {
+    const account = require(`./accounts/${accounts[i]}`);
+    if (!account.bypassStripe) {
+      const amountOfServers = account.servers.length;
+      s.checkSubscription(account.email, (data) => {
+        if (data.data.length < amountOfServers) {
+          for (j in account.servers) {
+            const ls = require("child_process").execSync;
+            f.stopAsync(account.servers[j].id, () => {
+            ls(`mv servers/${account.servers[j].id} backup/disabledServers${account.servers[j].id}`);
+            });
+            
+        }
+
+        if (account.disabledServers == undefined) {
+          account.disabledServers = [];
+        }
+        account.disabledServers.push(account.servers);
+        account.servers = [];
+          
+          
+        }
+      });
+    
+    }
+  }
+}
+
 //This handles commands from the terminal
 process.stdin.setEncoding('utf8');
 
@@ -319,7 +355,7 @@ process.stdin.on('data', (data) => {
     case 'exit':
       process.exit(0);
     case 'help':
-      console.log('Commands:\nstop\nend\nexit\nhelp\nrefresh - downloads the latest jars, and gets the latest version. This automatically runs every 12 hours.\n');
+      console.log('Commands:\nstop\nend\nexit\nhelp\nrefresh - downloads the latest jars, gets the latest version, and verifies subscriptions. This automatically runs every 12 hours.\n');
       break;
     case 'refresh':
       getLatestVersion();
