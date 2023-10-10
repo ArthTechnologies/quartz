@@ -707,7 +707,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
           if (!req.file) {
             console.log("no file");
             let worldgenMods = [];
-            if (req.query.worldgenMods == undefined) {
+            if (req.query.worldgenMods != undefined) {
             if (req.query.worldgenMods.indexOf(",") > -1) {
               worldgenMods = req.query.worldgenMods.split(",");
             } else if (req.query.worldgenMods != "") {
