@@ -393,11 +393,16 @@ if (!fs.existsSync("java")) {
 
 const data = require("./stores/data.json");
 const f = require("./scripts/mc.js");
+if (data.serversWithAutomaticStartup != undefined) {
 data.serversWithAutomaticStartup.forEach((server) => {
   let id = server.split(":")[0];
   let email = server.split(":")[1];
   f.run(id, undefined, undefined, undefined, undefined, email, false);
 });
+} else {
+  data.serversWithAutomaticStartup = [];
+  fs.writeFileSync("./stores/data.json", JSON.stringify(data));
+}
 
 // generate public and private key
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
