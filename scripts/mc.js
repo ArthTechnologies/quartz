@@ -502,8 +502,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
 
-  //replace line 15 of folder/plugins/Geyser-Spigot/config.yml with "port: " + port
-
   var text = fs.readFileSync("servers/template/geyserconfig.yml", "utf8");
   var textByLine = text.split("\n");
   textByLine[15] = "  port: " + port;
@@ -532,7 +530,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     if (!fs.existsSync(folder + "/plugins/Geyser-Spigot")) {
       fs.mkdirSync(folder + "/plugins/Geyser-Spigot");
     }
+    if (!server.adminServer) {
     fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
+    }
 
     fs.copyFile(
       "servers/template/downloading/cx_geyser-spigot_Geyser.jar",
@@ -568,8 +568,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     if (!fs.existsSync(folder + "/plugins/Geyser-Velocity")) {
       fs.mkdirSync(folder + "/plugins/Geyser-Velocity");
     }
-    fs.writeFileSync(folder + "/plugins/Geyser-Velocity/config.yml", text);
+    if (!server.adminServer) {
 
+    
+    fs.writeFileSync(folder + "/plugins/Geyser-Velocity/config.yml", text);
+    }
     fs.copyFile(
       "servers/template/downloading/cx_geyser-velocity_Geyser.jar",
       folder + "/plugins/cx_geyser-velocity_Geyser.jar",
