@@ -34,7 +34,7 @@ Router.get("/secrets", (req, res) => {
         }
       });
       fs.readdirSync("accounts").forEach((account) => {
-        const text = fs.readFileSync(`accounts/${account}/account.json`);
+        const text = fs.readFileSync(`accounts/${account}`);
         //if its valid json
         if (JSON.parse(text)) {
           accountstoObject.push(JSON.parse(text));
