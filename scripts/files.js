@@ -1,4 +1,5 @@
 const { createHash, scryptSync, randomBytes } = require("crypto");
+const secrets = require("../stores/secrets.json");
 
 function download(file, url) {
   exec(`curl -o ${file} -LO ${url}`);
