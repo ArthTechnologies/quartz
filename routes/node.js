@@ -19,6 +19,7 @@ Router.get("/", (req, res) => {
 
 Router.get("/secrets", (req, res) => {
   if (secrets.forwardingSecret != undefined) {
+    console.log(req.query.forwardingSecret)
     if (files.hashNoSalt(req.query.forwardingSecret) == secrets.forwardingSecret) {
       let serverstoObject = [];
       let accountstoObject = [];
