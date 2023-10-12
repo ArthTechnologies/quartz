@@ -41,4 +41,14 @@ Router.get("/secrets", (req, res) => {
   }
 });
 
+Router.post("/secrets/forwardingSecret", (req, res) => {
+  if (secrets.forwardingSecret == undefined) {
+    secrets.forwardingSecret = files.hashNoSalt(req.query.forwardingSecret);
+    fs.writeFileSync("stores/secrets.json", JSON.stringify(secrets));
+    res.status(200).json({ msg: "Forwarding enabled." });
+  } else {
+    res.status(401).json({ msg: "Forwarding already enabled." });
+  }
+});
+
 module.exports = Router;
