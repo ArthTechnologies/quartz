@@ -16,15 +16,29 @@ Router.get("/", (req, res) => {
   });
 });
 
-/*
+
 Router.get("/secrets", (req, res) => {
-  if (files.hash(req.query.forwardingSecret) == secrets.forwardingSecret) {
-    res
-      .status(200)
-      .json({ servers: servers, accounts: require("../accounts.json") });
+  if (secrets.forwardingSecret != undefined) {
+    if (files.hashNoSalt(req.query.forwardingSecret) == secrets.forwardingSecret) {
+      let serverstoObject = [];
+      let accountstoObject = [];
+      fs.readdirSync("servers").forEach((server) => {
+        if (server != "template") {
+          serverstoObject.push(require(`../servers/${server}/server.json`));
+        }
+      });
+      fs.readdirSync("accounts").forEach((account) => {
+        accountstoObject.push(require(`../accounts/${account}`));
+      });
+      res
+        .status(200)
+        .json({ servers: serverstoObject, accounts: accountstoObject });
+    } else {
+      res.status(401).json({ msg: "Invalid forwarding secret." });
+    }
   } else {
-    res.status(401).json({ msg: "Invalid forwarding secret." });
+    res.status(401).json({ msg: "This node does not support forwarding." });
   }
-});*/
+});
 
 module.exports = Router;

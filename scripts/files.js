@@ -23,6 +23,12 @@ function hash(input, salt) {
   return salt + ":" + scryptSync(input, salt, 48).toString("hex");
 }
 
+function hashNoSalt(input) {
+  return scryptSync(input, randomBytes(12).toString("hex"), 48).toString(
+    "hex"
+  );
+}
+
 function folderSizeRecursive(directoryPath) {
   if (!fs.existsSync(directoryPath)) {
     console.log(`Directory "${directoryPath}" does not exist.`);
@@ -280,6 +286,7 @@ function getIndex(callback) {
 }
 module.exports = {
   hash,
+  hashNoSalt,
   download,
   extract,
   write,

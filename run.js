@@ -26,7 +26,8 @@ if (!fs.existsSync("./stores")) {
       crypto.randomBytes(12).toString("hex") +
       '","stripekey":"' +
       process.env.stripe_key +
-      '"}'
+      '", "forwardingSecret":"' + crypto.randomBytes(12).toString("hex") + '"}'
+      
   );
 
   fs.writeFileSync(
