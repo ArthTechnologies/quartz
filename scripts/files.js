@@ -7,7 +7,6 @@ function download(file, url) {
 
 function downloadAsync(file, url, callback) {
   exec(`curl -o ${file} -LO ${url}`, (error, stdout, stderr) => {
-    console.log(stdout);
     callback(stdout);
   });
 }
@@ -25,7 +24,7 @@ function hash(input, salt) {
 }
 
 function hashNoSalt(input) {
-  return scryptSync(input, secrets.pepper).toString(
+  return scryptSync(input, secrets.pepper, 48).toString(
     "hex"
   );
 }
