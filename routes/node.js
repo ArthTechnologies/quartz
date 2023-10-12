@@ -12,7 +12,7 @@ Router.get("/", (req, res) => {
   fs.writeFileSync("data.json", JSON.stringify(data, null, 2));
   res.status(200).json({
     maxServers: settings.maxServers,
-    numServers: numServers,
+    numServers: data.numServers,
   });
 });
 
@@ -43,6 +43,7 @@ Router.get("/secrets", (req, res) => {
 
 Router.post("/secrets/forwardingSecret", (req, res) => {
   if (secrets.forwardingSecret == undefined) {
+    console.log(req.query.forwardingSecret);
     secrets.forwardingSecret = files.hashNoSalt(req.query.forwardingSecret);
     fs.writeFileSync("stores/secrets.json", JSON.stringify(secrets));
     res.status(200).json({ msg: "Forwarding enabled." });
