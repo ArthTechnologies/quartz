@@ -24,7 +24,7 @@ function hash(input, salt) {
 }
 
 function hashNoSalt(input) {
-  return scryptSync(input, randomBytes(12).toString("hex"), 48).toString(
+  return scryptSync(input, secrets.pepper).toString(
     "hex"
   );
 }
