@@ -26,18 +26,20 @@ Router.get("/secrets", (req, res) => {
       fs.readdirSync("servers").forEach((server) => {
         if (server != "template") {
           const text = fs.readFileSync(`servers/${server}/server.json`);
-          //if its valid json
-          if (JSON.parse(text)) {
+          try {
             serverstoObject.push(JSON.parse(text));
+          } catch {
+            console.log("error parsing " + server)
           }
     
         }
       });
       fs.readdirSync("accounts").forEach((account) => {
         const text = fs.readFileSync(`accounts/${account}`);
-        //if its valid json
-        if (JSON.parse(text)) {
+        try {
           accountstoObject.push(JSON.parse(text));
+        } catch {
+          console.log("error parsing " + account)
         }
       });
       res
