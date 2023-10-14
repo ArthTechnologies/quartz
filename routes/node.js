@@ -63,4 +63,24 @@ Router.post("/secrets/forwardingSecret", (req, res) => {
   }
 });
 
+Router.post("/account", (req, res) => {
+  if (secrets.forwardingSecret != undefined) {
+
+    if (files.hashNoSalt(req.query.forwardingSecret) == secrets.forwardingSecret) {
+      if (req.query.account != undefined) {
+        if (fs.existsSync(`accounts/${req.query.account}`)) {
+          res.status(200).json({ msg: "Account already exists." });
+        } else {
+          fs.writeFileSync(`accounts/${req.query.account}`, JSON.stringify({}));
+          res.status(200).json({ msg: "Account created." });
+        }
+      } else {
+        res.status(400).json({ msg: "No account specified." });
+      }
+    }
+  } else {
+  res.status(401).json({ msg: "This node does not support forwarding." });
+}
+});
+
 module.exports = Router;
