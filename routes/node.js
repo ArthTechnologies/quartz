@@ -67,11 +67,11 @@ Router.post("/account", (req, res) => {
   if (secrets.forwardingSecret != undefined) {
 
     if (files.hashNoSalt(req.query.forwardingSecret) == secrets.forwardingSecret) {
-      if (req.query.account != undefined) {
-        if (fs.existsSync(`accounts/${req.query.account}`)) {
+      if (req.body.account != undefined) {
+        if (fs.existsSync(`accounts/${req.body.account}`)) {
           res.status(200).json({ msg: "Account already exists." });
         } else {
-          fs.writeFileSync(`accounts/${req.query.account}`, JSON.stringify({}));
+          fs.writeFileSync(`accounts/${req.body.account}`, JSON.stringify({}));
           res.status(200).json({ msg: "Account created." });
         }
       } else {
