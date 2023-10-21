@@ -663,7 +663,14 @@ router.delete(`/:id`, function (req, res) {
             console.log("deleted server");
             if (fs.existsSync(`servers/` + id)) {
               setTimeout(() => {
-                exec(`rm -rf servers/${id}`);
+                exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
+                  if (fs.existsSync(`servers/` + id)) {
+                    fs.appendFileSync(
+                      "deleteLog.txt",
+                      "Failed to delete server " + id + "\n"
+                    );
+                  }
+                });
               }, 1000);
             }
             return;
