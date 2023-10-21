@@ -26,8 +26,9 @@ if (!fs.existsSync("./stores")) {
       crypto.randomBytes(12).toString("hex") +
       '","stripekey":"' +
       process.env.stripe_key +
-      '", "forwardingSecret":"' + crypto.randomBytes(12).toString("hex") + '"}'
-      
+      '", "forwardingSecret":"' +
+      crypto.randomBytes(12).toString("hex") +
+      '"}'
   );
 
   fs.writeFileSync(
@@ -78,6 +79,7 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
   }
 
   fs.copyFileSync("accounts.json", "backup/accounts.json");
+  Jars();
   fs.unlinkSync("accounts.json");
   fs.copyFileSync("servers.json", "backup/servers.json");
   fs.unlinkSync("servers.json");
@@ -310,59 +312,67 @@ function getLatestVersion() {
       settings.latestVersion = version;
       fs.writeFileSync("./stores/settings.json", JSON.stringify(settings));
       return version;
-    });
+    }
+  );
 }
 
 function verifySubscriptions() {
   const accounts = fs.readdirSync("accounts");
   for (i in accounts) {
-    const account = require(`./accounts/${accounts[i]}`);
-    if (!account.bypassStripe) {
-      const amountOfServers = account.servers.length;
-      s.checkSubscription(account.email, (data) => {
-        if (data.data.length < amountOfServers) {
-          for (j in account.servers) {
-            const ls = require("child_process").execSync;
-            f.stopAsync(account.servers[j].id, () => {
-            ls(`mv servers/${account.servers[j].id} backup/disabledServers${account.servers[j].id}`);
-            });
-            
-        }
+    if (accounts[i].split(".")[accounts[i].split(".").length - 1] == "json") {
+      const account = require(`./accounts/${accounts[i]}`);
+      if (!account.bypassStripe) {
+        const amountOfServers = account.servers.length;
+        s.checkSubscription(account.email, (data) => {
+          if (data.data.length < amountOfServers) {
+            for (j in account.servers) {
+              const ls = require("child_process").execSync;
+              f.stopAsync(account.servers[j].id, () => {
+                ls(
+                  `mv servers/${account.servers[j].id} backup/disabledServers${account.servers[j].id}`
+                );
+              });
+            }
 
-        if (account.disabledServers == undefined) {
-          account.disabledServers = [];
-        }
-        account.disabledServers.push(account.servers);
-        account.servers = [];
-          
-          
-        }
-      });
-    
+            if (account.disabledServers == undefined) {
+              account.disabledServers = [];
+            }
+            account.disabledServers.push(account.servers);
+            account.servers = [];
+          }
+        });
+      }
     }
   }
 }
 
 //This handles commands from the terminal
-process.stdin.setEncoding('utf8');
+process.stdin.setEncoding("utf8");
 
-process.stdout.write('Welcome to the terminal!\nType "help" for a list of commands.\n');
+process.stdout.write(
+  'Welcome to the terminal!\nType "help" for a list of commands.\n'
+);
 
-process.stdin.on('data', (data) => {
+process.stdin.on("data", (data) => {
   const input = data.trim(); // Remove leading/trailing whitespace
   switch (input) {
-    case 'stop':
-    case 'end':
-    case 'exit':
+    case "stop":
+    case "end":
+    case "exit":
       process.exit(0);
-    case 'help':
-      console.log('Commands:\nstop\nend\nexit\nhelp\nrefresh - downloads the latest jars, gets the latest version, and verifies subscriptions. This automatically runs every 12 hours.\n');
+    case "help":
+      console.log(
+        "Commands:\nstop\nend\nexit\nhelp\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
+      );
       break;
-    case 'refresh':
+    case "refresh":
       getLatestVersion();
       downloadJars();
-      console.log("downloading latest jars, and getting latest version");
-      break;  
+      verifySubscriptions();
+      console.log(
+        "downloading latest jars, verifying subscriptions and getting latest version"
+      );
+      break;
     default:
       console.log('Unknown command. Type "help" for a list of commands.');
   }
@@ -395,11 +405,11 @@ if (!fs.existsSync("java")) {
 const data = require("./stores/data.json");
 const f = require("./scripts/mc.js");
 if (data.serversWithAutomaticStartup != undefined) {
-data.serversWithAutomaticStartup.forEach((server) => {
-  let id = server.split(":")[0];
-  let email = server.split(":")[1];
-  f.run(id, undefined, undefined, undefined, undefined, email, false);
-});
+  data.serversWithAutomaticStartup.forEach((server) => {
+    let id = server.split(":")[0];
+    let email = server.split(":")[1];
+    f.run(id, undefined, undefined, undefined, undefined, email, false);
+  });
 } else {
   data.serversWithAutomaticStartup = [];
   fs.writeFileSync("./stores/data.json", JSON.stringify(data));
@@ -438,8 +448,6 @@ const security = (req, res, next) => {
   if (req.url.includes("/accounts/")) {
     next();
   } else {
-
-
     accounts = require("./accounts.json");
 
     if (accounts[req.headers.email].ips != undefined) {
@@ -463,7 +471,6 @@ app.use("/settings", require("./routes/settings"));
 app.use("/terminal", require("./routes/terminal"));
 app.use("/accounts", require("./routes/accounts"));
 app.use("/node", require("./routes/node"));
-
 
 // port
 const port = process.env.PORT || 4000;
