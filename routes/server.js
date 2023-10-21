@@ -112,7 +112,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     }
 
     fs.readdirSync(`${path}/${modtype}`).forEach((file) => {
-      console.log(file)
+      console.log(file);
       if (file.startsWith("gh_")) {
         mods.push({
           platform: file.split("_")[0],
@@ -137,12 +137,14 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           filename: file,
           date: fs.statSync(`${path}/${modtype}/${file}`).mtimeMs,
         });
-      } else if (!fs.statSync(`${path}/${modtype}/${file}`).isDirectory()) { 
-        unknownMods.push({filename:file,date:fs.statSync(`${path}/${modtype}/${file}`).mtimeMs});
+      } else if (!fs.statSync(`${path}/${modtype}/${file}`).isDirectory()) {
+        unknownMods.push({
+          filename: file,
+          date: fs.statSync(`${path}/${modtype}/${file}`).mtimeMs,
+        });
         console.log(unknownMods);
-    }
+      }
     });
-
 
     //sort mods by name if there are any
     if (mods.length > 1) {
@@ -150,28 +152,24 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
         return a.name.localeCompare(b.name);
       });
     }
-    
-    if(modpack != undefined){
-    if (modpack.files.length > 0) {
 
-      for (i in modpack.files) {
-        if (modpack.files[i].path.includes("\\")) {
-          modpack.files[i].path = modpack.files[i].path.replace(
-            /\\/g,
-            "/"
-          );
-        }
-        if (!fs.existsSync(`${path}/`+modpack.files[i].path)) {
-          modpack.files.splice(i, 1);
+    if (modpack != undefined) {
+      if (modpack.files.length > 0) {
+        for (i in modpack.files) {
+          if (modpack.files[i].path.includes("\\")) {
+            modpack.files[i].path = modpack.files[i].path.replace(/\\/g, "/");
+          }
+          if (!fs.existsSync(`${path}/` + modpack.files[i].path)) {
+            modpack.files.splice(i, 1);
+          }
         }
       }
     }
-  }
 
-      //add unknownMods array to the end of mods
-      for (i in unknownMods) {
-        mods.push(unknownMods[i]);
-      }
+    //add unknownMods array to the end of mods
+    for (i in unknownMods) {
+      mods.push(unknownMods[i]);
+    }
 
     res.status(200).json({ mods: mods, modpack: modpack });
   } else {
@@ -193,7 +191,8 @@ router.post(`/:id/version/`, function (req, res) {
       "servers/" + id + "/server.json",
       JSON.stringify(server, null, 2)
     );
-    account.servers[account.servers.findIndex((e) => e.id == id)].version = version;
+    account.servers[account.servers.findIndex((e) => e.id == id)].version =
+      version;
     f.stopAsync(id, () => {
       f.run(id, undefined, undefined, undefined, undefined, email, false);
     });
@@ -430,20 +429,22 @@ router.post(`/:id/setInfo`, function (req, res) {
     desc = req.body.desc;
 
     //setting automaticStartup
-      let dataJson = require("../stores/data.json");
-      let server = id + ":" + email;
-      if(dataJson.serversWithAutomaticStartup == undefined){
-        dataJson.serversWithAutomaticStartup = [];
-      }
+    let dataJson = require("../stores/data.json");
+    let server = id + ":" + email;
+    if (dataJson.serversWithAutomaticStartup == undefined) {
+      dataJson.serversWithAutomaticStartup = [];
+    }
     if (req.body.automaticStartup) {
       if (!dataJson.serversWithAutomaticStartup.includes(server)) {
         dataJson.serversWithAutomaticStartup.push(server);
       }
       fs.writeFileSync("stores/data.json", JSON.stringify(dataJson, null, 2));
     } else {
-      
       if (dataJson.serversWithAutomaticStartup.includes(server)) {
-        dataJson.serversWithAutomaticStartup.splice(dataJson.serversWithAutomaticStartup.indexOf(server),1);
+        dataJson.serversWithAutomaticStartup.splice(
+          dataJson.serversWithAutomaticStartup.indexOf(server),
+          1
+        );
       }
       fs.writeFileSync("stores/data.json", JSON.stringify(dataJson, null, 2));
     }
@@ -587,7 +588,7 @@ router.get(`/:id/getInfo`, function (req, res) {
 
     let automaticStartup = false;
     if (data.serversWithAutomaticStartup != undefined) {
-      if (data.serversWithAutomaticStartup.includes(id+":"+email)) {
+      if (data.serversWithAutomaticStartup.includes(id + ":" + email)) {
         automaticStartup = true;
       }
     }
@@ -597,7 +598,7 @@ router.get(`/:id/getInfo`, function (req, res) {
       desc: desc,
       secret: secret,
       proxiesEnabled: proxiesEnabled,
-      automaticStartup: automaticStartup
+      automaticStartup: automaticStartup,
     });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
@@ -610,48 +611,56 @@ router.delete(`/:id`, function (req, res) {
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
   if (token === account.token && server.accountId == account.accountId) {
-      if (files.hash(req.query.password, account.salt).split(":")[1] == account.password) {
-    id = req.params.id;
-    if (f.getState(id) == "true") {
-      f.stopAsync(id, () => {
+    if (
+      files.hash(req.query.password, account.salt).split(":")[1] ==
+      account.password
+    ) {
+      id = req.params.id;
+      if (f.getState(id) == "true") {
+        f.stopAsync(id, () => {
+          deleteServer();
+          res.status(200).json({ msg: `Deleted server` });
+        });
+      } else {
         deleteServer();
         res.status(200).json({ msg: `Deleted server` });
-      });
-    } else {
-      deleteServer();
-      res.status(200).json({ msg: `Deleted server` });
-    }
+      }
 
-    function deleteServer() {
-
-      //if the server isnt already being deleted
-      if (!fs.existsSync(`servers/${id}/deleting.txt`)) {
-        fs.writeFileSync(`servers/${id}/deleting.txt`, "deleting");
-        account.servers.findIndex = function () {
-          for (var i = 0; i < this.length; i++) {
-            if (account.servers[i].id == id) {
-              return i;
+      function deleteServer() {
+        //if the server isnt already being deleted
+        if (!fs.existsSync(`servers/${id}/deleting.txt`)) {
+          fs.writeFileSync(`servers/${id}/deleting.txt`, "deleting");
+          account.servers.findIndex = function () {
+            for (var i = 0; i < this.length; i++) {
+              if (account.servers[i].id == id) {
+                return i;
+              }
             }
+          };
+          account.servers.splice(account.servers.findIndex(), 1);
+          fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
+
+          //delete /servers/id
+          exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log("deleted server");
+            }
+
+            return;
+          });
+        }
+        const data = require("../stores/data.json");
+        for (i in data.serversWithAutomaticStartup) {
+          if (data.serversWithAutomaticStartup[i].includes(id)) {
+            data.serversWithAutomaticStartup.splice(i, 1);
           }
-        };
-        account.servers.splice(account.servers.findIndex(), 1);
-        fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
-  
-        //delete /servers/id
-        exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log("deleted server");
-          }
-  
-          return;
-        });
+        }
       }
+    } else {
+      res.status(401).json({ msg: `Invalid credentials.` });
     }
-      } else {
-        res.status(401).json({ msg: `Invalid credentials.` });
-      }
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
@@ -670,20 +679,16 @@ router.get("/:id/world", function (req, res) {
       path += "/server";
     }
     const exec = require("child_process").exec;
-    exec(
-      `zip -r -q -X ../world.zip .`,
-      { cwd: `${path}/world` },
-      (err) => {
-        res.setHeader("Content-Type", "application/zip");
+    exec(`zip -r -q -X ../world.zip .`, { cwd: `${path}/world` }, (err) => {
+      res.setHeader("Content-Type", "application/zip");
 
-        res.setHeader("Content-Disposition", `attachment; filename=world.zip`);
+      res.setHeader("Content-Disposition", `attachment; filename=world.zip`);
 
-        res.status(200).download(`${path}/world.zip`, "world.zip", () => {
-          //delete the zip file
-          fs.unlinkSync(`${path}/world.zip`);
-        });
-      }
-    );
+      res.status(200).download(`${path}/world.zip`, "world.zip", () => {
+        //delete the zip file
+        fs.unlinkSync(`${path}/world.zip`);
+      });
+    });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
@@ -708,15 +713,15 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             console.log("no file");
             let worldgenMods = [];
             if (req.query.worldgenMods != undefined) {
-            if (req.query.worldgenMods.indexOf(",") > -1) {
-              worldgenMods = req.query.worldgenMods.split(",");
-            } else if (req.query.worldgenMods != "") {
-              worldgenMods.push(req.query.worldgenMods);
+              if (req.query.worldgenMods.indexOf(",") > -1) {
+                worldgenMods = req.query.worldgenMods.split(",");
+              } else if (req.query.worldgenMods != "") {
+                worldgenMods.push(req.query.worldgenMods);
+              }
             }
-          }
             const serverJson = require(`../servers/${id}/server.json`);
             serverJson.addons = worldgenMods;
-            fs.writeFileSync( 
+            fs.writeFileSync(
               `servers/${id}/server.json`,
               JSON.stringify(serverJson, null, 2)
             );
@@ -1096,7 +1101,9 @@ router.get("/:id/file/:path", function (req, res) {
     let path = req.params.path.split("*").join("/");
     if (fs.existsSync(`servers/${req.params.id}/${path}`)) {
       if (fs.lstatSync(`servers/${req.params.id}/${path}`).isDirectory()) {
-        res.status(200).json(fs.readdirSync(`servers/${req.params.id}/${path}`));
+        res
+          .status(200)
+          .json(fs.readdirSync(`servers/${req.params.id}/${path}`));
       } else {
         let extension = path.split(".")[path.split(".").length - 1];
 
@@ -1166,7 +1173,7 @@ router.delete("/:id/file/:path", function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
-  server = require(`../servers/${req.params.id}/server.json`);  
+  server = require(`../servers/${req.params.id}/server.json`);
   if (
     token === account.token &&
     server.accountId == account.accountId &&
@@ -1184,7 +1191,7 @@ router.delete("/:id/file/:path", function (req, res) {
         extension == "yaml" ||
         extension == "json" ||
         extension == "toml" ||
-        extension =="jar") &&
+        extension == "jar") &&
       filename != "server.json" &&
       filename != "velocity.toml" &&
       filename != "modrinth.index.json"
@@ -1216,15 +1223,17 @@ router.post("/:id/rename/", function (req, res) {
     );
 
     account = require("../accounts/" + email + ".json");
-    account.servers[account.servers.findIndex((server) => {
-      return server.id == req.params.id;
-    })].name = req.query.newName;
+    account.servers[
+      account.servers.findIndex((server) => {
+        return server.id == req.params.id;
+      })
+    ].name = req.query.newName;
     fs.writeFileSync(
       `accounts/${email}.json`,
       JSON.stringify(account, null, 2)
     );
     res.status(200).json({ msg: "Done" });
-  } else {  
+  } else {
     res.status(401).json({ msg: "Invalid credentials." });
   }
 });
@@ -1241,13 +1250,14 @@ router.get("/:id/storageInfo", function (req, res) {
     let limit = -1;
     let used = files.folderSizeRecursive(`servers/${req.params.id}/`);
 
-    if (fs.existsSync(`stores/settings.json`) && require(`../stores/settings.json`).serverStorageLimit !== undefined) {  
+    if (
+      fs.existsSync(`stores/settings.json`) &&
+      require(`../stores/settings.json`).serverStorageLimit !== undefined
+    ) {
       limit = require(`../stores/settings.json`).serverStorageLimit;
     }
 
     res.status(200).json({ used: used, limit: limit });
-
-
   } else {
     res.status(401).json({ msg: "Invalid credentials." });
   }
