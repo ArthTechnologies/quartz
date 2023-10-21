@@ -606,6 +606,21 @@ router.get(`/:id/getInfo`, function (req, res) {
 });
 
 router.delete(`/:id`, function (req, res) {
+  //log
+
+  if (!fs.existsSync("deleteLog.txt")) {
+    fs.writeFileSync(
+      "deleteLog.txt",
+      "Recieved A Delete Request for server " + req.params.id + "\n"
+    );
+  } else {
+    fs.appendFileSync(
+      "deleteLog.txt",
+      "Recieved A Delete Request for server " + req.params.id + "\n"
+    );
+  }
+
+  //
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
