@@ -659,10 +659,13 @@ router.delete(`/:id`, function (req, res) {
           exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
             if (err) {
               console.log(err);
-            } else {
-              console.log("deleted server");
             }
-
+            console.log("deleted server");
+            if (fs.existsSync(`servers/` + id)) {
+              setTimeout(() => {
+                exec(`rm -rf servers/${id}`);
+              }, 1000);
+            }
             return;
           });
         }
