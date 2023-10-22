@@ -245,11 +245,24 @@ router.post(`/new`, function (req, res) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
     const settings = require("../stores/settings.json");
-    //1 is subtracted because of the "template" subdirectory
-    var serverFolders = fs.readdirSync("servers");
-    serverFolders = serverFolders.filter((e) => e !== "template");
-    serverFolders = serverFolders.sort((a, b) => a - b);
-    var id = parseInt(serverFolders[serverFolders.length - 1]) + 1;
+
+    let serverFolder = fs.readdirSync("servers");
+    let id = -1;
+    for (i in serverFolder) {
+      if (serverFolder[i] != "template") {
+        let num = serverFolder[i].split(".")[0];
+        console.log(num, i);
+        if (num !== i) {
+          id = i;
+          break; // Break out of the loop when the first available ID is found.
+        }
+        lastNum = parseInt(num);
+      }
+    }
+
+    if (id === -1) {
+      id = lastNum + 1;
+    }
     const datajson = require("../stores/data.json");
     datajson.numServers = serverFolders.length;
     fs.writeFileSync("stores/data.json", JSON.stringify(datajson, null, 2));
