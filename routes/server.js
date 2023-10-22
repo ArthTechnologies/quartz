@@ -655,30 +655,7 @@ router.delete(`/:id`, function (req, res) {
           account.servers.splice(account.servers.findIndex(), 1);
           fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
 
-          //delete /servers/id
-          exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
-            if (err) {
-              console.log(err);
-            }
-            const fs = require("fs");
-            console.log("deleted server" + id);
-            console.log(fs.existsSync(`servers/` + id) + " " + id);
-            if (fs.existsSync(`servers/` + id)) {
-              console.log("Failed to delete server " + id);
-              setTimeout(() => {
-                exec(`rm -rf servers/${id}`, (err, stdout, stderr) => {
-                  if (fs.existsSync(`servers/` + id)) {
-                    console.log("Failed to delete server " + id);
-                    fs.appendFileSync(
-                      "deleteLog.txt",
-                      "Failed to delete server " + id + "\n"
-                    );
-                  }
-                });
-              }, 1000);
-            }
-            return;
-          });
+          fs.removeDirectoryRecursive(`servers/${id}`);
         }
         const data = require("../stores/data.json");
         for (i in data.serversWithAutomaticStartup) {
