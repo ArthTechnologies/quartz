@@ -660,11 +660,9 @@ router.delete(`/:id`, function (req, res) {
             if (err) {
               console.log(err);
             }
+            const fs = require("fs");
             console.log("deleted server" + id);
-            fs.stat(`servers/${id}`, (err, stats) => {
-              console.log(stats);
-              console.log(err);
-            });
+            console.log(fs.existsSync(`servers/` + id) + " " + id);
             if (fs.existsSync(`servers/` + id)) {
               console.log("Failed to delete server " + id);
               setTimeout(() => {
