@@ -661,8 +661,9 @@ router.delete(`/:id`, function (req, res) {
               console.log(err);
             }
             console.log("deleted server" + id);
-            console.log("server exists:" + fs.existsSync(`servers/` + id));
-            console.log("servers in folder: " + fs.readdirSync("servers"));
+            fs.stat(`servers/${id}`, (err, stats) => {
+              console.log(stats);
+            });
             if (fs.existsSync(`servers/` + id)) {
               console.log("Failed to delete server " + id);
               setTimeout(() => {
