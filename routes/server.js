@@ -246,18 +246,18 @@ router.post(`/new`, function (req, res) {
     res.header("Access-Control-Allow-Origin", "*");
     const settings = require("../stores/settings.json");
 
-    let serverFolder = fs.readdirSync("servers");
+    let serverFolders = fs.readdirSync("servers");
+    serverFolders = serverFolders.filter((e) => e !== "template");
+    let serverFolder = serverFolders.sort((a, b) => a - b);
     let id = -1;
     for (i in serverFolder) {
-      if (serverFolder[i] != "template") {
-        let num = serverFolder[i].split(".")[0];
-        console.log(num, i);
-        if (num !== i) {
-          id = i;
-          break; // Break out of the loop when the first available ID is found.
-        }
-        lastNum = parseInt(num);
+      let num = serverFolder[i].split(".")[0];
+      console.log(num, i);
+      if (num !== i) {
+        id = i;
+        break; // Break out of the loop when the first available ID is found.
       }
+      lastNum = parseInt(num);
     }
 
     if (id === -1) {
