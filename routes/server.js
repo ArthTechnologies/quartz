@@ -655,7 +655,7 @@ router.delete(`/:id`, function (req, res) {
           account.servers.splice(account.servers.findIndex(), 1);
           fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
 
-          fs.removeDirectoryRecursive(`servers/${id}`);
+          files.removeDirectoryRecursive(`servers/${id}`);
         }
         const data = require("../stores/data.json");
         for (i in data.serversWithAutomaticStartup) {
