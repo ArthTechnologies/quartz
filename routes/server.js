@@ -845,6 +845,7 @@ router.get("/:id/proxy/info", function (req, res) {
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
   if (token === account.token && server.accountId == account.accountId) {
+    console.log(f.checkServer(req.params.id)["software"]);
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       let lobbyName;
 
