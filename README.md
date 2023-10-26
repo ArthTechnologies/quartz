@@ -29,7 +29,7 @@ The main panels currently used for running Minecraft servers are bulky, slow, ha
 ## How to run with docker (Unsupported)
 
 1. Download the image from docker hub with the command `sudo docker pull arthmc/quartz:latest`
-2. Run the image with `sudo docker run -p 4000:4000 arthmc/quartz:latest`. To change the port, replace the first 4000 with the port number you want.
+2. Run the image with `sudo docker run -p 4000:4000 10000-20000:10000-20000 arthmc/quartz:latest`. To change the port, replace the first 4000 with the port number you want.
 
 # Dependencies
 
