@@ -11,6 +11,9 @@ Documentation can be found [here](https://codeberg.org/arth/quartz/wiki)
 
 Quartz is a backend for Arth Panel, a lightweight self-hosted Minecraft server panel. Quartz is made with Node and Express.
 
+## Why Arth Panel?
+The main panels currently used for running Minecraft servers are bulky, slow, hard to setup, and hard to understand. It could be quite time-consuming to figure out where your servers actually are if you ever choose to ditch a panel like pufferpanel or pterodactyl. So Arth Panel was built from the ground up, with simplicity, design, and performance in mind. It doesn't use docker to contain your servers, so they're right there in the "servers" folder if you ever have a problem with Arth Panel and need to run them directly.
+
 ## How to run
 
 1. Grab the source code with `git clone https://codeberg.org/arth/quartz`
@@ -34,17 +37,13 @@ Quartz is a backend for Arth Panel, a lightweight self-hosted Minecraft server p
 
 # Contributing
 
-To run a dev server, follow the instructions in "how to run without docker"
+To run a dev server, follow steps 1 and 2 in "how to run" and then run `npm run dev` instead of `node run`.
 
 ## Contributing Guidelines
 
-- Please format your code with Prettier VSCode extension or an alternative that achieves the same results.
+- Please format your code with the Prettier VSCode extension or an alternative that achieves the same results.
 
 ### Check out our [frontend](https://github.com/arthmc/observer)'s progress
-
-## Why Arth Panel?
-
-The main difference between an alternative like pufferpanel or pterodactyl is that it's meant to work in a way so that if an issue were to occur, you could easily just SSH into the machine and run the jar directly in a folder, so you know that your server's uptime is not dependant on a panel someone else made working flawlessly.
 
 # To-do list
 
@@ -55,8 +54,8 @@ The main difference between an alternative like pufferpanel or pterodactyl is th
 ✅ Consistent routes  
 ✅ Locking a customer's assets behing a password  
 ✅ Add support for plugins and mods from modrinth  
-🛠️ Make no-stripe/no account modes more stable
+🛠️ Make no-stripe/no account modes more stable  
 🛠️ Make modded servers stable  
 🛠️ Add support for ocelot (master backend)  
-❓ Protecting customer assets with end-to-end encryption
+❓ Protecting customer assets with end-to-end encryption  
 ❓ Add support for mods/plugins from CurseForge
