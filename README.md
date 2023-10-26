@@ -52,10 +52,10 @@ To run a dev server, follow steps 1 and 2 in "how to run" and then run `npm run 
 ✅ Ability to run Minecraft servers with specified versions and softwares  
 ✅ Basic communication with frontend for terminal  
 ✅ Consistent routes  
-✅ Locking a customer's assets behing a password  
+✅ Secure accounts and servers with a password system
 ✅ Add support for plugins and mods from modrinth  
 🛠️ Make no-stripe/no account modes more stable  
 🛠️ Make modded servers stable  
 🛠️ Add support for ocelot (master backend)  
-❓ Protecting customer assets with end-to-end encryption  
+❓ Protect customer assets with end-to-end encryption  
 ❓ Add support for mods/plugins from CurseForge
