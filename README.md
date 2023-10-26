@@ -37,7 +37,7 @@ The main panels currently used for running Minecraft servers are bulky, slow, ha
 
 # Contributing
 
-To run a dev server, follow steps 1 and 2 in "how to run" and then run `npm run dev` instead of `node run`.
+To run a dev server, follow "how to run".
 
 ## Contributing Guidelines
 
