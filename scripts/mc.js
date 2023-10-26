@@ -16,8 +16,6 @@ function proxiesToggle(id, toggle, secret) {
       "utf8"
     );
 
-
-
     //set the line after 'velocity:' to 'enabled: true'
     let paperGlobalLines = paperGlobal.split("\n");
     let secretIndex = paperGlobalLines.findIndex((line) => {
@@ -28,7 +26,6 @@ function proxiesToggle(id, toggle, secret) {
     paperGlobalLines[index + 1] = "    enabled: true";
 
     paperGlobal = paperGlobalLines.join("\n");
-
 
     fs.writeFileSync(`servers/${id}/config/paper-global.yml`, paperGlobal);
 
@@ -121,7 +118,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   let path = "../../java/jdk-17.0.5+8/bin/java";
   let folder = "servers/" + id;
-  if (software == "quilt") {folder = "servers/" + id + "/server"}
+  if (software == "quilt") {
+    folder = "servers/" + id + "/server";
+  }
   let args = [
     "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Daikars.new.flags=true -Dusing.aikars.flags=https://mcflags.emc.gs -jar server.jar",
   ];
@@ -131,7 +130,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let installer = false;
 
   fs.writeFileSync(folder + "/eula.txt", "eula=true");
-  
+
   //make software all lowercase
   software = software.toLowerCase();
   switch (software) {
@@ -201,7 +200,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       path = "../../java/jdk-11.0.18+10/bin/java";
       break;
   }
-
+  console.log("software & version", software, version);
   if (software == "velocity") {
     path = "../../java/jdk-17.0.5+8/bin/java";
   }
@@ -230,10 +229,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
             exec(
               "cp -r " + folder + "/overrides/* " + folder + "/",
               (error, stdout, stderr) => {
-                if (
-                  
-                  fs.existsSync(folder + "/modrinth.index.json")
-                ) {
+                if (fs.existsSync(folder + "/modrinth.index.json")) {
                   modpack = JSON.parse(
                     fs.readFileSync(folder + "/modrinth.index.json")
                   );
@@ -250,8 +246,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                     files.downloadAsync(
                       folder + "/" + modpack.files[i].path,
                       modpack.files[i].downloads[0],
-                      () => {
-                      }
+                      () => {}
                     );
                   }
                 }
@@ -264,14 +259,17 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   }
 
   if (software != "quilt") {
-    if (fs.existsSync("data/" + software + "-" + version + ".jar")){
+    if (fs.existsSync("data/" + software + "-" + version + ".jar")) {
       fs.copyFileSync(
         "data/" + software + "-" + version + ".jar",
         folder + "/server.jar"
       );
     }
   } else {
-    fs.copyFileSync("data/" + software + "-0.5.1.jar", "servers/"+id+"/server.jar");
+    fs.copyFileSync(
+      "data/" + software + "-0.5.1.jar",
+      "servers/" + id + "/server.jar"
+    );
     args = [
       "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Daikars.new.flags=true -Dusing.aikars.flags=https://mcflags.emc.gs -jar server.jar install server " +
         version +
@@ -307,18 +305,17 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
     let result;
     if (server.adminServer) {
-       result = data
-      .replace(
+      result = data.replace(
         /player-info-forwarding-mode = "NONE"/g,
         `player-info-forwarding-mode = "modern"`
       );
     } else {
-       result = data
-      .replace(/bind = "0.0.0.0:25577"/g, `bind = "0.0.0.0:${port}"`)
-      .replace(
-        /player-info-forwarding-mode = "NONE"/g,
-        `player-info-forwarding-mode = "modern"`
-      );
+      result = data
+        .replace(/bind = "0.0.0.0:25577"/g, `bind = "0.0.0.0:${port}"`)
+        .replace(
+          /player-info-forwarding-mode = "NONE"/g,
+          `player-info-forwarding-mode = "modern"`
+        );
     }
 
     fs.writeFileSync(folder + "/velocity.toml", result, "utf8");
@@ -336,26 +333,25 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
           "servers/template/paper-global.yml",
           "utf8"
         );
-        if (!fs.existsSync(folder+"/config")) {
-          fs.mkdirSync(folder+"/config");
+        if (!fs.existsSync(folder + "/config")) {
+          fs.mkdirSync(folder + "/config");
         }
-        fs.writeFileSync(folder + "/config/paper-global.yml", paperGlobal, "utf8");
+        fs.writeFileSync(
+          folder + "/config/paper-global.yml",
+          paperGlobal,
+          "utf8"
+        );
       }
     } else {
-        data = fs.readFileSync(folder+"/server.properties", "utf8");
-
+      data = fs.readFileSync(folder + "/server.properties", "utf8");
     }
     let result = data;
     if (!server.adminServer) {
-     result = result.replace(/server-port=25565/g, "server-port=" + port);
+      result = result.replace(/server-port=25565/g, "server-port=" + port);
     }
 
     fs.writeFileSync(folder + "/server.properties", result, "utf8");
   }
-
-
-    
-
 
   //copy /server/template/Geyser-Spigot.jar to folder/plugins
 
@@ -376,12 +372,16 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         });
       } else {
         //quilt
-        exec(path + " " + args, { cwd: "servers/"+id }, (error, stdout, stderr) => {
-          console.log(error);
-          console.log(stdout);
-          console.log(stderr);
-          doneInstalling = true;
-        });
+        exec(
+          path + " " + args,
+          { cwd: "servers/" + id },
+          (error, stdout, stderr) => {
+            console.log(error);
+            console.log(stdout);
+            console.log(stderr);
+            doneInstalling = true;
+          }
+        );
       }
     } else {
       doneInstalling = true;
@@ -395,7 +395,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         states[id] = "starting";
         //-Dlog4j.configurationFile=consoleconfig.xml
         //get the forge version from the name of the folder inside /libraries/net/minecraftforge/forge/
-
 
         let execLine = "";
         let cwd = folder;
@@ -431,16 +430,15 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         });
         let count = 0;
         let intervalID = setInterval(() => {
-          
           if (states[id] == "stopping") {
             if (count < 5 * 24) {
-            ls.stdin.write("stop\n");
-            count++;
-          }else {
-            ls.kill();
-            clearInterval(intervalID);
+              ls.stdin.write("stop\n");
+              count++;
+            } else {
+              ls.kill();
+              clearInterval(intervalID);
+            }
           }
-        } 
         }, 200);
         eventEmitter.on("writeCmd", function () {
           ls.stdin.write(terminalInput + "\n");
@@ -455,10 +453,8 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     let count = 0;
 
     ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
-    
       terminalOutput[id] = stdout;
       states[id] = "false";
-
     });
     ls.stdout.on("data", (data) => {
       count++;
@@ -475,16 +471,15 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
     let count2 = 0;
     let intervalID = setInterval(() => {
-      
       if (states[id] == "stopping") {
         if (count2 < 5 * 24) {
-        ls.stdin.write("stop\n");
-        count++;
-      }else {
-        ls.kill();
-        clearInterval(intervalID);
+          ls.stdin.write("stop\n");
+          count++;
+        } else {
+          ls.kill();
+          clearInterval(intervalID);
+        }
       }
-    } 
     }, 200);
     eventEmitter.on("writeCmd", function () {
       ls.stdin.write(terminalInput + "\n");
@@ -531,7 +526,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       fs.mkdirSync(folder + "/plugins/Geyser-Spigot");
     }
     if (!server.adminServer) {
-    fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
+      fs.writeFileSync(folder + "/plugins/Geyser-Spigot/config.yml", text);
     }
 
     fs.copyFile(
@@ -569,9 +564,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       fs.mkdirSync(folder + "/plugins/Geyser-Velocity");
     }
     if (!server.adminServer) {
-
-    
-    fs.writeFileSync(folder + "/plugins/Geyser-Velocity/config.yml", text);
+      fs.writeFileSync(folder + "/plugins/Geyser-Velocity/config.yml", text);
     }
     fs.copyFile(
       "servers/template/downloading/cx_geyser-velocity_Geyser.jar",
