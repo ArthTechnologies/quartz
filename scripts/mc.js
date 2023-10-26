@@ -231,6 +231,8 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
               "cp -r " + folder + "/overrides/* " + folder + "/",
               (error, stdout, stderr) => {
                 if (fs.existsSync(folder + "/modrinth.index.json")) {
+                  //there's an odd bug where the file has no read access, so this changes that
+                  exec("chmod +r " + folder + "/modrinth.index.json", () => {});
                   modpack = JSON.parse(
                     fs.readFileSync(folder + "/modrinth.index.json")
                   );
