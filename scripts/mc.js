@@ -233,27 +233,26 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                 if (fs.existsSync(folder + "/modrinth.index.json")) {
                   //there's an odd bug where the file has no read access, so this changes that
                   exec("chmod +r " + folder + "/modrinth.index.json", (x) => {
-                    console.log(x);
                     modpack = JSON.parse(
                       fs.readFileSync(folder + "/modrinth.index.json")
                     );
-                  });
 
-                  //for each file in modpack.files, download it
-                  for (i in modpack.files) {
-                    //if the path has a backslash, convert it to slash, as backslashes are ignored in linux
-                    if (modpack.files[i].path.includes("\\")) {
-                      modpack.files[i].path = modpack.files[i].path.replace(
-                        /\\/g,
-                        "/"
+                    //for each file in modpack.files, download it
+                    for (i in modpack.files) {
+                      //if the path has a backslash, convert it to slash, as backslashes are ignored in linux
+                      if (modpack.files[i].path.includes("\\")) {
+                        modpack.files[i].path = modpack.files[i].path.replace(
+                          /\\/g,
+                          "/"
+                        );
+                      }
+                      files.downloadAsync(
+                        folder + "/" + modpack.files[i].path,
+                        modpack.files[i].downloads[0],
+                        () => {}
                       );
                     }
-                    files.downloadAsync(
-                      folder + "/" + modpack.files[i].path,
-                      modpack.files[i].downloads[0],
-                      () => {}
-                    );
-                  }
+                  });
                 }
               }
             );
