@@ -232,10 +232,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
               (error, stdout, stderr) => {
                 if (fs.existsSync(folder + "/modrinth.index.json")) {
                   //there's an odd bug where the file has no read access, so this changes that
-                  exec("chmod +r " + folder + "/modrinth.index.json", () => {});
-                  modpack = JSON.parse(
-                    fs.readFileSync(folder + "/modrinth.index.json")
-                  );
+                  exec("chmod +r " + folder + "/modrinth.index.json", (x) => {
+                    console.log(x);
+                    modpack = JSON.parse(
+                      fs.readFileSync(folder + "/modrinth.index.json")
+                    );
+                  });
 
                   //for each file in modpack.files, download it
                   for (i in modpack.files) {
