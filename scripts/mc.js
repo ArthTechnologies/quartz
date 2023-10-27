@@ -115,7 +115,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       cmd[i] = cmd[i].toLowerCase();
     }
   }
-
+  console.log("software & version", software, version);
   let path = "../../java/jdk-17.0.5+8/bin/java";
   let folder = "servers/" + id;
   if (software == "quilt") {
@@ -131,7 +131,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let installer = false;
 
   fs.writeFileSync(folder + "/eula.txt", "eula=true");
-  console.log("software & version", software, version);
+
   //make software all lowercase
   software = software.toLowerCase();
   switch (software) {
