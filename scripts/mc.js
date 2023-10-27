@@ -120,7 +120,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let folder = "servers/" + id;
   if (software == "quilt") {
     folder = "servers/" + id + "/server";
-    fs.mkdirSync(folder);
+    if (!fs.existsSync(folder)) {
+      fs.mkdirSync(folder);
+    }
   }
   console.log("software & version", software, version);
   let args = [
