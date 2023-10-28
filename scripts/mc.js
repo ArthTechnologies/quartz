@@ -431,7 +431,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
           }
 
           terminalOutput[id] = out.join("\n");
-          if (terminalOutput[id].indexOf("Done") > -1) {
+          if (terminalOutput[id].indexOf("Done") > -1 && state != "stopping") {
             //replace states[id] with true
             states[id] = "true";
           }
@@ -472,7 +472,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       }
 
       terminalOutput[id] = out.join("\n");
-      if (terminalOutput[id].indexOf("Done") > -1) {
+      if (terminalOutput[id].indexOf("Done") > -1 && state != "stopping") {
         //replace states[id] with true
         states[id] = "true";
       }
