@@ -42,7 +42,7 @@ function checkSubscription(email) {
         } else {
           if (subscriptions.data[0] != undefined) {
             console.log(subscriptions.data);
-            
+          }
           console.log("Not subscribed");
           return subscriptions;
         }
