@@ -487,7 +487,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         console.log(count2);
         if (count2 < 5 * 24) {
           ls.stdin.write("stop\n");
-          count++;
+          count2++;
         } else {
           ls.kill();
           clearInterval(intervalID);
