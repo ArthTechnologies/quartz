@@ -483,10 +483,8 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
     let count2 = 0;
     let intervalID = setInterval(() => {
-      if (id == 8) {
-        console.log(states[id]);
-      }
       if (states[id] == "stopping") {
+        console.log(count2);
         if (count2 < 5 * 24) {
           ls.stdin.write("stop\n");
           count++;
