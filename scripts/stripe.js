@@ -33,7 +33,10 @@ function checkSubscription(email) {
       if (err) {
         console.log(err);
       } else {
-        if (subscriptions.data[0].id.length > 0) {
+        if (
+          subscriptions.data[0] != undefined &&
+          subscriptions.data[0].id.length > 0
+        ) {
           console.log("Subscribed: " + subscriptions.data[0].id);
           return subscriptions;
         } else {
