@@ -40,6 +40,9 @@ function checkSubscription(email) {
           console.log("Subscribed: " + subscriptions.data[0].id);
           return subscriptions;
         } else {
+          if (subscriptions.data[0] != undefined) {
+            console.log(subscriptions.data);
+            
           console.log("Not subscribed");
           return subscriptions;
         }
