@@ -448,6 +448,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
               count++;
             } else {
               ls.kill();
+              states[id] = "false";
               clearInterval(intervalID);
             }
           }
@@ -491,6 +492,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
           count2++;
         } else {
           ls.kill();
+          states[id] = "false";
           clearInterval(intervalID);
         }
       }
