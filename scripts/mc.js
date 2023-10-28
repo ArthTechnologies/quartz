@@ -439,13 +439,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
             states[id] = "true";
           }
         });
-        let count = 0;
+        let count2 = 0;
         let intervalID = setInterval(() => {
-          console.log(count + states[id]);
+          console.log(count2 + states[id]);
           if (states[id] == "stopping") {
-            if (count < 5 * 24) {
+            if (count2 < 5 * 24) {
               ls.stdin.write("stop\n");
-              count++;
+              count2++;
             } else {
               ls.kill();
               states[id] = "false";
