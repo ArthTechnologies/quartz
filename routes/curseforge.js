@@ -14,7 +14,15 @@ Router.get("/search", (req, res) => {
     let results = [];
 
     const exec = require("child_process").exec;
-    
+    console.log(
+        `curl -X GET "https://api.curseforge.com/v1/mods/search` +
+        `?gameId=432` +
+        `&gameVersion=${gameVersion}` +
+        `&modLoaderType=${modLoaderType}` +
+        `&searchFilter=${searchFilter}` +
+        `&pageSize=10"` +
+        ` -H "x-api-key: ${apiKey}"`
+    )
     exec(
         `curl -X GET "https://api.curseforge.com/v1/mods/search` +
         `?gameId=432` +
