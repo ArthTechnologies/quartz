@@ -1196,7 +1196,7 @@ router.post("/:id/file/:path", function (req, res) {
             diffString += part.value;
           }
         });
-
+        console.log(diffString);
         let filename = fs.statSync(`servers/${req.params.id}/${path}`).mtimeMs;
         console.log(filename);
         fs.writeFileSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/`+
