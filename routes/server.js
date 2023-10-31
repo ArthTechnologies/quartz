@@ -1176,7 +1176,8 @@ router.post("/:id/file/:path", function (req, res) {
       filename != "server.json" &&
       filename != "velocity.toml" &&
       filename != "modrinth.index.json" &&
-      filename != "config.yml"
+      filename != "config.yml" &&
+      fs.statSync(`servers/${req.params.id}/${path}`).size <= 500000
     ) {
       fs.writeFileSync(`servers/${req.params.id}/${path}`, req.body.content);
       res.status(200).json({ msg: "Done" });
