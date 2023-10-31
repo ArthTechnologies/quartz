@@ -1185,7 +1185,7 @@ router.post("/:id/file/:path", function (req, res) {
         //write only the difference between the old file and the new file
         let oldFile = fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8");
         let newFile = req.body.content;
-        let diff = jsdiff.diffChars(oldFile, newFile);
+        let diff = dmp.diff_main(oldFile, newFile);
         let diffString = "";
         diff.forEach((part) => {
           if (part.added) {
