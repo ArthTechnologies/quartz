@@ -1145,7 +1145,9 @@ router.get("/:id/file/:path", function (req, res) {
     let returnArray = [];
 
     for (i in filesArray) {
-      returnArray.push(fs.statSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/${filesArray[i]}`).mtimeMs);
+      if (fs.existsSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/${filesArray[i]}`)) {
+        returnArray.push(fs.statSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/${filesArray[i]}`).mtimeMs);
+      }
     }
           res
             .status(200)
