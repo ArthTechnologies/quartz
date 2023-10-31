@@ -218,6 +218,10 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
 
+  if (!fs.existsSync(folder + "/.fileVersions")) {
+    fs.mkdirSync(folder + "/.fileVersions");
+  }
+
   if (c == "modded") {
     const { exec } = require("child_process");
 

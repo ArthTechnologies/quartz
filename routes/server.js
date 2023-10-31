@@ -1179,7 +1179,30 @@ router.post("/:id/file/:path", function (req, res) {
       filename != "config.yml" &&
       fs.statSync(`servers/${req.params.id}/${path}`).size <= 500000
     ) {
-      fs.writeFileSync(`servers/${req.params.id}/${path}`, req.body.content);
+      if (!fs.existsSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`)) {
+        fs.mkdirSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`);
+      }
+        //write only the difference between the old file and the new file
+        let oldFile = fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8");
+        let newFile = req.body.content;
+        let diff = jsdiff.diffChars(oldFile, newFile);
+        let diffString = "";
+        diff.forEach((part) => {
+          if (part.added) {
+            diffString += `+${part.value}`;
+          } else if (part.removed) {
+            diffString += `-${part.value}`;
+          } else {
+            diffString += part.value;
+          }
+        });
+
+        let filename = fs.statSync(`servers/${req.params.id}/${path}`).mtimeMs;
+        console.log(filename);
+        fs.writeFileSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/`+
+        `${filename}.${path.split(".")[path.split(".").length-1]}`, diffString);
+
+        fs.writeFileSync(`servers/${req.params.id}/${path}`, req.body.content);
       res.status(200).json({ msg: "Done" });
     } else {
       res.status(400).json({ msg: "Invalid request." });
