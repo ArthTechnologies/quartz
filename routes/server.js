@@ -1123,57 +1123,39 @@ router.get("/:id/file/:path", function (req, res) {
       if (fs.lstatSync(`servers/${req.params.id}/${path}`).isDirectory()) {
         res
           .status(200)
-          .json(fs.readdirSync(`servers/${req.params.id}/${path}`));
+          .json({content:"This is a directory, not a file. Listing files: " + fs.readdirSync(`servers/${req.params.id}/${path}`)});
       } else {
         let extension = path.split(".")[path.split(".").length - 1];
 
         if (extension == "png" || extension == "jepg" || extension == "svg") {
-          res.status(200).json("Image files can't be edited.");
+          res.status(200).json({content: "Image files can't be edited or viewed."});
         } else if (
           extension == "jar" ||
           extension == "exe" ||
           extension == "sh"
         ) {
-          res.status(200).json("Binary files can't be edited or viewed.");
+          res.status(200).json({content: "Binary files can't be edited or viewed."});
         } else if (
           fs.statSync(`servers/${req.params.id}/${path}`).size > 500000
         ) {
-          res.status(200).json("File too large.");
+          res.status(200).json({content: "File too large."});
         } else {
+          //get the file's previous versions
+          let filesArray = fs.readdirSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`);
+    let returnArray = [];
+
+    for (i in filesArray) {
+      returnArray.push(fs.statSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/${filesArray[i]}`).mtimeMs);
+    }
           res
             .status(200)
-            .json(fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8"));
+            .json({ content: fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8"), versions: returnArray});
         }
       }
     } else {
       res.status(200).json([]);
     }
   }
-});
-
-router.get("/:id/file/:path/versions", function (req, res) {
-  email = req.headers.email;
-  token = req.headers.token;
-  account = require("../accounts/" + email + ".json");
-  server = require("../servers/" + req.params.id + "/server.json");
-  if (
-    token === account.token &&
-    server.accountId == account.accountId &&
-    fs.existsSync(`servers/${req.params.id}/`)
-  ) {
-    let filesArray = fs.readdirSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`);
-    let returnArray = [];
-
-    for (i in filesArray) {
-      returnArray.push(fs.statSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/${filesArray[i]}`).mtimeMs);
-    }
-
-    res.status(200).json(returnArray);
-  } else {
-    res.status(401).json({ msg: "Invalid credentials." });
-  }
-
-
 });
 
 router.post("/:id/file/:path", function (req, res) {
