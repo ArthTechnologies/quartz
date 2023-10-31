@@ -1148,10 +1148,11 @@ router.get("/:id/file/:path", function (req, res) {
     for (i in filesArray) {
         returnArray.push(fs.statSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/${filesArray[i]}`).mtimeMs);
     }
-          res
-            .status(200)
-            .json({ content: fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8"), versions: returnArray});
+
         }
+        res
+        .status(200)
+        .json({ content: fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8"), versions: returnArray});
       }
       }
     } else {
