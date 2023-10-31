@@ -1141,18 +1141,18 @@ router.get("/:id/file/:path", function (req, res) {
           res.status(200).json({content: "File too large."});
         } else {
           //get the file's previous versions
+          if (fs.existsSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`)) {
           let filesArray = fs.readdirSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`);
     let returnArray = [];
 
     for (i in filesArray) {
-      if (fs.existsSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/${filesArray[i]}`)) {
         returnArray.push(fs.statSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/${filesArray[i]}`).mtimeMs);
-      }
     }
           res
             .status(200)
             .json({ content: fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8"), versions: returnArray});
         }
+      }
       }
     } else {
       res.status(200).json([]);
