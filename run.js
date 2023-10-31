@@ -472,6 +472,7 @@ app.use("/servers", require("./routes/servers"));
 app.use("/settings", require("./routes/settings"));
 app.use("/terminal", require("./routes/terminal"));
 app.use("/accounts", require("./routes/accounts"));
+app.use("/curseforge", require("./routes/curseforge"));
 app.use("/node", require("./routes/node"));
 
 // port
