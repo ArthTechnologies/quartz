@@ -5,6 +5,7 @@ const f = require("../scripts/mc.js");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const data = require("../stores/data.json");
+const JsDiff = require("diff");
 
 const fs = require("fs");
 
@@ -1185,7 +1186,7 @@ router.post("/:id/file/:path", function (req, res) {
         //write only the difference between the old file and the new file
         let oldFile = fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8");
         let newFile = req.body.content;
-        let diff = dmp.diff_main(oldFile, newFile);
+        let diff = JsDiff.diffLines(oldFile, newFile);
         let diffString = "";
         diff.forEach((part) => {
           if (part.added) {
