@@ -59,13 +59,16 @@ function readFilesRecursive(directoryPath) {
   const files = fs.readdirSync(directoryPath);
 
   files.forEach((file) => {
-    const curPath = `${directoryPath}/${file}`;
+    //if it isn't a hidden file/directory
+    if (file.charAt(0) != ".") {
+      const curPath = `${directoryPath}/${file}`;
 
     if (fs.lstatSync(curPath).isDirectory()) {
       const subDir = readFilesRecursive(curPath);
       result.push([file + ":" + curPath, subDir]);
     } else {
       result.push(file + ":" + curPath);
+    }
     }
   });
 
