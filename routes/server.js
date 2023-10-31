@@ -1151,6 +1151,31 @@ router.get("/:id/file/:path", function (req, res) {
   }
 });
 
+router.get("/:id/file/:path/versions", function (req, res) {
+  email = req.headers.email;
+  token = req.headers.token;
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + "/server.json");
+  if (
+    token === account.token &&
+    server.accountId == account.accountId &&
+    fs.existsSync(`servers/${req.params.id}/`)
+  ) {
+    let filesArray = fs.readdirSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`);
+    let returnArray = [];
+
+    for (i in filesArray) {
+      returnArray.push(fs.statSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/${filesArray[i]}`).mtimeMs);
+    }
+
+    res.status(200).json(returnArray);
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+
+
+});
+
 router.post("/:id/file/:path", function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
