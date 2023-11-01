@@ -20,7 +20,9 @@ Router.get("/search", (req, res) => {
         `&gameVersion=${gameVersion}` +
         `&modLoaderType=${modLoaderType}` +
         `&searchFilter=${searchFilter}` +
-        `&pageSize=10"` +
+        `&pageSize=10` +
+        `&sortField=2` +
+        `&sortOrder=desc"` +
         ` -H 'x-api-key: ${apiKey}'`,
         (error, stdout, stderr) => {
             if (!error && stdout != undefined) {
