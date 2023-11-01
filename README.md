@@ -20,6 +20,8 @@ The main panels currently used for running Minecraft servers are bulky, slow, ha
 2. Install the packages with `npm i`
 3. Run with `node run`
 
+You can update quartz by running `git pull` command inside your quartz folder.
+
 ## How to configure
 
 - stores/settings.json is where you can modify settings.
