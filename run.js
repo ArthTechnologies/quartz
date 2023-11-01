@@ -27,7 +27,7 @@ if (!fs.existsSync("./stores")) {
       process.env.stripe_key +
       '", "forwardingSecret":"' +
       crypto.randomBytes(12).toString("hex") +
-      '"}'
+      '", "curseforgeKey":"' + process.env.curseforge_key + '"}'
   );
 
   fs.writeFileSync(
@@ -41,7 +41,7 @@ if (!fs.existsSync("./stores")) {
       "latestVersion": "1.19.4",
       "maxServers": 8,
       "jarsMcUrl": "https://api.jarsmc.xyz/",
-      "serverStorageLimit": 1000000000,
+      "serverStorageLimit": 1000000000
     }`
   );
 } 
