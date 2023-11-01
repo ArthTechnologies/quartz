@@ -6,7 +6,6 @@ const cors = require("cors");
 const rsa = require("node-rsa");
 const fs = require("fs");
 const crypto = require("crypto");
-const files = require("./scripts/files.js");
 
 exec = require("child_process").exec;
 require("dotenv").config();
@@ -45,8 +44,9 @@ if (!fs.existsSync("./stores")) {
       "serverStorageLimit": 1000000000,
     }`
   );
-} else {
-}
+} 
+const files = require("./scripts/files.js");
+
 if (!fs.existsSync("uploads")) {
   fs.mkdirSync("uploads");
 }
