@@ -21,7 +21,7 @@ Router.get("/search", (req, res) => {
         `&modLoaderType=${modLoaderType}` +
         `&searchFilter=${searchFilter}` +
         `&pageSize=10"` +
-        ` -H "x-api-key: ${apiKey}"`
+        ` -H "x-api-key: '${apiKey}'"`
     )
     exec(
         `curl -X GET "https://api.curseforge.com/v1/mods/search` +
@@ -30,7 +30,7 @@ Router.get("/search", (req, res) => {
         `&modLoaderType=${modLoaderType}` +
         `&searchFilter=${searchFilter}` +
         `&pageSize=10"` +
-        ` -H "x-api-key: ${apiKey}"`,
+        ` -H "x-api-key: '${apiKey}'"`,
         (error, stdout, stderr) => {
             if (!error && stdout != undefined) {
                 console.log(stdout)
