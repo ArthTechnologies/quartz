@@ -1,4 +1,2 @@
-Unmodified versions of Terralith, Nullscape, Structory and Incendium are distributed here. Credit to Stardust Labs for making all these packs. You can view the Stardust Labs lisence at https://github.com/Stardust-Labs-MC/Terralith/blob/main/license.txt
-Credit to https://serverjars.com/ for their "Auto-Updater" jar, which is named server.jar here. 
-Credit to https://geysermc.org for the Geyser and Floodgate plugins, which allow for bedrock-java crossplay. Geyser is under the MIT lisence.
-Credit to kejonMC for GeyserUpdater, which keeps Geyser up to date. Licensed under GPLv3.
+Credit to https://jarsmc.xyz/ for their API providing minecraft serverjars, geyser/floodgate plugins, and worldgen mods.
+Credit to https://serverjars.com/ for their API providing minecraft serverjars.
