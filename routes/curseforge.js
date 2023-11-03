@@ -11,6 +11,7 @@ Router.get("/search", (req, res) => {
     let gameVersion = req.query.version;
     let modLoaderType = req.query.loader;
     let searchFilter = req.query.query;
+    let classId = req.query.classId;
     let results = [];
 
     const exec = require("child_process").exec;
@@ -20,6 +21,7 @@ Router.get("/search", (req, res) => {
         `&gameVersion=${gameVersion}` +
         `&modLoaderType=${modLoaderType}` +
         `&searchFilter=${searchFilter}` +
+        `&classId=${classId}` +
         `&pageSize=10` +
         `&sortField=2` +
         `&sortOrder=desc"` +
