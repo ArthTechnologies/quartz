@@ -46,7 +46,7 @@ Router.get("/search", (req, res) => {
         (error, stdout, stderr) => {
             if (!error && stdout != undefined) {
                 console.log(stdout)
-            res.status(200).json(stdout);
+            res.status(200).json(JSON.parse(stdout).data);
         } else {
             res.status(500).json({ msg: "Internal server error." });
         }
