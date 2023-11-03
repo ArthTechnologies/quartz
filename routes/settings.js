@@ -36,6 +36,9 @@ router.get(`/`, function (req, res) {
   res.json(settings);
 });
 
+//To-DO: This route needs to be locked behind some kind of admin system, otherwise anyone could remotely change the panel's settings.
+
+/*
 router.post(`/`, function (req, res) {
   var keyMatch = true;
   //add cors header
@@ -71,5 +74,5 @@ router.post(`/`, function (req, res) {
     res.json(settings);
   }
 });
-
+*/
 module.exports = router;
