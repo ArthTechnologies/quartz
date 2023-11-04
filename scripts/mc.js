@@ -276,6 +276,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
           folder + "/modpack.zip",
           modpackURL,
           (error, stdout, stderr) => {
+            console.log(error + stdout + stderr);
             exec(
               "unzip " + folder + "/modpack.zip" + " -d " + folder,
               (error, stdout, stderr) => {
