@@ -300,6 +300,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
 
                           if (stdout != undefined) {
+                            console.log(`curl -o ${folder}/mods/cf_${modpack.files[i].projectID}_NameUnknown.jar -LO "${JSON.parse(stdout).data}"`);
                             files.downloadAsync(
                               folder + "/mods/cf_" + modpack.files[i].projectID + "_NameUnknown.jar",
                               JSON.parse(stdout).data,
