@@ -115,7 +115,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       cmd[i] = cmd[i].toLowerCase();
     }
   }
-  console.log(modapckURL + "modpackURL")
+  console.log(modpackURL + "modpackURL")
   let path = "../../java/jdk-17.0.5+8/bin/java";
   let folder = "servers/" + id;
   if (software == "quilt") {
