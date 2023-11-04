@@ -226,7 +226,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   if (c == "modded") {
     const { exec } = require("child_process");
-
+    console.log(modapckURL + " " + modpackURL)
     let modpack;
     if (modpackURL != undefined) {
       if (modpackURL.includes("modrinth")) {
