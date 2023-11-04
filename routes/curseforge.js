@@ -28,7 +28,7 @@ Router.get("/search", (req, res) => {
         ` -H 'x-api-key: ${apiKey}'`,
         (error, stdout, stderr) => {
             if (!error && stdout != undefined) {
-                console.log(stdout)
+=
             res.status(200).json(JSON.parse(stdout));
         } else {
             res.status(500).json({ msg: "Internal server error." });
@@ -47,7 +47,7 @@ Router.get("/search", (req, res) => {
         ` -H 'x-api-key: ${apiKey}'`,
         (error, stdout, stderr) => {
             if (!error && stdout != undefined && JSON.parse(stdout).data != undefined) {
-                console.log(stdout)
+=
             res.status(200).json(JSON.parse(stdout).data);
         } else {
             res.status(500).json({ msg: "Internal server error." });
@@ -66,7 +66,7 @@ Router.get("/search", (req, res) => {
         ` -H 'x-api-key: ${apiKey}'`,
         (error, stdout, stderr) => {
             if (!error && stdout != undefined && JSON.parse(stdout).data != undefined) {
-                console.log(stdout)
+=
             res.status(200).json(JSON.parse(stdout).data);
         } else {
             res.status(500).json({ msg: "Internal server error." });
