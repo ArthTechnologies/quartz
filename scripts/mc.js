@@ -476,9 +476,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
           let forgeVersion = fs.readdirSync(
             folder + "/libraries/net/minecraftforge/forge/"
           )[0];
+
           execLine =
             path +
             ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
+            if (version == "1.16.5") {
+              execLine = path + `@libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-server.jar "$@"`;
+            }
         } else {
           path = "../" + path;
           execLine = path + " -jar quilt-server-launch.jar nogui";
