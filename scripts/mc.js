@@ -272,6 +272,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         );
         //curseforge download URLs are usually from 'forgecdn.net', so we check for 'forge' instead of 'curseforge'.
       } else if (modpackURL.includes("forge")) {
+        const apiKey = secrets.curseforgeKey;
         console.log(`curl -o ${folder}/modpack.zip -LO "${modpackURL}"`);
         files.downloadAsync(
           folder + "/modpack.zip",
@@ -295,8 +296,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     
                         
                         for (i in modpack.files) {
-                          console.log(`https://api.curseforge.com/v1/mods/${modpack.files[i].projectID}/files/${modpack.files[i].fileID}/download-url`);
-                          files.GET(`https://api.curseforge.com/v1/mods/${modpack.files[i].projectID}/files/${modpack.files[i].fileID}/download-url`, (error, stdout, stderr) => {
+                          console.log(`curl -X GET "https://api.curseforge.com/v1/mods/${modpack.files[i].projectID}/files/${modpack.files[i].fileID}/download-url" -H 'x-api-key: ${apiKey}'`);
+                          exec(`curl -X GET "https://api.curseforge.com/v1/mods/${modpack.files[i].projectID}/files/${modpack.files[i].fileID}/download-url" -H 'x-api-key: ${apiKey}'`,
+                           (error, stdout, stderr) => {
 
 
                           if (stdout != undefined) {
