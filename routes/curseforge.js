@@ -38,6 +38,25 @@ Router.get("/search", (req, res) => {
     }
    });
 
+   Router.get("/:id", (req, res) => {
+    if (apiKey != undefined) {
+    let id = req.params.id;
+    const exec = require("child_process").exec;
+    exec(
+        `curl -X GET "https://api.curseforge.com/v1/mods/${id}"` +
+        ` -H 'x-api-key: ${apiKey}'`,
+        (error, stdout, stderr) => {
+            if (!error && stdout != undefined && JSON.parse(stdout).data != undefined) {
+                console.log(stdout)
+            res.status(200).json(JSON.parse(stdout).data);
+        } else {
+            res.status(500).json({ msg: "Internal server error." });
+        }
+        }
+    );
+    }
+   });
+   
    Router.get("/:id/description", (req, res) => {
     if (apiKey != undefined) {
     let id = req.params.id;
