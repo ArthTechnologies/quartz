@@ -124,15 +124,9 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           filename: file,
           date: fs.statSync(`${path}/${modtype}/${file}`).mtimeMs,
         });
-      } else if (file.startsWith("lr_")) {
-        mods.push({
-          platform: file.split("_")[0],
-          id: file.split("_")[1],
-          name: file.split("_")[2].replace(".jar", ""),
-          filename: file,
-          date: fs.statSync(`${path}/${modtype}/${file}`).mtimeMs,
-        });
-      } else if (file.startsWith("cx_")) {
+      } else if (file.startsWith("lr_") |
+        file.startsWith("cx_") |
+        file.startsWith("cf_")) {
         mods.push({
           platform: file.split("_")[0],
           id: file.split("_")[1],
