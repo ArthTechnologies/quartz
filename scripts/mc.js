@@ -213,11 +213,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
     //fs.writeFileSync(folder + "/world.zip", worldFile);
-    if (!fs.existsSync(folder + "/mods/")) {
-      fs.mkdirSync(folder + "/mods/");
-    }
   }
-
+  if (!fs.existsSync(folder + "/plugins")) {
+    fs.mkdirSync(folder + "/plugins");
+  }
+  if (!fs.existsSync(folder + "/mods/")) {
+    fs.mkdirSync(folder + "/mods/");
+  }
   if (!fs.existsSync(folder + "/.fileVersions")) {
     fs.mkdirSync(folder + "/.fileVersions");
   }
@@ -411,9 +413,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   //copy /server/template/Geyser-Spigot.jar to folder/plugins
 
-  if (!fs.existsSync(folder + "/plugins")) {
-    fs.mkdirSync(folder + "/plugins");
-  }
+
   const { exec } = require("child_process");
   let ls;
   let interval = 0;
