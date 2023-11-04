@@ -228,92 +228,94 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     const { exec } = require("child_process");
 
     let modpack;
-    if (modpackURL.includes("modrinth")) {
-    files.downloadAsync(
-      folder + "/modpack.mrpack",
-      modpackURL,
-      (error, stdout, stderr) => {
-        exec(
-          "unzip " + folder + "/modpack.mrpack" + " -d " + folder,
+    if (modpackURL != undefined) {
+      if (modpackURL.includes("modrinth")) {
+        files.downloadAsync(
+          folder + "/modpack.mrpack",
+          modpackURL,
           (error, stdout, stderr) => {
             exec(
-              "cp -r " + folder + "/overrides/* " + folder + "/",
+              "unzip " + folder + "/modpack.mrpack" + " -d " + folder,
               (error, stdout, stderr) => {
-                if (fs.existsSync(folder + "/modrinth.index.json")) {
-                  //there's an odd bug where the file has no read access, so this changes that
-                  exec("chmod +r " + folder + "/modrinth.index.json", (x) => {
-                    modpack = JSON.parse(
-                      fs.readFileSync(folder + "/modrinth.index.json")
-                    );
-
-                    //for each file in modpack.files, download it
-                    for (i in modpack.files) {
-                      //if the path has a backslash, convert it to slash, as backslashes are ignored in linux
-                      if (modpack.files[i].path.includes("\\")) {
-                        modpack.files[i].path = modpack.files[i].path.replace(
-                          /\\/g,
-                          "/"
+                exec(
+                  "cp -r " + folder + "/overrides/* " + folder + "/",
+                  (error, stdout, stderr) => {
+                    if (fs.existsSync(folder + "/modrinth.index.json")) {
+                      //there's an odd bug where the file has no read access, so this changes that
+                      exec("chmod +r " + folder + "/modrinth.index.json", (x) => {
+                        modpack = JSON.parse(
+                          fs.readFileSync(folder + "/modrinth.index.json")
                         );
-                      }
-                      files.downloadAsync(
-                        folder + "/" + modpack.files[i].path,
-                        modpack.files[i].downloads[0],
-                        () => {}
-                      );
+    
+                        //for each file in modpack.files, download it
+                        for (i in modpack.files) {
+                          //if the path has a backslash, convert it to slash, as backslashes are ignored in linux
+                          if (modpack.files[i].path.includes("\\")) {
+                            modpack.files[i].path = modpack.files[i].path.replace(
+                              /\\/g,
+                              "/"
+                            );
+                          }
+                          files.downloadAsync(
+                            folder + "/" + modpack.files[i].path,
+                            modpack.files[i].downloads[0],
+                            () => {}
+                          );
+                        }
+                      });
                     }
-                  });
-                }
+                  }
+                );
               }
             );
           }
         );
-      }
-    );
-    //curseforge download URLs are usually from 'forgecdn.net', so we check for 'forge' instead of 'curseforge'.
-  } else if (modpackURL.includes("forge")) {
-    files.downloadAsync(
-      folder + "/modpack.zip",
-      modpackURL,
-      (error, stdout, stderr) => {
-        exec(
-          "unzip " + folder + "/modpack.zip" + " -d " + folder,
+        //curseforge download URLs are usually from 'forgecdn.net', so we check for 'forge' instead of 'curseforge'.
+      } else if (modpackURL.includes("forge")) {
+        files.downloadAsync(
+          folder + "/modpack.zip",
+          modpackURL,
           (error, stdout, stderr) => {
             exec(
-              "cp -r " + folder + "/overrides/* " + folder + "/",
+              "unzip " + folder + "/modpack.zip" + " -d " + folder,
               (error, stdout, stderr) => {
-                if (fs.existsSync(folder + "/manifest.json")) {
-                  //there's an odd bug where the file has no read access, so this changes that
-                  exec("chmod +r " + folder + "/manifest.json", (x) => {
-                    fs.copyFileSync(folder + "/manifest.json", folder + "/curseforge.index.json");
-                    modpack = JSON.parse(
-                      fs.readFileSync(folder + "/curseforge.index.json")
-                    );
-
-                    //It doesn't look like curseforge modpacks typically have files that aren't in the overrides folder,
-                    //so this is disabled for now. If the need arises, we'll have to make a request to the CurseForge API
-                    //for the download link because the file object only provides the ID, not the download link.
-                    /*for (i in modpack.files) {
-                      //if the path has a backslash, convert it to slash, as backslashes are ignored in linux
-                      if (modpack.files[i].path.includes("\\")) {
-                        modpack.files[i].path = modpack.files[i].path.replace(
-                          /\\/g,
-                          "/"
+                exec(
+                  "cp -r " + folder + "/overrides/* " + folder + "/",
+                  (error, stdout, stderr) => {
+                    if (fs.existsSync(folder + "/manifest.json")) {
+                      //there's an odd bug where the file has no read access, so this changes that
+                      exec("chmod +r " + folder + "/manifest.json", (x) => {
+                        fs.copyFileSync(folder + "/manifest.json", folder + "/curseforge.index.json");
+                        modpack = JSON.parse(
+                          fs.readFileSync(folder + "/curseforge.index.json")
                         );
-                      }
-                      files.downloadAsync(
-                        folder + "/" + modpack.files[i].path,
-                        modpack.files[i].url,
-                        () => {}
-                      );
-                    }*/
-                  });
-                }
+    
+                        //It doesn't look like curseforge modpacks typically have files that aren't in the overrides folder,
+                        //so this is disabled for now. If the need arises, we'll have to make a request to the CurseForge API
+                        //for the download link because the file object only provides the ID, not the download link.
+                        /*for (i in modpack.files) {
+                          //if the path has a backslash, convert it to slash, as backslashes are ignored in linux
+                          if (modpack.files[i].path.includes("\\")) {
+                            modpack.files[i].path = modpack.files[i].path.replace(
+                              /\\/g,
+                              "/"
+                            );
+                          }
+                          files.downloadAsync(
+                            folder + "/" + modpack.files[i].path,
+                            modpack.files[i].url,
+                            () => {}
+                          );
+                        }*/
+                      });
+                    }
+                  }
+                );
               }
             );
-          }
-        );
-    });
-    }
+        });
+        }
+      }
 }
 
   if (software != "quilt") {
