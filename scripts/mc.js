@@ -293,23 +293,23 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                           fs.readFileSync(folder + "/curseforge.index.json")
                         );
     
-                        //It doesn't look like curseforge modpacks typically have files that aren't in the overrides folder,
-                        //so this is disabled for now. If the need arises, we'll have to make a request to the CurseForge API
-                        //for the download link because the file object only provides the ID, not the download link.
-                        /*for (i in modpack.files) {
-                          //if the path has a backslash, convert it to slash, as backslashes are ignored in linux
-                          if (modpack.files[i].path.includes("\\")) {
-                            modpack.files[i].path = modpack.files[i].path.replace(
-                              /\\/g,
-                              "/"
+                        
+                        for (i in modpack.files) {
+                          files.GET("https://api.curseforge.com/v1/mods/{modId}/files/{fileId}/download-url", (error, stdout, stderr) => {
+
+
+                          if (stdout != undefined) {
+                            files.downloadAsync(
+                              folder + "/cf_" + modpack.files[i].projectID + "_NameUnknown.jar",
+                              JSON.parse(stdout).data,
+                              (error, stdout, stderr) => {
+                                console.log(stdout)
+                              }
                             );
                           }
-                          files.downloadAsync(
-                            folder + "/" + modpack.files[i].path,
-                            modpack.files[i].url,
-                            () => {}
-                          );
-                        }*/
+                        });
+                        }
+
                       });
                     }
                   }
