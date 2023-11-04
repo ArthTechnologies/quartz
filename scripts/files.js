@@ -2,11 +2,11 @@ const { createHash, scryptSync, randomBytes } = require("crypto");
 const secrets = require("../stores/secrets.json");
 
 function download(file, url) {
-  exec(`curl -o ${file} -LO ${url}`);
+  exec(`curl -o ${file} -LO "${url}"`);
 }
 
 function downloadAsync(file, url, callback) {
-  exec(`curl -o ${file} -LO ${url}`, (error, stdout, stderr) => {
+  exec(`curl -o ${file} -LO "${url}"`, (error, stdout, stderr) => {
     callback(stdout);
   });
 }
