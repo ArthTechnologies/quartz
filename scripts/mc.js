@@ -3,6 +3,7 @@ var eventEmitter = new events.EventEmitter();
 fs = require("fs");
 let states = [];
 const files = require("./files.js");
+const secrets = require("../stores/secrets.json");  
 const { time, Console } = require("console");
 const { randomBytes } = require("crypto");
 const { stat } = require("fs");
