@@ -153,11 +153,13 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     if (modpack != undefined) {
       if (modpack.files.length > 0) {
         for (i in modpack.files) {
-          if (modpack.files[i].path.includes("\\")) {
-            modpack.files[i].path = modpack.files[i].path.replace(/\\/g, "/");
-          }
-          if (!fs.existsSync(`${path}/` + modpack.files[i].path)) {
-            modpack.files.splice(i, 1);
+          if (modpack.files[i].path != undefined) {
+            if (modpack.files[i].path.includes("\\")) {
+              modpack.files[i].path = modpack.files[i].path.replace(/\\/g, "/");
+            }
+            if (!fs.existsSync(`${path}/` + modpack.files[i].path)) {
+              modpack.files.splice(i, 1);
+            }
           }
         }
       }
