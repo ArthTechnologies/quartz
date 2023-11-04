@@ -225,9 +225,12 @@ router.post(`/:id/add/:modtype`, function (req, res) {
       pluginUrl.startsWith("https://github.com/") |
       pluginUrl.startsWith("https://edge.forgecdn.net/") 
     ) {
+      let platform = "lr";
+      if (platform.startsWith("https://github.com/")) platform = "gh";  
+      if (platform.startsWith("https://edge.forgecdn.net/")) platform = "cf";
       if (pluginUrl != lastPlugin) {
         files.download(
-          `servers/${id}/${modtype}s/${pluginId}_${pluginName}.jar`,
+          `servers/${id}/${modtype}s/${platform}_${pluginId}_${pluginName}.jar`,
           pluginUrl
         );
         lastPlugin = pluginUrl;
