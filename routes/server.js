@@ -223,7 +223,7 @@ router.post(`/:id/add/:modtype`, function (req, res) {
     if (
       pluginUrl.startsWith("https://cdn.modrinth.com/data/") |
       pluginUrl.startsWith("https://github.com/") |
-      pluginUrl.startsWith("https://edge.forgecdn.net/") |
+      pluginUrl.startsWith("https://edge.forgecdn.net/") 
     ) {
       if (pluginUrl != lastPlugin) {
         files.download(
