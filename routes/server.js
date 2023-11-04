@@ -110,6 +110,8 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     }
     if (fs.existsSync(`${path}/modrinth.index.json`)) {
       modpack = require(`../${path}/modrinth.index.json`);
+    } else if (fs.existsSync(`${path}/curseforge.index.json`)) {
+      modpack = require(`../${path}/curseforge.index.json`);
     }
 
     fs.readdirSync(`${path}/${modtype}`).forEach((file) => {
@@ -220,7 +222,8 @@ router.post(`/:id/add/:modtype`, function (req, res) {
     modtype = req.params.modtype;
     if (
       pluginUrl.startsWith("https://cdn.modrinth.com/data/") |
-      pluginUrl.startsWith("https://github.com/")
+      pluginUrl.startsWith("https://github.com/") |
+      pluginUrl.startsWith("https://edge.forgecdn.net/") |
     ) {
       if (pluginUrl != lastPlugin) {
         files.download(
