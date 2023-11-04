@@ -297,24 +297,26 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     
                         
                         for (i in modpack.files) {
-                          console.log(modpack.files[i].projectID)
-                          console.log(`curl -X GET "https://api.curseforge.com/v1/mods/${modpack.files[i].projectID}/files/${modpack.files[i].fileID}/download-url" -H 'x-api-key: ${apiKey}'`);
-                          exec(`curl -X GET "https://api.curseforge.com/v1/mods/${modpack.files[i].projectID}/files/${modpack.files[i].fileID}/download-url" -H 'x-api-key: ${apiKey}'`,
+                          let projectID = modpack.files[i].projectID;
+                          let fileID = modpack.files[i].fileID;
+                          console.log(projectID)
+                          console.log(`curl -X GET "https://api.curseforge.com/v1/mods/${projectID}/files/${fileID}/download-url" -H 'x-api-key: ${apiKey}'`);
+                          exec(`curl -X GET "https://api.curseforge.com/v1/mods/${projectID}/files/${fileID}/download-url" -H 'x-api-key: ${apiKey}'`,
                            (error, stdout, stderr) => {
 
 
                           if (stdout != undefined) {
                             try {
-                              console.log(`curl -o ${folder}/mods/cf_${modpack.files[i].projectID}_NameUnknown.jar -LO "${JSON.parse(stdout).data}"`);
+                              console.log(`curl -o ${folder}/mods/cf_${projectID}_NameUnknown.jar -LO "${JSON.parse(stdout).data}"`);
                             files.downloadAsync(
-                              folder + "/mods/cf_" + modpack.files[i].projectID + "_NameUnknown.jar",
+                              folder + "/mods/cf_" + projectID + "_NameUnknown.jar",
                               JSON.parse(stdout).data,
                               (error, stdout, stderr) => {
                                 console.log(stdout)
                               }
                             );
                             } catch {
-                              console.log("error parsing json for " + modpack.files[i].projectID)
+                              console.log("error parsing json for " + projectID)
                             }
                           }
                         });
