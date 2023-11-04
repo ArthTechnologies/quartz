@@ -295,8 +295,8 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     
                         
                         for (i in modpack.files) {
-                          console.log(`https://api.curseforge.com/v1/mods/${modpack.files[i].modID}/files/${modpack.files[i].fileID}/download-url`);
-                          files.GET(`https://api.curseforge.com/v1/mods/${modpack.files[i].modID}/files/${modpack.files[i].fileID}/download-url`, (error, stdout, stderr) => {
+                          console.log(`https://api.curseforge.com/v1/mods/${modpack.files[i].projectID}/files/${modpack.files[i].fileID}/download-url`);
+                          files.GET(`https://api.curseforge.com/v1/mods/${modpack.files[i].projectID}/files/${modpack.files[i].fileID}/download-url`, (error, stdout, stderr) => {
 
 
                           if (stdout != undefined) {
