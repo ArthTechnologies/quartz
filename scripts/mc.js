@@ -297,6 +297,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     
                         
                         for (i in modpack.files) {
+                          console.log(modpack.files[i].projectID)
                           console.log(`curl -X GET "https://api.curseforge.com/v1/mods/${modpack.files[i].projectID}/files/${modpack.files[i].fileID}/download-url" -H 'x-api-key: ${apiKey}'`);
                           exec(`curl -X GET "https://api.curseforge.com/v1/mods/${modpack.files[i].projectID}/files/${modpack.files[i].fileID}/download-url" -H 'x-api-key: ${apiKey}'`,
                            (error, stdout, stderr) => {
