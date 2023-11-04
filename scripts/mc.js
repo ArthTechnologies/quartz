@@ -272,7 +272,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         );
         //curseforge download URLs are usually from 'forgecdn.net', so we check for 'forge' instead of 'curseforge'.
       } else if (modpackURL.includes("forge")) {
-        console.log(`curl -o ${folder + "/modpack.zip"} -LO ${modpackURL}`);
+        console.log(`curl -o ${folder}/modpack.zip -LO ${modpackURL}`);
         files.downloadAsync(
           folder + "/modpack.zip",
           modpackURL,
