@@ -295,12 +295,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     
                         
                         for (i in modpack.files) {
-                          files.GET("https://api.curseforge.com/v1/mods/{modId}/files/{fileId}/download-url", (error, stdout, stderr) => {
+                          files.GET(`https://api.curseforge.com/v1/mods/${modId}/files/${fileId}/download-url`, (error, stdout, stderr) => {
 
 
                           if (stdout != undefined) {
                             files.downloadAsync(
-                              folder + "/cf_" + modpack.files[i].projectID + "_NameUnknown.jar",
+                              folder + "/mods/cf_" + modpack.files[i].projectID + "_NameUnknown.jar",
                               JSON.parse(stdout).data,
                               (error, stdout, stderr) => {
                                 console.log(stdout)
