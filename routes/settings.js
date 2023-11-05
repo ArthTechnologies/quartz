@@ -26,10 +26,12 @@ router.get(`/`, function (req, res) {
     "Origin, X-Requested-With, Content-Type, Accept"
   );
   let returnObject = {};
-  //add everything from config and everything from data.json to returnObject
-  for (var key in config) {
-    returnObject[key] = config[key];
-  }
+  //add every non-secret from config and everything from data.json to returnObject
+  returnObject["address"] = config.address;
+  returnObject["enablePay"] = config.enablePay;
+  returnObject["enableAuth"] = config.enableAuth;
+  returnObject["maxServers"] = config.maxServers;
+  returnObject["serverStorageLimit"] = config.serverStorageLimit;
   for (var key in require("../assets/data.json")) {
     returnObject[key] = require("../assets/data.json")[key];
   }
