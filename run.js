@@ -353,30 +353,32 @@ function getLatestVersion() {
 }
 
 function verifySubscriptions() {
-  const accounts = fs.readdirSync("accounts");
-  for (i in accounts) {
-    if (accounts[i].split(".")[accounts[i].split(".").length - 1] == "json") {
-      const account = require(`./accounts/${accounts[i]}`);
-      if (!account.bypassStripe) {
-        const amountOfServers = account.servers.length;
-        s.checkSubscription(account.email, (data) => {
-          if (data.data.length < amountOfServers) {
-            for (j in account.servers) {
-              const ls = require("child_process").execSync;
-              f.stopAsync(account.servers[j].id, () => {
-                ls(
-                  `mv servers/${account.servers[j].id} backup/disabledServers${account.servers[j].id}`
-                );
-              });
-            }
+  if ((config.stripeKey != undefined || "undefined") && config.enablePay) {
+    const accounts = fs.readdirSync("accounts");
+    for (i in accounts) {
+      if (accounts[i].split(".")[accounts[i].split(".").length - 1] == "json") {
+        const account = require(`./accounts/${accounts[i]}`);
+        if (!account.bypassStripe) {
+          const amountOfServers = account.servers.length;
+          s.checkSubscription(account.email, (data) => {
+            if (data.data.length < amountOfServers) {
+              for (j in account.servers) {
+                const ls = require("child_process").execSync;
+                f.stopAsync(account.servers[j].id, () => {
+                  ls(
+                    `mv servers/${account.servers[j].id} backup/disabledServers${account.servers[j].id}`
+                  );
+                });
+              }
 
-            if (account.disabledServers == undefined) {
-              account.disabledServers = [];
+              if (account.disabledServers == undefined) {
+                account.disabledServers = [];
+              }
+              account.disabledServers.push(account.servers);
+              account.servers = [];
             }
-            account.disabledServers.push(account.servers);
-            account.servers = [];
-          }
-        });
+          });
+        }
       }
     }
   }
