@@ -13,6 +13,7 @@ private.pem
 /stores/*
 /assets/jars
 /assets/java
+/assets/data.json
 config.json
 accounts.json
 servers.json
