@@ -144,6 +144,7 @@ if (fs.existsSync("servers/template")) {
       fs.cpSync("servers/template/"+fs.readdirSync("servers/template")[i], "assets/template/"+fs.readdirSync("servers/template")[i]);
     }
   }
+  }
   fs.rmSync("servers/template", { recursive: true });
 }
 const datajson = require("./assets/data.json");
