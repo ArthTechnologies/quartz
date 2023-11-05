@@ -15,6 +15,12 @@ function extract(archive, dir) {
   exec(`tar -xvf ${archive} -C ${dir}`);
 }
 
+function extractAsync(archive, dir, callback) {
+  exec(`tar -xvf ${archive} -C ${dir}`, (error, stdout, stderr) => {
+    callback(stdout);
+  });
+}
+
 function hash(input, salt) {
   if (salt == undefined) {
     salt = randomBytes(12).toString("hex");
@@ -285,6 +291,7 @@ module.exports = {
   hashNoSalt,
   download,
   extract,
+  extractAsync,
   write,
   GET,
   getIPID,
