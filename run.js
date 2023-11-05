@@ -18,7 +18,7 @@ if (!fs.existsSync("./backup/disabledServers")) {
 if (!fs.existsSync("./servers")) {
   fs.mkdirSync("servers");
 } else if (fs.existsSync("./assets/template")) {
-  fs.rmSync("./assets/template", { recursive: true });
+  fs.rmSync("./servers/template", { recursive: true });
 }
 
 
