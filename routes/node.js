@@ -14,29 +14,27 @@ Router.get("/", (req, res) => {
   });
 });
 
-
 Router.get("/secrets", (req, res) => {
   if (config.forwardingSecret != undefined) {
-
-    if (files.hashNoSalt(req.query.forwardingSecret) == config.forwardingSecret) {
+    if (
+      files.hashNoSalt(req.query.forwardingSecret) == config.forwardingSecret
+    ) {
       let serverstoObject = [];
       let accountstoObject = [];
       fs.readdirSync("servers").forEach((server) => {
-          const text = fs.readFileSync(`servers/${server}/server.json`);
-          try {
-            serverstoObject.push(JSON.parse(text));
-          } catch {
-            console.log("error parsing " + server)
-          }
-    
-        
+        const text = fs.readFileSync(`servers/${server}/server.json`);
+        try {
+          serverstoObject.push(JSON.parse(text));
+        } catch {
+          console.log("error parsing " + server);
+        }
       });
       fs.readdirSync("accounts").forEach((account) => {
         const text = fs.readFileSync(`accounts/${account}`);
         try {
           accountstoObject.push(JSON.parse(text));
         } catch {
-          console.log("error parsing " + account)
+          console.log("error parsing " + account);
         }
       });
       res
@@ -52,12 +50,15 @@ Router.get("/secrets", (req, res) => {
 
 Router.post("/secrets/forwardingSecret", (req, res) => {
   if (config.forwardingSecret == undefined) {
-    let configTxt = fs.readFileSync("config.txt", "utf8")
+    let configTxt = fs.readFileSync("config.txt", "utf8");
     //find line including forwardingSecret
     let line = configTxt.split("\n").find((line) => {
       return line.includes("forwardingSecret");
     });
-    configTxt = configTxt.replace(line, `forwardingSecret=${req.query.forwardingSecret}`);
+    configTxt = configTxt.replace(
+      line,
+      `forwardingSecret=${req.query.forwardingSecret}`
+    );
     res.status(200).json({ msg: "Forwarding enabled." });
   } else {
     res.status(401).json({ msg: "Forwarding already enabled." });
@@ -66,8 +67,9 @@ Router.post("/secrets/forwardingSecret", (req, res) => {
 
 Router.post("/account", (req, res) => {
   if (config.forwardingSecret != undefined) {
-
-    if (files.hashNoSalt(req.query.forwardingSecret) == config.forwardingSecret) {
+    if (
+      files.hashNoSalt(req.query.forwardingSecret) == config.forwardingSecret
+    ) {
       if (req.body.account != undefined) {
         if (fs.existsSync(`accounts/${req.body.account}`)) {
           res.status(200).json({ msg: "Account already exists." });
@@ -80,8 +82,8 @@ Router.post("/account", (req, res) => {
       }
     }
   } else {
-  res.status(401).json({ msg: "This node does not support forwarding." });
-}
+    res.status(401).json({ msg: "This node does not support forwarding." });
+  }
 });
 
 module.exports = Router;

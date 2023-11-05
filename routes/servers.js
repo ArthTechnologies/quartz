@@ -49,24 +49,29 @@ router.get(`/jars`, function (req, res) {
     if (file.includes(".jar") || file.includes(".zip")) {
       returnArray.push(file);
     }
-  }
-  );
+  });
   res.status(200).json(returnArray);
 });
 
 router.get(`/jarsIndex`, function (req, res) {
   files.getIndex((index) => {
-  index.otherSoftwares = [index.terralith, index.incendium, index.nullscape, index.structory, index.geyser, index.floodgate];
+    index.otherSoftwares = [
+      index.terralith,
+      index.incendium,
+      index.nullscape,
+      index.structory,
+      index.geyser,
+      index.floodgate,
+    ];
 
-  index.terralith = null;
-  index.incendium = null;
-  index.nullscape = null;
-  index.structory = null;
-  index.geyser = null;
-  index.floodgate = null;
-  res.status(200).json(index);
+    index.terralith = null;
+    index.incendium = null;
+    index.nullscape = null;
+    index.structory = null;
+    index.geyser = null;
+    index.floodgate = null;
+    res.status(200).json(index);
   });
-}
-);
+});
 
 module.exports = router;

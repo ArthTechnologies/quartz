@@ -30,9 +30,7 @@ function hash(input, salt) {
 }
 
 function hashNoSalt(input) {
-  return scryptSync(input, config.pepper, 48).toString(
-    "hex"
-  );
+  return scryptSync(input, config.pepper, 48).toString("hex");
 }
 
 function folderSizeRecursive(directoryPath) {
@@ -69,12 +67,12 @@ function readFilesRecursive(directoryPath) {
     if (file.charAt(0) != ".") {
       const curPath = `${directoryPath}/${file}`;
 
-    if (fs.lstatSync(curPath).isDirectory()) {
-      const subDir = readFilesRecursive(curPath);
-      result.push([file + ":" + curPath, subDir]);
-    } else {
-      result.push(file + ":" + curPath);
-    }
+      if (fs.lstatSync(curPath).isDirectory()) {
+        const subDir = readFilesRecursive(curPath);
+        result.push([file + ":" + curPath, subDir]);
+      } else {
+        result.push(file + ":" + curPath);
+      }
     }
   });
 
@@ -254,8 +252,7 @@ function getIndex(callback) {
           file = "floodgate-spigot.jar";
           break;
       }
-        
-      
+
       if (file.includes("-")) {
         let software = file.split("-")[0];
         let version = "";
@@ -278,13 +275,10 @@ function getIndex(callback) {
           date: date,
           software: software,
         });
-        
       }
-    
     });
     callback(index);
   });
-
 }
 module.exports = {
   hash,
@@ -301,5 +295,5 @@ module.exports = {
   readFilesRecursive,
   simplifyTerminal,
   folderSizeRecursive,
-  getIndex
+  getIndex,
 };

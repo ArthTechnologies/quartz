@@ -4,7 +4,7 @@ const config = require("../scripts/config.js").getConfig();
 const apiKey = config.curseforgeKey;
 
 Router.get("/search", (req, res) => {
-   if (apiKey != undefined) {
+  if (apiKey != undefined) {
     let gameVersion = req.query.version;
     let modLoaderType = req.query.loader;
     let searchFilter = req.query.query;
@@ -13,7 +13,7 @@ Router.get("/search", (req, res) => {
 
     const exec = require("child_process").exec;
     exec(
-        `curl -X GET "https://api.curseforge.com/v1/mods/search` +
+      `curl -X GET "https://api.curseforge.com/v1/mods/search` +
         `?gameId=432` +
         `&gameVersion=${gameVersion}` +
         `&modLoaderType=${modLoaderType}` +
@@ -23,54 +23,59 @@ Router.get("/search", (req, res) => {
         `&sortField=2` +
         `&sortOrder=desc"` +
         ` -H 'x-api-key: ${apiKey}'`,
-        (error, stdout, stderr) => {
-            if (!error && stdout != undefined) {
-
-            res.status(200).json(JSON.parse(stdout));
+      (error, stdout, stderr) => {
+        if (!error && stdout != undefined) {
+          res.status(200).json(JSON.parse(stdout));
         } else {
-            res.status(500).json({ msg: "Internal server error." });
+          res.status(500).json({ msg: "Internal server error." });
         }
-        }
+      }
     );
-    }
-   });
+  }
+});
 
-   Router.get("/:id", (req, res) => {
-    if (apiKey != undefined) {
+Router.get("/:id", (req, res) => {
+  if (apiKey != undefined) {
     let id = req.params.id;
     const exec = require("child_process").exec;
     exec(
-        `curl -X GET "https://api.curseforge.com/v1/mods/${id}"` +
+      `curl -X GET "https://api.curseforge.com/v1/mods/${id}"` +
         ` -H 'x-api-key: ${apiKey}'`,
-        (error, stdout, stderr) => {
-            console.log(stdout)
-            if (!error && stdout != undefined && JSON.parse(stdout).data != undefined) {
-
-            res.status(200).json(JSON.parse(stdout).data);
+      (error, stdout, stderr) => {
+        console.log(stdout);
+        if (
+          !error &&
+          stdout != undefined &&
+          JSON.parse(stdout).data != undefined
+        ) {
+          res.status(200).json(JSON.parse(stdout).data);
         } else {
-            res.status(500).json({ msg: "Internal server error." });
+          res.status(500).json({ msg: "Internal server error." });
         }
-        }
+      }
     );
-    }
-   });
-   
-   Router.get("/:id/description", (req, res) => {
-    if (apiKey != undefined) {
+  }
+});
+
+Router.get("/:id/description", (req, res) => {
+  if (apiKey != undefined) {
     let id = req.params.id;
     const exec = require("child_process").exec;
     exec(
-        `curl -X GET "https://api.curseforge.com/v1/mods/${id}/description"` +
+      `curl -X GET "https://api.curseforge.com/v1/mods/${id}/description"` +
         ` -H 'x-api-key: ${apiKey}'`,
-        (error, stdout, stderr) => {
-            if (!error && stdout != undefined && JSON.parse(stdout).data != undefined) {
-
-            res.status(200).json(JSON.parse(stdout).data);
+      (error, stdout, stderr) => {
+        if (
+          !error &&
+          stdout != undefined &&
+          JSON.parse(stdout).data != undefined
+        ) {
+          res.status(200).json(JSON.parse(stdout).data);
         } else {
-            res.status(500).json({ msg: "Internal server error." });
+          res.status(500).json({ msg: "Internal server error." });
         }
-        }
+      }
     );
-    }
-   });
+  }
+});
 module.exports = Router;

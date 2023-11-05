@@ -243,27 +243,29 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                   (error, stdout, stderr) => {
                     if (fs.existsSync(folder + "/modrinth.index.json")) {
                       //there's an odd bug where the file has no read access, so this changes that
-                      exec("chmod +r " + folder + "/modrinth.index.json", (x) => {
-                        modpack = JSON.parse(
-                          fs.readFileSync(folder + "/modrinth.index.json")
-                        );
-    
-                        //for each file in modpack.files, download it
-                        for (i in modpack.files) {
-                          //if the path has a backslash, convert it to slash, as backslashes are ignored in linux
-                          if (modpack.files[i].path.includes("\\")) {
-                            modpack.files[i].path = modpack.files[i].path.replace(
-                              /\\/g,
-                              "/"
+                      exec(
+                        "chmod +r " + folder + "/modrinth.index.json",
+                        (x) => {
+                          modpack = JSON.parse(
+                            fs.readFileSync(folder + "/modrinth.index.json")
+                          );
+
+                          //for each file in modpack.files, download it
+                          for (i in modpack.files) {
+                            //if the path has a backslash, convert it to slash, as backslashes are ignored in linux
+                            if (modpack.files[i].path.includes("\\")) {
+                              modpack.files[i].path = modpack.files[
+                                i
+                              ].path.replace(/\\/g, "/");
+                            }
+                            files.downloadAsync(
+                              folder + "/" + modpack.files[i].path,
+                              modpack.files[i].downloads[0],
+                              () => {}
                             );
                           }
-                          files.downloadAsync(
-                            folder + "/" + modpack.files[i].path,
-                            modpack.files[i].downloads[0],
-                            () => {}
-                          );
                         }
-                      });
+                      );
                     }
                   }
                 );
@@ -279,7 +281,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
           folder + "/modpack.zip",
           modpackURL,
           (error, stdout, stderr) => {
-            console.log(modpackURL + "modpackURL")
+            console.log(modpackURL + "modpackURL");
             console.log(error + stdout + stderr);
             exec(
               "unzip " + folder + "/modpack.zip" + " -d " + folder,
@@ -290,48 +292,61 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                     if (fs.existsSync(folder + "/manifest.json")) {
                       //there's an odd bug where the file has no read access, so this changes that
                       exec("chmod +r " + folder + "/manifest.json", (x) => {
-                        fs.copyFileSync(folder + "/manifest.json", folder + "/curseforge.index.json");
+                        fs.copyFileSync(
+                          folder + "/manifest.json",
+                          folder + "/curseforge.index.json"
+                        );
                         modpack = JSON.parse(
                           fs.readFileSync(folder + "/curseforge.index.json")
                         );
-    
-                        
+
                         for (i in modpack.files) {
                           let projectID = modpack.files[i].projectID;
                           let fileID = modpack.files[i].fileID;
-                          console.log(projectID)
-                          console.log(`curl -X GET "https://api.curseforge.com/v1/mods/${projectID}/files/${fileID}/download-url" -H 'x-api-key: ${apiKey}'`);
-                          exec(`curl -X GET "https://api.curseforge.com/v1/mods/${projectID}/files/${fileID}/download-url" -H 'x-api-key: ${apiKey}'`,
-                           (error, stdout, stderr) => {
-
-
-                          if (stdout != undefined) {
-                            try {
-                              console.log(`curl -o ${folder}/mods/cf_${projectID}_NameUnknown.jar -LO "${JSON.parse(stdout).data}"`);
-                            files.downloadAsync(
-                              folder + "/mods/cf_" + projectID + "_NameUnknown.jar",
-                              JSON.parse(stdout).data,
-                              (error, stdout, stderr) => {
-                                console.log(stdout)
+                          console.log(projectID);
+                          console.log(
+                            `curl -X GET "https://api.curseforge.com/v1/mods/${projectID}/files/${fileID}/download-url" -H 'x-api-key: ${apiKey}'`
+                          );
+                          exec(
+                            `curl -X GET "https://api.curseforge.com/v1/mods/${projectID}/files/${fileID}/download-url" -H 'x-api-key: ${apiKey}'`,
+                            (error, stdout, stderr) => {
+                              if (stdout != undefined) {
+                                try {
+                                  console.log(
+                                    `curl -o ${folder}/mods/cf_${projectID}_NameUnknown.jar -LO "${
+                                      JSON.parse(stdout).data
+                                    }"`
+                                  );
+                                  files.downloadAsync(
+                                    folder +
+                                      "/mods/cf_" +
+                                      projectID +
+                                      "_NameUnknown.jar",
+                                    JSON.parse(stdout).data,
+                                    (error, stdout, stderr) => {
+                                      console.log(stdout);
+                                    }
+                                  );
+                                } catch {
+                                  console.log(
+                                    "error parsing json for " + projectID
+                                  );
+                                }
                               }
-                            );
-                            } catch {
-                              console.log("error parsing json for " + projectID)
                             }
-                          }
-                        });
+                          );
                         }
-
                       });
                     }
                   }
                 );
               }
             );
-        });
-        }
+          }
+        );
       }
-}
+    }
+  }
 
   if (software != "quilt") {
     if (fs.existsSync("assets/jars/" + software + "-" + version + ".jar")) {
@@ -430,7 +445,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   //copy /assets/template/Geyser-Spigot.jar to folder/plugins
 
-
   const { exec } = require("child_process");
   let ls;
   let interval = 0;
@@ -480,9 +494,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
           execLine =
             path +
             ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
-            if (version == "1.16.5") {
-              execLine = path + `@libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-server.jar "$@"`;
-            }
+          if (version == "1.16.5") {
+            execLine =
+              path +
+              `@libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-server.jar "$@"`;
+          }
         } else {
           path = "../" + path;
           execLine = path + " -jar quilt-server-launch.jar nogui";

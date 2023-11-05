@@ -21,64 +21,67 @@ if (!fs.existsSync("./servers")) {
   fs.rmSync("./servers/template", { recursive: true });
 }
 
-
 if (!fs.existsSync("config.txt")) {
   //migration from old way of storing settings to config.txt
-  if (fs.existsSync("stores/settings.json") && fs.existsSync("stores/secrets.json")) {
+  if (
+    fs.existsSync("stores/settings.json") &&
+    fs.existsSync("stores/secrets.json")
+  ) {
     const settings = require("./stores/settings.json");
     const secrets = require("./stores/secrets.json");
     fs.writeFileSync(
       "config.txt",
       `# The address that servers will be ran under:\n` +
-      `address=${settings.address}\n` +
-      `# Do you want to make users pay for servers? (If so, you'll need a Stripe API Key):\n` +
-      `enablePay=${settings.enablePay}\n` +
-      `# Do you want to make users login to access their servers? (Setting this to false is experimental):\n` +
-      `enableAuth=${settings.enableAuth}\n` +
-      `# The maximum amount of servers that this panel is allowed to create:\n` +
-      `maxServers=${settings.maxServers}\n` +
-      `# The maximum amount of storage that each server can use (in bytes):\n` +
-      `serverStorageLimit=${settings.serverStorageLimit}\n\n` +
-      `# The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):\n` +
-      `curseforgeKey=${secrets.curseforgeKey}\n` +
-      `# The Stripe API Key to use for charging users (You can apply for one at stripe.com):\n` +
-      `stripeKey=${secrets.stripeKey}\n\n` +
-      "# Advanced Settings:\n\n" +
-      `# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:\n` +
-      `forwardingSecret=${secrets.forwardingSecret}\n` +
-      `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
-      `jarsMcUrl=${settings.jarsMcUrl}\n` +
-      `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
-      `pepper=${secrets.pepper}\n`
+        `address=${settings.address}\n` +
+        `# Do you want to make users pay for servers? (If so, you'll need a Stripe API Key):\n` +
+        `enablePay=${settings.enablePay}\n` +
+        `# Do you want to make users login to access their servers? (Setting this to false is experimental):\n` +
+        `enableAuth=${settings.enableAuth}\n` +
+        `# The maximum amount of servers that this panel is allowed to create:\n` +
+        `maxServers=${settings.maxServers}\n` +
+        `# The maximum amount of storage that each server can use (in bytes):\n` +
+        `serverStorageLimit=${settings.serverStorageLimit}\n\n` +
+        `# The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):\n` +
+        `curseforgeKey=${secrets.curseforgeKey}\n` +
+        `# The Stripe API Key to use for charging users (You can apply for one at stripe.com):\n` +
+        `stripeKey=${secrets.stripeKey}\n\n` +
+        "# Advanced Settings:\n\n" +
+        `# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:\n` +
+        `forwardingSecret=${secrets.forwardingSecret}\n` +
+        `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
+        `jarsMcUrl=${settings.jarsMcUrl}\n` +
+        `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
+        `pepper=${secrets.pepper}\n`
     );
     fs.copyFileSync("stores/settings.json", "backup/settings.json");
     fs.unlinkSync("stores/settings.json");
     fs.copyFileSync("stores/secrets.json", "backup/secrets.json");
     fs.unlinkSync("stores/secrets.json");
-  }else {
+  } else {
     fs.writeFileSync(
       "config.txt",
       `# The address that servers will be ran under:\n` +
-      `address=arthmc.xyz\n` +
-      `# Do you want to make users pay for servers? (If so, you'll need a Stripe API Key):\n` +
-      `enablePay=true\n` +
-      `# Do you want to make users login to access their servers? (Setting this to false is experimental):\n` +
-      `enableAuth=true\n` +
-      `# The maximum amount of servers that this panel is allowed to create:\n` +
-      `maxServers=8\n` +
-      `# The maximum amount of storage that each server can use (in bytes):\n` +
-      `serverStorageLimit=1000000000\n\n` +
-      `# The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):\n` +
-      `curseforgeKey=${process.env.curseforge_key}\n` +
-      `# The Stripe API Key to use for charging users (You can apply for one at stripe.com):\n` +
-      `stripeKey=${process.env.stripe_key}\n\n` +
-      "# Advanced Settings:\n\n" +
-      `# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:\n` +
-      `forwardingSecret=${crypto.randomBytes(12).toString("hex")}\n` +
-      `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
-      `jarsMcUrl=https://api.jarsmc.xyz/\n` +
-      `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
-      `pepper=${crypto.randomBytes(12).toString("hex")}\n`);
+        `address=arthmc.xyz\n` +
+        `# Do you want to make users pay for servers? (If so, you'll need a Stripe API Key):\n` +
+        `enablePay=true\n` +
+        `# Do you want to make users login to access their servers? (Setting this to false is experimental):\n` +
+        `enableAuth=true\n` +
+        `# The maximum amount of servers that this panel is allowed to create:\n` +
+        `maxServers=8\n` +
+        `# The maximum amount of storage that each server can use (in bytes):\n` +
+        `serverStorageLimit=1000000000\n\n` +
+        `# The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):\n` +
+        `curseforgeKey=${process.env.curseforge_key}\n` +
+        `# The Stripe API Key to use for charging users (You can apply for one at stripe.com):\n` +
+        `stripeKey=${process.env.stripe_key}\n\n` +
+        "# Advanced Settings:\n\n" +
+        `# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:\n` +
+        `forwardingSecret=${crypto.randomBytes(12).toString("hex")}\n` +
+        `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
+        `jarsMcUrl=https://api.jarsmc.xyz/\n` +
+        `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
+        `pepper=${crypto.randomBytes(12).toString("hex")}\n`
+    );
   }
 }
 const files = require("./scripts/files.js");
@@ -205,11 +208,13 @@ function downloadJars() {
         `assets/jars/downloads/cx_floodgate-velocity_Floodgate.jar`,
         `assets/jars/cx_floodgate-velocity_Floodgate.jar`
       );
-      fs.unlinkSync(`assets/jars/downloads/cx_floodgate-velocity_Floodgate.jar`);
+      fs.unlinkSync(
+        `assets/jars/downloads/cx_floodgate-velocity_Floodgate.jar`
+      );
     }
   );
   let jarsMcUrl = "https://api.jarsmc.xyz/";
-      jarsMcUrl = config.jarsMcUrl;
+  jarsMcUrl = config.jarsMcUrl;
 
   //plugins
   files.GET(jarsMcUrl + "jars/arthHosting", (data) => {
@@ -409,38 +414,33 @@ process.stdin.on("data", (data) => {
   }
 });
 
-
-
 files.downloadAsync(
   "assets/java/java19.tar.gz",
   "https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.2%2B7/OpenJDK19U-jdk_x64_linux_hotspot_19.0.2_7.tar.gz",
   (data) => {
     files.extractAsync("assets/java/java19.tar.gz", "assets/java", () => {
-
-    fs.unlinkSync("assets/java/java19.tar.gz");
+      fs.unlinkSync("assets/java/java19.tar.gz");
     });
-  });
+  }
+);
 files.downloadAsync(
   "assets/java/java17.tar.gz",
   "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz",
   (data) => {
     files.extractAsync("assets/java/java17.tar.gz", "assets/java", () => {
-
       fs.unlinkSync("assets/java/java17.tar.gz");
-      });
-  });
+    });
+  }
+);
 files.downloadAsync(
   "assets/java/java11.tar.gz",
   "https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz",
   (data) => {
     files.extractAsync("assets/java/java11.tar.gz", "assets/java", () => {
-
       fs.unlinkSync("assets/java/java11.tar.gz");
-      });
-  });
-
-
-
+    });
+  }
+);
 
 const data = require("./assets/data.json");
 const f = require("./scripts/mc.js");

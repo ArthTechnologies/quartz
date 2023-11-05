@@ -33,13 +33,13 @@ Router.post("/email/signup/", (req, res) => {
         account.resetAttempts = 0;
         account.ips = [];
         account.ips.push(files.getIPID(req.ip));
-  fs.writeFileSync(
-    "accounts/" + email + ".json",
-    JSON.stringify(accounts, null, 4),
-    {
-      encoding: "utf8",
-    }
-  );
+        fs.writeFileSync(
+          "accounts/" + email + ".json",
+          JSON.stringify(accounts, null, 4),
+          {
+            encoding: "utf8",
+          }
+        );
         res.status(200).send({ token: account.token, accountId: accountId });
       } else {
         res.status(400).send({ token: -1, reason: "Email already exists" });
@@ -50,7 +50,6 @@ Router.post("/email/signup/", (req, res) => {
   } else {
     res.status(400).send({ token: -1, reason: "Passwords do not match" });
   }
-
 });
 
 Router.post("/email/signin/", (req, res) => {

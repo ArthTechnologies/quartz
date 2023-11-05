@@ -125,9 +125,11 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           filename: file,
           date: fs.statSync(`${path}/${modtype}/${file}`).mtimeMs,
         });
-      } else if (file.startsWith("lr_") |
+      } else if (
+        file.startsWith("lr_") |
         file.startsWith("cx_") |
-        file.startsWith("cf_")) {
+        file.startsWith("cf_")
+      ) {
         mods.push({
           platform: file.split("_")[0],
           id: file.split("_")[1],
@@ -220,10 +222,10 @@ router.post(`/:id/add/:modtype`, function (req, res) {
     if (
       pluginUrl.startsWith("https://cdn.modrinth.com/data/") |
       pluginUrl.startsWith("https://github.com/") |
-      pluginUrl.startsWith("https://edge.forgecdn.net/") 
+      pluginUrl.startsWith("https://edge.forgecdn.net/")
     ) {
       let platform = "lr";
-      if (pluginUrl.startsWith("https://github.com/")) platform = "gh";  
+      if (pluginUrl.startsWith("https://github.com/")) platform = "gh";
       if (pluginUrl.startsWith("https://edge.forgecdn.net/")) platform = "cf";
       if (pluginUrl != lastPlugin) {
         files.download(
@@ -995,9 +997,7 @@ router.post("/:id/proxy/servers", function (req, res) {
       }
       fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig);
 
-      if (
-        req.query.ip.split(":")[0] == config.address
-      ) {
+      if (req.query.ip.split(":")[0] == config.address) {
         let subserverId = parseInt(req.query.ip.split(":")[1]) - 10000;
         if (
           require("../servers/" + subserverId + "/server.json").accountId ==
@@ -1124,38 +1124,60 @@ router.get("/:id/file/:path", function (req, res) {
       if (fs.lstatSync(`servers/${req.params.id}/${path}`).isDirectory()) {
         res
           .status(200)
-          .json({content:"This is a directory, not a file. Listing files: " + fs.readdirSync(`servers/${req.params.id}/${path}`)});
+          .json({
+            content:
+              "This is a directory, not a file. Listing files: " +
+              fs.readdirSync(`servers/${req.params.id}/${path}`),
+          });
       } else {
         let extension = path.split(".")[path.split(".").length - 1];
 
         if (extension == "png" || extension == "jepg" || extension == "svg") {
-          res.status(200).json({content: "Image files can't be edited or viewed."});
+          res
+            .status(200)
+            .json({ content: "Image files can't be edited or viewed." });
         } else if (
           extension == "jar" ||
           extension == "exe" ||
           extension == "sh"
         ) {
-          res.status(200).json({content: "Binary files can't be edited or viewed."});
+          res
+            .status(200)
+            .json({ content: "Binary files can't be edited or viewed." });
         } else if (
           fs.statSync(`servers/${req.params.id}/${path}`).size > 500000
         ) {
-          res.status(200).json({content: "File too large."});
+          res.status(200).json({ content: "File too large." });
         } else {
           let returnArray = [];
           //get the file's previous versions
-          if (fs.existsSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`)) {
-          let filesArray = fs.readdirSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`);
+          if (
+            fs.existsSync(
+              `servers/${req.params.id}/.fileVersions/${req.params.path}`
+            )
+          ) {
+            let filesArray = fs.readdirSync(
+              `servers/${req.params.id}/.fileVersions/${req.params.path}`
+            );
 
-
-    for (i in filesArray) {
-        returnArray.push(fs.statSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/${filesArray[i]}`).mtimeMs);
-    }
-
+            for (i in filesArray) {
+              returnArray.push(
+                fs.statSync(
+                  `servers/${req.params.id}/.fileVersions/${req.params.path}/${filesArray[i]}`
+                ).mtimeMs
+              );
+            }
+          }
+          res
+            .status(200)
+            .json({
+              content: fs.readFileSync(
+                `servers/${req.params.id}/${path}`,
+                "utf8"
+              ),
+              versions: returnArray,
+            });
         }
-        res
-        .status(200)
-        .json({ content: fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8"), versions: returnArray});
-      }
       }
     } else {
       res.status(200).json([]);
@@ -1192,29 +1214,38 @@ router.post("/:id/file/:path", function (req, res) {
       filename != "config.yml" &&
       fs.statSync(`servers/${req.params.id}/${path}`).size <= 500000
     ) {
-      if (!fs.existsSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`)) {
-        fs.mkdirSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`);
+      if (
+        !fs.existsSync(
+          `servers/${req.params.id}/.fileVersions/${req.params.path}`
+        )
+      ) {
+        fs.mkdirSync(
+          `servers/${req.params.id}/.fileVersions/${req.params.path}`
+        );
       }
-        //write only the difference between the old file and the new file
-        let oldFile = fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8");
-        let newFile = req.body.content;
-        let diff = JsDiff.diffLines(oldFile, newFile);
-        let diffString = "";
-        diff.forEach((part) => {
-          if (part.added) {
-            diffString += `+${part.value}`;
-          } else if (part.removed) {
-            diffString += `-${part.value}`;
-          } else {
-            diffString += part.value;
-          }
-        });
-        console.log(diffString);
-        let filename = fs.statSync(`servers/${req.params.id}/${path}`).mtimeMs;
-        console.log(filename);
-        fs.writeFileSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/${filename}`, diffString);
+      //write only the difference between the old file and the new file
+      let oldFile = fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8");
+      let newFile = req.body.content;
+      let diff = JsDiff.diffLines(oldFile, newFile);
+      let diffString = "";
+      diff.forEach((part) => {
+        if (part.added) {
+          diffString += `+${part.value}`;
+        } else if (part.removed) {
+          diffString += `-${part.value}`;
+        } else {
+          diffString += part.value;
+        }
+      });
+      console.log(diffString);
+      let filename = fs.statSync(`servers/${req.params.id}/${path}`).mtimeMs;
+      console.log(filename);
+      fs.writeFileSync(
+        `servers/${req.params.id}/.fileVersions/${req.params.path}/${filename}`,
+        diffString
+      );
 
-        fs.writeFileSync(`servers/${req.params.id}/${path}`, req.body.content);
+      fs.writeFileSync(`servers/${req.params.id}/${path}`, req.body.content);
       res.status(200).json({ msg: "Done" });
     } else {
       res.status(400).json({ msg: "Invalid request." });
@@ -1305,9 +1336,7 @@ router.get("/:id/storageInfo", function (req, res) {
     let limit = -1;
     let used = files.folderSizeRecursive(`servers/${req.params.id}/`);
 
-    if (
-      config.serverStorageLimit !== undefined
-    ) {
+    if (config.serverStorageLimit !== undefined) {
       limit = config.serverStorageLimit;
     }
 
