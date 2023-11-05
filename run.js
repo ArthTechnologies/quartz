@@ -18,7 +18,7 @@ if (!fs.existsSync("./backup/disabledServers")) {
 if (!fs.existsSync("./servers")) {
   fs.mkdirSync("servers");
 } else if (fs.existsSync("./assets/template")) {
-  fs.rmdirSync("./assets/template", { recursive: true });
+  fs.rmSync("./assets/template", { recursive: true });
 }
 
 
@@ -135,6 +135,13 @@ if (!fs.existsSync("assets/jars")) {
   downloadJars();
 }
 
+//migration from the old template location
+if (fs.existsSync("servers/template")) {
+  if (!fs.existsSync("assets/template")) {
+    fs.cpSync("servers/template", "assets/template");
+  }
+  fs.rmSync("servers/template", { recursive: true });
+}
 const datajson = require("./assets/data.json");
 if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
   downloadJars();

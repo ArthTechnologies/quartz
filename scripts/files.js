@@ -90,7 +90,7 @@ function removeDirectoryRecursive(directoryPath) {
     });
 
     // Remove the directory itself
-    fs.rmdirSync(directoryPath);
+    fs.rmSync(directoryPath);
     console.log(`Directory "${directoryPath}" removed.`);
     return;
   } else {
@@ -114,7 +114,7 @@ function removeDirectoryRecursiveAsync(directoryPath, callback) {
     });
 
     // Remove the directory itself
-    fs.rmdirSync(directoryPath);
+    fs.rmSync(directoryPath);
     console.log(`Directory "${directoryPath}" removed.`);
     if (callback != undefined) {
       callback();
