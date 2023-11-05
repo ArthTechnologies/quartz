@@ -135,18 +135,6 @@ if (!fs.existsSync("assets/jars")) {
   downloadJars();
 }
 
-//migration from the old template location
-if (fs.existsSync("servers/template")) {
-  if (!fs.existsSync("assets/template")) {
-    fs.mkdirSync("assets/template");
-    for (i in fs.readdirSync("servers/template")) {
-    if (!fs.statSync(fs.readdirSync("servers/template")[i]).isDirectory()) {
-      fs.cpSync("servers/template/"+fs.readdirSync("servers/template")[i], "assets/template/"+fs.readdirSync("servers/template")[i]);
-    }
-  }
-  }
-  fs.rmSync("servers/template", { recursive: true });
-}
 const datajson = require("./assets/data.json");
 if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
   downloadJars();
