@@ -5,6 +5,7 @@ const s = require("../scripts/stripe.js");
 
 const { v4: uuidv4 } = require("uuid");
 const files = require("../scripts/files.js");
+const config = require("../scripts/config.js").getConfig();
 
 Router.post("/email/signup/", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -32,7 +33,13 @@ Router.post("/email/signup/", (req, res) => {
         account.resetAttempts = 0;
         account.ips = [];
         account.ips.push(files.getIPID(req.ip));
-
+  fs.writeFileSync(
+    "accounts/" + email + ".json",
+    JSON.stringify(accounts, null, 4),
+    {
+      encoding: "utf8",
+    }
+  );
         res.status(200).send({ token: account.token, accountId: accountId });
       } else {
         res.status(400).send({ token: -1, reason: "Email already exists" });
@@ -43,14 +50,7 @@ Router.post("/email/signup/", (req, res) => {
   } else {
     res.status(400).send({ token: -1, reason: "Passwords do not match" });
   }
-  //write account file
-  fs.writeFileSync(
-    "accounts/" + email + ".json",
-    JSON.stringify(accounts, null, 4),
-    {
-      encoding: "utf8",
-    }
-  );
+
 });
 
 Router.post("/email/signin/", (req, res) => {
@@ -100,7 +100,6 @@ Router.delete("/email", (req, res) => {
 Router.post("/email/resetPassword/", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
-  let settings = require("../stores/settings.json");
   let password = req.query.password;
   let email = req.query.email;
   let confirmPassword = req.query.confirmPassword;
@@ -110,7 +109,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
   try {
     const creditId = await s.getCreditId(email);
     if (account.resetAttempts < 5) {
-      if (creditId === last4 || settings.enablePay === false) {
+      if (creditId === last4 || config.enablePay === false) {
         if (password == confirmPassword) {
           if (password.length >= 7) {
             [salt, password] = files.hash(password).split(":");

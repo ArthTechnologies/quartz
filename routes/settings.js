@@ -1,42 +1,42 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
-
-//import settings.json
-let settings = require("../stores/settings.json");
-
-let sk = require("../stores/secrets.json").stripekey;
+const config = require("../scripts/config.js").getConfig();
 
 if (process.env.SERVERS_PER_USER) {
-  settings.serversPerUser = process.env.WEB_PORT;
+  config.serversPerUser = process.env.WEB_PORT;
 }
 if (process.env.BROWSER_TITLE) {
-  settings.browserTitle = process.env.WEB_PORT;
+  config.browserTitle = process.env.WEB_PORT;
 }
 
 if (process.env.WEB_NAME) {
-  settings.webName = process.env.WEB_PORT;
+  config.webName = process.env.WEB_PORT;
 }
 
 if (process.env.TRUSTED_DOMAINS) {
-  settings.trustedDomains = process.env.WEB_PORT;
+  config.trustedDomains = process.env.WEB_PORT;
 }
 
 router.get(`/`, function (req, res) {
-  if (sk.indexOf("sk") == "-1") {
-    settings.enablePay = false;
-  }
   //add cors header
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
   );
-  //return settings.json
-  res.json(settings);
+  let returnObject = {};
+  //add everything from config and everything from data.json to returnObject
+  for (var key in config) {
+    returnObject[key] = config[key];
+  }
+  for (var key in require("../assets/data.json")) {
+    returnObject[key] = require("../assets/data.json")[key];
+  }
+  res.json(returnObject);
 });
 
-//To-DO: This route needs to be locked behind some kind of admin system, otherwise anyone could remotely change the panel's settings.
+//To-DO: This route needs to be locked behind some kind of admin system, otherwise anyone could remotely change the panel's config.
 
 /*
 router.post(`/`, function (req, res) {
@@ -60,9 +60,9 @@ router.post(`/`, function (req, res) {
   for (var setting in req.body) {
     console.log(settings);
     if (keyMatch) {
-      //write settings to settings.json
+      //write settings to config.json
       fs.writeFile(
-        "stores/settings.json",
+        "stores/config.json",
         JSON.stringify(settings),
         function (err) {
           if (err) throw err;
@@ -70,7 +70,7 @@ router.post(`/`, function (req, res) {
         }
       );
     }
-    //return settings.json
+    //return config.json
     res.json(settings);
   }
 });

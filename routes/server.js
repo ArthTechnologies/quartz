@@ -3,14 +3,15 @@ const router = express.Router();
 const files = require("../scripts/files.js");
 const f = require("../scripts/mc.js");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
-const data = require("../stores/data.json");
+const upload = multer({ dest: "assets/uploads/" });
+const data = require("../assets/data.json");
 const JsDiff = require("diff");
+const config = require("../scripts/config.js").getConfig();
 
 const fs = require("fs");
 
-let stripekey = require("../stores/secrets.json").stripekey;
-const stripe = require("stripe")(stripekey);
+let stripeKey = config.stripeKey;
+const stripe = require("stripe")(stripeKey);
 
 router.get(`/:id`, function (req, res) {
   email = req.headers.email;
@@ -247,10 +248,8 @@ router.post(`/new`, function (req, res) {
     let amount = account.servers.length;
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
-    const settings = require("../stores/settings.json");
 
     let serverFolders = fs.readdirSync("servers");
-    serverFolders = serverFolders.filter((e) => e !== "template");
     let serverFolder = serverFolders.sort((a, b) => a - b);
     let id = -1;
     for (i in serverFolder) {
@@ -266,9 +265,9 @@ router.post(`/new`, function (req, res) {
     if (id === -1) {
       id = lastNum + 1;
     }
-    const datajson = require("../stores/data.json");
+    const datajson = require("../assets/data.json");
     datajson.numServers = serverFolders.length;
-    fs.writeFileSync("stores/data.json", JSON.stringify(datajson, null, 2));
+    fs.writeFileSync("assets/data.json", JSON.stringify(datajson, null, 2));
     em = req.query.email;
 
     var store = {
@@ -282,9 +281,9 @@ router.post(`/new`, function (req, res) {
     let cid = "";
 
     if (
-      (stripekey.indexOf("sk") == -1 || account.bypassStripe == true) &&
-      (settings.maxServers > data.numServers ||
-        settings.maxServers == undefined ||
+      (stripeKey.indexOf("sk") == -1 || account.bypassStripe == true) &&
+      (config.maxServers > data.numServers ||
+        config.maxServers == undefined ||
         data.numServers == undefined)
     ) {
       console.log("debug");
@@ -327,7 +326,7 @@ router.post(`/new`, function (req, res) {
         req.body.modpackURL
       );
       res.status(202).json({ success: true, msg: `Success. Server created.` });
-    } else if (settings.maxServers <= data.numServers) {
+    } else if (config.maxServers <= data.numServers) {
       res
         .status(400)
         .json({ success: false, msg: "Maxiumum servers reached." });
@@ -445,7 +444,7 @@ router.post(`/:id/setInfo`, function (req, res) {
     desc = req.body.desc;
 
     //setting automaticStartup
-    let dataJson = require("../stores/data.json");
+    let dataJson = require("../assets/data.json");
     let server = id + ":" + email;
     if (dataJson.serversWithAutomaticStartup == undefined) {
       dataJson.serversWithAutomaticStartup = [];
@@ -454,7 +453,7 @@ router.post(`/:id/setInfo`, function (req, res) {
       if (!dataJson.serversWithAutomaticStartup.includes(server)) {
         dataJson.serversWithAutomaticStartup.push(server);
       }
-      fs.writeFileSync("stores/data.json", JSON.stringify(dataJson, null, 2));
+      fs.writeFileSync("assets/data.json", JSON.stringify(dataJson, null, 2));
     } else {
       if (dataJson.serversWithAutomaticStartup.includes(server)) {
         dataJson.serversWithAutomaticStartup.splice(
@@ -462,7 +461,7 @@ router.post(`/:id/setInfo`, function (req, res) {
           1
         );
       }
-      fs.writeFileSync("stores/data.json", JSON.stringify(dataJson, null, 2));
+      fs.writeFileSync("assets/data.json", JSON.stringify(dataJson, null, 2));
     }
 
     //setting description
@@ -673,7 +672,7 @@ router.delete(`/:id`, function (req, res) {
 
           files.removeDirectoryRecursive(`servers/${id}`);
         }
-        const data = require("../stores/data.json");
+        const data = require("../assets/data.json");
         for (i in data.serversWithAutomaticStartup) {
           if (data.serversWithAutomaticStartup[i].includes(id)) {
             data.serversWithAutomaticStartup.splice(i, 1);
@@ -997,7 +996,7 @@ router.post("/:id/proxy/servers", function (req, res) {
       fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig);
 
       if (
-        req.query.ip.split(":")[0] == require("../stores/settings.json").address
+        req.query.ip.split(":")[0] == config.address
       ) {
         let subserverId = parseInt(req.query.ip.split(":")[1]) - 10000;
         if (
@@ -1307,10 +1306,9 @@ router.get("/:id/storageInfo", function (req, res) {
     let used = files.folderSizeRecursive(`servers/${req.params.id}/`);
 
     if (
-      fs.existsSync(`stores/settings.json`) &&
-      require(`../stores/settings.json`).serverStorageLimit !== undefined
+      config.serverStorageLimit !== undefined
     ) {
-      limit = require(`../stores/settings.json`).serverStorageLimit;
+      limit = config.serverStorageLimit;
     }
 
     res.status(200).json({ used: used, limit: limit });

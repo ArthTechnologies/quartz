@@ -35,7 +35,7 @@ router.get(`/worldgenMods`, function (req, res) {
   let returnArray = [];
   wmods.forEach((file) => {
     console.log(file);
-    if (fs.existsSync(`data/${file}-${req.query.version}.zip`)) {
+    if (fs.existsSync(`assets/jars/${file}-${req.query.version}.zip`)) {
       returnArray.push(file.split("-")[0]);
     }
   });
@@ -45,7 +45,7 @@ router.get(`/worldgenMods`, function (req, res) {
 
 router.get(`/jars`, function (req, res) {
   let returnArray = [];
-  fs.readdirSync("data").forEach((file) => {
+  fs.readdirSync("assets/jars").forEach((file) => {
     if (file.includes(".jar") || file.includes(".zip")) {
       returnArray.push(file);
     }

@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const cors = require("cors");
-const rsa = require("node-rsa");
+
 const fs = require("fs");
 const crypto = require("crypto");
 
@@ -15,41 +15,74 @@ if (!fs.existsSync("./backup")) {
 if (!fs.existsSync("./backup/disabledServers")) {
   fs.mkdirSync("backup/disabledServers");
 }
-
-//if it doesnt exist, write to /lib/store.json
-if (!fs.existsSync("./stores")) {
-  fs.mkdirSync("stores");
-  fs.writeFileSync(
-    "./stores/secrets.json",
-    '{"pepper":"' +
-      crypto.randomBytes(12).toString("hex") +
-      '","stripekey":"' +
-      process.env.stripe_key +
-      '", "forwardingSecret":"' +
-      crypto.randomBytes(12).toString("hex") +
-      '", "curseforgeKey":"' + process.env.curseforge_key + '"}'
-  );
-
-  fs.writeFileSync(
-    "./stores/settings.json",
-    `{
-      "browserTitle": "Your Servers",
-      "webLogo": "/images/sitelogo.svg",
-      "enableAuth": true,
-      "address": "arthmc.xyz",
-      "enablePay": true,
-      "latestVersion": "1.19.4",
-      "maxServers": 8,
-      "jarsMcUrl": "https://api.jarsmc.xyz/",
-      "serverStorageLimit": 1000000000
-    }`
-  );
-} 
-const files = require("./scripts/files.js");
-
-if (!fs.existsSync("uploads")) {
-  fs.mkdirSync("uploads");
+if (!fs.existsSync("./servers")) {
+  fs.mkdirSync("servers");
+} else if (fs.existsSync("./assets/template")) {
+  fs.rmdirSync("./assets/template", { recursive: true });
 }
+
+
+if (!fs.existsSync("config.txt")) {
+  //migration from old way of storing settings to config.txt
+  if (fs.existsSync("stores/settings.json") && fs.existsSync("stores/secrets.json")) {
+    const settings = require("./stores/settings.json");
+    const secrets = require("./stores/secrets.json");
+    fs.writeFileSync(
+      "config.txt",
+      `# The address that servers will be ran under:\n` +
+      `address=${settings.address}\n` +
+      `# Do you want to make users pay for servers? (If so, you'll need a Stripe API Key):\n` +
+      `enablePay=${settings.enablePay}\n` +
+      `# Do you want to make users login to access their servers? (Setting this to false is experimental):\n` +
+      `enableAuth=${settings.enableAuth}\n` +
+      `# The maximum amount of servers that this panel is allowed to create:\n` +
+      `maxServers=${settings.maxServers}\n` +
+      `# The maximum amount of storage that each server can use (in bytes):\n` +
+      `serverStorageLimit=${settings.serverStorageLimit}\n\n` +
+      `# The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):\n` +
+      `curseforgeKey=${secrets.curseforgeKey}\n` +
+      `# The Stripe API Key to use for charging users (You can apply for one at stripe.com):\n` +
+      `stripeKey=${secrets.stripeKey}\n\n` +
+      "# Advanced Settings:\n\n" +
+      `# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:\n` +
+      `forwardingSecret=${secrets.forwardingSecret}\n` +
+      `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
+      `jarsMcUrl=${settings.jarsMcUrl}\n` +
+      `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
+      `pepper=${secrets.pepper}\n`
+    );
+    fs.copyFileSync("stores/settings.json", "backup/settings.json");
+    fs.unlinkSync("stores/settings.json");
+    fs.copyFileSync("stores/secrets.json", "backup/secrets.json");
+    fs.unlinkSync("stores/secrets.json");
+  }else {
+    fs.writeFileSync(
+      "config.txt",
+      `# The address that servers will be ran under:\n` +
+      `address=arthmc.xyz\n` +
+      `# Do you want to make users pay for servers? (If so, you'll need a Stripe API Key):\n` +
+      `enablePay=true\n` +
+      `# Do you want to make users login to access their servers? (Setting this to false is experimental):\n` +
+      `enableAuth=true\n` +
+      `# The maximum amount of servers that this panel is allowed to create:\n` +
+      `maxServers=8\n` +
+      `# The maximum amount of storage that each server can use (in bytes):\n` +
+      `serverStorageLimit=1000000000\n\n` +
+      `# The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):\n` +
+      `curseforgeKey=${process.env.curseforge_key}\n` +
+      `# The Stripe API Key to use for charging users (You can apply for one at stripe.com):\n` +
+      `stripeKey=${process.env.stripe_key}\n\n` +
+      "# Advanced Settings:\n\n" +
+      `# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:\n` +
+      `forwardingSecret=${crypto.randomBytes(12).toString("hex")}\n` +
+      `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
+      `jarsMcUrl=https://api.jarsmc.xyz/\n` +
+      `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
+      `pepper=${crypto.randomBytes(12).toString("hex")}\n`);
+  }
+}
+const files = require("./scripts/files.js");
+const config = require("./scripts/config.js").getConfig();
 
 if (!fs.existsSync("accounts")) {
   fs.mkdirSync("accounts");
@@ -89,17 +122,20 @@ const s = require("./scripts/stripe.js");
 
 let modVersions = [{ c: "modded", s: "forge", v: "1.19.4" }];
 
-if (!fs.existsSync("data")) {
-  fs.mkdirSync("data");
-  fs.mkdirSync("data/downloads");
+if (!fs.existsSync("assets/jars")) {
+  fs.mkdirSync("assets/java");
+  fs.mkdirSync("assets/jars");
+  fs.mkdirSync("assets/jars/downloads");
+  fs.mkdirSync("assets/uploads");
+
   fs.writeFileSync(
-    "stores/data.json",
-    `{"lastUpdate":${Date.now()},"numServers":0}`
+    "assets/data.json",
+    `{"lastUpdate":${Date.now()},"numServers":0,"latestVersion":"1.20.2"}`
   );
   downloadJars();
 }
 
-const datajson = require("./stores/data.json");
+const datajson = require("./assets/data.json");
 if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
   downloadJars();
   getLatestVersion();
@@ -112,73 +148,68 @@ setInterval(() => {
 }, 1000 * 60 * 60 * 12);
 
 function downloadJars() {
-  const datajson = require("./stores/data.json");
+  const datajson = require("./assets/data.json");
   datajson.lastUpdate = Date.now();
-  fs.writeFileSync("stores/data.json", JSON.stringify(datajson));
+  fs.writeFileSync("assets/data.json", JSON.stringify(datajson));
   //geyser
   files.downloadAsync(
-    "data/downloads/cx_geyser-spigot_Geyser.jar",
+    "assets/jars/downloads/cx_geyser-spigot_Geyser.jar",
     "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
     (data) => {
-      if (fs.existsSync(`data/cx_geyser-spigot_Geyser.jar`)) {
-        fs.unlinkSync(`data/cx_geyser-spigot_Geyser.jar`);
+      if (fs.existsSync(`assets/jars/cx_geyser-spigot_Geyser.jar`)) {
+        fs.unlinkSync(`assets/jars/cx_geyser-spigot_Geyser.jar`);
       }
       fs.copyFileSync(
-        `data/downloads/cx_geyser-spigot_Geyser.jar`,
-        `data/cx_geyser-spigot_Geyser.jar`
+        `assets/jars/downloads/cx_geyser-spigot_Geyser.jar`,
+        `assets/jars/cx_geyser-spigot_Geyser.jar`
       );
-      fs.unlinkSync(`data/downloads/cx_geyser-spigot_Geyser.jar`);
+      fs.unlinkSync(`assets/jars/downloads/cx_geyser-spigot_Geyser.jar`);
     }
   );
   files.downloadAsync(
-    "data/downloads/cx_floodgate-spigot_Floodgate.jar",
+    "assets/jars/downloads/cx_floodgate-spigot_Floodgate.jar",
     "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
     (data) => {
-      if (fs.existsSync(`data/cx_floodgate-spigot_Floodgate.jar`)) {
-        fs.unlinkSync(`data/cx_floodgate-spigot_Floodgate.jar`);
+      if (fs.existsSync(`assets/jars/cx_floodgate-spigot_Floodgate.jar`)) {
+        fs.unlinkSync(`assets/jars/cx_floodgate-spigot_Floodgate.jar`);
       }
       fs.copyFileSync(
-        `data/downloads/cx_floodgate-spigot_Floodgate.jar`,
-        `data/cx_floodgate-spigot_Floodgate.jar`
+        `assets/jars/downloads/cx_floodgate-spigot_Floodgate.jar`,
+        `assets/jars/cx_floodgate-spigot_Floodgate.jar`
       );
-      fs.unlinkSync(`data/downloads/cx_floodgate-spigot_Floodgate.jar`);
+      fs.unlinkSync(`assets/jars/downloads/cx_floodgate-spigot_Floodgate.jar`);
     }
   );
   files.downloadAsync(
-    "data/downloads/cx_geyser-velocity_Geyser.jar",
+    "assets/jars/downloads/cx_geyser-velocity_Geyser.jar",
     "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/velocity/build/libs/Geyser-Velocity.jar",
     (data) => {
-      if (fs.existsSync(`data/cx_geyser-velocity_Geyser.jar`)) {
-        fs.unlinkSync(`data/cx_geyser-velocity_Geyser.jar`);
+      if (fs.existsSync(`assets/jars/cx_geyser-velocity_Geyser.jar`)) {
+        fs.unlinkSync(`assets/jars/cx_geyser-velocity_Geyser.jar`);
       }
       fs.copyFileSync(
-        `data/downloads/cx_geyser-velocity_Geyser.jar`,
-        `data/cx_geyser-velocity_Geyser.jar`
+        `assets/jars/downloads/cx_geyser-velocity_Geyser.jar`,
+        `assets/jars/cx_geyser-velocity_Geyser.jar`
       );
-      fs.unlinkSync(`data/downloads/cx_geyser-velocity_Geyser.jar`);
+      fs.unlinkSync(`assets/jars/downloads/cx_geyser-velocity_Geyser.jar`);
     }
   );
   files.downloadAsync(
-    "data/downloads/cx_floodgate-velocity_Floodgate.jar",
+    "assets/jars/downloads/cx_floodgate-velocity_Floodgate.jar",
     "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/velocity/build/libs/floodgate-velocity.jar",
     (data) => {
-      if (fs.existsSync(`data/cx_floodgate-velocity_Floodgate.jar`)) {
-        fs.unlinkSync(`data/cx_floodgate-velocity_Floodgate.jar`);
+      if (fs.existsSync(`assets/jars/cx_floodgate-velocity_Floodgate.jar`)) {
+        fs.unlinkSync(`assets/jars/cx_floodgate-velocity_Floodgate.jar`);
       }
       fs.copyFileSync(
-        `data/downloads/cx_floodgate-velocity_Floodgate.jar`,
-        `data/cx_floodgate-velocity_Floodgate.jar`
+        `assets/jars/downloads/cx_floodgate-velocity_Floodgate.jar`,
+        `assets/jars/cx_floodgate-velocity_Floodgate.jar`
       );
-      fs.unlinkSync(`data/downloads/cx_floodgate-velocity_Floodgate.jar`);
+      fs.unlinkSync(`assets/jars/downloads/cx_floodgate-velocity_Floodgate.jar`);
     }
   );
   let jarsMcUrl = "https://api.jarsmc.xyz/";
-  if (fs.existsSync("stores/settings.json")) {
-    const settings = require("./stores/settings.json");
-    if (settings.jarsMcUrl != undefined) {
-      jarsMcUrl = settings.jarsMcUrl;
-    }
-  }
+      jarsMcUrl = config.jarsMcUrl;
 
   //plugins
   files.GET(jarsMcUrl + "jars/arthHosting", (data) => {
@@ -231,7 +262,7 @@ function downloadJars() {
           downloadProgress.push(false);
           function downloadFromJarsMC() {
             files.downloadAsync(
-              "data/downloads/" +
+              "assets/jars/downloads/" +
                 jar.software +
                 "-" +
                 jar.version +
@@ -241,15 +272,15 @@ function downloadJars() {
               (data3) => {
                 if (
                   fs.statSync(
-                    `data/downloads/${jar.software}-${jar.version}.${extension}`
+                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
                   ).size > 1000
                 ) {
                   fs.copyFileSync(
-                    `data/downloads/${jar.software}-${jar.version}.${extension}`,
-                    `data/${jar.software}-${jar.version}.${extension}`
+                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`,
+                    `assets/jars/${jar.software}-${jar.version}.${extension}`
                   );
                   fs.unlinkSync(
-                    `data/downloads/${jar.software}-${jar.version}.${extension}`
+                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
                   );
                 }
               }
@@ -260,7 +291,7 @@ function downloadJars() {
           //latest version, which is not always the recommended version.
           if (jar.software != "forge") {
             files.downloadAsync(
-              "data/downloads/" +
+              "assets/jars/downloads/" +
                 jar.software +
                 "-" +
                 jar.version +
@@ -275,21 +306,21 @@ function downloadJars() {
               (data2) => {
                 if (
                   !fs.existsSync(
-                    `data/downloads/${jar.software}-${jar.version}.${extension}`
+                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
                   ) ||
                   fs.readFileSync(
-                    `data/downloads/${jar.software}-${jar.version}.${extension}`
+                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
                   ).length == 26351
                 ) {
                   downloadFromJarsMC();
                   return;
                 } else {
                   fs.copyFileSync(
-                    `data/downloads/${jar.software}-${jar.version}.${extension}`,
-                    `data/${jar.software}-${jar.version}.${extension}`
+                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`,
+                    `assets/jars/${jar.software}-${jar.version}.${extension}`
                   );
                   fs.unlinkSync(
-                    `data/downloads/${jar.software}-${jar.version}.${extension}`
+                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
                   );
                 }
               }
@@ -308,9 +339,9 @@ function getLatestVersion() {
     "https://launchermeta.mojang.com/mc/game/version_manifest.json",
     (vdata) => {
       let version = JSON.parse(vdata).latest.release;
-      const settings = require("./stores/settings.json");
-      settings.latestVersion = version;
-      fs.writeFileSync("./stores/settings.json", JSON.stringify(settings));
+      let datajson = require("./assets/data.json");
+      data.latestVersion = version;
+      fs.writeFileSync("./assets/data.json", JSON.stringify(datajson));
       return version;
     }
   );
@@ -378,31 +409,34 @@ process.stdin.on("data", (data) => {
   }
 });
 
-//api.github.com/repos/Stardust-Labs-MC/Terralith/releases/latest
-if (!fs.existsSync("java")) {
-  fs.mkdirSync("java");
 
-  files.download(
-    "java/java19.tar.gz",
-    "https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.2%2B7/OpenJDK19U-jdk_x64_linux_hotspot_19.0.2_7.tar.gz"
-  );
-  files.download(
-    "java/java17.tar.gz",
-    "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz"
-  );
-  files.download(
-    "java/java11.tar.gz",
-    "https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz"
-  );
 
-  setTimeout(function () {
-    files.extract("java/java19.tar.gz", "java");
-    files.extract("java/java17.tar.gz", "java");
-    files.extract("java/java11.tar.gz", "java");
-  }, 9000);
-}
+files.downloadAsync(
+  "assets/java/java19.tar.gz",
+  "https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.2%2B7/OpenJDK19U-jdk_x64_linux_hotspot_19.0.2_7.tar.gz",
+  (data) => {
+    files.extract("assets/java/java19.tar.gz", "assets/java");
+    fs.unlinkSync("assets/java/java19.tar.gz");
+  });
+files.downloadAsync(
+  "assets/java/java17.tar.gz",
+  "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz",
+  (data) => {
+    files.extract("assets/java/java17.tar.gz", "assets/java");
+    fs.unlinkSync("assets/java/java17.tar.gz");
+  });
+files.downloadAsync(
+  "assets/java/java11.tar.gz",
+  "https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz",
+  (data) => {
+    files.extract("assets/java/java11.tar.gz", "assets/java");
+    fs.unlinkSync("assets/java/java11.tar.gz");
+  });
 
-const data = require("./stores/data.json");
+
+
+
+const data = require("./assets/data.json");
 const f = require("./scripts/mc.js");
 if (data.serversWithAutomaticStartup != undefined) {
   data.serversWithAutomaticStartup.forEach((server) => {
@@ -414,30 +448,11 @@ if (data.serversWithAutomaticStartup != undefined) {
   });
 } else {
   data.serversWithAutomaticStartup = [];
-  fs.writeFileSync("./stores/data.json", JSON.stringify(data));
-}
-
-// generate public and private key
-const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
-  modulusLength: 2048,
-});
-
-const exportPublicKey = publicKey.export({
-  type: "pkcs1",
-  format: "pem",
-});
-const exportPrivateKey = privateKey.export({
-  type: "pkcs1",
-  format: "pem",
-});
-
-if (!fs.existsSync("public.pem")) {
-  fs.writeFileSync("private.pem", exportPrivateKey, { encoding: "utf8" });
-  fs.writeFileSync("public.pem", exportPublicKey, { encoding: "utf8" });
+  fs.writeFileSync("./assets/data.json", JSON.stringify(data));
 }
 
 app.get("/", (req, res) => {
-  res.status(200).sendFile(path.join(__dirname, "index.html"));
+  res.status(200).sendFile(path.join(__dirname, "assets/clientMessage.html"));
 });
 const rateLimit = require("express-rate-limit");
 const limiter = rateLimit({

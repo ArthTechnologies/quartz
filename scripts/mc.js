@@ -3,7 +3,7 @@ var eventEmitter = new events.EventEmitter();
 fs = require("fs");
 let states = [];
 const files = require("./files.js");
-const secrets = require("../stores/secrets.json");  
+const config = require("./config.js").getConfig();
 const { time, Console } = require("console");
 const { randomBytes } = require("crypto");
 const { stat } = require("fs");
@@ -117,7 +117,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
 
-  let path = "../../java/jdk-17.0.5+8/bin/java";
+  let path = "../../assets/java/jdk-17.0.5+8/bin/java";
   let folder = "servers/" + id;
   if (software == "quilt") {
     folder = "servers/" + id + "/server";
@@ -180,34 +180,34 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       break;
   }
 
-  const settings = require("../stores/settings.json");
-  let latestVersion = settings.latestVersion;
+  const datajson = require("../assets/data.json");
+  let latestVersion = datajson.latestVersion;
   switch (version) {
     case latestVersion:
       version = latestVersion;
-      path = "../../java/jdk-19.0.2+7/bin/java";
+      path = "../../assets/java/jdk-19.0.2+7/bin/java";
       break;
     case "1.20.1":
-      path = "../../java/jdk-19.0.2+7/bin/java";
+      path = "../../assets/java/jdk-19.0.2+7/bin/java";
       break;
     case "1.19.4":
-      path = "../../java/jdk-19.0.2+7/bin/java";
+      path = "../../assets/java/jdk-19.0.2+7/bin/java";
       break;
     case "1.18.2":
-      path = "../../java/jdk-17.0.5+8/bin/java";
+      path = "../../assets/java/jdk-17.0.5+8/bin/java";
       break;
     case "1.17.1":
-      path = "../../java/jdk-17.0.5+8/bin/java";
+      path = "../../assets/java/jdk-17.0.5+8/bin/java";
       break;
     case "3.2.0":
-      path = "../../java/jdk-17.0.5+8/bin/java";
+      path = "../../assets/java/jdk-17.0.5+8/bin/java";
     default:
-      path = "../../java/jdk-11.0.18+10/bin/java";
+      path = "../../assets/java/jdk-11.0.18+10/bin/java";
       break;
   }
 
   if (software == "velocity") {
-    path = "../../java/jdk-17.0.5+8/bin/java";
+    path = "../../assets/java/jdk-17.0.5+8/bin/java";
   }
   let doneInstalling = false;
 
@@ -273,7 +273,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         );
         //curseforge download URLs are usually from 'forgecdn.net', so we check for 'forge' instead of 'curseforge'.
       } else if (modpackURL.includes("forge")) {
-        const apiKey = secrets.curseforgeKey;
+        const apiKey = config.curseforgeKey;
         console.log(`curl -o ${folder}/modpack.zip -LO "${modpackURL}"`);
         files.downloadAsync(
           folder + "/modpack.zip",
@@ -334,15 +334,15 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 }
 
   if (software != "quilt") {
-    if (fs.existsSync("data/" + software + "-" + version + ".jar")) {
+    if (fs.existsSync("assets/jars/" + software + "-" + version + ".jar")) {
       fs.copyFileSync(
-        "data/" + software + "-" + version + ".jar",
+        "assets/jars/" + software + "-" + version + ".jar",
         folder + "/server.jar"
       );
     }
   } else {
     fs.copyFileSync(
-      "data/" + software + "-0.5.1.jar",
+      "assets/jars/" + software + "-0.5.1.jar",
       "servers/" + id + "/server.jar"
     );
     args = [
@@ -363,7 +363,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   for (i in addons) {
     if (addons[i] != undefined && addons[i] != "") {
       fs.copyFileSync(
-        "data/" + addons[i] + "-" + version + ".zip",
+        "assets/jars/" + addons[i] + "-" + version + ".zip",
         folder + "/world/datapacks/" + addons[i] + ".zip"
       );
     }
@@ -374,7 +374,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let data;
   if (software == "velocity") {
     if (isNew) {
-      data = fs.readFileSync("servers/template/velocity.toml", "utf8");
+      data = fs.readFileSync("assets/template/velocity.toml", "utf8");
     } else {
       data = fs.readFileSync("servers/" + id + "/velocity.toml", "utf8");
     }
@@ -401,11 +401,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   } else {
     if (isNew) {
-      data = fs.readFileSync("servers/template/server.properties", "utf8");
+      data = fs.readFileSync("assets/template/server.properties", "utf8");
       data = data.replace(/spawn-protection=16/g, `spawn-protection=0`);
       if (software == "paper") {
         let paperGlobal = fs.readFileSync(
-          "servers/template/paper-global.yml",
+          "assets/template/paper-global.yml",
           "utf8"
         );
         if (!fs.existsSync(folder + "/config")) {
@@ -428,7 +428,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     fs.writeFileSync(folder + "/server.properties", result, "utf8");
   }
 
-  //copy /server/template/Geyser-Spigot.jar to folder/plugins
+  //copy /assets/template/Geyser-Spigot.jar to folder/plugins
 
 
   const { exec } = require("child_process");
@@ -584,7 +584,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
 
-  var text = fs.readFileSync("servers/template/geyserconfig.yml", "utf8");
+  var text = fs.readFileSync("assets/template/geyserconfig.yml", "utf8");
   var textByLine = text.split("\n");
   textByLine[15] = "  port: " + port;
 
@@ -592,7 +592,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   if (software == "paper" || software == "spigot") {
     if (
-      fs.existsSync("data/cx_geyser-spigot_Geyser.jar") &&
+      fs.existsSync("assets/jars/cx_geyser-spigot_Geyser.jar") &&
       (fs.existsSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar") || isNew)
     ) {
       if (!isNew) {
@@ -600,11 +600,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         fs.unlinkSync(folder + "/plugins/cx_floodgate-spigot_Floodgate.jar");
       }
       fs.copyFileSync(
-        "data/cx_geyser-spigot_Geyser.jar",
+        "assets/jars/cx_geyser-spigot_Geyser.jar",
         folder + "/plugins/cx_geyser-spigot_Geyser.jar"
       );
       fs.copyFileSync(
-        "data/cx_floodgate-spigot_Floodgate.jar",
+        "assets/jars/cx_floodgate-spigot_Floodgate.jar",
         folder + "/plugins/cx_floodgate-spigot_Floodgate.jar"
       );
     }
@@ -617,19 +617,19 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
 
     fs.copyFile(
-      "servers/template/downloading/cx_geyser-spigot_Geyser.jar",
+      "assets/template/downloading/cx_geyser-spigot_Geyser.jar",
       folder + "/plugins/cx_geyser-spigot_Geyser.jar",
       (err) => {}
     );
 
     fs.copyFile(
-      "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
+      "assets/template/downloading/cx_floodgate-spigot_Floodgate.jar",
       folder + "/plugins/cx_floodgate-spigot_Floodgate.jar",
       (err) => {}
     );
   } else if (software == "velocity") {
     if (
-      fs.existsSync("data/cx_geyser-velocity_Geyser.jar") &&
+      fs.existsSync("assets/jars/cx_geyser-velocity_Geyser.jar") &&
       (fs.existsSync(folder + "/plugins/cx_geyser-velocity_Geyser.jar") ||
         isNew)
     ) {
@@ -638,11 +638,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         fs.unlinkSync(folder + "/plugins/cx_floodgate-velocity_Floodgate.jar");
       }
       fs.copyFileSync(
-        "data/cx_geyser-velocity_Geyser.jar",
+        "assets/jars/cx_geyser-velocity_Geyser.jar",
         folder + "/plugins/cx_geyser-velocity_Geyser.jar"
       );
       fs.copyFileSync(
-        "data/cx_floodgate-velocity_Floodgate.jar",
+        "assets/jars/cx_floodgate-velocity_Floodgate.jar",
         folder + "/plugins/cx_floodgate-velocity_Floodgate.jar"
       );
     }
@@ -654,13 +654,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       fs.writeFileSync(folder + "/plugins/Geyser-Velocity/config.yml", text);
     }
     fs.copyFile(
-      "servers/template/downloading/cx_geyser-velocity_Geyser.jar",
+      "assets/template/downloading/cx_geyser-velocity_Geyser.jar",
       folder + "/plugins/cx_geyser-velocity_Geyser.jar",
       (err) => {}
     );
 
     fs.copyFile(
-      "servers/template/downloading/cx_floodgate-velocity_Floodgate.jar",
+      "assets/template/downloading/cx_floodgate-velocity_Floodgate.jar",
       folder + "/plugins/cx_floodgate-velocity_Floodgate.jar",
       (err) => {}
     );

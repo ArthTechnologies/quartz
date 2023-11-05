@@ -1,5 +1,5 @@
 const { createHash, scryptSync, randomBytes } = require("crypto");
-const secrets = require("../stores/secrets.json");
+const config = require("./config.js").getConfig();
 
 function download(file, url) {
   exec(`curl -o ${file} -LO "${url}"`);
@@ -24,7 +24,7 @@ function hash(input, salt) {
 }
 
 function hashNoSalt(input) {
-  return scryptSync(input, secrets.pepper, 48).toString(
+  return scryptSync(input, config.pepper, 48).toString(
     "hex"
   );
 }
@@ -125,14 +125,7 @@ function removeDirectoryRecursiveAsync(directoryPath, callback) {
 }
 
 function getIPID(ip) {
-  const secrets = require("../stores/secrets.json");
-
-  if (secrets.pepper == undefined) {
-    secrets.pepper = randomBytes(12).toString("hex");
-
-    fs.writeFileSync("stores/secrets.json", JSON.stringify(secrets));
-  }
-  return hash(ip, secrets.pepper).split(":")[1];
+  return hash(ip, config.pepper).split(":")[1];
 }
 
 function write(file, content) {
@@ -270,8 +263,8 @@ function getIndex(callback) {
           index[software] = [];
         }
         let date;
-        if (fs.existsSync("./data/" + file)) {
-          date = fs.statSync("./data/" + file).mtime;
+        if (fs.existsSync("./assets/jars/" + file)) {
+          date = fs.statSync("./assets/jars/" + file).mtime;
         }
         index[software].push({
           version: version,

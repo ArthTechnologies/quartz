@@ -1,11 +1,8 @@
 const express = require("express");
 const Router = express.Router();
-const fs = require("fs");
-const settings = require("../stores/settings.json");
-const data = require("../stores/data.json");
-const files = require("../scripts/files.js");
-const secrets = require("../stores/secrets.json");
-const apiKey = secrets.curseforgeKey;
+const config = require("../scripts/config.js").getConfig();
+const apiKey = config.curseforgeKey;
+
 Router.get("/search", (req, res) => {
    if (apiKey != undefined) {
     let gameVersion = req.query.version;
