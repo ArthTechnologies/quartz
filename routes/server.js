@@ -253,9 +253,9 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
     modtype = req.params.modtype;
     console.log(id + filename + modtype);
     if (filename.split(".")[filename.split(".").length -1] != "disabled") {
-    fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename+".jar", "servers/"+id+"/"+modtype+"s/"+filename+".jar.disabled");
+    fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename, "servers/"+id+"/"+modtype+"s/"+filename+".disabled");
     } else {
-      fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename+".jar.disabled", "servers/"+id+"/"+modtype+"s/"+filename+".jar");
+      fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename+".disabled", "servers/"+id+"/"+modtype+"s/"+filename);
     }
     res.status(202).json({ msg: `Success. Plugin added.` });
   } else {
