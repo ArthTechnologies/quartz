@@ -251,6 +251,7 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
     id = req.params.id;
     filename = req.query.filename;
     modtype = req.params.modtype;
+    console.log(id + filename + modtype);
     if (filename.split(".")[filename.split(".").length -1] != "disabled") {
     fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename+".jar", "servers/"+id+"/"+modtype+"s/"+filename+".jar.disabled");
     } else {
