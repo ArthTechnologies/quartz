@@ -251,13 +251,16 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
     id = req.params.id;
     filename = req.query.filename;
     modtype = req.params.modtype;
-    console.log(id + filename + modtype);
+    let text = "disabled";
     if (filename.split(".")[filename.split(".").length -1] != "disabled") {
     fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename, "servers/"+id+"/"+modtype+"s/"+filename+".disabled");
+    fs.unlinkSync("servers/"+id+"/"+modtype+"s/"+filename);
     } else {
+      text = "enabled;"
       fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename+".disabled", "servers/"+id+"/"+modtype+"s/"+filename);
+      fs.unlinkSync("servers/"+id+"/"+modtype+"s/"+filename+".disabled");
     }
-    res.status(202).json({ msg: `Success. Plugin added.` });
+    res.status(202).json({ msg: `Success. Plugin ${text}.` });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
