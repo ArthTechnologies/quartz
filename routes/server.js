@@ -252,8 +252,8 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
     filename = req.query.filename;
     modtype = req.params.modtype;
     let text = "disabled";
-    console.log(fs.existsSync("servers/" + id+"/" + filename+ ".disabled") + "servers/" + id+"/" + filename+ ".disabled");
-    if (!fs.existsSync("servers/" + id+"/" + filename+ ".disabled")) {
+
+    if (!fs.existsSync("servers/" + id+modtype+"s/" + filename+ ".disabled")) {
     fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename, "servers/"+id+"/"+modtype+"s/"+filename+".disabled");
     fs.unlinkSync("servers/"+id+"/"+modtype+"s/"+filename);
     } else {
