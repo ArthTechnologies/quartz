@@ -242,6 +242,29 @@ router.post(`/:id/add/:modtype`, function (req, res) {
   }
 });
 
+router.post(`/:id/toggleDisable/:modtype`, function (req, res) {
+  email = req.headers.email;
+  token = req.headers.token;
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + "/server.json");
+  if (token === account.token && server.accountId == account.accountId) {
+    id = req.params.id;
+    pluginUrl = req.query.pluginUrl;
+    pluginId = req.query.id;
+    pluginName = req.query.name;
+    pluginName = pluginName.replace(/\//g, "-");
+    modtype = req.params.modtype;
+    if (filename.split(".")[filename.split(".").length -1] != "disabled") {
+    fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+pluginName+".jar", "servers/"+id+"/"+modtype+"s/"+pluginName+".jar.disabled");
+    } else {
+      fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+pluginName+".jar.disabled", "servers/"+id+"/"+modtype+"s/"+pluginName+".jar");
+    }
+    res.status(202).json({ msg: `Success. Plugin added.` });
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
+});
+
 router.post(`/new`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
