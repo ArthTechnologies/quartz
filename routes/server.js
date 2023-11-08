@@ -249,15 +249,12 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
   server = require("../servers/" + req.params.id + "/server.json");
   if (token === account.token && server.accountId == account.accountId) {
     id = req.params.id;
-    pluginUrl = req.query.pluginUrl;
-    pluginId = req.query.id;
-    pluginName = req.query.name;
-    pluginName = pluginName.replace(/\//g, "-");
+    filename = req.query.filename;
     modtype = req.params.modtype;
     if (filename.split(".")[filename.split(".").length -1] != "disabled") {
-    fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+pluginName+".jar", "servers/"+id+"/"+modtype+"s/"+pluginName+".jar.disabled");
+    fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename+".jar", "servers/"+id+"/"+modtype+"s/"+filename+".jar.disabled");
     } else {
-      fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+pluginName+".jar.disabled", "servers/"+id+"/"+modtype+"s/"+pluginName+".jar");
+      fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename+".jar.disabled", "servers/"+id+"/"+modtype+"s/"+filename+".jar");
     }
     res.status(202).json({ msg: `Success. Plugin added.` });
   } else {
