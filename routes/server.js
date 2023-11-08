@@ -64,7 +64,7 @@ router.post(`/:id/state/:state`, function (req, res) {
   }
 });
 
-router.delete(`/:id/:modtype`, function (req, res) {
+router.delete(`/:id/:modtype(plugin|mod)`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
@@ -205,7 +205,7 @@ router.post(`/:id/version/`, function (req, res) {
 });
 
 let lastPlugin = "";
-router.post(`/:id/add/:modtype`, function (req, res) {
+router.post(`/:id/add/:modtype(plugin|mod)`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
@@ -242,7 +242,7 @@ router.post(`/:id/add/:modtype`, function (req, res) {
   }
 });
 
-router.post(`/:id/toggleDisable/:modtype`, function (req, res) {
+router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
