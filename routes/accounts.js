@@ -33,6 +33,7 @@ Router.post("/email/signup/", (req, res) => {
         account.resetAttempts = 0;
         account.ips = [];
         account.ips.push(files.getIPID(req.ip));
+        account.type = "email";
         fs.writeFileSync(
           "accounts/" + email + ".json",
           JSON.stringify(accounts, null, 4),
@@ -152,5 +153,67 @@ Router.post("/email/resetPassword/", async (req, res) => {
     }
   );
 });
+
+Router.post("/discord/signup/", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+
+  let account = {};
+  let emailExists = false;
+  let token = req.query.token;  
+
+
+
+  exec("curl -X GET https://discord.com/api/users/@me -H 'authorization: Bearer " + token + "'", (req, res) => {
+    let email = res.email;
+    if (fs.existsSync("accounts/" + email + ".json")) {
+      emailExists = true;
+    }
+    if (!emailExists) {
+      let accountId = uuidv4();
+
+      account.accountId = accountId;
+      account.token = uuidv4();
+      account.resetAttempts = 0;
+      account.ips = [];
+      account.ips.push(files.getIPID(req.ip));
+      account.type = "discord";
+      fs.writeFileSync(
+        "accounts/" + email + ".json",
+        JSON.stringify(accounts, null, 4),
+        {
+          encoding: "utf8",
+        }
+      );
+      res.status(200).send({ token: account.token, accountId: accountId, email: email });
+    }
+
+  });
+
+});
+
+Router.post("/discord/signin/", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+
+  let token = req.query.token;  
+
+  exec("curl -X GET https://discord.com/api/users/@me -H 'authorization: Bearer " + token + "'", (req, res) => {
+    let email = res.email;
+    let account = require("../accounts/" + email + ".json");
+    let response = {};
+
+    if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
+      account.ips.push(files.getIPID(req.ip));
+    }
+    response = {
+      token: account.token,
+      accountId: account.accountId,
+    };
+
+    res.status(200).send(response);
+  });
+});
+
+
+
 
 module.exports = Router;
