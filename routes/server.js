@@ -64,7 +64,7 @@ router.post(`/:id/state/:state`, function (req, res) {
   }
 });
 
-router.delete(`/:id/:modtype`, function (req, res) {
+router.delete(`/:id/:modtype(plugin|mod)`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
@@ -205,7 +205,7 @@ router.post(`/:id/version/`, function (req, res) {
 });
 
 let lastPlugin = "";
-router.post(`/:id/add/:modtype`, function (req, res) {
+router.post(`/:id/add/:modtype(plugin|mod)`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
@@ -237,6 +237,31 @@ router.post(`/:id/add/:modtype`, function (req, res) {
 
       res.status(202).json({ msg: `Success. Plugin added.` });
     }
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
+});
+
+router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
+  email = req.headers.email;
+  token = req.headers.token;
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + "/server.json");
+  if (token === account.token && server.accountId == account.accountId) {
+    id = req.params.id;
+    filename = req.query.filename;
+    modtype = req.params.modtype;
+    let text = "disabled";
+
+    if (!fs.existsSync("servers/" + id +"/"+modtype+"s/" + filename+ ".disabled")) {
+    fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename, "servers/"+id+"/"+modtype+"s/"+filename+".disabled");
+    fs.unlinkSync("servers/"+id+"/"+modtype+"s/"+filename);
+    } else {
+      text = "enabled"
+      fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename+".disabled", "servers/"+id+"/"+modtype+"s/"+filename);
+      fs.unlinkSync("servers/"+id+"/"+modtype+"s/"+filename+".disabled");
+    }
+    res.status(202).json({ msg: `Success. Plugin ${text}.` });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
