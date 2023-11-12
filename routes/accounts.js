@@ -154,7 +154,8 @@ Router.post("/email/resetPassword/", async (req, res) => {
   );
 });
 
-Router.post("/discord/signup/", (req, res) => {
+//combined signin and signup for discord
+Router.post("/discord/", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
   let account = {};
@@ -168,7 +169,23 @@ Router.post("/discord/signup/", (req, res) => {
     if (fs.existsSync("accounts/" + email + ".json")) {
       emailExists = true;
     }
-    if (!emailExists) {
+    //if account exists, so the user is signing in not up...
+    if (emailExists) {
+      let email = res.email;
+      let account = require("../accounts/" + email + ".json");
+      let response = {};
+  
+      if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
+        account.ips.push(files.getIPID(req.ip));
+      }
+      response = {
+        token: account.token,
+        accountId: account.accountId,
+        email: email,
+      };
+  
+      res.status(200).send(response);
+    } else {
       let accountId = uuidv4();
 
       account.accountId = accountId;
@@ -191,27 +208,6 @@ Router.post("/discord/signup/", (req, res) => {
 
 });
 
-Router.post("/discord/signin/", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*");
-
-  let token = req.query.token;  
-
-  exec("curl -X GET https://discord.com/api/users/@me -H 'authorization: Bearer " + token + "'", (req, res) => {
-    let email = res.email;
-    let account = require("../accounts/" + email + ".json");
-    let response = {};
-
-    if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
-      account.ips.push(files.getIPID(req.ip));
-    }
-    response = {
-      token: account.token,
-      accountId: account.accountId,
-    };
-
-    res.status(200).send(response);
-  });
-});
 
 
 
