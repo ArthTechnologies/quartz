@@ -165,6 +165,7 @@ Router.post("/discord/", (req, res) => {
 
 
   exec("curl -X GET https://discord.com/api/users/@me -H 'authorization: Bearer " + token + "'", (req, res) => {
+    let req = JSON.parse(res);
     let email = res.email;
     if (fs.existsSync("accounts/" + email + ".json")) {
       emailExists = true;
@@ -191,12 +192,12 @@ Router.post("/discord/", (req, res) => {
       account.accountId = accountId;
       account.token = uuidv4();
       account.resetAttempts = 0;
-if (req.ip != undefined) {
+
   account.ips = [];
   if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
   account.ips.push(files.getIPID(req.ip));
   }
-}
+
       account.type = "discord";
       fs.writeFileSync(
         "accounts/" + email + ".json",
