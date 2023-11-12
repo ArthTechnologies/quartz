@@ -201,7 +201,7 @@ Router.post("/discord/", (req, res) => {
       account.type = "discord";
       fs.writeFileSync(
         "accounts/" + email + ".json",
-        JSON.stringify(accounts, null, 4),
+        JSON.stringify(account, null, 4),
         {
           encoding: "utf8",
         }
