@@ -164,8 +164,8 @@ Router.post("/discord/", (req, res) => {
 
 
 
-  exec("curl -X GET https://discord.com/api/users/@me -H 'authorization: Bearer " + token + "'", (req, res) => {
-    let req = JSON.parse(res);
+  exec("curl -X GET https://discord.com/api/users/@me -H 'authorization: Bearer " + token + "'", (req2, res) => {
+    let req = JSON.parse(res2);
     let email = res.email;
     if (fs.existsSync("accounts/" + email + ".json")) {
       emailExists = true;
