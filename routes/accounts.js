@@ -174,7 +174,7 @@ Router.post("/discord/", (req, res) => {
       let email = res.email;
       let account = require("../accounts/" + email + ".json");
       let response = {};
-  
+      account.ips = [];
       if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
         account.ips.push(files.getIPID(req.ip));
       }
@@ -191,10 +191,12 @@ Router.post("/discord/", (req, res) => {
       account.accountId = accountId;
       account.token = uuidv4();
       account.resetAttempts = 0;
-      account.ips = [];
-      if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
-      account.ips.push(files.getIPID(req.ip));
-      }
+if (req.ip != undefined) {
+  account.ips = [];
+  if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
+  account.ips.push(files.getIPID(req.ip));
+  }
+}
       account.type = "discord";
       fs.writeFileSync(
         "accounts/" + email + ".json",
