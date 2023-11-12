@@ -154,6 +154,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
   );
 });
 
+/*
 //combined signin and signup for discord
 Router.post("/discord/", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -212,7 +213,7 @@ Router.post("/discord/", (req, res) => {
   });
 
 });
-
+*/
 
 
 
