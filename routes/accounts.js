@@ -192,7 +192,9 @@ Router.post("/discord/", (req, res) => {
       account.token = uuidv4();
       account.resetAttempts = 0;
       account.ips = [];
+      if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
       account.ips.push(files.getIPID(req.ip));
+      }
       account.type = "discord";
       fs.writeFileSync(
         "accounts/" + email + ".json",
