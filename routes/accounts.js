@@ -164,15 +164,15 @@ Router.post("/discord/", (req, res) => {
 
 
 
-  exec("curl -X GET https://discord.com/api/users/@me -H 'authorization: Bearer " + token + "'", (req2, res) => {
+  exec("curl -X GET https://discord.com/api/users/@me -H 'authorization: Bearer " + token + "'", (req2, res2) => {
 
-    let email = res.email;
+    let email = res2.email;
     if (fs.existsSync("accounts/" + email + ".json")) {
       emailExists = true;
     }
     //if account exists, so the user is signing in not up...
     if (emailExists) {
-      let email = res.email;
+      let email = res2.email;
       let account = require("../accounts/" + email + ".json");
       let response = {};
       account.ips = [];
