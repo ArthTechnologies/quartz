@@ -19,7 +19,7 @@ Router.get("/search", (req, res) => {
         `&modLoaderType=${modLoaderType}` +
         `&searchFilter=${searchFilter}` +
         `&classId=${classId}` +
-        `&pageSize=10` +
+        `&pageSize=15` +
         `&sortField=2` +
         `&sortOrder=desc"` +
         ` -H 'x-api-key: ${apiKey}'`,
