@@ -11,7 +11,7 @@ Router.get("/search", (req, res) => {
     let classId = req.query.classId;
     let index = req.query.index;
     let results = [];
-
+    console.log(index);
     const exec = require("child_process").exec;
     exec(
       `curl -X GET "https://api.curseforge.com/v1/mods/search` +
