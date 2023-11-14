@@ -9,6 +9,7 @@ Router.get("/search", (req, res) => {
     let modLoaderType = req.query.loader;
     let searchFilter = req.query.query;
     let classId = req.query.classId;
+    let index = req.query.index;
     let results = [];
 
     const exec = require("child_process").exec;
@@ -19,6 +20,7 @@ Router.get("/search", (req, res) => {
         `&modLoaderType=${modLoaderType}` +
         `&searchFilter=${searchFilter}` +
         `&classId=${classId}` +
+        `&index=${index}` +
         `&pageSize=15` +
         `&sortField=2` +
         `&sortOrder=desc"` +
