@@ -10,6 +10,7 @@ Router.get("/search", (req, res) => {
     let searchFilter = req.query.query;
     let classId = req.query.classId;
     let index = req.query.index || 0;
+    let sortField = req.query.sortField || 1;
     let results = [];
     console.log(index);
     const exec = require("child_process").exec;
@@ -22,7 +23,7 @@ Router.get("/search", (req, res) => {
         `&classId=${classId}` +
         `&index=${index}` +
         `&pageSize=15` +
-        `&sortField=2` +
+        `&sortField=${sortField}` +
         `&sortOrder=desc"` +
         ` -H 'x-api-key: ${apiKey}'`,
       (error, stdout, stderr) => {
