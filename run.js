@@ -359,7 +359,8 @@ function verifySubscriptions() {
       if (accounts[i].split(".")[accounts[i].split(".").length - 1] == "json") {
         const account = require(`./accounts/${accounts[i]}`);
         if (!account.bypassStripe) {
-          const amountOfServers = account.servers.length;
+          try {
+            const amountOfServers = account.servers.length;
           s.checkSubscription(account.email, (data) => {
             if (data.data.length < amountOfServers) {
               for (j in account.servers) {
@@ -378,6 +379,9 @@ function verifySubscriptions() {
               account.servers = [];
             }
           });
+          } catch{
+            console.log("Error verifying subscription for " + account.email);
+          }
         }
       }
     }
