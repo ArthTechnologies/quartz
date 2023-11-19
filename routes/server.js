@@ -3,14 +3,15 @@ const router = express.Router();
 const files = require("../scripts/files.js");
 const f = require("../scripts/mc.js");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
-const data = require("../stores/data.json");
+const upload = multer({ dest: "assets/uploads/" });
+const data = require("../assets/data.json");
 const JsDiff = require("diff");
+const config = require("../scripts/config.js").getConfig();
 
 const fs = require("fs");
 
-let stripekey = require("../stores/secrets.json").stripekey;
-const stripe = require("stripe")(stripekey);
+let stripeKey = config.stripeKey;
+const stripe = require("stripe")(stripeKey);
 
 router.get(`/:id`, function (req, res) {
   email = req.headers.email;
@@ -63,7 +64,7 @@ router.post(`/:id/state/:state`, function (req, res) {
   }
 });
 
-router.delete(`/:id/:modtype`, function (req, res) {
+router.delete(`/:id/:modtype(plugin|mod)`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
@@ -110,6 +111,8 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     }
     if (fs.existsSync(`${path}/modrinth.index.json`)) {
       modpack = require(`../${path}/modrinth.index.json`);
+    } else if (fs.existsSync(`${path}/curseforge.index.json`)) {
+      modpack = require(`../${path}/curseforge.index.json`);
     }
 
     fs.readdirSync(`${path}/${modtype}`).forEach((file) => {
@@ -122,15 +125,11 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           filename: file,
           date: fs.statSync(`${path}/${modtype}/${file}`).mtimeMs,
         });
-      } else if (file.startsWith("lr_")) {
-        mods.push({
-          platform: file.split("_")[0],
-          id: file.split("_")[1],
-          name: file.split("_")[2].replace(".jar", ""),
-          filename: file,
-          date: fs.statSync(`${path}/${modtype}/${file}`).mtimeMs,
-        });
-      } else if (file.startsWith("cx_")) {
+      } else if (
+        file.startsWith("lr_") |
+        file.startsWith("cx_") |
+        file.startsWith("cf_")
+      ) {
         mods.push({
           platform: file.split("_")[0],
           id: file.split("_")[1],
@@ -157,11 +156,13 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     if (modpack != undefined) {
       if (modpack.files.length > 0) {
         for (i in modpack.files) {
-          if (modpack.files[i].path.includes("\\")) {
-            modpack.files[i].path = modpack.files[i].path.replace(/\\/g, "/");
-          }
-          if (!fs.existsSync(`${path}/` + modpack.files[i].path)) {
-            modpack.files.splice(i, 1);
+          if (modpack.files[i].path != undefined) {
+            if (modpack.files[i].path.includes("\\")) {
+              modpack.files[i].path = modpack.files[i].path.replace(/\\/g, "/");
+            }
+            if (!fs.existsSync(`${path}/` + modpack.files[i].path)) {
+              modpack.files.splice(i, 1);
+            }
           }
         }
       }
@@ -204,7 +205,7 @@ router.post(`/:id/version/`, function (req, res) {
 });
 
 let lastPlugin = "";
-router.post(`/:id/add/:modtype`, function (req, res) {
+router.post(`/:id/add/:modtype(plugin|mod)`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
@@ -220,11 +221,15 @@ router.post(`/:id/add/:modtype`, function (req, res) {
     modtype = req.params.modtype;
     if (
       pluginUrl.startsWith("https://cdn.modrinth.com/data/") |
-      pluginUrl.startsWith("https://github.com/")
+      pluginUrl.startsWith("https://github.com/") |
+      pluginUrl.startsWith("https://edge.forgecdn.net/")
     ) {
+      let platform = "lr";
+      if (pluginUrl.startsWith("https://github.com/")) platform = "gh";
+      if (pluginUrl.startsWith("https://edge.forgecdn.net/")) platform = "cf";
       if (pluginUrl != lastPlugin) {
         files.download(
-          `servers/${id}/${modtype}s/${pluginId}_${pluginName}.jar`,
+          `servers/${id}/${modtype}s/${platform}_${pluginId}_${pluginName}.jar`,
           pluginUrl
         );
         lastPlugin = pluginUrl;
@@ -232,6 +237,31 @@ router.post(`/:id/add/:modtype`, function (req, res) {
 
       res.status(202).json({ msg: `Success. Plugin added.` });
     }
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
+});
+
+router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
+  email = req.headers.email;
+  token = req.headers.token;
+  account = require("../accounts/" + email + ".json");
+  server = require("../servers/" + req.params.id + "/server.json");
+  if (token === account.token && server.accountId == account.accountId) {
+    id = req.params.id;
+    filename = req.query.filename;
+    modtype = req.params.modtype;
+    let text = "disabled";
+
+    if (!fs.existsSync("servers/" + id +"/"+modtype+"s/" + filename+ ".disabled")) {
+    fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename, "servers/"+id+"/"+modtype+"s/"+filename+".disabled");
+    fs.unlinkSync("servers/"+id+"/"+modtype+"s/"+filename);
+    } else {
+      text = "enabled"
+      fs.copyFileSync("servers/"+id+"/"+modtype+"s/"+filename+".disabled", "servers/"+id+"/"+modtype+"s/"+filename);
+      fs.unlinkSync("servers/"+id+"/"+modtype+"s/"+filename+".disabled");
+    }
+    res.status(202).json({ msg: `Success. Plugin ${text}.` });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
@@ -245,10 +275,8 @@ router.post(`/new`, function (req, res) {
     let amount = account.servers.length;
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
-    const settings = require("../stores/settings.json");
 
     let serverFolders = fs.readdirSync("servers");
-    serverFolders = serverFolders.filter((e) => e !== "template");
     let serverFolder = serverFolders.sort((a, b) => a - b);
     let id = -1;
     for (i in serverFolder) {
@@ -264,9 +292,9 @@ router.post(`/new`, function (req, res) {
     if (id === -1) {
       id = lastNum + 1;
     }
-    const datajson = require("../stores/data.json");
+    const datajson = require("../assets/data.json");
     datajson.numServers = serverFolders.length;
-    fs.writeFileSync("stores/data.json", JSON.stringify(datajson, null, 2));
+    fs.writeFileSync("assets/data.json", JSON.stringify(datajson, null, 2));
     em = req.query.email;
 
     var store = {
@@ -280,9 +308,9 @@ router.post(`/new`, function (req, res) {
     let cid = "";
 
     if (
-      (stripekey.indexOf("sk") == -1 || account.bypassStripe == true) &&
-      (settings.maxServers > data.numServers ||
-        settings.maxServers == undefined ||
+      (stripeKey.indexOf("sk") == -1 || account.bypassStripe == true) &&
+      (config.maxServers > data.numServers ||
+        config.maxServers == undefined ||
         data.numServers == undefined)
     ) {
       console.log("debug");
@@ -325,7 +353,7 @@ router.post(`/new`, function (req, res) {
         req.body.modpackURL
       );
       res.status(202).json({ success: true, msg: `Success. Server created.` });
-    } else if (settings.maxServers <= data.numServers) {
+    } else if (config.maxServers <= data.numServers) {
       res
         .status(400)
         .json({ success: false, msg: "Maxiumum servers reached." });
@@ -443,7 +471,7 @@ router.post(`/:id/setInfo`, function (req, res) {
     desc = req.body.desc;
 
     //setting automaticStartup
-    let dataJson = require("../stores/data.json");
+    let dataJson = require("../assets/data.json");
     let server = id + ":" + email;
     if (dataJson.serversWithAutomaticStartup == undefined) {
       dataJson.serversWithAutomaticStartup = [];
@@ -452,7 +480,7 @@ router.post(`/:id/setInfo`, function (req, res) {
       if (!dataJson.serversWithAutomaticStartup.includes(server)) {
         dataJson.serversWithAutomaticStartup.push(server);
       }
-      fs.writeFileSync("stores/data.json", JSON.stringify(dataJson, null, 2));
+      fs.writeFileSync("assets/data.json", JSON.stringify(dataJson, null, 2));
     } else {
       if (dataJson.serversWithAutomaticStartup.includes(server)) {
         dataJson.serversWithAutomaticStartup.splice(
@@ -460,7 +488,7 @@ router.post(`/:id/setInfo`, function (req, res) {
           1
         );
       }
-      fs.writeFileSync("stores/data.json", JSON.stringify(dataJson, null, 2));
+      fs.writeFileSync("assets/data.json", JSON.stringify(dataJson, null, 2));
     }
 
     //setting description
@@ -671,7 +699,7 @@ router.delete(`/:id`, function (req, res) {
 
           files.removeDirectoryRecursive(`servers/${id}`);
         }
-        const data = require("../stores/data.json");
+        const data = require("../assets/data.json");
         for (i in data.serversWithAutomaticStartup) {
           if (data.serversWithAutomaticStartup[i].includes(id)) {
             data.serversWithAutomaticStartup.splice(i, 1);
@@ -994,9 +1022,7 @@ router.post("/:id/proxy/servers", function (req, res) {
       }
       fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig);
 
-      if (
-        req.query.ip.split(":")[0] == require("../stores/settings.json").address
-      ) {
+      if (req.query.ip.split(":")[0] == config.address) {
         let subserverId = parseInt(req.query.ip.split(":")[1]) - 10000;
         if (
           require("../servers/" + subserverId + "/server.json").accountId ==
@@ -1123,38 +1149,53 @@ router.get("/:id/file/:path", function (req, res) {
       if (fs.lstatSync(`servers/${req.params.id}/${path}`).isDirectory()) {
         res
           .status(200)
-          .json({content:"This is a directory, not a file. Listing files: " + fs.readdirSync(`servers/${req.params.id}/${path}`)});
+          .json({
+            content:
+              "This is a directory, not a file. Listing files: " +
+              fs.readdirSync(`servers/${req.params.id}/${path}`),
+          });
       } else {
         let extension = path.split(".")[path.split(".").length - 1];
 
         if (extension == "png" || extension == "jepg" || extension == "svg") {
-          res.status(200).json({content: "Image files can't be edited or viewed."});
+          res
+            .status(200)
+            .json({ content: "Image files can't be edited or viewed." });
         } else if (
           extension == "jar" ||
           extension == "exe" ||
           extension == "sh"
         ) {
-          res.status(200).json({content: "Binary files can't be edited or viewed."});
+          res
+            .status(200)
+            .json({ content: "Binary files can't be edited or viewed." });
         } else if (
           fs.statSync(`servers/${req.params.id}/${path}`).size > 500000
         ) {
-          res.status(200).json({content: "File too large."});
+          res.status(200).json({ content: "File too large." });
         } else {
-          let returnArray = [];
+          let versionsArray = [];
           //get the file's previous versions
-          if (fs.existsSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`)) {
-          let filesArray = fs.readdirSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`);
+          if (
+            fs.existsSync(
+              `servers/${req.params.id}/.fileVersions/${req.params.path}`
+            )
+          ) {
+            versionsArray = fs.readdirSync(
+              `servers/${req.params.id}/.fileVersions/${req.params.path}`
+            );
 
-
-    for (i in filesArray) {
-        returnArray.push(fs.statSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/${filesArray[i]}`).mtimeMs);
-    }
-
+          }
+          res
+            .status(200)
+            .json({
+              content: fs.readFileSync(
+                `servers/${req.params.id}/${path}`,
+                "utf8"
+              ),
+              versions: versionsArray,
+            });
         }
-        res
-        .status(200)
-        .json({ content: fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8"), versions: returnArray});
-      }
       }
     } else {
       res.status(200).json([]);
@@ -1191,29 +1232,38 @@ router.post("/:id/file/:path", function (req, res) {
       filename != "config.yml" &&
       fs.statSync(`servers/${req.params.id}/${path}`).size <= 500000
     ) {
-      if (!fs.existsSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`)) {
-        fs.mkdirSync(`servers/${req.params.id}/.fileVersions/${req.params.path}`);
+      if (
+        !fs.existsSync(
+          `servers/${req.params.id}/.fileVersions/${req.params.path}`
+        )
+      ) {
+        fs.mkdirSync(
+          `servers/${req.params.id}/.fileVersions/${req.params.path}`
+        );
       }
-        //write only the difference between the old file and the new file
-        let oldFile = fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8");
-        let newFile = req.body.content;
-        let diff = JsDiff.diffLines(oldFile, newFile);
-        let diffString = "";
-        diff.forEach((part) => {
-          if (part.added) {
-            diffString += `+${part.value}`;
-          } else if (part.removed) {
-            diffString += `-${part.value}`;
-          } else {
-            diffString += part.value;
-          }
-        });
-        console.log(diffString);
-        let filename = fs.statSync(`servers/${req.params.id}/${path}`).mtimeMs;
-        console.log(filename);
-        fs.writeFileSync(`servers/${req.params.id}/.fileVersions/${req.params.path}/${filename}`, diffString);
+      //write only the difference between the old file and the new file
+      let oldFile = fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8");
+      let newFile = req.body.content;
+      let diff = JsDiff.diffLines(oldFile, newFile);
+      let diffString = "";
+      diff.forEach((part) => {
+        if (part.added) {
+          diffString += `+${part.value}`;
+        } else if (part.removed) {
+          diffString += `-${part.value}`;
+        } else {
+          diffString += part.value;
+        }
+      });
+      console.log(diffString);
+      let filename = fs.statSync(`servers/${req.params.id}/${path}`).mtimeMs;
+      console.log(filename);
+      fs.writeFileSync(
+        `servers/${req.params.id}/.fileVersions/${req.params.path}/${filename}`,
+        diffString
+      );
 
-        fs.writeFileSync(`servers/${req.params.id}/${path}`, req.body.content);
+      fs.writeFileSync(`servers/${req.params.id}/${path}`, req.body.content);
       res.status(200).json({ msg: "Done" });
     } else {
       res.status(400).json({ msg: "Invalid request." });
@@ -1304,11 +1354,8 @@ router.get("/:id/storageInfo", function (req, res) {
     let limit = -1;
     let used = files.folderSizeRecursive(`servers/${req.params.id}/`);
 
-    if (
-      fs.existsSync(`stores/settings.json`) &&
-      require(`../stores/settings.json`).serverStorageLimit !== undefined
-    ) {
-      limit = require(`../stores/settings.json`).serverStorageLimit;
+    if (config.serverStorageLimit !== undefined) {
+      limit = config.serverStorageLimit;
     }
 
     res.status(200).json({ used: used, limit: limit });

@@ -5,6 +5,7 @@ const s = require("../scripts/stripe.js");
 
 const { v4: uuidv4 } = require("uuid");
 const files = require("../scripts/files.js");
+const config = require("../scripts/config.js").getConfig();
 
 Router.post("/email/signup/", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -32,7 +33,14 @@ Router.post("/email/signup/", (req, res) => {
         account.resetAttempts = 0;
         account.ips = [];
         account.ips.push(files.getIPID(req.ip));
-
+        account.type = "email";
+        fs.writeFileSync(
+          "accounts/" + email + ".json",
+          JSON.stringify(accounts, null, 4),
+          {
+            encoding: "utf8",
+          }
+        );
         res.status(200).send({ token: account.token, accountId: accountId });
       } else {
         res.status(400).send({ token: -1, reason: "Email already exists" });
@@ -43,14 +51,6 @@ Router.post("/email/signup/", (req, res) => {
   } else {
     res.status(400).send({ token: -1, reason: "Passwords do not match" });
   }
-  //write account file
-  fs.writeFileSync(
-    "accounts/" + email + ".json",
-    JSON.stringify(accounts, null, 4),
-    {
-      encoding: "utf8",
-    }
-  );
 });
 
 Router.post("/email/signin/", (req, res) => {
@@ -100,7 +100,6 @@ Router.delete("/email", (req, res) => {
 Router.post("/email/resetPassword/", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
-  let settings = require("../stores/settings.json");
   let password = req.query.password;
   let email = req.query.email;
   let confirmPassword = req.query.confirmPassword;
@@ -110,7 +109,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
   try {
     const creditId = await s.getCreditId(email);
     if (account.resetAttempts < 5) {
-      if (creditId === last4 || settings.enablePay === false) {
+      if (creditId === last4 || config.enablePay === false) {
         if (password == confirmPassword) {
           if (password.length >= 7) {
             [salt, password] = files.hash(password).split(":");
@@ -154,5 +153,69 @@ Router.post("/email/resetPassword/", async (req, res) => {
     }
   );
 });
+
+/*
+//combined signin and signup for discord
+Router.post("/discord/", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+
+  let account = {};
+  let emailExists = false;
+  let token = req.query.token;  
+
+
+
+  exec("curl -X GET https://discord.com/api/users/@me -H 'authorization: Bearer " + token + "'", (req2, res2) => {
+
+    let email = res2.email;
+    if (fs.existsSync("accounts/" + email + ".json")) {
+      emailExists = true;
+    }
+    //if account exists, so the user is signing in not up...
+    if (emailExists) {
+      let email = res2.email;
+      let account = require("../accounts/" + email + ".json");
+      let response = {};
+      account.ips = [];
+      if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
+        account.ips.push(files.getIPID(req.ip));
+      }
+      response = {
+        token: account.token,
+        accountId: account.accountId,
+        email: email,
+      };
+  
+      res.status(200).send(response);
+    } else {
+      let accountId = uuidv4();
+
+      account.accountId = accountId;
+      account.token = uuidv4();
+      account.resetAttempts = 0;
+
+  account.ips = [];
+  if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
+  account.ips.push(files.getIPID(req.ip));
+  }
+
+      account.type = "discord";
+      fs.writeFileSync(
+        "accounts/" + email + ".json",
+        JSON.stringify(account, null, 4),
+        {
+          encoding: "utf8",
+        }
+      );
+      res.status(200).send({ token: account.token, accountId: accountId, email: email });
+    }
+
+  });
+
+});
+*/
+
+
+
 
 module.exports = Router;

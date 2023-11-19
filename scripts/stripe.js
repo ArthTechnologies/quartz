@@ -1,7 +1,5 @@
-//stripekey is stripe.key from lib/store.json
-
-let stripekey = require("../stores/secrets.json").stripekey;
-const stripe = require("stripe")(stripekey);
+let stripeKey = require("./config.js").getConfig().stripeKey;
+const stripe = require("stripe")(stripeKey);
 const express = require("express");
 
 async function getCustomerID(email) {

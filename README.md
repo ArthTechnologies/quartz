@@ -24,8 +24,7 @@ You can update quartz by running `git pull` command inside your quartz folder.
 
 ## How to configure
 
-- stores/settings.json is where you can modify settings.
-- stores/secrets.json is where you can enter your stripe key if you want payments enabled.
+- config.txt is where you can configure settings and provide API keys if you want to enable curseForge or stripe support.
 - Advanced: If you want to set up quartz to be proxied by ocelot (a master backend that connects quartz instances), you can use the `POST /node/forwardingSecret` route. Specify the `forwardingSecret` as a query parameter.
 
 ## How to run with docker (Unsupported)
