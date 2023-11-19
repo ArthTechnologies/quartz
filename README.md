@@ -53,7 +53,7 @@ To run a dev server, follow "how to run".
 ✅ Ability to run Minecraft servers with specified versions and softwares  
 ✅ Basic communication with frontend for terminal  
 ✅ Consistent routes  
-✅ Secure accounts and servers with a password system
+✅ Secure accounts and servers with a password system  
 ✅ Add support for plugins and mods from modrinth  
 🛠️ Make no-stripe/no account modes more stable  
 🛠️ Make modded servers stable  
