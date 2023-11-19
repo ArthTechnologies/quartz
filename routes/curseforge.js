@@ -32,7 +32,7 @@ Router.get("/search", (req, res) => {
           try {
           res.status(200).json(JSON.parse(stdout));
           } catch {
-            console.log("Error parsing JSON");
+            res.status(400).json({msg:"Error parsing JSON."})
           }
         } else {
           res.status(500).json({ msg: "Internal server error." });
@@ -59,7 +59,7 @@ Router.get("/:id", (req, res) => {
           try {
             res.status(200).json(JSON.parse(stdout).data);
             } catch {
-              console.log("Error parsing JSON");
+              res.status(400).json({msg:"Error parsing JSON."})
             }
         } else {
           res.status(500).json({ msg: "Internal server error." });
@@ -85,7 +85,7 @@ Router.get("/:id/description", (req, res) => {
           try {
             res.status(200).json(JSON.parse(stdout).data);
             } catch {
-              console.log("Error parsing JSON");
+              res.status(400).json({msg:"Error parsing JSON."})
             }
         } else {
           res.status(500).json({ msg: "Internal server error." });
