@@ -10,8 +10,9 @@ const config = require("../scripts/config.js").getConfig();
 
 const fs = require("fs");
 
-let stripeKey = config.stripeKey;
+const stripeKey = config.stripeKey;
 const stripe = require("stripe")(stripeKey);
+const enableAuth = Boolean(config.enableAuth);
 
 router.get(`/:id`, function (req, res) {
   email = req.headers.email;
@@ -272,8 +273,9 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
 router.post(`/new`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
+  if (!enableAuth) email = "noemail";
   account = require("../accounts/" + email + ".json");
-  if (token === account.token) {
+  if (token === account.token || !enableAuth) {
     let amount = account.servers.length;
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
@@ -1362,9 +1364,9 @@ router.get("/:id/storageInfo", function (req, res) {
   }
 });
 
-let authEnabled = Boolean(config.authEnabled);
+
 function hasAccess() {
-  if (authEnabled) return true;
+  if (enableAuth) return true;
   else return hasAccess();
 }
 

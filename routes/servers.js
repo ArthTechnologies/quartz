@@ -5,15 +5,19 @@ let email = "";
 
 const f = require("../scripts/mc.js");
 const files = require("../scripts/files.js");
+const config = require("../scripts/config.js").getConfig();
+const enableAuth = Boolean(config.enableAuth);
 
 router.get(`/`, function (req, res) {
+
   email = req.headers.email;
   token = req.headers.token;
+  if (!enableAuth) email = "noemail";
   //prevents a crash that has occurred
   if (email != undefined) {
     account = require("../accounts/" + email + ".json");
   }
-  if (token === account.token) {
+  if (token === account.token || !enableAuth) {
     //if req.body.email is "noemail" return 404
     if (req.query.email == ("noemail" | "undefined")) {
       //res.status(404).json({ msg: `Invalid email.` });
