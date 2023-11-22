@@ -293,7 +293,7 @@ router.post(`/new`, function (req, res) {
       }
       lastNum = parseInt(num);
     }
-
+    if (lastNum == undefined) lastNum = -1;
     if (id === -1) {
       id = lastNum + 1;
     }
