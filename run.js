@@ -89,6 +89,7 @@ const config = require("./scripts/config.js").getConfig();
 
 if (!fs.existsSync("accounts")) {
   fs.mkdirSync("accounts");
+  fs.writeFileSync("accounts/noemail.json", "{}");
 }
 
 //Migration from old file-based accounts format to new folder-based one
