@@ -276,6 +276,7 @@ router.post(`/new`, function (req, res) {
   if (!enableAuth) email = "noemail";
   account = require("../accounts/" + email + ".json");
   if (token === account.token || !enableAuth) {
+    if (account.servers == undefined) account.servers = [];
     let amount = account.servers.length;
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
