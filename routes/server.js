@@ -284,6 +284,7 @@ router.post(`/new`, function (req, res) {
     let serverFolders = fs.readdirSync("servers");
     let serverFolder = serverFolders.sort((a, b) => a - b);
     let id = -1;
+    let lastNum = -1;
     for (i in serverFolder) {
       let num = serverFolder[i].split(".")[0];
       console.log(num, i);
@@ -293,7 +294,7 @@ router.post(`/new`, function (req, res) {
       }
       lastNum = parseInt(num);
     }
-    if (lastNum == undefined) lastNum = -1;
+
     if (id === -1) {
       id = lastNum + 1;
     }
