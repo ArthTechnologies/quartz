@@ -313,6 +313,7 @@ router.post(`/new`, function (req, res) {
 
     let cid = "";
 
+
     if (
       (stripeKey.indexOf("sk") == -1 || account.bypassStripe == true) &&
       (config.maxServers > data.numServers ||
@@ -321,7 +322,6 @@ router.post(`/new`, function (req, res) {
     ) {
       console.log("debug");
       if (
-        em !== "noemail" &&
         req.body.software !== "undefined" &&
         req.body.version !== "undefined" &&
         req.body.name !== "undefined"
@@ -342,6 +342,7 @@ router.post(`/new`, function (req, res) {
         );
 
         account.servers.push(server);
+
         fs.writeFileSync(
           "accounts/" + email + ".json",
           JSON.stringify(account, null, 4)
