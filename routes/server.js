@@ -12,7 +12,7 @@ const fs = require("fs");
 
 const stripeKey = config.stripeKey;
 const stripe = require("stripe")(stripeKey);
-const enableAuth = Boolean(config.enableAuth);
+const enableAuth = config.enableAuth;
 
 router.get(`/:id`, function (req, res) {
   email = req.headers.email;
