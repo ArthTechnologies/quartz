@@ -12,11 +12,12 @@ router.get(`/`, function (req, res) {
 
   email = req.headers.email;
   token = req.headers.token;
-  console.log(!enableAuth + "enableAuth" + token === account.token || !enableAuth);
+
   if (!enableAuth) email = "noemail";
   //prevents a crash that has occurred
   if (email != undefined) {
     account = require("../accounts/" + email + ".json");
+    console.log(!enableAuth + "enableAuth" + token === account.token || !enableAuth);
   }
   if (token === account.token || !enableAuth) {
     //if req.body.email is "noemail" return 404
