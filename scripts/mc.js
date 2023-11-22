@@ -313,7 +313,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                               if (stdout != undefined) {
                                 try {
                                   console.log(
-                                    `curl -o ${folder}/mods/cf_${projectID}_NameUnknown.jar -LO "${
+                                    `curl -o ${folder}/mods/cf_${projectID}_CFMod.jar -LO "${
                                       JSON.parse(stdout).data
                                     }"`
                                   );
@@ -321,7 +321,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                                     folder +
                                       "/mods/cf_" +
                                       projectID +
-                                      "_NameUnknown.jar",
+                                      "CFMod.jar",
                                     JSON.parse(stdout).data,
                                     (error, stdout, stderr) => {
                                       console.log(stdout);
