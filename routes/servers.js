@@ -9,9 +9,10 @@ const config = require("../scripts/config.js").getConfig();
 const enableAuth = config.enableAuth;
 
 router.get(`/`, function (req, res) {
-  console.log(!enableAuth + "enableAuth" + token === account.token || !enableAuth);
+
   email = req.headers.email;
   token = req.headers.token;
+  console.log(!enableAuth + "enableAuth" + token === account.token || !enableAuth);
   if (!enableAuth) email = "noemail";
   //prevents a crash that has occurred
   if (email != undefined) {
