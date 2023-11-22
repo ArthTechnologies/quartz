@@ -9,7 +9,7 @@ const config = require("../scripts/config.js").getConfig();
 const enableAuth = Boolean(config.enableAuth);
 
 router.get(`/`, function (req, res) {
-
+  console.log(enableAuth + "enableAuth");
   email = req.headers.email;
   token = req.headers.token;
   if (!enableAuth) email = "noemail";
