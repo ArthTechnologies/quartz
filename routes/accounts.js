@@ -36,7 +36,7 @@ Router.post("/email/signup/", (req, res) => {
         account.type = "email";
         fs.writeFileSync(
           "accounts/" + email + ".json",
-          JSON.stringify(accounts, null, 4),
+          JSON.stringify(account, null, 4),
           {
             encoding: "utf8",
           }
