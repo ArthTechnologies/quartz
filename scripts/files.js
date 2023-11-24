@@ -93,8 +93,12 @@ function removeDirectoryRecursive(directoryPath) {
       }
     });
 
+    try {
     // Remove the directory itself
     fs.rmSync(directoryPath);
+    } catch (err) {
+      console.log(err);
+    }
     console.log(`Directory "${directoryPath}" removed.`);
     return;
   } else {
