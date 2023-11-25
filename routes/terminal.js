@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const f = require("../scripts/mc.js");
-const enableAuth = require("../scripts/config.js").getConfig().enableAuth;
-
+const config = require("../scripts/config.js").getConfig();
+const enableAuth = JSON.parse(config.enableAuth);
 router.get("/:id", (req, res) => {
   email = req.headers.email;
   token = req.headers.token;
@@ -32,7 +32,7 @@ router.post("/:id", (req, res) => {
 
 function hasAccess(token,account) {
 
-  if (enableAuth == "false") return true;
+  if (!enableAuth) return true;
   else return token === account.token && server.accountId == account.accountId;
 }
 
