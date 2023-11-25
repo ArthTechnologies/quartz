@@ -31,7 +31,8 @@ router.post("/:id", (req, res) => {
 });
 
 function hasAccess(token,account) {
-  if (!enableAuth) return true;
+
+  if (enableAuth == "false") return true;
   else return token === account.token && server.accountId == account.accountId;
 }
 
