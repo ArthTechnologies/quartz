@@ -80,58 +80,38 @@ function readFilesRecursive(directoryPath) {
 }
 
 function removeDirectoryRecursive(directoryPath) {
-  if (fs.existsSync(directoryPath)) {
-    fs.readdirSync(directoryPath).forEach((file) => {
-      const curPath = `${directoryPath}/${file}`;
-
-      if (fs.lstatSync(curPath).isDirectory()) {
-        // Recursive call if the file is a directory
-        removeDirectoryRecursive(curPath);
-      } else {
-        // Delete the file
-        fs.unlinkSync(curPath);
-      }
-    });
-
-    try {
-    // Remove the directory itself
-    fs.rmSync(directoryPath);
-    } catch (err) {
-      console.log(err);
-    }
-    console.log(`Directory "${directoryPath}" removed.`);
-    return;
+ const exec = require("child_process").execSync;
+ //check if directory exists
+ if (fs.existsSync(directoryPath)) {
+  //check if directory path is inside the server folder
+  if (directoryPath.startsWith("servers")) {
+    exec(`rm -rf ${directoryPath}`);
   } else {
-    console.log(`Directory "${directoryPath}" does not exist.`);
-    return;
+    console.log("Directory path is not inside servers folder");
   }
+} else {
+  console.log(`Directory "${directoryPath}" does not exist.`);
+}
 }
 
 function removeDirectoryRecursiveAsync(directoryPath, callback) {
+  const exec = require("child_process").exec;
+  //check if directory exists
   if (fs.existsSync(directoryPath)) {
-    fs.readdirSync(directoryPath).forEach((file) => {
-      const curPath = `${directoryPath}/${file}`;
-
-      if (fs.lstatSync(curPath).isDirectory()) {
-        // Recursive call if the file is a directory
-        removeDirectoryRecursiveAsync(curPath);
-      } else {
-        // Delete the file
-        fs.unlinkSync(curPath);
-      }
-    });
-
-    // Remove the directory itself
-    fs.rmSync(directoryPath);
-    console.log(`Directory "${directoryPath}" removed.`);
-    if (callback != undefined) {
-      callback();
-    }
-  } else {
-    console.log(`Directory "${directoryPath}" does not exist.`);
-  }
-}
-
+   //check if directory path is inside the server folder
+   if (directoryPath.startsWith("servers")) {
+     exec(`rm -rf ${directoryPath}`, (error, stdout, stderr) => {
+        if (callback != undefined) {
+          callback(stdout);
+        }
+      });
+   } else {
+     console.log("Directory path is not inside servers folder");
+   }
+ } else {
+   console.log(`Directory "${directoryPath}" does not exist.`);
+ }
+ }
 function getIPID(ip) {
   return hash(ip, config.pepper).split(":")[1];
 }
