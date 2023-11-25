@@ -677,7 +677,7 @@ router.delete(`/:id`, function (req, res) {
   if (hasAccess(token,account)) {
     if (
       files.hash(req.query.password, account.salt).split(":")[1] ==
-      account.password
+      account.password || !enableAuth
     ) {
       id = req.params.id;
       if (f.getState(id) == "true") {
