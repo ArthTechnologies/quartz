@@ -689,9 +689,7 @@ router.delete(`/:id`, function (req, res) {
       }
 
       function deleteServer() {
-        //if the server isnt already being deleted
-        if (!fs.existsSync(`servers/${id}/deleting.txt`)) {
-          fs.writeFileSync(`servers/${id}/deleting.txt`, "deleting");
+
           account.servers.findIndex = function () {
             for (var i = 0; i < this.length; i++) {
               if (account.servers[i].id == id) {
@@ -705,7 +703,7 @@ router.delete(`/:id`, function (req, res) {
           files.removeDirectoryRecursiveAsync(`servers/${id}`, () => {
             res.status(200).json({ msg: `Deleted server` });
           });
-        }
+        
         const data = require("../assets/data.json");
         for (i in data.serversWithAutomaticStartup) {
           if (data.serversWithAutomaticStartup[i].includes(id)) {
