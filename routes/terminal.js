@@ -7,7 +7,7 @@ router.get("/:id", (req, res) => {
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
-  if (token === account.token && server.accountId == account.accountId) {
+  if (hasAccess(token,account)) {
     res.send(f.readTerminal(req.params.id));
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
@@ -19,12 +19,17 @@ router.post("/:id", (req, res) => {
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
-  if (token === account.token && server.accountId == account.accountId) {
+  if (hasAccess(token,account)) {
     console.log("revieved request: " + req.query.cmd);
     f.writeTerminal(req.params.id, req.query.cmd);
     res.send("Success");
     res.status(401).json({ msg: `Invalid credentials.` });
   }
 });
+
+function hasAccess(token,account) {
+  if (enableAuth) return true;
+  else return token === account.token && server.accountId == account.accountId;
+}
 
 module.exports = router;
