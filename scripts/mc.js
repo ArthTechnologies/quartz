@@ -321,7 +321,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                                     folder +
                                       "/mods/cf_" +
                                       projectID +
-                                      "CFMod.jar",
+                                      "_CFMod.jar",
                                     JSON.parse(stdout).data,
                                     (error, stdout, stderr) => {
                                       console.log(stdout);
