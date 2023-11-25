@@ -683,11 +683,9 @@ router.delete(`/:id`, function (req, res) {
       if (f.getState(id) == "true") {
         f.stopAsync(id, () => {
           deleteServer();
-          res.status(200).json({ msg: `Deleted server` });
         });
       } else {
         deleteServer();
-        res.status(200).json({ msg: `Deleted server` });
       }
 
       function deleteServer() {
@@ -704,7 +702,9 @@ router.delete(`/:id`, function (req, res) {
           account.servers.splice(account.servers.findIndex(), 1);
           fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
 
-          files.removeDirectoryRecursive(`servers/${id}`);
+          files.removeDirectoryRecursiveAsync(`servers/${id}`, () => {
+            res.status(200).json({ msg: `Deleted server` });
+          });
         }
         const data = require("../assets/data.json");
         for (i in data.serversWithAutomaticStartup) {
