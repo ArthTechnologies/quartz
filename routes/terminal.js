@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const f = require("../scripts/mc.js");
+const enableAuth = require("../scripts/config.js").getConfig().enableAuth;
 
 router.get("/:id", (req, res) => {
   email = req.headers.email;
@@ -23,12 +24,14 @@ router.post("/:id", (req, res) => {
     console.log("revieved request: " + req.query.cmd);
     f.writeTerminal(req.params.id, req.query.cmd);
     res.send("Success");
+
+  } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
 });
 
 function hasAccess(token,account) {
-  if (enableAuth) return true;
+  if (!enableAuth) return true;
   else return token === account.token && server.accountId == account.accountId;
 }
 

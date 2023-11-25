@@ -1369,7 +1369,7 @@ router.get("/:id/storageInfo", function (req, res) {
 
 
 function hasAccess(token,account) {
-  if (enableAuth) return true;
+  if (!enableAuth) return true;
   else return token === account.token && server.accountId == account.accountId;
 }
 
