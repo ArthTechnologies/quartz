@@ -32,6 +32,11 @@ You can update quartz by running `git pull` command inside your quartz folder.
 1. Download the image from docker hub with the command `sudo docker pull arthmc/quartz:latest`
 2. Run the image with `sudo docker run -p 4000:4000 10000-20000:10000-20000 arthmc/quartz:latest`. To change the port, replace the first 4000 with the port number you want.
 
+If you are using an ARM-based machine (Like a Mac or Raspberry Pi):
+1. Grab the source code with `git clone https://codeberg.org/arth/quartz`
+2. Inside the quartz folder, run `docker buildx build --platform linux/arm64 . -t arthmc/quartz:latest`
+2. Run the image with `sudo docker run -p 4000:4000 10000-20000:10000-20000 arthmc/quartz:latest`. To change the port, replace the first 4000 with the port number you want.
+
 # Dependencies
 
 - Arth Uses the `curl` command to download plugins and the `convert` command to downscale images. If you want these functionalities, you'll need to install those commands.
@@ -55,8 +60,10 @@ To run a dev server, follow "how to run".
 ✅ Consistent routes  
 ✅ Secure accounts and servers with a password system  
 ✅ Add support for plugins and mods from modrinth  
+✅ Add support for mods/plugins from CurseForge  
 🛠️ Make no-stripe/no account modes more stable  
 🛠️ Make modded servers stable  
+🛠️ Make discord accounts more stable  
 🛠️ Add support for ocelot (master backend)  
 ❓ Protect customer assets with end-to-end encryption  
-❓ Add support for mods/plugins from CurseForge
+
