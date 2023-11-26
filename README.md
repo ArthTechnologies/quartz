@@ -59,8 +59,8 @@ To run a dev server, follow "how to run".
 ✅ Basic communication with frontend for terminal  
 ✅ Consistent routes  
 ✅ Secure accounts and servers with a password system  
-✅ Add support for plugins and mods from modrinth  
-✅ Add support for mods/plugins from CurseForge  
+✅ Add support for plugins, mods, and modpacks from modrinth  
+✅ Add support for mods/modpacks from CurseForge  
 🛠️ Make no-stripe/no account modes more stable  
 🛠️ Make modded servers stable  
 🛠️ Make discord accounts more stable  
