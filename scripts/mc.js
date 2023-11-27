@@ -266,6 +266,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL, modpackI
                           }
                           //add in modpackID so that it frontends can check for updates later
                           modpack.projectID = modpackID;
+                          modpack.platform = "mr";
                           fs.writeFileSync(
                             folder + "/modrinth.index.json",
                             JSON.stringify(modpack)
@@ -334,6 +335,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL, modpackI
                         console.log("modpackID:" + modpackID);
                                                   //add in modpackID so that it frontends can check for updates later
                                                   modpack.projectID = modpackID;
+                                                  modpack.platform = "cf";
                                                   fs.writeFileSync(
                                                     folder + "/curseforge.index.json",
                                                     JSON.stringify(modpack)
