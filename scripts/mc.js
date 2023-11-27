@@ -283,13 +283,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL, modpackI
         //curseforge download URLs are usually from 'forgecdn.net', so we check for 'forge' instead of 'curseforge'.
       } else if (modpackURL.includes("forge")) {
         const apiKey = config.curseforgeKey;
-        console.log(`curl -o ${folder}/modpack.zip -LO "${modpackURL}"`);
+
         files.downloadAsync(
           folder + "/modpack.zip",
           modpackURL,
           (error, stdout, stderr) => {
-            console.log(modpackURL + "modpackURL");
-            console.log(error + stdout + stderr);
+     
             exec(
               "unzip " + folder + "/modpack.zip" + " -d " + folder,
               (error, stdout, stderr) => {
@@ -315,11 +314,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL, modpackI
                             (error, stdout, stderr) => {
                               if (stdout != undefined) {
                                 try {
-                                  console.log(
-                                    `curl -o ${folder}/mods/cf_${projectID}_CFMod.jar -LO "${
-                                      JSON.parse(stdout).data
-                                    }"`
-                                  );
+       
                                   files.download(
                                     folder +
                                       "/mods/cf_" +
