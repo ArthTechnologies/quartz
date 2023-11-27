@@ -310,10 +310,6 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL, modpackI
                         for (i in modpack.files) {
                           let projectID = modpack.files[i].projectID;
                           let fileID = modpack.files[i].fileID;
-                          console.log(projectID);
-                          console.log(
-                            `curl -X GET "https://api.curseforge.com/v1/mods/${projectID}/files/${fileID}/download-url" -H 'x-api-key: ${apiKey}'`
-                          );
                           exec(
                             `curl -X GET "https://api.curseforge.com/v1/mods/${projectID}/files/${fileID}/download-url" -H 'x-api-key: ${apiKey}'`,
                             (error, stdout, stderr) => {
@@ -324,15 +320,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL, modpackI
                                       JSON.parse(stdout).data
                                     }"`
                                   );
-                                  files.downloadAsync(
+                                  files.download(
                                     folder +
                                       "/mods/cf_" +
                                       projectID +
                                       "_CFMod.jar",
-                                    JSON.parse(stdout).data,
-                                    (error, stdout, stderr) => {
-                                      console.log(stdout);
-                                    }
+                                    JSON.parse(stdout).data
                                   );
                                 } catch {
                                   console.log(
