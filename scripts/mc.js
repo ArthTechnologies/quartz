@@ -92,7 +92,7 @@ function checkServer(id) {
   };
 }
 
-function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
+function run(id, software, version, addons, cmd, em, isNew, modpackURL, modpackID) {
   let server = require("../servers/" + id + "/server.json");
   let out = [];
   states[id] = "starting";
@@ -264,6 +264,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                               () => {}
                             );
                           }
+                          //add in modpackID so that it frontends can check for updates later
+                          modpack.projectID = modpackID;
+                          fs.writeFileSync(
+                            folder + "/modrinth.index.json",
+                            JSON.stringify(modpack)
+                          );
+
                         }
                       );
                     }
@@ -336,6 +343,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
                             }
                           );
                         }
+                                                  //add in modpackID so that it frontends can check for updates later
+                                                  modpack.projectID = modpackID;
+                                                  fs.writeFileSync(
+                                                    folder + "/curseforge.index.json",
+                                                    JSON.stringify(modpack)
+                                                  );
                       });
                     }
                   }

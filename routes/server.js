@@ -357,7 +357,8 @@ router.post(`/new`, function (req, res) {
         req.body.cmd,
         undefined,
         true,
-        req.body.modpackURL
+        req.body.modpackURL,
+        req.body.modpackID
       );
       res.status(202).json({ success: true, msg: `Success. Server created.` });
     } else if (config.maxServers <= data.numServers) {
@@ -430,7 +431,8 @@ router.post(`/new`, function (req, res) {
                       req.body.cmd,
                       undefined,
                       true,
-                      req.body.modpackURL
+                      req.body.modpackURL,
+                      req.body.modapckID
                     );
                     res.status(202).json({
                       success: true,
@@ -1233,6 +1235,7 @@ router.post("/:id/file/:path", function (req, res) {
       filename != "server.json" &&
       filename != "velocity.toml" &&
       filename != "modrinth.index.json" &&
+      filename != "curseforge.index.json" &&
       filename != "config.yml" &&
       fs.statSync(`servers/${req.params.id}/${path}`).size <= 500000
     ) {
@@ -1301,7 +1304,8 @@ router.delete("/:id/file/:path", function (req, res) {
         extension == "jar") &&
       filename != "server.json" &&
       filename != "velocity.toml" &&
-      filename != "modrinth.index.json"
+      filename != "modrinth.index.json" && 
+      filename != "curseforge.index.json"
     ) {
       fs.unlinkSync(`servers/${req.params.id}/${path}`);
       res.status(200).json({ msg: "Done" });
