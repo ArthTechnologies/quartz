@@ -343,6 +343,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL, modpackI
                             }
                           );
                         }
+                        console.log("modpackID:" + modpackID);
                                                   //add in modpackID so that it frontends can check for updates later
                                                   modpack.projectID = modpackID;
                                                   fs.writeFileSync(
