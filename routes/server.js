@@ -388,7 +388,8 @@ router.post(`/new`, function (req, res) {
         undefined,
         true,
         req.body.modpackURL,
-        req.body.modpackID
+        req.body.modpackID,
+        req.body.modpackVersionID
       );
       res.status(202).json({ success: true, msg: `Success. Server created.` });
     } else if (config.maxServers <= data.numServers) {
