@@ -667,7 +667,6 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
     );
     //curseforge download URLs are usually from 'forgecdn.net', so we check for 'forge' instead of 'curseforge'.
   } else if (modpackURL.includes("forge")) {
-    console.log("downloading modpack from forge...");
     const apiKey = config.curseforgeKey;
 
     files.downloadAsync(
@@ -681,6 +680,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
               "cp -r " + folder + "/overrides/* " + folder + "/",
               (error, stdout, stderr) => {
                 if (fs.existsSync(folder + "/manifest.json")) {
+                  console.log("downloading modpack from forge...");
                   //there's an odd bug where the file has no read access, so this changes that
                   exec("chmod +r " + folder + "/manifest.json", (x) => {
                     fs.copyFileSync(
