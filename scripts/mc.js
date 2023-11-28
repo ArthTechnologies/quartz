@@ -667,6 +667,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
     );
     //curseforge download URLs are usually from 'forgecdn.net', so we check for 'forge' instead of 'curseforge'.
   } else if (modpackURL.includes("forge")) {
+    console.log("downloading modpack from forge...");
     const apiKey = config.curseforgeKey;
 
     files.downloadAsync(
