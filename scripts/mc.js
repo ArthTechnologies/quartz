@@ -101,7 +101,8 @@ function run(
   em,
   isNew,
   modpackURL,
-  modpackID
+  modpackID,
+  modpackVersionID
 ) {
   let server = require("../servers/" + id + "/server.json");
   let out = [];
@@ -240,7 +241,7 @@ function run(
 
     let modpack;
     if (modpackURL != undefined) {
-      downloadModpack(id, modpackURL, modpackID);
+      downloadModpack(id, modpackURL, modpackID, modpackVersionID);
     }
   }
 
@@ -611,7 +612,7 @@ function writeTerminal(id, cmd) {
   terminalInput = cmd;
   eventEmitter.emit("writeCmd");
 }
-function downloadModpack(id, modpackURL, modpackID) {
+function downloadModpack(id, modpackURL, modpackID, versionID) {
   const folder = "servers/" + id;
   if (modpackURL.includes("modrinth")) {
     files.downloadAsync(
@@ -650,6 +651,7 @@ function downloadModpack(id, modpackURL, modpackID) {
                     modpack.projectID = modpackID;
                     modpack.platform = "mr";
                     modpack.currentVersionDateAdded = Date.now();
+                    modpack.versionID = versionID;
                     fs.writeFileSync(
                       folder + "/modrinth.index.json",
                       JSON.stringify(modpack)
@@ -714,6 +716,7 @@ function downloadModpack(id, modpackURL, modpackID) {
                     modpack.projectID = modpackID;
                     modpack.platform = "cf";
                     modpack.currentVersionDateAdded = Date.now();
+                    modpack.versionID = versionID;
                     fs.writeFileSync(
                       folder + "/curseforge.index.json",
                       JSON.stringify(modpack)

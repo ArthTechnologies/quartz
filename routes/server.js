@@ -254,7 +254,8 @@ router.post(`/:id/modpack`, function (req, res) {
       f.downloadModpack(
         req.params.id,
         req.query.modpackURL,
-        req.query.modpackID
+        req.query.modpackID,
+        req.query.versionID
       );
       res.status(202).json({ msg: `Success. Modpack Downloaded.` });
     });
