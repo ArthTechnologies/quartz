@@ -676,10 +676,10 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
         exec(
           "unzip " + folder + "/modpack.zip" + " -d " + folder,
           (error, stdout, stderr) => {
+            console.log("downloading modpack from forge...");
             exec(
               "cp -r " + folder + "/overrides/* " + folder + "/",
               (error, stdout, stderr) => {
-                console.log("downloading modpack from forge...");
                 if (fs.existsSync(folder + "/manifest.json")) {
                   //there's an odd bug where the file has no read access, so this changes that
                   exec("chmod +r " + folder + "/manifest.json", (x) => {
