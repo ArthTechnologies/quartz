@@ -53,8 +53,7 @@ Router.get("/:id", (req, res) => {
         console.log(stdout);
         if (
           !error &&
-          stdout != undefined &&
-          JSON.parse(stdout).data != undefined
+          stdout != undefined
         ) {
           try {
             res.status(200).json(JSON.parse(stdout).data);
@@ -79,8 +78,7 @@ Router.get("/:id/description", (req, res) => {
       (error, stdout, stderr) => {
         if (
           !error &&
-          stdout != undefined &&
-          JSON.parse(stdout).data != undefined
+          stdout != undefined
         ) {
           try {
             res.status(200).json(JSON.parse(stdout).data);
@@ -105,8 +103,7 @@ Router.get("/:id/versions", (req, res) => {
       (error, stdout, stderr) => {
         if (
           !error &&
-          stdout != undefined &&
-          JSON.parse(stdout).data != undefined
+          stdout != undefined
         ) {
           try {
             res.status(200).json(JSON.parse(stdout).data);
@@ -127,13 +124,12 @@ Router.get("/:id/version/:versionId/changelog", (req, res) => {
     let versionId = req.params.versionId;
     const exec = require("child_process").exec;
     exec(
-      `curl -X GET "https://api.curseforge.com/v1/projects/${id}/files/${versionId}/changelog"` +
+      `curl -X GET "https://api.curseforge.com/v1/mods/${id}/files/${versionId}/changelog"` +
         ` -H 'x-api-key: ${apiKey}'`,
       (error, stdout, stderr) => {
         if (
           !error &&
-          stdout != undefined &&
-          JSON.parse(stdout).data != undefined
+          stdout != undefined
         ) {
           try {
             res.status(200).json(JSON.parse(stdout).data);
