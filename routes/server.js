@@ -872,12 +872,8 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               //unzip the file and put it in /servers/id/world
 
               const exec = require("child_process").exec;
-              console.log(enableVirusScan + "virus scans");
-              if (!enableVirusScan) {
-                res.write("Upload Complete.");
-                res.end();
-                unzipFile();
-              } else {
+
+              if (enableVirusScan) {
                 res.write("Upload Complete. Scanning for Viruses...");
                 exec(
                   `clamdscan --multiscan --fdpass servers/${id}/world`,
@@ -893,6 +889,10 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                     }
                   }
                 );
+              } else {
+                res.write("Upload Complete.");
+                res.end();
+                unzipFile();
               }
               function unzipFile() {
                 //wait 5s
