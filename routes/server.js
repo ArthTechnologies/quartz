@@ -849,6 +849,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                 email,
                 false
               );
+              res.status(200).json({ msg: `Done` });
             });
           } else {
             console.log("yes file");
@@ -870,37 +871,59 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               //unzip the file and put it in /servers/id/world
 
               const exec = require("child_process").exec;
-              //wait 5s
-              setTimeout(() => {
+              if (!config.enableVirusScan) {
+                res.write("Upload Complete.");
+                res.end();
+                unzipFile();
+              } else {
+                res.write("Upload Complete. Scanning for Viruses...");
                 exec(
-                  `unzip -o ${req.file.path} -d servers/` + id + `/world`,
+                  `clamdscan --multiscan --fdpass servers/${id}/world`,
+                  {},
                   (err, stdout, stderr) => {
-                    if (err) {
-                      console.log(err);
-                    } else if (!lock) {
-                      console.log("unzipped world");
-                      //start server back up
-                      f.run(
-                        id,
-                        undefined,
-                        undefined,
-                        undefined,
-                        undefined,
-                        email,
-                        false
-                      );
-                      1;
-                      lock = true;
+                    if (stdout.indexOf("Infexted files: 0")) {
+                      res.write("No Viruses Detected.");
+                      res.end();
+                      unzipFile();
+                    } else {
+                      res.write("Virus Detected.");
+                      res.end();
                     }
                   }
                 );
-              }, 5000);
+              }
+              function unzipFile() {
+                //wait 5s
+                setTimeout(() => {
+                  exec(
+                    `unzip -o ${req.file.path} -d servers/` + id + `/world`,
+                    (err, stdout, stderr) => {
+                      if (err) {
+                        console.log(err);
+                      } else if (!lock) {
+                        console.log("unzipped world");
+                        //start server back up
+                        f.run(
+                          id,
+                          undefined,
+                          undefined,
+                          undefined,
+                          undefined,
+                          email,
+                          false
+                        );
+                        1;
+                        lock = true;
+                      }
+                    }
+                  );
+                }, 5000);
+              }
             });
           }
         }
       }, 2000);
     });
-    res.status(200).json({ msg: `Done` });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }

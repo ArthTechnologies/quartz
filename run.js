@@ -51,7 +51,9 @@ if (!fs.existsSync("config.txt")) {
         `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
         `jarsMcUrl=${settings.jarsMcUrl}\n` +
         `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
-        `pepper=${secrets.pepper}\n`
+        `pepper=${secrets.pepper}\n` +
+        `# Virus scans run whenever someone uploads a world file. Read clamav.net's documentation for setup instructions before enabling this:\n` +
+        `enableVirusScan=false\n`
     );
     fs.copyFileSync("stores/settings.json", "backup/settings.json");
     fs.unlinkSync("stores/settings.json");
@@ -80,7 +82,9 @@ if (!fs.existsSync("config.txt")) {
         `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
         `jarsMcUrl=https://api.jarsmc.xyz/\n` +
         `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
-        `pepper=${crypto.randomBytes(12).toString("hex")}\n`
+        `pepper=${crypto.randomBytes(12).toString("hex")}\n` +
+        `# Virus scans run whenever someone uploads a world file. Read clamav.net's documentation for setup instructions before enabling this:\n` +
+        `enableVirusScan=false\n`
     );
   }
 }
@@ -362,25 +366,25 @@ function verifySubscriptions() {
         if (!account.bypassStripe) {
           try {
             const amountOfServers = account.servers.length;
-          s.checkSubscription(account.email, (data) => {
-            if (data.data.length < amountOfServers) {
-              for (j in account.servers) {
-                const ls = require("child_process").execSync;
-                f.stopAsync(account.servers[j].id, () => {
-                  ls(
-                    `mv servers/${account.servers[j].id} backup/disabledServers${account.servers[j].id}`
-                  );
-                });
-              }
+            s.checkSubscription(account.email, (data) => {
+              if (data.data.length < amountOfServers) {
+                for (j in account.servers) {
+                  const ls = require("child_process").execSync;
+                  f.stopAsync(account.servers[j].id, () => {
+                    ls(
+                      `mv servers/${account.servers[j].id} backup/disabledServers${account.servers[j].id}`
+                    );
+                  });
+                }
 
-              if (account.disabledServers == undefined) {
-                account.disabledServers = [];
+                if (account.disabledServers == undefined) {
+                  account.disabledServers = [];
+                }
+                account.disabledServers.push(account.servers);
+                account.servers = [];
               }
-              account.disabledServers.push(account.servers);
-              account.servers = [];
-            }
-          });
-          } catch{
+            });
+          } catch {
             console.log("Error verifying subscription for " + account.email);
           }
         }
