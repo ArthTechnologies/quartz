@@ -873,7 +873,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
 
               const exec = require("child_process").exec;
 
-              if (enableVirusScan == "true") {
+              if (enableVirusScan) {
                 console.log("scanning for viruses");
                 res.write("Upload Complete. Scanning for Viruses...");
                 exec(
