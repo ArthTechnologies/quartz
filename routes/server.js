@@ -13,6 +13,7 @@ const fs = require("fs");
 const stripeKey = config.stripeKey;
 const stripe = require("stripe")(stripeKey);
 const enableAuth = JSON.parse(config.enableAuth);
+const enableVirusScan = JSON.parse(config.enableVirusScan);
 
 router.get(`/:id`, function (req, res) {
   email = req.headers.email;
@@ -871,10 +872,8 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               //unzip the file and put it in /servers/id/world
 
               const exec = require("child_process").exec;
-              console.log(
-                JSON.parse(config.enableVirusScan) == true + "virus scans"
-              );
-              if (!JSON.parse(config.enableVirusScan)) {
+              console.log(enableVirusScan + "virus scans");
+              if (!enableVirusScan) {
                 res.write("Upload Complete.");
                 res.end();
                 unzipFile();
