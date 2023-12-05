@@ -871,7 +871,9 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               //unzip the file and put it in /servers/id/world
 
               const exec = require("child_process").exec;
-              console.log(JSON.parse(config.enableVirusScan) + "virus scans");
+              console.log(
+                JSON.parse(config.enableVirusScan) == true + "virus scans"
+              );
               if (!JSON.parse(config.enableVirusScan)) {
                 res.write("Upload Complete.");
                 res.end();
