@@ -882,11 +882,13 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                   `clamdscan --multiscan --fdpass ${req.file.path}`,
                   {},
                   (err, stdout, stderr) => {
-                    if (stdout.indexOf("Infexted files: 0")) {
+                    if (stdout.indexOf("Infected files: 0") != -1) {
                       res.send("Upload Complete. No Viruses Detected.")
                       unzipFile();
+                      
                     } else {
                       res.send("Virus Detected.");
+                      fs.rmSync(req.file.path);
                      
                     }
                   }
@@ -902,6 +904,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                   exec(
                     `unzip -o ${req.file.path} -d servers/` + id + `/world`,
                     (err, stdout, stderr) => {
+                      fs.rmSync(req.file.path);
                       if (err) {
                         console.log(err);
                       } else if (!lock) {
