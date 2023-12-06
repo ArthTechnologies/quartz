@@ -876,7 +876,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               const exec = require("child_process").exec;
 
               if (enableVirusScan) {
-
+                console.log(req.file.path)
                 exec(
                   `clamdscan --multiscan --fdpass ${req.file.path}`,
                   {},
