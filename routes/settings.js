@@ -32,6 +32,7 @@ router.get(`/`, function (req, res) {
   returnObject["enableAuth"] = config.enableAuth;
   returnObject["maxServers"] = config.maxServers;
   returnObject["serverStorageLimit"] = config.serverStorageLimit;
+  returnObject["enableVirusScan"] = config.enableVirusScan;
   for (var key in require("../assets/data.json")) {
     returnObject[key] = require("../assets/data.json")[key];
   }
