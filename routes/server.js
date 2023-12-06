@@ -876,7 +876,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               if (enableVirusScan) {
 
                 exec(
-                  `clamdscan --multiscan --fdpass servers/${id}/world`,
+                  `clamdscan --multiscan --fdpass ${req.file.path}`,
                   {},
                   (err, stdout, stderr) => {
                     if (stdout.indexOf("Infexted files: 0")) {
