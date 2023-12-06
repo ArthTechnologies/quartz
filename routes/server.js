@@ -874,25 +874,23 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               const exec = require("child_process").exec;
 
               if (enableVirusScan) {
-                console.log("scanning for viruses");
-                res.write("Upload Complete. Scanning for Viruses...");
+
                 exec(
                   `clamdscan --multiscan --fdpass servers/${id}/world`,
                   {},
                   (err, stdout, stderr) => {
                     if (stdout.indexOf("Infexted files: 0")) {
-                      res.write("No Viruses Detected.");
-                      res.end();
+                      res.send("Upload Complete. No Viruses Detected.")
                       unzipFile();
                     } else {
-                      res.write("Virus Detected.");
-                      res.end();
+                      res.send("Virus Detected.");
+                     
                     }
                   }
                 );
               } else {
-                res.write("Upload Complete.");
-                res.end();
+                res.send("Upload Complete.");
+                
                 unzipFile();
               }
               function unzipFile() {
