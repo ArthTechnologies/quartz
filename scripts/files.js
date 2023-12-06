@@ -107,9 +107,11 @@ function removeDirectoryRecursiveAsync(directoryPath, callback) {
       });
    } else {
      console.log("Directory path is not inside servers folder");
+     callback("Directory path is not inside servers folder");
    }
  } else {
    console.log(`Directory "${directoryPath}" does not exist.`);
+    callback(`Directory "${directoryPath}" does not exist.`)
  }
  }
 function getIPID(ip) {
