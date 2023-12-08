@@ -118,7 +118,6 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
     }
 
     fs.readdirSync(`${path}/${modtype}`).forEach((file) => {
-      console.log(file);
       if (file.startsWith("gh_")) {
         mods.push({
           platform: file.split("_")[0],
@@ -144,7 +143,6 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
           filename: file,
           date: fs.statSync(`${path}/${modtype}/${file}`).mtimeMs,
         });
-        console.log(unknownMods);
       }
     });
 
