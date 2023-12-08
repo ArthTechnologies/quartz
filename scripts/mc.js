@@ -414,7 +414,6 @@ function run(
         });
         let count2 = 0;
         let intervalID = setInterval(() => {
-          console.log(count2 + states[id]);
           if (states[id] == "stopping") {
             if (count2 < 5 * 24) {
               ls.stdin.write("stop\n");
@@ -438,7 +437,7 @@ function run(
     }, interval);
   } else {
     let count = 0;
-    console.log(path + " " + args + " and cwd:" + folder);
+
     ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
       terminalOutput[id] = stdout;
       states[id] = "false";
@@ -492,7 +491,7 @@ function run(
   textByLine[15] = "  port: " + port;
 
   text = textByLine.join("\n");
-  console.log("software & version", software, version);
+
   if (software == "paper" || software == "spigot") {
     if (
       fs.existsSync("assets/jars/cx_geyser-spigot_Geyser.jar") &&
