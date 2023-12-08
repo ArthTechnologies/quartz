@@ -221,7 +221,7 @@ function run(
     path = "../../assets/java/jdk-17.0.5+8/bin/java";
   }
   let doneInstalling = false;
-  console.log("software & version", software, version);
+
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
     //fs.writeFileSync(folder + "/world.zip", worldFile);
@@ -345,6 +345,7 @@ function run(
   const { exec } = require("child_process");
   let ls;
   let interval = 0;
+  console.log("software & version", software, version);
   if (installer) {
     if (isNew) {
       interval = 500;
