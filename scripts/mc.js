@@ -193,33 +193,22 @@ function run(
 
   const datajson = require("../assets/data.json");
   let latestVersion = datajson.latestVersion;
-  switch (version) {
-    case latestVersion:
-      version = latestVersion;
-      path = "../../assets/java/jdk-19.0.2+7/bin/java";
-      break;
-    case "1.20.1":
-      path = "../../assets/java/jdk-19.0.2+7/bin/java";
-      break;
-    case "1.19.4":
-      path = "../../assets/java/jdk-19.0.2+7/bin/java";
-      break;
-    case "1.18.2":
-      path = "../../assets/java/jdk-17.0.5+8/bin/java";
-      break;
-    case "1.17.1":
-      path = "../../assets/java/jdk-17.0.5+8/bin/java";
-      break;
-    case "3.2.0":
-      path = "../../assets/java/jdk-17.0.5+8/bin/java";
-    default:
-      path = "../../assets/java/jdk-11.0.18+10/bin/java";
-      break;
-  }
-
-  if (software == "velocity") {
+  //this selects the correct version of java for the minecraft version
+  if (version == latestVersion) {
+    version = latestVersion;
+    path = "../../assets/java/jdk-19.0.2+7/bin/java";
+  } else if (version.includes("1.20"))
+    path = "../../assets/java/jdk-19.0.2+7/bin/java";
+  else if (version.includes("1.19"))
+    path = "../../assets/java/jdk-19.0.2+7/bin/java";
+  else if (version.includes("1.18"))
     path = "../../assets/java/jdk-17.0.5+8/bin/java";
-  }
+  else if (version.includes("1.17"))
+    path = "../../assets/java/jdk-17.0.5+8/bin/java";
+  else path = "../../assets/java/jdk-11.0.18+10/bin/java";
+
+  if (software == "velocity") path = "../../assets/java/jdk-17.0.5+8/bin/java";
+
   let doneInstalling = false;
 
   if (!fs.existsSync(folder)) {
