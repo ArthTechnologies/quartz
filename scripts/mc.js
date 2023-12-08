@@ -104,6 +104,7 @@ function run(
   modpackID,
   modpackVersionID
 ) {
+  console.log("modpackID: " + modpackID);
   let server = require("../servers/" + id + "/server.json");
   let out = [];
   states[id] = "starting";
@@ -609,7 +610,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
       modpackURL,
       (error, stdout, stderr) => {
         exec(
-          "unzip " + folder + "/modpack.mrpack" + " -d " + folder,
+          "unzip -o " + folder + "/modpack.mrpack" + " -d " + folder,
           (error, stdout, stderr) => {
             exec(
               "cp -r " + folder + "/overrides/* " + folder + "/",
