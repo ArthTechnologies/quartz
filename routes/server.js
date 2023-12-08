@@ -454,6 +454,7 @@ router.post(`/new`, function (req, res) {
                         "accounts/" + email + ".json",
                         JSON.stringify(account, null, 4)
                       );
+                      console.log(req.body);
                     }
                     f.run(
                       id,
@@ -464,7 +465,8 @@ router.post(`/new`, function (req, res) {
                       undefined,
                       true,
                       req.body.modpackURL,
-                      req.body.modapckID
+                      req.body.modpackID,
+                      req.body.modpackVersionID
                     );
                     res.status(202).json({
                       success: true,
@@ -867,7 +869,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             var newText = textByLine.join("\n");
             fs.writeFileSync(`servers/${id}/server.properties`, newText);
             files.removeDirectoryRecursiveAsync(`servers/${id}/world`, () => {
-              console.log("debug log")
+              console.log("debug log");
               fs.mkdirSync(`servers/${id}/world`);
               fs.mkdirSync(`servers/${id}/world/datapacks`);
               files.removeDirectoryRecursive(`servers/${id}/world_nether`);
@@ -877,25 +879,23 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               const exec = require("child_process").exec;
 
               if (enableVirusScan) {
-                console.log(req.file.path)
+                console.log(req.file.path);
                 exec(
                   `clamdscan --multiscan --fdpass ${req.file.path}`,
                   {},
                   (err, stdout, stderr) => {
                     if (stdout.indexOf("Infected files: 0") != -1) {
-                      res.send("Upload Complete. No Viruses Detected.")
+                      res.send("Upload Complete. No Viruses Detected.");
                       unzipFile();
-                      
                     } else {
                       res.send("Virus Detected.");
                       fs.rmSync(req.file.path);
-                     
                     }
                   }
                 );
               } else {
                 res.send("Upload Complete.");
-                
+
                 unzipFile();
               }
               function unzipFile() {

@@ -104,7 +104,6 @@ function run(
   modpackID,
   modpackVersionID
 ) {
-  console.log("modpackID: " + modpackID);
   let server = require("../servers/" + id + "/server.json");
   let out = [];
   states[id] = "starting";
