@@ -345,7 +345,7 @@ function run(
   const { exec } = require("child_process");
   let ls;
   let interval = 0;
-  console.log("software & version", software, version);
+
   if (installer) {
     if (isNew) {
       interval = 500;
@@ -503,7 +503,7 @@ function run(
   textByLine[15] = "  port: " + port;
 
   text = textByLine.join("\n");
-
+  console.log("software & version", software, version);
   if (software == "paper" || software == "spigot") {
     if (
       fs.existsSync("assets/jars/cx_geyser-spigot_Geyser.jar") &&
