@@ -449,7 +449,7 @@ function run(
     }, interval);
   } else {
     let count = 0;
-
+    console.log(path + " " + args + " and cwd:" + folder);
     ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
       terminalOutput[id] = stdout;
       states[id] = "false";
