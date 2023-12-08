@@ -664,10 +664,10 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
       (error, stdout, stderr) => {
         console.log("downloading modpack from forge...");
         exec(
-          "unzip " + folder + "/modpack.zip" + " -o -d " + folder,
+          "unzip -o " + folder + "/modpack.zip" + " -d " + folder,
           (error, stdout, stderr) => {
             console.log("unzipping modpack...");
-            console.log(error + " " + stdout + " " + stderr);
+            console.log(error + " " + stderr);
             exec(
               "cp -r " + folder + "/overrides/* " + folder + "/",
               (error, stdout, stderr) => {
