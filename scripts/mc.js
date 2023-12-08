@@ -684,6 +684,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                     for (i in modpack.files) {
                       let projectID = modpack.files[i].projectID;
                       let fileID = modpack.files[i].fileID;
+                      console.log(projectID + " " + fileID);
                       exec(
                         `curl -X GET "https://api.curseforge.com/v1/mods/${projectID}/files/${fileID}/download-url" -H 'x-api-key: ${apiKey}'`,
                         (error, stdout, stderr) => {
