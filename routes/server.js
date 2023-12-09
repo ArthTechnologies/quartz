@@ -301,6 +301,9 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
 });
 
 router.post(`/new`, function (req, res) {
+  console.log(
+    "creating server for " + req.headers.email + "..." + req.headers.token
+  );
   email = req.headers.email;
   token = req.headers.token;
   if (!enableAuth) email = "noemail";
