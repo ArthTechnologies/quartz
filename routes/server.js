@@ -308,6 +308,7 @@ router.post(`/new`, function (req, res) {
   token = req.headers.token;
   if (!enableAuth) email = "noemail";
   account = require("../accounts/" + email + ".json");
+  console.log("account" + account);
   if (token === account.token || !enableAuth) {
     if (account.servers == undefined) account.servers = [];
     let amount = account.servers.length;
