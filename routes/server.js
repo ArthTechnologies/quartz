@@ -42,38 +42,14 @@ router.post(`/:id/state/:state`, function (req, res) {
     if ((state == "start") | (state == "stop") | (state == "restart")) {
       switch (state) {
         case "start":
-          f.run(
-            id,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            email,
-            false,
-            undefined,
-            undefined,
-            undefined,
-            req.query.lang.replace("-", "_").toLowerCase()
-          );
+          f.run(id, undefined, undefined, undefined, undefined, email, false);
           break;
         case "stop":
           f.stop(id);
           break;
         case "restart":
           f.stopAsync(id, () => {
-            f.run(
-              id,
-              undefined,
-              undefined,
-              undefined,
-              undefined,
-              email,
-              false,
-              undefined,
-              undefined,
-              undefined,
-              req.query.lang.replace("-", "_").toLowerCase()
-            );
+            f.run(id, undefined, undefined, undefined, undefined, email, false);
           });
           break;
         default:
@@ -220,19 +196,7 @@ router.post(`/:id/version/`, function (req, res) {
     account.servers[account.servers.findIndex((e) => e.id == id)].version =
       version;
     f.stopAsync(id, () => {
-      f.run(
-        id,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        email,
-        false,
-        undefined,
-        undefined,
-        undefined,
-        req.query.lang.replace("-", "_").toLowerCase()
-      );
+      f.run(id, undefined, undefined, undefined, undefined, email, false);
     });
     res.status(202).json({ msg: `Success. Server updated.` });
   } else {
@@ -424,8 +388,7 @@ router.post(`/new`, function (req, res) {
         true,
         req.body.modpackURL,
         req.body.modpackID,
-        req.body.modpackVersionID,
-        req.body.lang
+        req.body.modpackVersionID
       );
       res.status(202).json({ success: true, msg: `Success. Server created.` });
     } else if (config.maxServers <= data.numServers) {
@@ -501,8 +464,7 @@ router.post(`/new`, function (req, res) {
                       true,
                       req.body.modpackURL,
                       req.body.modpackID,
-                      req.body.modpackVersionID,
-                      req.body.lang
+                      req.body.modpackVersionID
                     );
                     res.status(202).json({
                       success: true,
@@ -888,11 +850,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                 undefined,
                 undefined,
                 email,
-                false,
-                undefined,
-                undefined,
-                undefined,
-                req.query.lang.replace("-", "_").toLowerCase()
+                false
               );
               res.status(200).json({ msg: `Done` });
             });
@@ -957,11 +915,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                           undefined,
                           undefined,
                           email,
-                          false,
-                          undefined,
-                          undefined,
-                          undefined,
-                          req.query.lang.replace("-", "_").toLowerCase()
+                          false
                         );
                         1;
                         lock = true;
@@ -1149,11 +1103,7 @@ router.post("/:id/proxy/servers", function (req, res) {
               undefined,
               undefined,
               email,
-              false,
-              undefined,
-              undefined,
-              undefined,
-              req.query.lang.replace("-", "_").toLowerCase()
+              false
             );
           });
           f.stopAsync(req.params.id, () => {
@@ -1164,11 +1114,7 @@ router.post("/:id/proxy/servers", function (req, res) {
               undefined,
               undefined,
               email,
-              false,
-              undefined,
-              undefined,
-              undefined,
-              req.query.lang.replace("-", "_").toLowerCase()
+              false
             );
           });
 
