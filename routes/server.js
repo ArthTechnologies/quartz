@@ -308,7 +308,7 @@ router.post(`/new`, function (req, res) {
   token = req.headers.token;
   if (!enableAuth) email = "noemail";
   account = require("../accounts/" + email + ".json");
-  console.log("account" + JSON.stringify(account));
+  console.log("account" + JSON.stringify(account).accountId);
   if (token === account.token || !enableAuth) {
     if (account.servers == undefined) account.servers = [];
     let amount = account.servers.length;
@@ -337,16 +337,8 @@ router.post(`/new`, function (req, res) {
     fs.writeFileSync("assets/data.json", JSON.stringify(datajson, null, 2));
     em = req.query.email;
 
-    var store = {
-      name: req.body.name,
-      software: req.body.software,
-      version: req.body.version,
-      addons: req.body.addons,
-      accountId: account.accountId,
-    };
-
     let cid = "";
-
+    console.log(account.accountId + "accountId");
     if (
       (stripeKey.indexOf("sk") == -1 || account.bypassStripe == true) &&
       (config.maxServers > data.numServers ||
@@ -400,6 +392,7 @@ router.post(`/new`, function (req, res) {
         .status(400)
         .json({ success: false, msg: "Maxiumum servers reached." });
     } else {
+      console.log(account.accountId + "accountId");
       stripe.customers.list(
         {
           limit: 100,
