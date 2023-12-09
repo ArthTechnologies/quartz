@@ -42,14 +42,38 @@ router.post(`/:id/state/:state`, function (req, res) {
     if ((state == "start") | (state == "stop") | (state == "restart")) {
       switch (state) {
         case "start":
-          f.run(id, undefined, undefined, undefined, undefined, email, false);
+          f.run(
+            id,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            email,
+            false,
+            undefined,
+            undefined,
+            undefined,
+            req.query.lang
+          );
           break;
         case "stop":
           f.stop(id);
           break;
         case "restart":
           f.stopAsync(id, () => {
-            f.run(id, undefined, undefined, undefined, undefined, email, false);
+            f.run(
+              id,
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              email,
+              false,
+              undefined,
+              undefined,
+              undefined,
+              req.query.lang
+            );
           });
           break;
         default:
@@ -196,7 +220,19 @@ router.post(`/:id/version/`, function (req, res) {
     account.servers[account.servers.findIndex((e) => e.id == id)].version =
       version;
     f.stopAsync(id, () => {
-      f.run(id, undefined, undefined, undefined, undefined, email, false);
+      f.run(
+        id,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        email,
+        false,
+        undefined,
+        undefined,
+        undefined,
+        req.query.lang
+      );
     });
     res.status(202).json({ msg: `Success. Server updated.` });
   } else {
@@ -388,7 +424,8 @@ router.post(`/new`, function (req, res) {
         true,
         req.body.modpackURL,
         req.body.modpackID,
-        req.body.modpackVersionID
+        req.body.modpackVersionID,
+        req.body.lang
       );
       res.status(202).json({ success: true, msg: `Success. Server created.` });
     } else if (config.maxServers <= data.numServers) {
@@ -464,7 +501,8 @@ router.post(`/new`, function (req, res) {
                       true,
                       req.body.modpackURL,
                       req.body.modpackID,
-                      req.body.modpackVersionID
+                      req.body.modpackVersionID,
+                      req.body.lang
                     );
                     res.status(202).json({
                       success: true,
@@ -850,7 +888,11 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                 undefined,
                 undefined,
                 email,
-                false
+                false,
+                undefined,
+                undefined,
+                undefined,
+                req.query.lang
               );
               res.status(200).json({ msg: `Done` });
             });
@@ -915,7 +957,11 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                           undefined,
                           undefined,
                           email,
-                          false
+                          false,
+                          undefined,
+                          undefined,
+                          undefined,
+                          req.query.lang
                         );
                         1;
                         lock = true;
@@ -1103,7 +1149,11 @@ router.post("/:id/proxy/servers", function (req, res) {
               undefined,
               undefined,
               email,
-              false
+              false,
+              undefined,
+              undefined,
+              undefined,
+              req.query.lang
             );
           });
           f.stopAsync(req.params.id, () => {
@@ -1114,7 +1164,11 @@ router.post("/:id/proxy/servers", function (req, res) {
               undefined,
               undefined,
               email,
-              false
+              false,
+              undefined,
+              undefined,
+              undefined,
+              req.query.lang
             );
           });
 

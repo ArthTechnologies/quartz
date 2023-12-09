@@ -102,7 +102,8 @@ function run(
   isNew,
   modpackURL,
   modpackID,
-  modpackVersionID
+  modpackVersionID,
+  lang = "en_us"
 ) {
   let server = require("../servers/" + id + "/server.json");
   let out = [];
@@ -325,7 +326,9 @@ function run(
     if (!server.adminServer) {
       result = result.replace(/server-port=25565/g, "server-port=" + port);
     }
-
+    if (!result.includes("lang=")) {
+      result += "\nlang=" + lang;
+    }
     fs.writeFileSync(folder + "/server.properties", result, "utf8");
   }
 
