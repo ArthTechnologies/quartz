@@ -392,7 +392,7 @@ router.post(`/new`, function (req, res) {
         .status(400)
         .json({ success: false, msg: "Maxiumum servers reached." });
     } else {
-      console.log(account.accountId + "accountId");
+      console.log(account.accountId + "accountId2");
       stripe.customers.list(
         {
           limit: 100,
@@ -403,6 +403,7 @@ router.post(`/new`, function (req, res) {
             console.log("err");
             return "no";
           } else {
+            console.log(customers);
             console.log(account.accountId + "accountId3");
             if (customers.data.length > 0) {
               cid = customers.data[0].id;
