@@ -53,7 +53,7 @@ router.post(`/:id/state/:state`, function (req, res) {
             undefined,
             undefined,
             undefined,
-            req.query.lang
+            req.query.lang.replace("-", "_").toLowerCase()
           );
           break;
         case "stop":
@@ -72,7 +72,7 @@ router.post(`/:id/state/:state`, function (req, res) {
               undefined,
               undefined,
               undefined,
-              req.query.lang
+              req.query.lang.replace("-", "_").toLowerCase()
             );
           });
           break;
@@ -231,7 +231,7 @@ router.post(`/:id/version/`, function (req, res) {
         undefined,
         undefined,
         undefined,
-        req.query.lang
+        req.query.lang.replace("-", "_").toLowerCase()
       );
     });
     res.status(202).json({ msg: `Success. Server updated.` });
@@ -892,7 +892,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                 undefined,
                 undefined,
                 undefined,
-                req.query.lang
+                req.query.lang.replace("-", "_").toLowerCase()
               );
               res.status(200).json({ msg: `Done` });
             });
@@ -961,7 +961,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                           undefined,
                           undefined,
                           undefined,
-                          req.query.lang
+                          req.query.lang.replace("-", "_").toLowerCase()
                         );
                         1;
                         lock = true;
@@ -1153,7 +1153,7 @@ router.post("/:id/proxy/servers", function (req, res) {
               undefined,
               undefined,
               undefined,
-              req.query.lang
+              req.query.lang.replace("-", "_").toLowerCase()
             );
           });
           f.stopAsync(req.params.id, () => {
@@ -1168,7 +1168,7 @@ router.post("/:id/proxy/servers", function (req, res) {
               undefined,
               undefined,
               undefined,
-              req.query.lang
+              req.query.lang.replace("-", "_").toLowerCase()
             );
           });
 
