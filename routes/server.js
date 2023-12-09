@@ -403,7 +403,7 @@ router.post(`/new`, function (req, res) {
             console.log("err");
             return "no";
           } else {
-            console.log("...");
+            console.log(account.accountId + "accountId3");
             if (customers.data.length > 0) {
               cid = customers.data[0].id;
 
@@ -414,6 +414,7 @@ router.post(`/new`, function (req, res) {
                   limit: 100,
                 },
                 function (err, subscriptions) {
+                  console.log(account.accountId + "accountId4");
                   console.log(subscriptions);
                   let subs = 0;
                   //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
@@ -429,7 +430,7 @@ router.post(`/new`, function (req, res) {
                       req.body.version !== "undefined" &&
                       req.body.name !== "undefined"
                     ) {
-                      console.log(account.accountId + "accountId");
+                      console.log(account.accountId + "accountId5");
                       server = {};
                       server.name = req.body.name;
                       server.software = req.body.software;
