@@ -308,7 +308,7 @@ router.post(`/new`, function (req, res) {
   token = req.headers.token;
   if (!enableAuth) email = "noemail";
   account = require("../accounts/" + email + ".json");
-  console.log("account" + account);
+  console.log("account" + JSON.stringify(account));
   if (token === account.token || !enableAuth) {
     if (account.servers == undefined) account.servers = [];
     let amount = account.servers.length;
@@ -436,6 +436,7 @@ router.post(`/new`, function (req, res) {
                       req.body.version !== "undefined" &&
                       req.body.name !== "undefined"
                     ) {
+                      console.log(account.accountId + "accountId");
                       server = {};
                       server.name = req.body.name;
                       server.software = req.body.software;
