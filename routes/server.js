@@ -20,6 +20,7 @@ router.get(`/:id`, function (req, res) {
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
+  console.log(email + token + JSON.stringify(account));
   if (hasAccess(token, account)) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
