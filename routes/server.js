@@ -699,7 +699,7 @@ router.delete(`/:id`, function (req, res) {
       "Recieved A Delete Request for server " + req.params.id + "\n"
     );
   }
-  console.log("deleting " + req.params.id);
+
   //
   email = req.headers.email;
   token = req.headers.token;
@@ -711,10 +711,8 @@ router.delete(`/:id`, function (req, res) {
         account.password ||
       !enableAuth
     ) {
-      id = req.params.id;
-      console.log("deleting " + req.params.id + " " + id);
-      if (f.getState(id) == "true") {
-        f.stopAsync(id, () => {
+      if (f.getState(req.params.id) == "true") {
+        f.stopAsync(req.params.id, () => {
           deleteServer();
         });
       } else {
@@ -722,10 +720,9 @@ router.delete(`/:id`, function (req, res) {
       }
 
       function deleteServer() {
-        console.log("deleting " + req.params.id + " " + id);
         account.servers.findIndex = function () {
           for (var i = 0; i < this.length; i++) {
-            if (account.servers[i].id == id) {
+            if (account.servers[i].id == req.params.id) {
               return i;
             }
           }
@@ -733,13 +730,13 @@ router.delete(`/:id`, function (req, res) {
         account.servers.splice(account.servers.findIndex(), 1);
         fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
 
-        files.removeDirectoryRecursiveAsync(`servers/${id}`, () => {
+        files.removeDirectoryRecursiveAsync(`servers/${req.params.id}`, () => {
           res.status(200).json({ msg: `Deleted server` });
         });
 
         const data = require("../assets/data.json");
         for (i in data.serversWithAutomaticStartup) {
-          if (data.serversWithAutomaticStartup[i].includes(id)) {
+          if (data.serversWithAutomaticStartup[i].includes(req.params.id)) {
             data.serversWithAutomaticStartup.splice(i, 1);
           }
         }
