@@ -133,11 +133,9 @@ fs.readdirSync("accounts").forEach((file) => {
     const account = require(`./accounts/${file}`);
 
     for (let i in account.servers) {
-      console.log(account.servers[i]);
-      console.log("typeof" + typeof account.servers[i] == typeof "object");
-      console.log("typeof" + typeof account.servers[i] == Object);
-      console.log("typeof" + typeof account.servers[i] == typeof Object);
-      account.servers[i] = account.servers[i].id;
+      //if the server is an object, simplify it by just storing the ID
+      if (typeof account.servers[i] == "object")
+        account.servers[i] = account.servers[i].id;
     }
 
     fs.writeFileSync(`accounts/${file}`, JSON.stringify(account));
