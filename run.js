@@ -130,9 +130,12 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
 fs.readdirSync("accounts").forEach((file) => {
   if (file.split(".")[file.split(".").length - 1] == "json") {
     const account = require(`./accounts/${file}`);
-    for (let i in account.servers) {
-      account.servers[i] = account.servers[i].id;
+    if (account.servers == typeof Object) {
+      for (let i in account.servers) {
+        account.servers[i] = account.servers[i].id;
+      }
     }
+    fs.writeFileSync(`accounts/${file}`, JSON.stringify(account));
   }
 });
 
