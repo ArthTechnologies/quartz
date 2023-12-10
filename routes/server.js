@@ -699,7 +699,7 @@ router.delete(`/:id`, function (req, res) {
       "Recieved A Delete Request for server " + req.params.id + "\n"
     );
   }
-
+  console.log("deleting " + req.params.id);
   //
   email = req.headers.email;
   token = req.headers.token;
@@ -712,6 +712,7 @@ router.delete(`/:id`, function (req, res) {
       !enableAuth
     ) {
       id = req.params.id;
+      console.log("deleting " + req.params.id + " " + id);
       if (f.getState(id) == "true") {
         f.stopAsync(id, () => {
           deleteServer();
@@ -721,6 +722,7 @@ router.delete(`/:id`, function (req, res) {
       }
 
       function deleteServer() {
+        console.log("deleting " + req.params.id + " " + id);
         account.servers.findIndex = function () {
           for (var i = 0; i < this.length; i++) {
             if (account.servers[i].id == id) {
