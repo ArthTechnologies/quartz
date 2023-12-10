@@ -338,7 +338,7 @@ router.post(`/new`, function (req, res) {
     em = req.query.email;
 
     let cid = "";
-    console.log(JSON.stringify(account) + "accountId");
+    console.log(email + "accountId");
     if (
       (stripeKey.indexOf("sk") == -1 || account.bypassStripe == true) &&
       (config.maxServers > data.numServers ||
@@ -392,7 +392,7 @@ router.post(`/new`, function (req, res) {
         .status(400)
         .json({ success: false, msg: "Maxiumum servers reached." });
     } else {
-      console.log(JSON.stringify(account) + "accountId2");
+      console.log(email + "accountId2");
       stripe.customers.list(
         {
           limit: 100,
@@ -404,7 +404,7 @@ router.post(`/new`, function (req, res) {
             return "no";
           } else {
             console.log(customers);
-            console.log(JSON.stringify(account) + "accountId3");
+            console.log(email + "accountId3");
             if (customers.data.length > 0) {
               cid = customers.data[0].id;
 
@@ -415,7 +415,7 @@ router.post(`/new`, function (req, res) {
                   limit: 100,
                 },
                 function (err, subscriptions) {
-                  console.log(JSON.stringify(account) + "accountId4");
+                  console.log(email + "accountId4");
                   console.log(subscriptions);
                   let subs = 0;
                   //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
@@ -431,7 +431,7 @@ router.post(`/new`, function (req, res) {
                       req.body.version !== "undefined" &&
                       req.body.name !== "undefined"
                     ) {
-                      console.log(JSON.stringify(account) + "accountId5");
+                      console.log(email + "accountId5");
                       server = {};
                       server.name = req.body.name;
                       server.software = req.body.software;
