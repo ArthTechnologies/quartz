@@ -9,7 +9,6 @@ const config = require("../scripts/config.js").getConfig();
 const enableAuth = JSON.parse(config.enableAuth);
 
 router.get(`/`, function (req, res) {
-
   email = req.headers.email;
   token = req.headers.token;
 
@@ -17,7 +16,9 @@ router.get(`/`, function (req, res) {
   //prevents a crash that has occurred
   if (email != undefined) {
     account = require("../accounts/" + email + ".json");
-    console.log(!enableAuth + "enableAuth" + token === account.token || !enableAuth);
+    console.log(
+      !enableAuth + "enableAuth" + token === account.token || !enableAuth
+    );
   }
   if (token === account.token || !enableAuth) {
     //if req.body.email is "noemail" return 404
@@ -27,6 +28,9 @@ router.get(`/`, function (req, res) {
     //set email to the email in the request
     accountId = req.query.accountId;
     for (i in account.servers) {
+      account.servers[i] = require("../servers/" +
+        account.servers[i].id +
+        ".json");
       account.servers[i].state = f.getState(account.servers[i].id);
     }
     res.status(200).json(account.servers);

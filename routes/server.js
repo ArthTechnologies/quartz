@@ -194,8 +194,7 @@ router.post(`/:id/version/`, function (req, res) {
       "servers/" + id + "/server.json",
       JSON.stringify(server, null, 2)
     );
-    account.servers[account.servers.findIndex((e) => e.id == id)].version =
-      version;
+    account.servers[account.servers.indexOf(id)].version = version;
     f.stopAsync(id, () => {
       f.run(id, undefined, undefined, undefined, undefined, email, false);
     });
@@ -367,8 +366,8 @@ router.post(`/new`, function (req, res) {
           "servers/" + id + "/server.json",
           JSON.stringify(server, null, 4)
         );
-
-        account.servers.push(server);
+        console.log("debuglog2 " + id + server.id);
+        account.servers.push(server.id);
 
         fs.writeFileSync(
           "accounts/" + email + ".json",
@@ -448,8 +447,8 @@ router.post(`/new`, function (req, res) {
                         "servers/" + id + "/server.json",
                         JSON.stringify(server, null, 4)
                       );
-
-                      account.servers.push(server);
+                      console.log("debuglog2 " + id + server.id);
+                      account.servers.push(server.id);
                       fs.writeFileSync(
                         "accounts/" + email + ".json",
                         JSON.stringify(account, null, 4)
@@ -728,14 +727,8 @@ router.delete(`/:id`, function (req, res) {
 
       function deleteServer() {
         console.log("deleting " + req.params.id);
-        account.servers.findIndex = function () {
-          for (var i = 0; i < this.length; i++) {
-            if (account.servers[i].id == req.params.id) {
-              return i;
-            }
-          }
-        };
-        account.servers.splice(account.servers.findIndex(), 1);
+
+        account.servers.splice(account.servers.indexOf(req.params.id), 1);
         fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
 
         files.removeDirectoryRecursiveAsync(`servers/${req.params.id}`, () => {
@@ -1382,11 +1375,6 @@ router.post("/:id/rename/", function (req, res) {
     );
 
     account = require("../accounts/" + email + ".json");
-    account.servers[
-      account.servers.findIndex((server) => {
-        return server.id == req.params.id;
-      })
-    ].name = req.query.newName;
     fs.writeFileSync(
       `accounts/${email}.json`,
       JSON.stringify(account, null, 2)

@@ -126,6 +126,16 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
   fs.unlinkSync("servers.json");
 }
 
+//Migration from second account format to third account format
+fs.readdirSync("accounts").forEach((file) => {
+  if (file.split(".")[file.split(".").length - 1] == "json") {
+    const account = require(`./accounts/${file}`);
+    for (let i in account.servers) {
+      account.servers[i] = account.servers[i].id;
+    }
+  }
+});
+
 const s = require("./scripts/stripe.js");
 
 let modVersions = [{ c: "modded", s: "forge", v: "1.19.4" }];
