@@ -128,9 +128,7 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
 
 //Migration from second account format to third account format
 fs.readdirSync("accounts").forEach((file) => {
-  console.log(
-    file + file.split(".")[file.split(".").length - 1] == "json" + "file"
-  );
+  console.log(file + " file");
   if (file.split(".")[file.split(".").length - 1] == "json") {
     const account = require(`./accounts/${file}`);
     console.log("typeof" + account.servers == typeof Object);
