@@ -65,9 +65,9 @@ if (!fs.existsSync("config.txt")) {
       `# The address that servers will be ran under:\n` +
         `address=arthmc.xyz\n` +
         `# Do you want to make users pay for servers? (If so, you'll need a Stripe API Key):\n` +
-        `enablePay=true\n` +
+        `enablePay=false\n` +
         `# Do you want to make users login to access their servers? (Setting this to false is experimental):\n` +
-        `enableAuth=true\n` +
+        `enableAuth=false\n` +
         `# The maximum amount of servers that this panel is allowed to create:\n` +
         `maxServers=8\n` +
         `# The maximum amount of storage that each server can use (in bytes):\n` +
