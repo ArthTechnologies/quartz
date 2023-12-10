@@ -29,7 +29,7 @@ router.get(`/`, function (req, res) {
     accountId = req.query.accountId;
     for (i in account.servers) {
       account.servers[i] = require("../servers/" +
-        account.servers[i].id +
+        account.servers[i] +
         "/server.json");
       account.servers[i].state = f.getState(account.servers[i].id);
     }
