@@ -120,7 +120,7 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
   }
 
   fs.copyFileSync("accounts.json", "backup/accounts.json");
-  Jars();
+
   fs.unlinkSync("accounts.json");
   fs.copyFileSync("servers.json", "backup/servers.json");
   fs.unlinkSync("servers.json");
