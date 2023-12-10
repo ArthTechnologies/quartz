@@ -30,7 +30,7 @@ router.get(`/`, function (req, res) {
     for (i in account.servers) {
       account.servers[i] = require("../servers/" +
         account.servers[i].id +
-        ".json");
+        "/server.json");
       account.servers[i].state = f.getState(account.servers[i].id);
     }
     res.status(200).json(account.servers);
