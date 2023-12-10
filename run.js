@@ -130,6 +130,8 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
 fs.readdirSync("accounts").forEach((file) => {
   if (file.split(".")[file.split(".").length - 1] == "json") {
     const account = require(`./accounts/${file}`);
+    console.log("typeof" + account.servers == typeof Object);
+    console.log("typeof" + typeof account.servers == typeof Object);
     if (account.servers == typeof Object) {
       for (let i in account.servers) {
         account.servers[i] = account.servers[i].id;
