@@ -310,6 +310,7 @@ router.post(`/new`, function (req, res) {
   account = require("../accounts/" + email + ".json");
   console.log("account" + JSON.stringify(account).accountId);
   if (token === account.token || !enableAuth) {
+    console.log("debug: " + email + req.headers.email);
     if (account.servers == undefined) account.servers = [];
     let amount = account.servers.length;
     //add cors header
@@ -338,7 +339,7 @@ router.post(`/new`, function (req, res) {
     em = req.headers.email;
 
     let cid = "";
-
+    console.log("debug: " + email + req.headers.email + em);
     if (
       (stripeKey.indexOf("sk") == -1 || account.bypassStripe == true) &&
       (config.maxServers > data.numServers ||
@@ -392,6 +393,7 @@ router.post(`/new`, function (req, res) {
         .status(400)
         .json({ success: false, msg: "Maxiumum servers reached." });
     } else {
+      console.log("debug: " + email + req.headers.email + em);
       stripe.customers.list(
         {
           limit: 100,
@@ -402,6 +404,7 @@ router.post(`/new`, function (req, res) {
             console.log("err");
             return "no";
           } else {
+            console.log("debug: " + email + req.headers.email + em);
             console.log(customers);
 
             if (customers.data.length > 0) {
