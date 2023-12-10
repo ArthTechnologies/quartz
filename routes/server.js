@@ -432,6 +432,7 @@ router.post(`/new`, function (req, res) {
                       req.body.version !== "undefined" &&
                       req.body.name !== "undefined"
                     ) {
+                      console.log("debug: " + email + req.headers.email + em);
                       server = {};
                       server.name = req.body.name;
                       server.software = req.body.software;
@@ -454,6 +455,7 @@ router.post(`/new`, function (req, res) {
                       );
                       console.log(req.body);
                     }
+                    console.log("debug: " + email + req.headers.email + em);
                     f.run(
                       id,
                       req.body.software,
