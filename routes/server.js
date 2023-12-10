@@ -335,7 +335,7 @@ router.post(`/new`, function (req, res) {
     const datajson = require("../assets/data.json");
     datajson.numServers = serverFolders.length;
     fs.writeFileSync("assets/data.json", JSON.stringify(datajson, null, 2));
-    em = req.query.email;
+    em = req.headers.email;
 
     let cid = "";
     console.log(email + " " + em + "accountId");
