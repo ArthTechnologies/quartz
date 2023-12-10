@@ -131,8 +131,8 @@ fs.readdirSync("accounts").forEach((file) => {
   console.log(file + " file");
   if (file.split(".")[file.split(".").length - 1] == "json") {
     const account = require(`./accounts/${file}`);
-    console.log("typeof" + typeof account.servers == "object");
-    console.log("typeof" + typeof account.servers);
+    console.log("typeof" + typeof account.servers == typeof "object");
+    console.log("typeof" + typeof account.servers == Object);
     if (account.servers == typeof Object) {
       for (let i in account.servers) {
         account.servers[i] = account.servers[i].id;
