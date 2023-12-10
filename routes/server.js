@@ -20,7 +20,7 @@ router.get(`/:id`, function (req, res) {
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
-  console.log(email + token + JSON.stringify(account).accountId);
+
   if (hasAccess(token, account)) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
@@ -706,7 +706,7 @@ router.delete(`/:id`, function (req, res) {
     );
   }
 
-  //
+  console.log("deleting " + req.params.id);
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
@@ -717,6 +717,7 @@ router.delete(`/:id`, function (req, res) {
         account.password ||
       !enableAuth
     ) {
+      console.log("deleting " + req.params.id);
       if (f.getState(req.params.id) == "true") {
         f.stopAsync(req.params.id, () => {
           deleteServer();
@@ -726,6 +727,7 @@ router.delete(`/:id`, function (req, res) {
       }
 
       function deleteServer() {
+        console.log("deleting " + req.params.id);
         account.servers.findIndex = function () {
           for (var i = 0; i < this.length; i++) {
             if (account.servers[i].id == req.params.id) {
