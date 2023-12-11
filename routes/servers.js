@@ -15,9 +15,11 @@ router.get(`/`, function (req, res) {
   if (!enableAuth) email = "noemail";
   //prevents a crash that has occurred
   if (email != undefined) {
-    try {account = JSON.parse(fs.readFileSync("/accounts/" + email + ".json"));
-  }
-    catch{}
+    try {
+      account = JSON.parse(fs.readFileSync("/accounts/" + email + ".json"));
+    console.log(account);
+
+  } catch{}
 
   }
   if (token === account.token || !enableAuth) {
