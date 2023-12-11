@@ -733,6 +733,11 @@ router.delete(`/:id`, function (req, res) {
         files.removeDirectoryRecursiveAsync(`servers/${req.params.id}`, () => {
           files.refreshAccountServerList(email);
           res.status(200).json({ msg: `Deleted server` });
+          setTimeout(() => {
+            if (fs.existsSync(`servers/${req.params.id}`)) {
+              files.removeDirectoryRecursive(`servers/${req.params.id}`);
+            }
+            },100)
           
         });
 
