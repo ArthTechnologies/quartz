@@ -596,7 +596,9 @@ function killAsync(id, callback) {
     const intervalId = setInterval(() => {
       if (states[id] === "false") {
         clearInterval(intervalId); // Clear the interval once the condition is met
-        callback();
+        setTimeout(() => {
+          callback();
+        }, 50);
       }
     }, 200);
   }
@@ -750,4 +752,5 @@ module.exports = {
   proxiesToggle,
   getState,
   downloadModpack,
+  killAsync,
 };
