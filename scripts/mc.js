@@ -598,7 +598,7 @@ function killAsync(id, callback) {
         clearInterval(intervalId); // Clear the interval once the condition is met
         setTimeout(() => {
           callback();
-        }, 50);
+        }, 500);
       }
     }, 200);
   }
