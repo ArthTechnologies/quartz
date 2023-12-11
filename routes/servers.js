@@ -11,15 +11,11 @@ const enableAuth = JSON.parse(config.enableAuth);
 router.get(`/`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
-  let account;
+
   if (!enableAuth) email = "noemail";
   //prevents a crash that has occurred
   if (email != undefined) {
-    try {
-      account = JSON.parse(fs.readFileSync("/accounts/" + email + ".json"));
-    console.log(account);
-
-  } catch{}
+    account = require("../accounts/" + email + ".json");
 
   }
   if (token === account.token || !enableAuth) {
