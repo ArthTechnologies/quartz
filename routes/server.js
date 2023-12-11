@@ -729,6 +729,7 @@ router.delete(`/:id`, function (req, res) {
         console.log("deleting " + req.params.id);
         console.log(account.servers)
         console.log(account.servers.indexOf(req.params.id) + account.servers[account.servers.indexOf(req.params.id)])
+        if (account.servers.indexOf(req.params.id) != NaN) 
         account.servers.splice(account.servers.indexOf(req.params.id), 1);
         console.log(account.servers)
         fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
