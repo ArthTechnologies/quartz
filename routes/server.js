@@ -735,14 +735,12 @@ router.delete(`/:id`, function (req, res) {
           res.status(200).json({ msg: `Deleted server` });
           console.log("checking if server still exists...")
           setTimeout(() => {
-            console.log("checking if server still exists...")
-            console.log(req.params.id + fs.existsSync(`servers/${req.params.id}`));
-            console.log(fs.readdirSync("servers"))
-            if (fs.existsSync(`servers/${req.params.id}`)) {
-              console.log("server still exists...")
+            //sometimes, it'll delete the files inside a folder but not the folder itself.
+            
+              console.log("making sure server is deleted...")
               files.removeDirectoryRecursive(`servers/${req.params.id}`);
-            }
-            },100)
+            
+            },50)
           
         });
 
