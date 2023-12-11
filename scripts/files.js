@@ -98,10 +98,12 @@ function refreshAccountServerList(email) {
   let account = require("../accounts/" + email + ".json");
   let servers = [];
   fs.readdirSync("servers").forEach((folder) => {
+    if (!fs.existsSync("servers/" + folder + "/server.json")) {
     let server = require("../servers/" + folder + "/server.json");
     if (server.accountId == account.accountId) {
       servers.push(server);
     }
+  }
   });
   account.servers = servers;
   fs.writeFileSync("accounts/" + email + ".json", JSON.stringify(account));
