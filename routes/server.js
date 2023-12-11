@@ -718,7 +718,7 @@ router.delete(`/:id`, function (req, res) {
     ) {
       console.log("deleting " + req.params.id);
       if (f.getState(req.params.id) == "true") {
-        f.stopAsync(req.params.id, () => {
+        f.killAsync(req.params.id, () => {
           deleteServer();
         });
       } else {

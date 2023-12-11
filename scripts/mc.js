@@ -418,11 +418,11 @@ function run(
             if (count2 < 5 * 24) {
               ls.stdin.write("stop\n");
               count2++;
-            } else {
-              ls.kill();
-              states[id] = "false";
-              clearInterval(intervalID);
             }
+          } else if (states[id] == "deleting") {
+            ls.kill();
+            states[id] = "false";
+            clearInterval(intervalID);
           }
         }, 200);
         eventEmitter.on("writeCmd", function () {
@@ -462,7 +462,7 @@ function run(
         if (count2 < 5 * 24) {
           ls.stdin.write("stop\n");
           count2++;
-        } else {
+        } else if (states[id] == "deleting") {
           ls.kill();
           states[id] = "false";
           clearInterval(intervalID);
@@ -579,6 +579,20 @@ function stopAsync(id, callback) {
     callback();
   } else {
     states[id] = "stopping";
+    const intervalId = setInterval(() => {
+      if (states[id] === "false") {
+        clearInterval(intervalId); // Clear the interval once the condition is met
+        callback();
+      }
+    }, 200);
+  }
+}
+
+function killAsync(id, callback) {
+  if (states[id] == "false") {
+    callback();
+  } else {
+    states[id] = "deleting";
     const intervalId = setInterval(() => {
       if (states[id] === "false") {
         clearInterval(intervalId); // Clear the interval once the condition is met
