@@ -25,6 +25,8 @@ router.get(`/`, function (req, res) {
     }
     console.log(JSON.stringify(account))
     for (i in account.servers) {
+      if (typeof account.servers[i] == "object")
+      account.servers[i] = account.servers[i].id
       account.servers[i] = require("../servers/" +
         account.servers[i] +
         "/server.json");
