@@ -194,7 +194,7 @@ router.post(`/:id/version/`, function (req, res) {
       "servers/" + id + "/server.json",
       JSON.stringify(server, null, 2)
     );
-    account.servers[account.servers.indexOf(id)].version = version;
+   
     f.stopAsync(id, () => {
       f.run(id, undefined, undefined, undefined, undefined, email, false);
     });
@@ -727,15 +727,13 @@ router.delete(`/:id`, function (req, res) {
 
       function deleteServer() {
         console.log("deleting " + req.params.id);
-        console.log(account.servers)
-        console.log(account.servers.indexOf(req.params.id) + account.servers[account.servers.indexOf(req.params.id)])
-        if (account.servers.indexOf(req.params.id) != NaN) 
-        account.servers.splice(account.servers.indexOf(req.params.id), 1);
-        console.log(account.servers)
+        
         fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
 
         files.removeDirectoryRecursiveAsync(`servers/${req.params.id}`, () => {
+          files.refreshAccountServerList(email);
           res.status(200).json({ msg: `Deleted server` });
+          
         });
 
         const data = require("../assets/data.json");
