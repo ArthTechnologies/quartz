@@ -736,6 +736,8 @@ router.delete(`/:id`, function (req, res) {
           console.log("checking if server still exists...")
           setTimeout(() => {
             console.log("checking if server still exists...")
+            console.log(req.params.id + fs.existsSync(`servers/${req.params.id}`));
+            console.log(rs.readdirSync("servers"))
             if (fs.existsSync(`servers/${req.params.id}`)) {
               console.log("server still exists...")
               files.removeDirectoryRecursive(`servers/${req.params.id}`);
