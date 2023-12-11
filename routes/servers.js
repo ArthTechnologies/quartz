@@ -16,17 +16,14 @@ router.get(`/`, function (req, res) {
   //prevents a crash that has occurred
   if (email != undefined) {
     account = require("../accounts/" + email + ".json");
-    console.log(
-      !enableAuth + "enableAuth" + token === account.token || !enableAuth
-    );
+
   }
   if (token === account.token || !enableAuth) {
     //if req.body.email is "noemail" return 404
     if (req.query.email == ("noemail" | "undefined")) {
       //res.status(404).json({ msg: `Invalid email.` });
     }
-    //set email to the email in the request
-    accountId = req.query.accountId;
+    console.log(JSON.stringify(account))
     for (i in account.servers) {
       account.servers[i] = require("../servers/" +
         account.servers[i] +
