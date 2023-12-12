@@ -6,6 +6,7 @@ const s = require("../scripts/stripe.js");
 const { v4: uuidv4 } = require("uuid");
 const files = require("../scripts/files.js");
 const config = require("../scripts/config.js").getConfig();
+const enableCloudflareVerify = JSON.parse(config.enableCloudflareVerify);
 
 Router.post("/email/signup/", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -15,41 +16,66 @@ Router.post("/email/signup/", (req, res) => {
   let password = req.query.password;
   let email = req.query.email;
   let confirmPassword = req.query.confirmPassword;
-
-  if (fs.existsSync("accounts/" + email + ".json")) {
-    emailExists = true;
-  }
-
-  if (password == confirmPassword) {
-    if (password.length >= 7) {
-      if (!emailExists) {
-        let accountId = uuidv4();
-        [salt, password] = files.hash(password).split(":");
-
-        account.password = password;
-        account.accountId = accountId;
-        account.token = uuidv4();
-        account.salt = salt;
-        account.resetAttempts = 0;
-        account.ips = [];
-        account.ips.push(files.getIPID(req.ip));
-        account.type = "email";
-        fs.writeFileSync(
-          "accounts/" + email + ".json",
-          JSON.stringify(account, null, 4),
-          {
-            encoding: "utf8",
+  let cloudflareVerifyToken = req.query.cloudflareVerifyToken;
+  if (config.enableCloudflareVerify) {
+    const exec = require("child_process").exec;
+    exec(
+      `curl 'https://challenges.cloudflare.com/turnstile/v0/siteverify' --data 'secret=${config.cloudflareVerifySecretKey}&response=${cloudflareVerifyToken}'`,
+      (err, stdout, stderr) => {
+        try {
+          if (JSON.parse(stdout).success) {
+            signup();
+          } else {
+            res
+              .status(400)
+              .send({ token: -1, reason: "Human Verification Failed" });
           }
-        );
-        res.status(200).send({ token: account.token, accountId: accountId });
+        } catch {
+          res
+            .status(400)
+            .send({ token: -1, reason: "Human Verification Failed" });
+        }
+      }
+    );
+  } else {
+    signup();
+  }
+  function signup() {
+    if (fs.existsSync("accounts/" + email + ".json")) {
+      emailExists = true;
+    }
+
+    if (password == confirmPassword) {
+      if (password.length >= 7) {
+        if (!emailExists) {
+          let accountId = uuidv4();
+          [salt, password] = files.hash(password).split(":");
+
+          account.password = password;
+          account.accountId = accountId;
+          account.token = uuidv4();
+          account.salt = salt;
+          account.resetAttempts = 0;
+          account.ips = [];
+          account.ips.push(files.getIPID(req.ip));
+          account.type = "email";
+          fs.writeFileSync(
+            "accounts/" + email + ".json",
+            JSON.stringify(account, null, 4),
+            {
+              encoding: "utf8",
+            }
+          );
+          res.status(200).send({ token: account.token, accountId: accountId });
+        } else {
+          res.status(400).send({ token: -1, reason: "Email already exists" });
+        }
       } else {
-        res.status(400).send({ token: -1, reason: "Email already exists" });
+        res.status(400).send({ token: -1, reason: "Password is too short" });
       }
     } else {
-      res.status(400).send({ token: -1, reason: "Password is too short" });
+      res.status(400).send({ token: -1, reason: "Passwords do not match" });
     }
-  } else {
-    res.status(400).send({ token: -1, reason: "Passwords do not match" });
   }
 });
 
@@ -62,20 +88,45 @@ Router.post("/email/signin/", (req, res) => {
   let response = {};
 
   let salt = account.salt;
-
-  if (account.password == files.hash(password, salt).split(":")[1]) {
-    if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
-      account.ips.push(files.getIPID(req.ip));
-    }
-    response = {
-      token: account.token,
-      accountId: account.accountId,
-    };
+  let cloudflareVerifyToken = req.query.cloudflareVerifyToken;
+  if (config.enableCloudflareVerify) {
+    const exec = require("child_process").exec;
+    exec(
+      `curl 'https://challenges.cloudflare.com/turnstile/v0/siteverify' --data 'secret=${config.cloudflareVerifySecretKey}&response=${cloudflareVerifyToken}'`,
+      (err, stdout, stderr) => {
+        try {
+          if (JSON.parse(stdout).success) {
+            signin();
+          } else {
+            res
+              .status(400)
+              .send({ token: -1, reason: "Human Verification Failed" });
+          }
+        } catch {
+          res
+            .status(400)
+            .send({ token: -1, reason: "Human Verification Failed" });
+        }
+      }
+    );
   } else {
-    response = { token: -1, reason: "Incorrect email or password" };
+    signin();
   }
+  function signin() {
+    if (account.password == files.hash(password, salt).split(":")[1]) {
+      if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
+        account.ips.push(files.getIPID(req.ip));
+      }
+      response = {
+        token: account.token,
+        accountId: account.accountId,
+      };
+    } else {
+      response = { token: -1, reason: "Incorrect email or password" };
+    }
 
-  res.status(200).send(response);
+    res.status(200).send(response);
+  }
 });
 
 Router.delete("/email", (req, res) => {
@@ -214,8 +265,5 @@ Router.post("/discord/", (req, res) => {
 
 });
 */
-
-
-
 
 module.exports = Router;
