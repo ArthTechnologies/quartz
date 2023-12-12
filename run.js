@@ -137,20 +137,13 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
   fs.unlinkSync("servers.json");
 }
 
-//Migration from second account format to third account format
 fs.readdirSync("accounts").forEach((file) => {
-  console.log(file + " file");
-  if (file.split(".")[file.split(".").length - 1] == "json") {
-    const account = require(`./accounts/${file}`);
-
-    for (let i in account.servers) {
-      //if the server is an object, simplify it by just storing the ID
-      if (typeof account.servers[i] == "object")
-        account.servers[i] = account.servers[i].id;
-    }
-
-    fs.writeFileSync(`accounts/${file}`, JSON.stringify(account));
-  }
+  files.refreshAccountServerList(
+    file
+      .split(".")
+      .splice(0, file.split(".").length - 1)
+      .join(".")
+  );
 });
 
 const s = require("./scripts/stripe.js");

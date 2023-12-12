@@ -1,5 +1,6 @@
 const { createHash, scryptSync, randomBytes } = require("crypto");
 const config = require("./config.js").getConfig();
+const fs = require("fs");
 
 function download(file, url) {
   exec(`curl -o ${file} -LO "${url}"`);
@@ -80,30 +81,39 @@ function readFilesRecursive(directoryPath) {
 }
 
 function removeDirectoryRecursive(directoryPath) {
- const exec = require("child_process").execSync;
- //check if directory exists
- if (fs.existsSync(directoryPath)) {
-  //check if directory path is inside the server folder
-  if (directoryPath.startsWith("servers")) {
-    exec(`rm -rf ${directoryPath}`);
-  } else {
-    console.log("Directory path is not inside servers folder");
-  }
-} else {
-  console.log(`Directory "${directoryPath}" does not exist.`);
-}
+  const exec = require("child_process").execSync;
+  //check if directory exists
+  //fs cannot be relied upon for this because of a bug
+  //where if a directory itself exists but there are no files,
+  //it says it doesn't exist
+
+  exec(
+    `[ -e ${directoryPath}} ] && echo "File exists" || echo "File does not exist"`,
+    (error, stdout, stderr) => {
+      if (stdout.includes("File exists")) {
+        //check if directory path is inside the server folder
+        if (directoryPath.startsWith("servers")) {
+          exec(`rm -r ${directoryPath}`);
+        } else {
+          console.log("Directory path is not inside servers folder");
+        }
+      } else {
+        console.log(`Directory "${directoryPath}" does not exist.`);
+      }
+    }
+  );
 }
 
 function refreshAccountServerList(email) {
   let account = require("../accounts/" + email + ".json");
   let servers = [];
   fs.readdirSync("servers").forEach((folder) => {
-    if (!fs.existsSync("servers/" + folder + "/server.json")) {
-    let server = require("../servers/" + folder + "/server.json");
-    if (server.accountId == account.accountId) {
-      servers.push(server);
+    if (fs.existsSync("servers/" + folder + "/server.json")) {
+      let server = require("../servers/" + folder + "/server.json");
+      if (server.accountId == account.accountId) {
+        servers.push(server);
+      }
     }
-  }
   });
   account.servers = servers;
   fs.writeFileSync("accounts/" + email + ".json", JSON.stringify(account));
@@ -113,22 +123,22 @@ function removeDirectoryRecursiveAsync(directoryPath, callback) {
   const exec = require("child_process").exec;
   //check if directory exists
   if (fs.existsSync(directoryPath)) {
-   //check if directory path is inside the server folder
-   if (directoryPath.startsWith("servers")) {
-     exec(`rm -rf ${directoryPath}`, (error, stdout, stderr) => {
+    //check if directory path is inside the server folder
+    if (directoryPath.startsWith("servers")) {
+      exec(`rm -rf ${directoryPath}`, (error, stdout, stderr) => {
         if (callback != undefined) {
           callback(stdout);
         }
       });
-   } else {
-     console.log("Directory path is not inside servers folder");
-     callback("Directory path is not inside servers folder");
-   }
- } else {
-   console.log(`Directory "${directoryPath}" does not exist.`);
-    callback(`Directory "${directoryPath}" does not exist.`)
- }
- }
+    } else {
+      console.log("Directory path is not inside servers folder");
+      callback("Directory path is not inside servers folder");
+    }
+  } else {
+    console.log(`Directory "${directoryPath}" does not exist.`);
+    callback(`Directory "${directoryPath}" does not exist.`);
+  }
+}
 function getIPID(ip) {
   return hash(ip, config.pepper).split(":")[1];
 }

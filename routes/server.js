@@ -194,7 +194,7 @@ router.post(`/:id/version/`, function (req, res) {
       "servers/" + id + "/server.json",
       JSON.stringify(server, null, 2)
     );
-   
+
     f.stopAsync(id, () => {
       f.run(id, undefined, undefined, undefined, undefined, email, false);
     });
@@ -727,21 +727,19 @@ router.delete(`/:id`, function (req, res) {
 
       function deleteServer() {
         console.log("deleting " + req.params.id);
-        
+
         fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
 
         files.removeDirectoryRecursiveAsync(`servers/${req.params.id}`, () => {
           files.refreshAccountServerList(email);
           res.status(200).json({ msg: `Deleted server` });
-          console.log("checking if server still exists...")
+          console.log("checking if server still exists...");
           setTimeout(() => {
             //sometimes, it'll delete the files inside a folder but not the folder itself.
-            
-              console.log("making sure server is deleted...")
-              files.removeDirectoryRecursive(`servers/${req.params.id}`);
-            
-            },50)
-          
+
+            console.log("making sure server is deleted...");
+            files.removeDirectoryRecursive(`servers/${req.params.id}`);
+          }, 5000);
         });
 
         const data = require("../assets/data.json");
