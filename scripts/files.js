@@ -93,7 +93,7 @@ function removeDirectoryRecursive(directoryPath) {
       if (stdout.includes("File exists")) {
         //check if directory path is inside the server folder
         if (directoryPath.startsWith("servers")) {
-          exec(`rm -rf ${directoryPath}`);
+          exec(`rm -r ${directoryPath}`);
         } else {
           console.log("Directory path is not inside servers folder");
         }
