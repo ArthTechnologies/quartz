@@ -52,9 +52,14 @@ if (!fs.existsSync("config.txt")) {
         `jarsMcUrl=${settings.jarsMcUrl}\n` +
         `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
         `pepper=${secrets.pepper}\n` +
-        `# Virus scans run whenever someone uploads a world file. Read clamav.net's documentation for setup instructions before enabling this:\n` +
-        `enableVirusScan=false\n`
-    );
+        `# Virus scans run whenever someone uploads a world file. Uses 'clamdscan', Read clamav.net's documentation for setup instructions before enabling this:\n` +
+        `enableVirusScan=false\n` +
+        `# Enable cloudflare turnstile, which verifies that users are human. You need to set this up on observer as well:\n` +
+        `enableCloudflareVerify=false\n` +
+        `# The secret key for cloudflare turnstile, found in the cloudflare dashboard:\n` +
+        `cloudflareVerifySecretKey=\n` +
+        `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the url here:\n`+
+        `labrinthUrl=https://api.modrinth.com/v2\n` );
     fs.copyFileSync("stores/settings.json", "backup/settings.json");
     fs.unlinkSync("stores/settings.json");
     fs.copyFileSync("stores/secrets.json", "backup/secrets.json");
@@ -84,7 +89,13 @@ if (!fs.existsSync("config.txt")) {
         `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
         `pepper=${crypto.randomBytes(12).toString("hex")}\n` +
         `# Virus scans run whenever someone uploads a world file. Read clamav.net's documentation for setup instructions before enabling this:\n` +
-        `enableVirusScan=false\n`
+        `enableVirusScan=false\n` +
+        `# Enable cloudflare turnstile, which verifies that users are human. You need to set this up on observer as well:\n` +
+        `enableCloudflareVerify=false\n` +
+        `# The secret key for cloudflare turnstile, found in the cloudflare dashboard:\n` +
+        `cloudflareVerifySecretKey=\n` +
+        `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the url here:\n`+
+        `labrinthUrl=https://api.modrinth.com/v2\n`
     );
   }
 }
