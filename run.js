@@ -127,7 +127,12 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
 }
 
 fs.readdirSync("accounts").forEach((file) => {
-  files.refreshAccountServerList(file.splice(0, file.length - 5));
+  files.refreshAccountServerList(
+    file
+      .split(".")
+      .splice(0, file.split(".").length - 1)
+      .join(".")
+  );
 });
 
 const s = require("./scripts/stripe.js");
