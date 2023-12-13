@@ -17,9 +17,7 @@ router.get(`/`, function (req, res) {
   if (email != undefined) {
     account = require("../accounts/" + email + ".json");
   }
-  console.log("debug: " + (token === account.token) + "account");
-  console.log("token: " + token);
-  console.log("account token: " + account.token);
+
   if (token === account.token || !enableAuth) {
     //if req.body.email is "noemail" return 404
     if (req.query.email == ("noemail" | "undefined")) {
