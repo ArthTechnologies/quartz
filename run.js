@@ -107,8 +107,7 @@ if (!fs.existsSync("accounts")) {
   fs.writeFileSync("accounts/noemail.json", `{"accountId":"noemail"}`);
 }
 
-//Migration from old file-based accounts format to new folder-based one
-//Migration from old file-based servers format to new folder-based one
+//Migration from old file-based servers & accounts format from 1.2 to the 1.3 folder-based one
 if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
   const oldAccounts = require("./accounts.json");
   const oldServers = require("./servers.json");
@@ -138,12 +137,18 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
 }
 
 fs.readdirSync("accounts").forEach((file) => {
+  
   files.refreshAccountServerList(
     file
       .split(".")
       .splice(0, file.split(".").length - 1)
       .join(".")
   );
+
+  //if account is from old email-only system, this adds the "email:" prefix
+  if (file.includes("@") && !file.includes("email:") && !file.split(":")[0] == undefined) {
+    fs.renameSync(`accounts/${file}`, `accounts/email:${file}`);
+  }
 });
 
 const s = require("./scripts/stripe.js");

@@ -41,7 +41,7 @@ Router.post("/email/signup/", (req, res) => {
     signup();
   }
   function signup() {
-    if (fs.existsSync("accounts/" + email + ".json")) {
+    if (fs.existsSync("accounts/email:" + email + ".json")) {
       emailExists = true;
     }
 
@@ -60,7 +60,7 @@ Router.post("/email/signup/", (req, res) => {
           account.ips.push(files.getIPID(req.ip));
           account.type = "email";
           fs.writeFileSync(
-            "accounts/" + email + ".json",
+            "accounts/email:" + email + ".json",
             JSON.stringify(account, null, 4),
             {
               encoding: "utf8",
@@ -84,7 +84,7 @@ Router.post("/email/signin/", (req, res) => {
 
   let password = req.query.password;
   let email = req.query.email;
-  let account = require("../accounts/" + email + ".json");
+  let account = require("../accounts/email:" + email + ".json");
   let response = {};
 
   let salt = account.salt;
@@ -133,11 +133,11 @@ Router.delete("/email", (req, res) => {
   email = req.headers.email;
   password = req.query.password;
   token = req.headers.token;
-  let account = require("../accounts/" + email + ".json");
+  let account = require("../accounts/email:" + email + ".json");
 
   if (token == account.token) {
     if (account.password == files.hash(password, account.salt).split(":")[1]) {
-      fs.unlinkSync("accounts/" + email + ".json");
+      fs.unlinkSync("accounts/email:" + email + ".json");
 
       res.status(200).send({ success: true });
     } else {
@@ -155,7 +155,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
   let email = req.query.email;
   let confirmPassword = req.query.confirmPassword;
   let last4 = req.query.last4;
-  let account = require("../accounts/" + email + ".json");
+  let account = require("../accounts/email:" + email + ".json");
 
   try {
     const creditId = await s.getCreditId(email);
@@ -196,7 +196,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
 
   //write account file
   fs.writeFileSync(
-    "accounts/" + email + ".json",
+    "accounts/email:" + email + ".json",
     JSON.stringify(account, null, 4),
 
     {
