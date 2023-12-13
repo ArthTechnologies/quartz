@@ -146,7 +146,7 @@ fs.readdirSync("accounts").forEach((file) => {
   );
 
   //if account is from old email-only system, this adds the "email:" prefix
-  if (file.includes("@") && !file.includes("email:") && !file.split(":")[0] == undefined) {
+  if (file.includes("@") && !file.includes("email:") && file.split(":")[0] == undefined) {
     fs.renameSync(`accounts/${file}`, `accounts/email:${file}`);
   }
 });
