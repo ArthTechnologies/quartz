@@ -273,4 +273,18 @@ Router.post("/discord/", (req, res) => {
   );
 });
 
+Router.delete("/discord", (req, res) => {
+  username = req.headers.username;
+  token = req.headers.token;
+  let account = require("../accounts/discord:" + username + ".json");
+
+  if (token == account.token) {
+    fs.unlinkSync("accounts/discord:" + username + ".json");
+
+    res.status(200).send({ success: true });
+  } else {
+    res.status(400).send({ success: false, reason: "Invalid token" });
+  }
+});
+
 module.exports = Router;

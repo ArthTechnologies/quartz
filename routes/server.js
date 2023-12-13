@@ -714,7 +714,8 @@ router.delete(`/:id`, function (req, res) {
     if (
       files.hash(req.query.password, account.salt).split(":")[1] ==
         account.password ||
-      !enableAuth
+      !enableAuth ||
+      account.type != "email"
     ) {
       console.log("deleting " + req.params.id);
       if (f.getState(req.params.id) == "true") {
