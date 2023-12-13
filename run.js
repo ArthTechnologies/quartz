@@ -56,8 +56,11 @@ if (!fs.existsSync("config.txt")) {
         `enableVirusScan=false\n` +
         `# Enable cloudflare turnstile, which verifies that users are human. You need to set this up on observer as well:\n` +
         `enableCloudflareVerify=false\n` +
+        `# The "sitekey" for cloudflare turnstile, found in the cloudflare dashboard:\n` +
+        `cloudflareVerifySiteKey=\n` +
         `# The secret key for cloudflare turnstile, found in the cloudflare dashboard:\n` +
         `cloudflareVerifySecretKey=\n` +
+
         `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the url here:\n`+
         `labrinthUrl=https://api.modrinth.com/v2\n` );
     fs.copyFileSync("stores/settings.json", "backup/settings.json");
@@ -90,10 +93,13 @@ if (!fs.existsSync("config.txt")) {
         `pepper=${crypto.randomBytes(12).toString("hex")}\n` +
         `# Virus scans run whenever someone uploads a world file. Read clamav.net's documentation for setup instructions before enabling this:\n` +
         `enableVirusScan=false\n` +
+        `# The "sitekey" for cloudflare turnstile, found in the cloudflare dashboard:\n` +
+        `cloudflareVerifySiteKey=\n` +
         `# Enable cloudflare turnstile, which verifies that users are human. You need to set this up on observer as well:\n` +
         `enableCloudflareVerify=false\n` +
         `# The secret key for cloudflare turnstile, found in the cloudflare dashboard:\n` +
         `cloudflareVerifySecretKey=\n` +
+
         `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the url here:\n`+
         `labrinthUrl=https://api.modrinth.com/v2\n`
     );
