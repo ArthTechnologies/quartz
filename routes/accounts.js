@@ -220,6 +220,7 @@ Router.post("/discord/", (req, res) => {
     (req2, res2) => {
       console.log(res2);
       let username = res2.username;
+      console.log(username);
       if (fs.existsSync("accounts/discord:" + username + ".json")) {
         nameTaken = true;
       }
