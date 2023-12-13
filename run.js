@@ -144,8 +144,7 @@ fs.readdirSync("accounts").forEach((file) => {
       .splice(0, file.split(".").length - 1)
       .join(".")
   );
-  console.log("conditional check");
-  console.log(file.includes("@") + " " + !file.includes("email:") + " " + file.split(":")[1] == undefined);
+
   //if account is from old email-only system, this adds the "email:" prefix
   if (file.includes("@") && !file.includes("email:") && file.split(":")[1] == undefined) {
     fs.renameSync(`accounts/${file}`, `accounts/email:${file}`);
