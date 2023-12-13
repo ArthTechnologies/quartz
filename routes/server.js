@@ -1412,7 +1412,6 @@ router.get("/:id/storageInfo", function (req, res) {
 });
 
 function hasAccess(token, account) {
-  console.log("debug: " + (token === account.token) + "account");
   if (!enableAuth) return true;
   else return token === account.token && server.accountId == account.accountId;
 }

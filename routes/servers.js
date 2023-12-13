@@ -16,17 +16,18 @@ router.get(`/`, function (req, res) {
   //prevents a crash that has occurred
   if (email != undefined) {
     account = require("../accounts/" + email + ".json");
-
   }
+  console.log("debug: " + (token === account.token) + "account");
+  console.log("debug: " + token + " " + account.token);
   if (token === account.token || !enableAuth) {
     //if req.body.email is "noemail" return 404
     if (req.query.email == ("noemail" | "undefined")) {
       //res.status(404).json({ msg: `Invalid email.` });
     }
-    console.log(JSON.stringify(account))
+    console.log(JSON.stringify(account));
     for (i in account.servers) {
       if (typeof account.servers[i] == "object")
-      account.servers[i] = account.servers[i].id
+        account.servers[i] = account.servers[i].id;
       account.servers[i] = require("../servers/" +
         account.servers[i] +
         "/server.json");
