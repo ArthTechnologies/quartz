@@ -234,6 +234,7 @@ Router.post("/discord/", (req, res) => {
           token: account.token,
           accountId: account.accountId,
           username: username,
+          firstTime: false,
         };
 
         res.status(200).send(response);
@@ -261,6 +262,7 @@ Router.post("/discord/", (req, res) => {
           token: account.token,
           accountId: accountId,
           username: username,
+          firstTime: true,
         });
       }
     }
