@@ -274,7 +274,7 @@ Router.post("/discord/", (req, res) => {
 });
 
 Router.delete("/discord", (req, res) => {
-  username = req.headers.username;
+  username = req.headers.email;
   token = req.headers.token;
   let account = require("../accounts/discord:" + username + ".json");
 
