@@ -205,65 +205,66 @@ Router.post("/email/resetPassword/", async (req, res) => {
   );
 });
 
-/*
 //combined signin and signup for discord
 Router.post("/discord/", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
   let account = {};
-  let emailExists = false;
-  let token = req.query.token;  
+  let nameTaken = false;
+  let token = req.query.token;
 
-
-
-  exec("curl -X GET https://discord.com/api/users/@me -H 'authorization: Bearer " + token + "'", (req2, res2) => {
-
-    let email = res2.email;
-    if (fs.existsSync("accounts/" + email + ".json")) {
-      emailExists = true;
-    }
-    //if account exists, so the user is signing in not up...
-    if (emailExists) {
-      let email = res2.email;
-      let account = require("../accounts/" + email + ".json");
-      let response = {};
-      account.ips = [];
-      if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
-        account.ips.push(files.getIPID(req.ip));
+  exec(
+    "curl -X GET https://discord.com/api/users/@me -H 'authorization: Bearer " +
+      token +
+      "'",
+    (req2, res2) => {
+      let username = res2.username;
+      if (fs.existsSync("accounts/discord:" + username + ".json")) {
+        nameTaken = true;
       }
-      response = {
-        token: account.token,
-        accountId: account.accountId,
-        email: email,
-      };
-  
-      res.status(200).send(response);
-    } else {
-      let accountId = uuidv4();
-
-      account.accountId = accountId;
-      account.token = uuidv4();
-      account.resetAttempts = 0;
-
-  account.ips = [];
-  if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
-  account.ips.push(files.getIPID(req.ip));
-  }
-
-      account.type = "discord";
-      fs.writeFileSync(
-        "accounts/" + email + ".json",
-        JSON.stringify(account, null, 4),
-        {
-          encoding: "utf8",
+      //if account exists, so the user is signing in not up...
+      if (nameTaken) {
+        let account = require("../accounts/discord:" + username + ".json");
+        let response = {};
+        account.ips = [];
+        if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
+          account.ips.push(files.getIPID(req.ip));
         }
-      );
-      res.status(200).send({ token: account.token, accountId: accountId, email: email });
+        response = {
+          token: account.token,
+          accountId: account.accountId,
+          username: username,
+        };
+
+        res.status(200).send(response);
+      } else {
+        let accountId = uuidv4();
+
+        account.accountId = accountId;
+        account.token = uuidv4();
+        account.resetAttempts = 0;
+
+        account.ips = [];
+        if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
+          account.ips.push(files.getIPID(req.ip));
+        }
+
+        account.type = "discord";
+        fs.writeFileSync(
+          "accounts/discord:" + username + ".json",
+          JSON.stringify(account, null, 4),
+          {
+            encoding: "utf8",
+          }
+        );
+        res.status(200).send({
+          token: account.token,
+          accountId: accountId,
+          username: username,
+        });
+      }
     }
-
-  });
-
+  );
 });
-*/
 
 module.exports = Router;
