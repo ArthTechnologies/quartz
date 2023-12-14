@@ -54,7 +54,7 @@ if (!fs.existsSync("config.txt")) {
         `pepper=${secrets.pepper}\n` +
         `# Virus scans run whenever someone uploads a world file. Uses 'clamdscan', Read clamav.net's documentation for setup instructions before enabling this:\n` +
         `enableVirusScan=false\n` +
-        `# Enable cloudflare turnstile, which verifies that users are human. You need to set this up on observer as well:\n` +
+        `# Enable cloudflare turnstile, which verifies that users are human:\n` +
         `enableCloudflareVerify=false\n` +
         `# The "sitekey" for cloudflare turnstile, found in the cloudflare dashboard:\n` +
         `cloudflareVerifySiteKey=\n` +
@@ -92,7 +92,7 @@ if (!fs.existsSync("config.txt")) {
         `pepper=${crypto.randomBytes(12).toString("hex")}\n` +
         `# Virus scans run whenever someone uploads a world file. Read clamav.net's documentation for setup instructions before enabling this:\n` +
         `enableVirusScan=false\n` +
-        `# Enable cloudflare turnstile, which verifies that users are human. You need to set this up on observer as well:\n` +
+        `# Enable cloudflare turnstile, which verifies that users are human:\n` +
         `enableCloudflareVerify=false\n` +
         `# The "sitekey" for cloudflare turnstile, found in the cloudflare dashboard:\n` +
         `cloudflareVerifySiteKey=\n` +
