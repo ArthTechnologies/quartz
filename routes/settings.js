@@ -33,6 +33,8 @@ router.get(`/`, function (req, res) {
   returnObject["maxServers"] = config.maxServers;
   returnObject["serverStorageLimit"] = config.serverStorageLimit;
   returnObject["enableVirusScan"] = config.enableVirusScan;
+  returnObject["cloudflareVerify"] = config.cloudflareVerify;
+  returnObject["cloudflareVerifySiteKey"] = config.cloudflareVerifySiteKey;
   for (var key in require("../assets/data.json")) {
     returnObject[key] = require("../assets/data.json")[key];
   }
