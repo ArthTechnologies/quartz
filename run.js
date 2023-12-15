@@ -392,6 +392,7 @@ function downloadJars() {
 function backup() {
   try{
     if (JSON.parse(config.enableBackups)) {
+      console.log("Backing up")
       let backupsList = config.backupsList;
       let nodeName = config.nodeName;
       for (i in backupsList) {
@@ -401,6 +402,8 @@ function backup() {
             (err, stdout, stderr) => {
               if (err) {
                 console.log(err);
+              } else {
+                console.log("Backup to " + backupsList[i] + " successful");
               }
             }
           );
