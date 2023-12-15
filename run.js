@@ -399,6 +399,14 @@ function backup() {
       let nodeName = config.nodeName;
       for (i in backupsList) {
         if (backupsList[i] != "") {
+          //if backupsList[i]'s last character is a /, remove it
+          if (backupsList[i].charAt(backupsList[i].length - 1) == "/") {
+            backupsList[i] = backupsList[i].slice(0, -1);
+          }
+          //if nodeName's first character is a /, remove it
+          if (nodeName.charAt(0) == "/") {
+            nodeName = nodeName.slice(1);
+          }
           exec(
             `rsync -a --delete . ${backupsList[i]}/${nodeName}`,
             (err, stdout, stderr) => {
