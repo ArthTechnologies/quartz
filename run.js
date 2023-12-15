@@ -397,9 +397,9 @@ function backup() {
 
       let backupsList = config.backupsList.split(",")
       let nodeName = config.nodeName;
-      console.log("backups list[0] = " + backupsList[0])
+
       for (i in backupsList) {
-        console.log("backupsList["+i+"] = " + backupsList[i])
+       
         if (backupsList[i] != "") {
 
           //if backupsList[i]'s last character is a /, remove it
@@ -411,11 +411,11 @@ function backup() {
           if (nodeName.charAt(0) == "/") {
             nodeName = nodeName.slice(1);
           }
-          console.log("2backupsList["+i+"] = " + backupsList[i])
+
           exec(
             `rsync -a --delete . ${backupsList[i]}/${nodeName}`,
             (err, stdout, stderr) => {
-              console.log("3backupsList["+i+"] = " + backupsList[i])
+        
               if (err) {
                 console.log(err);
               } else {
