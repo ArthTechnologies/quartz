@@ -50,8 +50,11 @@ if (!fs.existsSync("config.txt")) {
         `forwardingSecret=${secrets.forwardingSecret}\n` +
         `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
         `jarsMcUrl=${settings.jarsMcUrl}\n` +
+        `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the url here:\n`+
+        `labrinthUrl=https://api.modrinth.com/v2\n` +
         `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
-        `pepper=${secrets.pepper}\n` +
+        `pepper=${secrets.pepper}\n\n` +
+        `# Security Settings:\n\n`+
         `# Virus scans run whenever someone uploads a world file. Uses 'clamdscan', Read clamav.net's documentation for setup instructions before enabling this:\n` +
         `enableVirusScan=false\n` +
         `# Enable cloudflare turnstile, which verifies that users are human:\n` +
@@ -59,9 +62,15 @@ if (!fs.existsSync("config.txt")) {
         `# The "sitekey" for cloudflare turnstile, found in the cloudflare dashboard:\n` +
         `cloudflareVerifySiteKey=\n` +
         `# The secret key for cloudflare turnstile, found in the cloudflare dashboard:\n` +
-        `cloudflareVerifySecretKey=\n` +
-        `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the url here:\n`+
-        `labrinthUrl=https://api.modrinth.com/v2\n` );
+        `cloudflareVerifySecretKey=\n`
+        `# Enable backups, which will run every 12 hours:\n` +
+        `enableBackups=false\n` +
+        `# The list of places (can also be on other computers via ssh) to backup to [Seperate with commas]:\n` +
+        `backupsList=\n` +
+        `# The name of this quartz instance (will appear in the backup locations):\n` +
+        `nodeName=\n`
+
+         );
     fs.copyFileSync("stores/settings.json", "backup/settings.json");
     fs.unlinkSync("stores/settings.json");
     fs.copyFileSync("stores/secrets.json", "backup/secrets.json");
@@ -88,8 +97,11 @@ if (!fs.existsSync("config.txt")) {
         `forwardingSecret=${crypto.randomBytes(12).toString("hex")}\n` +
         `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
         `jarsMcUrl=https://api.jarsmc.xyz/\n` +
+        `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the url here:\n`+
+        `labrinthUrl=https://api.modrinth.com/v2\n`+
         `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
-        `pepper=${crypto.randomBytes(12).toString("hex")}\n` +
+        `pepper=${crypto.randomBytes(12).toString("hex")}\n\n` +
+        `# Security Settings:\n\n`+
         `# Virus scans run whenever someone uploads a world file. Read clamav.net's documentation for setup instructions before enabling this:\n` +
         `enableVirusScan=false\n` +
         `# Enable cloudflare turnstile, which verifies that users are human:\n` +
@@ -98,9 +110,10 @@ if (!fs.existsSync("config.txt")) {
         `cloudflareVerifySiteKey=\n` +
         `# The secret key for cloudflare turnstile, found in the cloudflare dashboard:\n` +
         `cloudflareVerifySecretKey=\n` +
-
-        `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the url here:\n`+
-        `labrinthUrl=https://api.modrinth.com/v2\n`
+        `# The list of places (can also be on other computers via ssh) to backup to [Seperate with commas]:\n` +
+        `backupsList=\n` +
+        `# The name of this quartz instance (will appear in the backup locations):\n` +
+        `nodeName=\n`
     );
   }
 }
@@ -178,11 +191,13 @@ if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
   downloadJars();
   getLatestVersion();
   verifySubscriptions();
+  backup();
 }
 setInterval(() => {
   downloadJars();
   getLatestVersion();
   verifySubscriptions();
+  backup();
 }, 1000 * 60 * 60 * 12);
 
 function downloadJars() {
@@ -372,6 +387,30 @@ function downloadJars() {
       }
     }
   });
+}
+
+function backup() {
+  try{
+    if (JSON.parse(config.enableBackups)) {
+      let backupsList = config.backupsList;
+      let nodeName = config.nodeName;
+      for (i in backupsList) {
+        if (backupsList[i] != "") {
+          exec(
+            `rsync -a --delete . ${backupsList[i]}/${nodeName}`,
+            (err, stdout, stderr) => {
+              if (err) {
+                console.log(err);
+              }
+            }
+          );
+        }
+      }
+      
+    }
+  } catch{
+    console.log("Backup setting can't be found in config.");
+  }
 }
 
 function getLatestVersion() {
