@@ -397,8 +397,9 @@ function backup() {
 
       let backupsList = config.backupsList.split(",")
       let nodeName = config.nodeName;
-      console.log("backups list = " + backupsList)
+      console.log("backups list[0] = " + backupsList[0])
       for (i in backupsList) {
+        console.log("backupsList[i] = " + backupsList[i])
         if (backupsList[i] != "") {
           //if backupsList[i]'s last character is a /, remove it
           if (backupsList[i].charAt(backupsList[i].length - 1) == "/") {
