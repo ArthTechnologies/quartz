@@ -399,12 +399,14 @@ function backup() {
       let nodeName = config.nodeName;
       console.log("backups list[0] = " + backupsList[0])
       for (i in backupsList) {
-        console.log("backupsList[i] = " + backupsList[i])
+        console.log("backupsList["+i+"] = " + backupsList[i])
         if (backupsList[i] != "") {
+          console.log("2backupsList["+i+"] = " + backupsList[i])
           //if backupsList[i]'s last character is a /, remove it
           if (backupsList[i].charAt(backupsList[i].length - 1) == "/") {
             backupsList[i] = backupsList[i].slice(0, -1);
           }
+          console.log("3backupsList["+i+"] = " + backupsList[i])
           //if nodeName's first character is a /, remove it
           if (nodeName.charAt(0) == "/") {
             nodeName = nodeName.slice(1);
