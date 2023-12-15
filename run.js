@@ -50,8 +50,8 @@ if (!fs.existsSync("config.txt")) {
         `forwardingSecret=${secrets.forwardingSecret}\n` +
         `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
         `jarsMcUrl=${settings.jarsMcUrl}\n` +
-        `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the url here:\n`+
-        `labrinthUrl=https://api.modrinth.com/v2\n` +
+        `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the domain name here:\n`+
+        `labrinthUrl=modrinth.com\n` +
         `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
         `pepper=${secrets.pepper}\n\n` +
         `# Security Settings:\n\n`+
@@ -68,7 +68,7 @@ if (!fs.existsSync("config.txt")) {
         `# The list of places (can also be on other computers via ssh) to backup to [Seperate with commas]:\n` +
         `backupsList=\n` +
         `# The name of this quartz instance (will appear in the backup locations):\n` +
-        `nodeName=\n`
+        `nodeName=somerandomquartzinstance\n`
 
          );
     fs.copyFileSync("stores/settings.json", "backup/settings.json");
@@ -97,7 +97,7 @@ if (!fs.existsSync("config.txt")) {
         `forwardingSecret=${crypto.randomBytes(12).toString("hex")}\n` +
         `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
         `jarsMcUrl=https://api.jarsmc.xyz/\n` +
-        `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the url here:\n`+
+        `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the domain name here:\n`+
         `labrinthUrl=https://api.modrinth.com/v2\n`+
         `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
         `pepper=${crypto.randomBytes(12).toString("hex")}\n\n` +
@@ -113,7 +113,7 @@ if (!fs.existsSync("config.txt")) {
         `# The list of places (can also be on other computers via ssh) to backup to [Seperate with commas]:\n` +
         `backupsList=\n` +
         `# The name of this quartz instance (will appear in the backup locations):\n` +
-        `nodeName=\n`
+        `nodeName=somerandomquartzinstance\n`
     );
   }
 }
