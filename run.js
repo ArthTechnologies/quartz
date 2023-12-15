@@ -395,7 +395,7 @@ function backup() {
     console.log("Backing up")
     if (JSON.parse(config.enableBackups)) {
 
-      let backupsList = config.backupsList;
+      let backupsList = config.backupsList.split(",")
       let nodeName = config.nodeName;
       for (i in backupsList) {
         if (backupsList[i] != "") {
