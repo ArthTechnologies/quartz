@@ -390,9 +390,11 @@ function downloadJars() {
 }
 
 function backup() {
+  console.log("Backing up")
   try{
+    console.log("Backing up")
     if (JSON.parse(config.enableBackups)) {
-      console.log("Backing up")
+
       let backupsList = config.backupsList;
       let nodeName = config.nodeName;
       for (i in backupsList) {
