@@ -6,6 +6,9 @@ const stripe = require("stripe")(stripeKey);
 Router.post("/:plan", async (req, res) => {
   let plan = req.params.plan;
   let quantity = req.query.quantity;
+  if (quantity == undefined) {
+    quantity = 1;
+  }
   let priceId;
   if (plan == "basic") {
     priceId = "price_1OLajDJYPXquzaSzCMWB6bxH";
