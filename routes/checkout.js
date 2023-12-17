@@ -38,3 +38,5 @@ Router.get("/status", async (req, res) => {
     customer_email: session.customer_details.email,
   });
 });
+
+module.exports = Router;
