@@ -3,16 +3,37 @@ const Router = express.Router();
 let stripeKey = require("../scripts/config.js").getConfig().stripeKey;
 const stripe = require("stripe")(stripeKey);
 
-const calculateOrderAmount = (items) => {
-  // Replace this constant with a calculation of the order's amount
-  // Calculate the order total on the server to prevent
-  // people from directly manipulating the amount on the client
-
-  //to-do... figure out what this means??
-  return 1400;
-};
-
 Router.post("/:plan", async (req, res) => {
+  let plan = req.params.plan;
+  let quantity = req.query.quantity;
+  if (quantity == undefined) {
+    quantity = 1;
+  }
+  let priceId;
+  if (plan == "basic") {
+    priceId = "price_1OLajDJYPXquzaSzCMWB6bxH";
+  } else if (plan == "modded") {
+    priceId = "price_1OLaahJYPXquzaSzTKOn08Rn";
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    ui_mode: "embedded",
+    line_items: [
+      {
+        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+        price: priceId,
+        quantity: quantity,
+      },
+    ],
+    mode: "subscription",
+    return_url: `https://servers.arthmc.xyz/subscription-success`,
+    automatic_tax: { enabled: true },
+  });
+
+  res.send({ clientSecret: session.client_secret });
+});
+
+Router.post("/intent/:plan", async (req, res) => {
   let plan = req.params.plan;
   let quantity = req.query.quantity;
   if (quantity == undefined) {
@@ -41,5 +62,4 @@ Router.post("/:plan", async (req, res) => {
     clientSecret: paymentIntent.client_secret,
   });
 });
-
 module.exports = Router;
