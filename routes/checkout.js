@@ -3,6 +3,15 @@ const Router = express.Router();
 let stripeKey = require("../scripts/config.js").getConfig().stripeKey;
 const stripe = require("stripe")(stripeKey);
 
+const calculateOrderAmount = (items) => {
+  // Replace this constant with a calculation of the order's amount
+  // Calculate the order total on the server to prevent
+  // people from directly manipulating the amount on the client
+
+  //to-do... figure out what this means??
+  return 1400;
+};
+
 Router.post("/:plan", async (req, res) => {
   let plan = req.params.plan;
   let quantity = req.query.quantity;
