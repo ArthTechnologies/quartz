@@ -27,7 +27,6 @@ function checkSubscription(email) {
     console.log("waiting");
 
     stripe.subscriptions.list({ customer: cid }, function (err, subscriptions) {
-    
       if (err) {
         console.log(err);
       } else {
