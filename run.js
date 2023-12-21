@@ -528,11 +528,11 @@ files.downloadAsync(
   }
 );
 files.downloadAsync(
-  "assets/java/java11.tar.gz",
-  "https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.18%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.18_10.tar.gz",
+  "assets/java/java8.tar.gz",
+  "https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_aarch64_linux_hotspot_8u392b08.tar.gz",
   (data) => {
-    files.extractAsync("assets/java/java11.tar.gz", "assets/java", () => {
-      fs.unlinkSync("assets/java/java11.tar.gz");
+    files.extractAsync("assets/java/java8.tar.gz", "assets/java", () => {
+      fs.unlinkSync("assets/java/java8.tar.gz");
     });
   }
 );
