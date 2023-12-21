@@ -384,7 +384,13 @@ function run(
           if (version == "1.16.5") {
             execLine =
               path +
-              `@libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-server.jar "$@"`;
+              ` @libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-server.jar "$@"`;
+          }
+
+          if (version == "1.12.2") {
+            execLine =
+              path +
+              ` @libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}.jar "$@"`;
           }
 
           console.log(
