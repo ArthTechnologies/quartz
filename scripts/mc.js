@@ -205,7 +205,7 @@ function run(
     path = "../../assets/java/jdk-17.0.5+8/bin/java";
   else if (version.includes("1.17"))
     path = "../../assets/java/jdk-17.0.5+8/bin/java";
-  else path = "../../assets/java/jdk8u392-b05/bin/java";
+  else path = "../../assets/java/jdk8u382-b05/bin/java";
 
   if (software == "velocity") path = "../../assets/java/jdk-17.0.5+8/bin/java";
 
@@ -388,9 +388,7 @@ function run(
           }
 
           if (version == "1.12.2") {
-            execLine =
-              path +
-              ` @libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}.jar "$@"`;
+            execLine = path + ` ${args} -jar forge-${forgeVersion}.jar`;
           }
 
           console.log(execLine);
