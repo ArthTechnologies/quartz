@@ -30,9 +30,9 @@ Router.get("/search", (req, res) => {
         if (!error && stdout != undefined) {
           console.log(error + stdout + stderr);
           try {
-          res.status(200).json(JSON.parse(stdout));
+            res.status(200).json(JSON.parse(stdout));
           } catch {
-            res.status(400).json({msg:"Error parsing JSON."})
+            res.status(400).json({ msg: "Error parsing JSON." });
           }
         } else {
           res.status(500).json({ msg: "Internal server error." });
@@ -51,15 +51,12 @@ Router.get("/:id", (req, res) => {
         ` -H 'x-api-key: ${apiKey}'`,
       (error, stdout, stderr) => {
         console.log(stdout);
-        if (
-          !error &&
-          stdout != undefined
-        ) {
+        if (!error && stdout != undefined) {
           try {
             res.status(200).json(JSON.parse(stdout).data);
-            } catch {
-              res.status(400).json({msg:"Error parsing JSON."})
-            }
+          } catch {
+            res.status(400).json({ msg: "Error parsing JSON." });
+          }
         } else {
           res.status(500).json({ msg: "Internal server error." });
         }
@@ -76,15 +73,12 @@ Router.get("/:id/description", (req, res) => {
       `curl -X GET "https://api.curseforge.com/v1/mods/${id}/description"` +
         ` -H 'x-api-key: ${apiKey}'`,
       (error, stdout, stderr) => {
-        if (
-          !error &&
-          stdout != undefined
-        ) {
+        if (!error && stdout != undefined) {
           try {
             res.status(200).json(JSON.parse(stdout).data);
-            } catch {
-              res.status(400).json({msg:"Error parsing JSON."})
-            }
+          } catch {
+            res.status(400).json({ msg: "Error parsing JSON." });
+          }
         } else {
           res.status(500).json({ msg: "Internal server error." });
         }
@@ -101,15 +95,12 @@ Router.get("/:id/versions", (req, res) => {
       `curl -X GET "https://api.curseforge.com/v1/mods/${id}/files"` +
         ` -H 'x-api-key: ${apiKey}'`,
       (error, stdout, stderr) => {
-        if (
-          !error &&
-          stdout != undefined
-        ) {
+        if (!error && stdout != undefined) {
           try {
             res.status(200).json(JSON.parse(stdout).data);
-            } catch {
-              res.status(400).json({msg:"Error parsing JSON."})
-            }
+          } catch {
+            res.status(400).json({ msg: "Error parsing JSON." });
+          }
         } else {
           res.status(500).json({ msg: "Internal server error." });
         }
@@ -127,15 +118,35 @@ Router.get("/:id/version/:versionId/changelog", (req, res) => {
       `curl -X GET "https://api.curseforge.com/v1/mods/${id}/files/${versionId}/changelog"` +
         ` -H 'x-api-key: ${apiKey}'`,
       (error, stdout, stderr) => {
-        if (
-          !error &&
-          stdout != undefined
-        ) {
+        if (!error && stdout != undefined) {
           try {
             res.status(200).json(JSON.parse(stdout).data);
-            } catch {
-              res.status(400).json({msg:"Error parsing JSON."})
-            }
+          } catch {
+            res.status(400).json({ msg: "Error parsing JSON." });
+          }
+        } else {
+          res.status(500).json({ msg: "Internal server error." });
+        }
+      }
+    );
+  }
+});
+
+Router.get("/:id/version/:versionId/", (req, res) => {
+  if (apiKey != undefined) {
+    let id = req.params.id;
+    let versionId = req.params.versionId;
+    const exec = require("child_process").exec;
+    exec(
+      `curl -X GET "https://api.curseforge.com/v1/mods/${id}/files/${versionId}/"` +
+        ` -H 'x-api-key: ${apiKey}'`,
+      (error, stdout, stderr) => {
+        if (!error && stdout != undefined) {
+          try {
+            res.status(200).json(JSON.parse(stdout).data);
+          } catch {
+            res.status(400).json({ msg: "Error parsing JSON." });
+          }
         } else {
           res.status(500).json({ msg: "Internal server error." });
         }
