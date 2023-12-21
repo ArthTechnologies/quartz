@@ -393,10 +393,7 @@ function run(
               ` @libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}.jar "$@"`;
           }
 
-          console.log(
-            path +
-              `@libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-server.jar "$@"`
-          );
+          console.log(execLine);
         } else {
           path = "../" + path;
           execLine = path + " -jar quilt-server-launch.jar nogui";
