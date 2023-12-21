@@ -529,7 +529,7 @@ files.downloadAsync(
 );
 files.downloadAsync(
   "assets/java/java8.tar.gz",
-  "https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_aarch64_linux_hotspot_8u392b08.tar.gz",
+  "https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u382-b05/OpenJDK8U-jdk_x64_linux_hotspot_8u382b05.tar.gz",
   (data) => {
     files.extractAsync("assets/java/java8.tar.gz", "assets/java", () => {
       fs.unlinkSync("assets/java/java8.tar.gz");

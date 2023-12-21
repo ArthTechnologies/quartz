@@ -205,7 +205,7 @@ function run(
     path = "../../assets/java/jdk-17.0.5+8/bin/java";
   else if (version.includes("1.17"))
     path = "../../assets/java/jdk-17.0.5+8/bin/java";
-  else path = "../../assets/java/jdk8u392-b08/bin/java";
+  else path = "../../assets/java/jdk8u392-b05/bin/java";
 
   if (software == "velocity") path = "../../assets/java/jdk-17.0.5+8/bin/java";
 
