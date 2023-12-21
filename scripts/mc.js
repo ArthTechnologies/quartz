@@ -386,6 +386,11 @@ function run(
               path +
               `@libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-server.jar "$@"`;
           }
+
+          console.log(
+            path +
+              `@libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-server.jar "$@"`
+          );
         } else {
           path = "../" + path;
           execLine = path + " -jar quilt-server-launch.jar nogui";
@@ -622,7 +627,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
   let includes = "modrinth.com";
   try {
     includes = config.labrinthUrl;
-  } catch{}
+  } catch {}
   if (modpackURL.includes(includes)) {
     files.downloadAsync(
       folder + "/modpack.mrpack",
