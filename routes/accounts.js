@@ -17,7 +17,7 @@ Router.post("/email/signup/", (req, res) => {
   let email = req.query.email;
   let confirmPassword = req.query.confirmPassword;
   let cloudflareVerifyToken = req.query.cloudflareVerifyToken;
-  if (config.enableCloudflareVerify) {
+  if (enableCloudflareVerify) {
     const exec = require("child_process").exec;
     exec(
       `curl 'https://challenges.cloudflare.com/turnstile/v0/siteverify' --data 'secret=${config.cloudflareVerifySecretKey}&response=${cloudflareVerifyToken}'`,
@@ -89,7 +89,7 @@ Router.post("/email/signin/", (req, res) => {
 
   let salt = account.salt;
   let cloudflareVerifyToken = req.query.cloudflareVerifyToken;
-  if (config.enableCloudflareVerify) {
+  if (enableCloudflareVerify) {
     const exec = require("child_process").exec;
     exec(
       `curl 'https://challenges.cloudflare.com/turnstile/v0/siteverify' --data 'secret=${config.cloudflareVerifySecretKey}&response=${cloudflareVerifyToken}'`,
