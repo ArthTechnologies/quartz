@@ -414,7 +414,7 @@ function run(
 
           terminalOutput[id] = out.join("\n");
           if (
-            terminalOutput[id].indexOf("Done") > -1 &&
+            terminalOutput[id].includes("Done (") &&
             states[id] != "stopping"
           ) {
             //replace states[id] with true
@@ -458,7 +458,7 @@ function run(
       }
 
       terminalOutput[id] = out.join("\n");
-      if (terminalOutput[id].indexOf("Done") > -1 && states[id] != "stopping") {
+      if (terminalOutput[id].includes("Done (") && states[id] != "stopping") {
         //replace states[id] with true
         states[id] = "true";
       }
