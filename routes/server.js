@@ -13,6 +13,7 @@ const fs = require("fs");
 const stripeKey = config.stripeKey;
 const stripe = require("stripe")(stripeKey);
 const enableAuth = JSON.parse(config.enableAuth);
+const enablePay = JSON.parse(config.enablePay);
 const enableVirusScan = JSON.parse(config.enableVirusScan);
 
 router.get(`/claimId`, function (req, res) {
@@ -22,20 +23,20 @@ router.get(`/claimId`, function (req, res) {
   account = require("../accounts/" + email + ".json");
 
   if (token === account.token) {
-    if (enableAuth) {
+    if (enablePay) {
       //check if the user is subscribed
       let amount = account.servers.length;
       stripe.customers.list(
         {
           limit: 100,
-          email: em,
+          email: email,
         },
         function (err, customers) {
           if (err) {
             console.log("err");
             return "no";
           } else {
-            console.log("debug: " + email + req.headers.email + em);
+            console.log("debug: " + email + req.headers.email);
             console.log(customers);
 
             if (customers.data.length > 0) {
@@ -457,7 +458,7 @@ router.post(`/new/:id`, function (req, res) {
         let cid = "";
         console.log("debug: " + email + req.headers.email + em);
         if (
-          (stripeKey.indexOf("sk") == -1 || account.bypassStripe == true) &&
+          (!enablePay || account.bypassStripe == true) &&
           (config.maxServers > data.numServers ||
             config.maxServers == undefined ||
             data.numServers == undefined)
