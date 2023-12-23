@@ -16,6 +16,8 @@ router.get(`/`, function (req, res) {
   //prevents a crash that has occurred
   if (email != undefined) {
     account = require("../accounts/" + email + ".json");
+    console.log(account);
+    console.log(JSON.parse(fs.readFileSync("accounts/" + email + ".json")));
   }
 
   if (token === account.token || !enableAuth) {
@@ -23,7 +25,7 @@ router.get(`/`, function (req, res) {
     if (req.query.email == ("noemail" | "undefined")) {
       //res.status(404).json({ msg: `Invalid email.` });
     }
-    console.log(account);
+
     console.log("debug1");
     for (i in account.servers) {
       console.log("server " + account.servers[i]);
