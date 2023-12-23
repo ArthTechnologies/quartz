@@ -115,7 +115,15 @@ router.get(`/claimId`, function (req, res) {
       if (fs.existsSync("accounts/" + email + ".json")) {
         emailExists = true;
       }
-      account.servers.push(id);
+      if (id != -1 && id < config.maxServers) {
+        if (account.servers == undefined) account.servers = [];
+        account.servers.push(id);
+        res.status(200).json({ id: id });
+      } else {
+        res.status(400).json({
+          msg: `We're at capacity. Contact support for a refund.`,
+        });
+      }
     }
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
