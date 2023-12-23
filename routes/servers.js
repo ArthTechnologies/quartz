@@ -23,9 +23,11 @@ router.get(`/`, function (req, res) {
     if (req.query.email == ("noemail" | "undefined")) {
       //res.status(404).json({ msg: `Invalid email.` });
     }
-    console.log(JSON.stringify(account));
+    console.log(account);
+    console.log("debug1");
     for (i in account.servers) {
       console.log("server " + account.servers[i]);
+      console.log("debug2");
       if (typeof account.servers[i] == "object")
         account.servers[i] = account.servers[i].id;
       if (fs.existsSync(`servers/${account.servers[i]}/server.json`)) {
