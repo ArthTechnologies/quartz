@@ -128,7 +128,7 @@ router.get(`/claimId`, function (req, res) {
           "accounts/" + email + ".json",
           JSON.stringify(account, null, 4)
         );
-        console.log(fs.readFileSync("accounts/" + email + ".json"));
+        console.log(fs.readFileSync("accounts/" + email + ".json", "utf8"));
         res.status(200).json({ id: id });
       } else {
         res.status(400).json({
