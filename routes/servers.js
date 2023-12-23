@@ -17,7 +17,7 @@ router.get(`/`, function (req, res) {
   if (email != undefined) {
     account = require("../accounts/" + email + ".json");
     console.log(account);
-    console.log(JSON.parse(fs.readFileSync("accounts/" + email + ".json")));
+    console.log("../accounts/" + email + ".json");
   }
 
   if (token === account.token || !enableAuth) {
