@@ -33,7 +33,7 @@ router.get(`/`, function (req, res) {
           "/server.json");
         account.servers[i].state = f.getState(account.servers[i].id);
       } else {
-        account.servers[i] = null;
+        account.servers[i] = "null";
       }
     }
     res.status(200).json(account.servers);
