@@ -44,7 +44,13 @@ if (!fs.existsSync("config.txt")) {
         `# The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):\n` +
         `curseforgeKey=${secrets.curseforgeKey}\n` +
         `# The Stripe API Key to use for charging users (You can apply for one at stripe.com):\n` +
-        `stripeKey=${secrets.stripeKey}\n\n` +
+        `stripeKey=${secrets.stripeKey}\n` +
+        `# The URL that users get sent to after checking out (should probably be yourobserverinstance/subscription-success):\n` +
+        `stripeReturnUrl=\n` +
+        `# The stripe priceId (found in the dashboard, create a product first) of the basic plan:\n` +
+        `basicPlanPriceId=\n` +
+        `# The stripe priceId (found in the dashboard, create a product first) of the modded plan:\n` +
+        `moddedPlanPriceId=\n\n` +
         "# Advanced Settings:\n\n" +
         `# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:\n` +
         `forwardingSecret=${secrets.forwardingSecret}\n` +
@@ -89,7 +95,13 @@ if (!fs.existsSync("config.txt")) {
         `# The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):\n` +
         `curseforgeKey=${process.env.curseforge_key}\n` +
         `# The Stripe API Key to use for charging users (You can apply for one at stripe.com):\n` +
-        `stripeKey=${process.env.stripe_key}\n\n` +
+        `stripeKey=${process.env.stripe_key}\n` +
+        `# The URL that users get sent to after checking out (should probably be yourobserverinstance/subscription-success):\n` +
+        `stripeReturnUrl=\n` +
+        `# The stripe priceId (found in the dashboard, create a product first) of the basic plan:\n` +
+        `basicPlanPriceId=\n` +
+        `# The stripe priceId (found in the dashboard, create a product first) of the modded plan:\n` +
+        `moddedPlanPriceId=\n\n` +
         "# Advanced Settings:\n\n" +
         `# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:\n` +
         `forwardingSecret=${crypto.randomBytes(12).toString("hex")}\n` +
