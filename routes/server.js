@@ -121,7 +121,9 @@ router.get(`/claimId`, function (req, res) {
       }
       if (id != -1 && id < config.maxServers) {
         if (account.servers == undefined) account.servers = [];
+        console.log("debug " + id);
         account.servers.push(id);
+        console.log("debug " + account.servers);
         fs.writeFileSync(
           "accounts/" + email + ".json",
           JSON.stringify(account, null, 4)
