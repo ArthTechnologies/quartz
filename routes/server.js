@@ -21,6 +21,7 @@ router.get(`/claimId`, function (req, res) {
   account = require("../accounts/" + email + ".json");
   if (hasAccess(token, account)) {
     if (enableAuth) {
+      console.log("debug1");
       //check if the user is subscribed
       let amount = account.servers.length;
       stripe.customers.list(
@@ -98,6 +99,7 @@ router.get(`/claimId`, function (req, res) {
         }
       );
     } else {
+      console.log("debug2");
       //else if auth is disabled, just give them an id
       //find an id to assign to the account
       let serverFolders = fs.readdirSync("servers");
@@ -121,6 +123,7 @@ router.get(`/claimId`, function (req, res) {
         emailExists = true;
       }
       if (id != -1 && id < config.maxServers) {
+        console.log("debug3");
         if (account.servers == undefined) account.servers = [];
 
         if (!account.servers.includes(id)) account.servers.push(id);
