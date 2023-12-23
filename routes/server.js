@@ -20,11 +20,9 @@ router.get(`/claimId`, function (req, res) {
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
-  console.log("debug1.2");
-  if (hasAccess(token, account)) {
-    console.log("debug1.3");
+
+  if (token === account.token) {
     if (enableAuth) {
-      console.log("debug1.5");
       //check if the user is subscribed
       let amount = account.servers.length;
       stripe.customers.list(
