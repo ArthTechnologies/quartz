@@ -78,7 +78,8 @@ router.get(`/claimId`, function (req, res) {
                     }
                     if (id != -1 && id < config.maxServers) {
                       if (account.servers == undefined) account.servers = [];
-                      account.servers.push(id);
+                      if (!account.servers.includes(id))
+                        account.servers.push(id);
                       fs.writeFileSync(
                         "accounts/" + email + ".json",
                         JSON.stringify(account, null, 4)
@@ -122,13 +123,13 @@ router.get(`/claimId`, function (req, res) {
       if (id != -1 && id < config.maxServers) {
         if (account.servers == undefined) account.servers = [];
 
-        account.servers.push(id);
-        console.log(account);
+        if (!account.servers.includes(id)) account.servers.push(id);
+
         fs.writeFileSync(
           "accounts/" + email + ".json",
           JSON.stringify(account, null, 4)
         );
-        console.log(fs.readFileSync("accounts/" + email + ".json", "utf8"));
+
         res.status(200).json({ id: id });
       } else {
         res.status(400).json({
