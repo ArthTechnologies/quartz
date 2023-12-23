@@ -25,6 +25,7 @@ router.get(`/`, function (req, res) {
     }
     console.log(JSON.stringify(account));
     for (i in account.servers) {
+      console.log("server " + account.servers[i]);
       if (typeof account.servers[i] == "object")
         account.servers[i] = account.servers[i].id;
       if (fs.existsSync(`servers/${account.servers[i]}/server.json`)) {
