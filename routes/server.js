@@ -16,12 +16,13 @@ const enableAuth = JSON.parse(config.enableAuth);
 const enableVirusScan = JSON.parse(config.enableVirusScan);
 
 router.get(`/claimId`, function (req, res) {
+  console.log("debug1");
   email = req.headers.email;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   if (hasAccess(token, account)) {
     if (enableAuth) {
-      console.log("debug1");
+      console.log("debug1.5");
       //check if the user is subscribed
       let amount = account.servers.length;
       stripe.customers.list(
