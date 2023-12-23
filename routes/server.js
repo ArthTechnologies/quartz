@@ -77,6 +77,7 @@ router.get(`/claimId`, function (req, res) {
                       emailExists = true;
                     }
                     if (id != -1 && id < config.maxServers) {
+                      if (account.servers == undefined) account.servers = [];
                       account.servers.push(id);
                       res.status(200).json({ id: id });
                     } else {
