@@ -443,7 +443,7 @@ router.post(`/new/:id`, function (req, res) {
   console.log("account" + JSON.stringify(account).accountId);
   if (token === account.token || !enableAuth) {
     if (!fs.existsSync("servers/" + id)) {
-      if (account.servers.includes(id)) {
+      if (JSON.stringify(account.servers).includes(id)) {
         console.log("debug: " + email + req.headers.email);
         if (account.servers == undefined) account.servers = [];
         let amount = account.servers.length;
