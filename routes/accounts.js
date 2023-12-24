@@ -59,6 +59,7 @@ Router.post("/email/signup/", (req, res) => {
           account.ips = [];
           account.ips.push(files.getIPID(req.ip));
           account.type = "email";
+          account.servers = [];
           fs.writeFileSync(
             "accounts/email:" + email + ".json",
             JSON.stringify(account, null, 4),
@@ -255,6 +256,7 @@ Router.post("/discord/", (req, res) => {
         }
 
         account.type = "discord";
+        account.servers = [];
         fs.writeFileSync(
           "accounts/discord:" + username + ".json",
           JSON.stringify(account, null, 4),
