@@ -433,8 +433,12 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
 
 router.post(`/new/:id`, function (req, res) {
   console.log(
-    "creating server for " + req.headers.email + "..." + req.headers.token
+    "creating server for " +
+      req.headers.email +
+      "owns id? " +
+      JSON.stringify(account.servers).includes(id)
   );
+
   email = req.headers.email;
   token = req.headers.token;
   id = req.params.id;
@@ -444,7 +448,6 @@ router.post(`/new/:id`, function (req, res) {
   console.log("account", account);
   if (token === account.token || !enableAuth) {
     if (!fs.existsSync("servers/" + id)) {
-      console.log("owns id? " + JSON.stringify(account.servers).includes(id));
       console.log(id);
       console.log(account.servers);
       if (JSON.stringify(account.servers).includes(id)) {
