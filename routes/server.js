@@ -441,7 +441,7 @@ router.post(`/new/:id`, function (req, res) {
   if (!enableAuth) email = "noemail";
   account = require("../accounts/" + email + ".json");
   console.log("../accounts/" + email + ".json");
-  console.log("account" + JSON.stringify(account).accountId);
+  console.log("account", account);
   if (token === account.token || !enableAuth) {
     if (!fs.existsSync("servers/" + id)) {
       console.log("owns id? " + JSON.stringify(account.servers).includes(id));
