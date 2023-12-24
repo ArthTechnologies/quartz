@@ -104,21 +104,6 @@ function removeDirectoryRecursive(directoryPath) {
   );
 }
 
-function refreshAccountServerList(email) {
-  let account = require("../accounts/" + email + ".json");
-  let servers = [];
-  fs.readdirSync("servers").forEach((folder) => {
-    if (fs.existsSync("servers/" + folder + "/server.json")) {
-      let server = require("../servers/" + folder + "/server.json");
-      if (server.accountId == account.accountId) {
-        servers.push(server);
-      }
-    }
-  });
-  account.servers = servers;
-  fs.writeFileSync("accounts/" + email + ".json", JSON.stringify(account));
-}
-
 function removeDirectoryRecursiveAsync(directoryPath, callback) {
   const exec = require("child_process").exec;
   //check if directory exists
@@ -307,5 +292,4 @@ module.exports = {
   simplifyTerminal,
   folderSizeRecursive,
   getIndex,
-  refreshAccountServerList,
 };

@@ -165,13 +165,6 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
 }
 
 fs.readdirSync("accounts").forEach((file) => {
-  files.refreshAccountServerList(
-    file
-      .split(".")
-      .splice(0, file.split(".").length - 1)
-      .join(".")
-  );
-
   //if account is from old email-only system, this adds the "email:" prefix
   if (
     file.includes("@") &&
