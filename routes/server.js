@@ -457,6 +457,7 @@ router.post(`/new/:id`, function (req, res) {
         res.header("Access-Control-Allow-Origin", "*");
 
         const datajson = require("../assets/data.json");
+        let serverFolders = fs.readdirSync("servers");
         datajson.numServers = serverFolders.length;
         fs.writeFileSync("assets/data.json", JSON.stringify(datajson, null, 2));
         em = req.headers.email;
