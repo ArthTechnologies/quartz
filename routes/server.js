@@ -432,18 +432,17 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
 });
 
 router.post(`/new/:id`, function (req, res) {
-  console.log(
-    "creating server for " +
-      req.headers.email +
-      "owns id? " +
-      JSON.stringify(account.servers).includes(id)
-  );
-
   email = req.headers.email;
   token = req.headers.token;
   id = req.params.id;
   if (!enableAuth) email = "noemail";
   account = require("../accounts/" + email + ".json");
+  console.log(
+    "creating server for " +
+      email +
+      "owns id? " +
+      JSON.stringify(account.servers).includes(id)
+  );
   console.log("../accounts/" + email + ".json");
   console.log("account", account);
   if (token === account.token || !enableAuth) {
