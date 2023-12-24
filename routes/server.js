@@ -443,6 +443,9 @@ router.post(`/new/:id`, function (req, res) {
   console.log("account" + JSON.stringify(account).accountId);
   if (token === account.token || !enableAuth) {
     if (!fs.existsSync("servers/" + id)) {
+      console.log("owns id? " + JSON.stringify(account.servers).includes(id));
+      console.log(id);
+      console.log(account.servers);
       if (JSON.stringify(account.servers).includes(id)) {
         console.log("debug: " + email + req.headers.email);
         if (account.servers == undefined) account.servers = [];
