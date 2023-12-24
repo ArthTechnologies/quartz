@@ -492,7 +492,10 @@ router.post(`/new/:id`, function (req, res) {
             );
             console.log("debuglog2 " + id + server.id);
             account.servers.push(server.id);
-
+            let index = account.servers.indexOf(server.id + ":not created yet");
+            if (index > -1) {
+              account.servers.splice(index, 1);
+            }
             fs.writeFileSync(
               "accounts/" + email + ".json",
               JSON.stringify(account, null, 4)
@@ -577,6 +580,12 @@ router.post(`/new/:id`, function (req, res) {
                           );
                           console.log("debuglog2 " + id + server.id);
                           account.servers.push(server.id);
+                          let index = account.servers.indexOf(
+                            server.id + ":not created yet"
+                          );
+                          if (index > -1) {
+                            account.servers.splice(index, 1);
+                          }
                           fs.writeFileSync(
                             "accounts/" + email + ".json",
                             JSON.stringify(account, null, 4)
