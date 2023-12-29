@@ -60,6 +60,7 @@ Router.post("/email/signup/", (req, res) => {
           account.ips.push(files.getIPID(req.ip));
           account.type = "email";
           account.servers = [];
+          account.email = email;
           fs.writeFileSync(
             "accounts/email:" + email + ".json",
             JSON.stringify(account, null, 4),
@@ -223,7 +224,6 @@ Router.post("/discord/", (req, res) => {
         res2 = JSON.parse(res2);
       } catch {}
       let username = res2.username;
-      console.log(res2);
       if (fs.existsSync("accounts/discord:" + username + ".json")) {
         nameTaken = true;
       }
@@ -240,6 +240,8 @@ Router.post("/discord/", (req, res) => {
           accountId: account.accountId,
           username: username,
           firstTime: false,
+          avatar: `https://cdn.discordapp.com/avatars/${res2.id}/${res2.avatar}.webp`,
+          bannerColor: res2.banner_color,
         };
 
         res.status(200).send(response);
@@ -256,6 +258,7 @@ Router.post("/discord/", (req, res) => {
         }
 
         account.type = "discord";
+        account.email = res2.email;
         account.servers = [];
         fs.writeFileSync(
           "accounts/discord:" + username + ".json",
@@ -269,6 +272,8 @@ Router.post("/discord/", (req, res) => {
           accountId: accountId,
           username: username,
           firstTime: true,
+          avatar: `https://cdn.discordapp.com/avatars/${res2.id}/${res2.avatar}.webp`,
+          bannerColor: res2.banner_color,
         });
       }
     }

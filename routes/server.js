@@ -29,7 +29,7 @@ router.get(`/claimId`, function (req, res) {
       stripe.customers.list(
         {
           limit: 100,
-          email: email,
+          email: account.email,
         },
         function (err, customers) {
           if (err) {
@@ -526,7 +526,7 @@ router.post(`/new/:id`, function (req, res) {
           stripe.customers.list(
             {
               limit: 100,
-              email: em,
+              email: account.email,
             },
             function (err, customers) {
               if (err) {
