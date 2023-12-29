@@ -573,8 +573,8 @@ const security = (req, res, next) => {
   } else {
     accounts = require("./accounts.json");
 
-    if (accounts[req.headers.email].ips != undefined) {
-      if (accounts[req.headers.email].ips.includes(files.getIPID(req.ip))) {
+    if (accounts[req.headers.username].ips != undefined) {
+      if (accounts[req.headers.username].ips.includes(files.getIPID(req.ip))) {
         next();
       } else {
         res.status(403).send({

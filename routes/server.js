@@ -18,7 +18,7 @@ const enableVirusScan = JSON.parse(config.enableVirusScan);
 
 router.get(`/claimId`, function (req, res) {
   console.log("debug1");
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
 
@@ -36,7 +36,7 @@ router.get(`/claimId`, function (req, res) {
             console.log("err");
             return "no";
           } else {
-            console.log("debug: " + email + req.headers.email);
+            console.log("debug: " + email + req.headers.username);
             console.log(customers);
 
             if (customers.data.length > 0) {
@@ -147,7 +147,7 @@ router.get(`/claimId`, function (req, res) {
   }
 });
 router.get(`/:id`, function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -162,7 +162,7 @@ router.get(`/:id`, function (req, res) {
   }
 });
 router.post(`/:id/state/:state`, function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -199,7 +199,7 @@ router.post(`/:id/state/:state`, function (req, res) {
 });
 
 router.delete(`/:id/:modtype(plugin|mod)`, function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -228,7 +228,7 @@ router.delete(`/:id/:modtype(plugin|mod)`, function (req, res) {
 });
 
 router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -312,7 +312,7 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
 });
 
 router.post(`/:id/version/`, function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -337,7 +337,7 @@ router.post(`/:id/version/`, function (req, res) {
 
 let lastPlugin = "";
 router.post(`/:id/add/:modtype(plugin|mod)`, function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -375,7 +375,7 @@ router.post(`/:id/add/:modtype(plugin|mod)`, function (req, res) {
 });
 
 router.post(`/:id/modpack`, function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -395,7 +395,7 @@ router.post(`/:id/modpack`, function (req, res) {
 });
 
 router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -432,7 +432,7 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
 });
 
 router.post(`/new/:id`, function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   id = req.params.id;
   if (!enableAuth) email = "noemail";
@@ -450,7 +450,7 @@ router.post(`/new/:id`, function (req, res) {
       console.log(id);
       console.log(account.servers);
       if (JSON.stringify(account.servers).includes(id)) {
-        console.log("debug: " + email + req.headers.email);
+        console.log("debug: " + email + req.headers.username);
         if (account.servers == undefined) account.servers = [];
         let amount = account.servers.length;
         //add cors header
@@ -460,10 +460,10 @@ router.post(`/new/:id`, function (req, res) {
         let serverFolders = fs.readdirSync("servers");
         datajson.numServers = serverFolders.length;
         fs.writeFileSync("assets/data.json", JSON.stringify(datajson, null, 2));
-        em = req.headers.email;
+        em = req.headers.username;
 
         let cid = "";
-        console.log("debug: " + email + req.headers.email + em);
+        console.log("debug: " + email + req.headers.username + em);
         if (
           (!enablePay || account.bypassStripe == true) &&
           (config.maxServers > data.numServers ||
@@ -522,7 +522,7 @@ router.post(`/new/:id`, function (req, res) {
             .status(400)
             .json({ success: false, msg: "Maxiumum servers reached." });
         } else {
-          console.log("debug: " + email + req.headers.email + em);
+          console.log("debug: " + email + req.headers.username + em);
           stripe.customers.list(
             {
               limit: 100,
@@ -533,7 +533,7 @@ router.post(`/new/:id`, function (req, res) {
                 console.log("err");
                 return "no";
               } else {
-                console.log("debug: " + email + req.headers.email + em);
+                console.log("debug: " + email + req.headers.username + em);
                 console.log(customers);
 
                 if (customers.data.length > 0) {
@@ -562,7 +562,7 @@ router.post(`/new/:id`, function (req, res) {
                           req.body.name !== "undefined"
                         ) {
                           console.log(
-                            "debug: " + email + req.headers.email + em
+                            "debug: " + email + req.headers.username + em
                           );
                           server = {};
                           server.name = req.body.name;
@@ -592,7 +592,9 @@ router.post(`/new/:id`, function (req, res) {
                           );
                           console.log(req.body);
                         }
-                        console.log("debug: " + email + req.headers.email + em);
+                        console.log(
+                          "debug: " + email + req.headers.username + em
+                        );
                         f.run(
                           id,
                           req.body.software,
@@ -649,7 +651,7 @@ router.post(`/new/:id`, function (req, res) {
   }
 });
 router.post(`/:id/setInfo`, function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -756,7 +758,7 @@ router.post(`/:id/setInfo`, function (req, res) {
 });
 
 router.get(`/:id/getInfo`, function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -851,7 +853,7 @@ router.delete(`/:id`, function (req, res) {
   }
 
   console.log("deleting " + req.params.id);
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -903,7 +905,7 @@ router.delete(`/:id`, function (req, res) {
 });
 
 router.get("/:id/world", function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -934,7 +936,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   //this disables timeouts if virus scanning takes too long
   req.setTimeout(0);
   id = req.params.id;
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -1084,7 +1086,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
 });
 
 router.get("/:id/proxy/info", function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -1117,7 +1119,7 @@ router.get("/:id/proxy/info", function (req, res) {
 });
 
 router.post("/:id/proxy/info", function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -1144,7 +1146,7 @@ router.post("/:id/proxy/info", function (req, res) {
 });
 
 router.get("/:id/proxy/servers", function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -1187,7 +1189,7 @@ router.get("/:id/proxy/servers", function (req, res) {
 });
 
 router.post("/:id/proxy/servers", function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -1283,7 +1285,7 @@ router.post("/:id/proxy/servers", function (req, res) {
 });
 
 router.delete("/:id/proxy/servers", function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -1338,7 +1340,7 @@ router.delete("/:id/proxy/servers", function (req, res) {
 });
 
 router.get("/:id/files", function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -1354,7 +1356,7 @@ router.get("/:id/files", function (req, res) {
 });
 
 router.get("/:id/file/:path", function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -1414,7 +1416,7 @@ router.get("/:id/file/:path", function (req, res) {
 });
 
 router.post("/:id/file/:path", function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
@@ -1481,7 +1483,7 @@ router.post("/:id/file/:path", function (req, res) {
 });
 
 router.delete("/:id/file/:path", function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
   server = require(`../servers/${req.params.id}/server.json`);
@@ -1515,7 +1517,7 @@ router.delete("/:id/file/:path", function (req, res) {
 });
 
 router.post("/:id/rename/", function (req, res) {
-  let email = req.headers.email;
+  let email = req.headers.username;
   let token = req.headers.token;
   let account = require("../accounts/" + email + ".json");
   if (hasAccess(token, account) && fs.existsSync(`servers/${req.params.id}/`)) {
@@ -1538,7 +1540,7 @@ router.post("/:id/rename/", function (req, res) {
 });
 
 router.get("/:id/storageInfo", function (req, res) {
-  let email = req.headers.email;
+  let email = req.headers.username;
   let token = req.headers.token;
   let account = require("../accounts/" + email + ".json");
   if (hasAccess(token, account) && fs.existsSync(`servers/${req.params.id}/`)) {

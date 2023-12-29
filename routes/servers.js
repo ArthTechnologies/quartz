@@ -9,7 +9,7 @@ const config = require("../scripts/config.js").getConfig();
 const enableAuth = JSON.parse(config.enableAuth);
 
 router.get(`/`, function (req, res) {
-  email = req.headers.email;
+  email = req.headers.username;
   token = req.headers.token;
 
   if (!enableAuth) email = "noemail";
@@ -22,7 +22,7 @@ router.get(`/`, function (req, res) {
 
   if (token === account.token || !enableAuth) {
     //if req.body.email is "noemail" return 404
-    if (req.query.email == ("noemail" | "undefined")) {
+    if (req.query.username == ("noemail" | "undefined")) {
       //res.status(404).json({ msg: `Invalid email.` });
     }
 
