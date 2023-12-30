@@ -634,15 +634,16 @@ router.post(`/new/:id`, function (req, res) {
           );
         }
       } else {
-        res.status(401).json({ msg: `You don't own this ID.` });
+        res.status(401).json({ success: false, msg: `You don't own this ID.` });
       }
     } else {
       res.status(401).json({
+        success: false,
         msg: `There's already a server using this ID. Contact support if you think this is a mistake.`,
       });
     }
   } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
+    res.status(401).json({ success: false, msg: `Invalid credentials.` });
   }
 });
 router.post(`/:id/setInfo`, function (req, res) {
