@@ -16,15 +16,17 @@ router.get(`/`, function (req, res) {
   //prevents a crash that has occurred
   if (email != undefined) {
     account = {};
+    console.log(
+      "checking servers..." +
+        fs.readFileSync("../accounts/" + email + ".json", "utf8")
+    );
     try {
-      console.log(
-        "checking servers..." +
-          fs.readFileSync("../accounts/" + email + ".json", "utf8")
-      );
       account = JSON.parse(
         fs.readFileSync("../accounts/" + email + ".json", "utf8")
       );
-    } catch {}
+    } catch {
+      console.log("error reading account file");
+    }
     console.log(account);
     console.log("../accounts/" + email + ".json");
   }
