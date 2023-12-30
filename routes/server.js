@@ -922,6 +922,7 @@ router.get("/:id/world", function (req, res) {
         cwd = path + "/World";
       }
     }
+    console.log(cwd + "cwd");
 
     try {
       exec(`zip -r -q -X ../world.zip .`, { cwd: cwd }, (err) => {
