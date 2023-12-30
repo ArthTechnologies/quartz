@@ -916,6 +916,7 @@ router.get("/:id/world", function (req, res) {
     let cwd = path + "/world";
     //some modpacks make a world folder with a capital W, this checks for that
     if (fs.existsSync(path + "/World")) {
+      const { execSync } = require("child_process");
       let sizeOfLowercase = parseInt(execSync(`du -s ${path}/world | cut -f1`));
       let sizeOfUppercase = parseInt(execSync(`du -s ${path}/World | cut -f1`));
 
