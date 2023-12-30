@@ -916,13 +916,14 @@ router.get("/:id/world", function (req, res) {
     let cwd = path + "/world";
     //some modpacks make a world folder with a capital W, this checks for that
     if (fs.existsSync(path + "/World")) {
+      console.log(cwd + "cwd");
+
       if (
         fs.statSync(path + "/World").size > fs.statSync(path + "/world").size
       ) {
         cwd = path + "/World";
       }
     }
-    console.log(cwd + "cwd");
 
     try {
       exec(`zip -r -q -X ../world.zip .`, { cwd: cwd }, (err) => {
