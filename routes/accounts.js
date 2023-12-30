@@ -15,6 +15,7 @@ Router.post("/email/signup/", (req, res) => {
   let emailExists = false;
   let password = req.query.password;
   let email = req.query.username;
+  if (email.includes("email:")) email = email.replace("email:", "");
   let confirmPassword = req.query.confirmPassword;
   let cloudflareVerifyToken = req.query.cloudflareVerifyToken;
   if (enableCloudflareVerify) {
@@ -86,6 +87,7 @@ Router.post("/email/signin/", (req, res) => {
 
   let password = req.query.password;
   let email = req.query.username;
+  if (email.includes("email:")) email = email.replace("email:", "");
   let account = require("../accounts/email:" + email + ".json");
   let response = {};
 
@@ -133,6 +135,7 @@ Router.post("/email/signin/", (req, res) => {
 
 Router.delete("/email", (req, res) => {
   email = req.headers.username;
+  if (email.includes("email:")) email = email.replace("email:", "");
   password = req.query.password;
   token = req.headers.token;
   let account = require("../accounts/email:" + email + ".json");
@@ -155,6 +158,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
 
   let password = req.query.password;
   let email = req.query.username;
+  if (email.includes("email:")) email = email.replace("email:", "");
   let confirmPassword = req.query.confirmPassword;
   let last4 = req.query.last4;
   let account = require("../accounts/email:" + email + ".json");
@@ -224,6 +228,7 @@ Router.post("/discord/", (req, res) => {
         res2 = JSON.parse(res2);
       } catch {}
       let username = res2.username;
+
       if (fs.existsSync("accounts/discord:" + username + ".json")) {
         nameTaken = true;
       }
