@@ -7,6 +7,7 @@ function download(file, url) {
 }
 
 function downloadAsync(file, url, callback) {
+  console.log(`curl -o ${file} -LO "${url}"`);
   exec(`curl -o ${file} -LO "${url}"`, (error, stdout, stderr) => {
     callback(stdout);
   });
