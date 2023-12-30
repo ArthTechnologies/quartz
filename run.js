@@ -128,7 +128,7 @@ if (!fs.existsSync("config.txt")) {
   }
 }
 const files = require("./scripts/files.js");
-const config = require("./scripts/config.js").getConfig();
+const config = require("./scripts/utils.js").getConfig();
 
 if (!fs.existsSync("accounts")) {
   fs.mkdirSync("accounts");

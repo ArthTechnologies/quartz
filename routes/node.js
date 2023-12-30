@@ -3,7 +3,7 @@ const Router = express.Router();
 const fs = require("fs");
 const data = require("../assets/data.json");
 const files = require("../scripts/files.js");
-const config = require("../scripts/config.js").getConfig();
+const config = require("../scripts/utils.js").getConfig();
 
 Router.get("/", (req, res) => {
   data.numServers = fs.readdirSync("servers").length;

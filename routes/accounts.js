@@ -5,7 +5,7 @@ const s = require("../scripts/stripe.js");
 
 const { v4: uuidv4 } = require("uuid");
 const files = require("../scripts/files.js");
-const config = require("../scripts/config.js").getConfig();
+const config = require("../scripts/utils.js").getConfig();
 const enableCloudflareVerify = JSON.parse(config.enableCloudflareVerify);
 
 Router.post("/email/signup/", (req, res) => {

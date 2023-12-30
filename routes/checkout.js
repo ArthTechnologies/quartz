@@ -1,8 +1,8 @@
 const express = require("express");
 const Router = express.Router();
-let stripeKey = require("../scripts/config.js").getConfig().stripeKey;
+let stripeKey = require("../scripts/utils.js").getConfig().stripeKey;
 const stripe = require("stripe")(stripeKey);
-const config = require("../scripts/config.js").getConfig();
+const config = require("../scripts/utils.js").getConfig();
 
 Router.post("/:plan", async (req, res) => {
   let plan = req.params.plan;

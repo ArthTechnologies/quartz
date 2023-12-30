@@ -5,7 +5,7 @@ let email = "";
 
 const f = require("../scripts/mc.js");
 const files = require("../scripts/files.js");
-const config = require("../scripts/config.js").getConfig();
+const config = require("../scripts/utils.js").getConfig();
 const enableAuth = JSON.parse(config.enableAuth);
 
 router.get(`/`, function (req, res) {

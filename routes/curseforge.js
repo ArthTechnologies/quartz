@@ -1,6 +1,6 @@
 const express = require("express");
 const Router = express.Router();
-const config = require("../scripts/config.js").getConfig();
+const config = require("../scripts/utils.js").getConfig();
 const apiKey = config.curseforgeKey;
 
 Router.get("/search", (req, res) => {
