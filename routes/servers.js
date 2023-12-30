@@ -21,6 +21,7 @@ router.get(`/`, function (req, res) {
         fs.readFileSync("../accounts/" + email + ".json"),
         "utf8"
       );
+      console.log("checking servers..." + account);
     } catch {}
     console.log(account);
     console.log("../accounts/" + email + ".json");
