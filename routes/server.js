@@ -452,7 +452,12 @@ router.post(`/new/:id`, function (req, res) {
       if (JSON.stringify(account.servers).includes(id)) {
         console.log("debug: " + email + req.headers.username);
         if (account.servers == undefined) account.servers = [];
-        let amount = account.servers.length;
+        let amount = 0;
+        for (i in account.servers) {
+          if (account.servers[i] != undefined) {
+            if (fs.existsSync("servers/" + account.servers[i])) amount++;
+          }
+        }
         //add cors header
         res.header("Access-Control-Allow-Origin", "*");
 
