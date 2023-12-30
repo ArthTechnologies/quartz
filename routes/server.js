@@ -924,7 +924,7 @@ router.get("/:id/world", function (req, res) {
     }
 
     try {
-      exec(`zip -r -q -X ../world.zip .`, { cwd: `${path}/world` }, (err) => {
+      exec(`zip -r -q -X ../world.zip .`, { cwd: cwd }, (err) => {
         res.setHeader("Content-Type", "application/zip");
 
         res.setHeader("Content-Disposition", `attachment; filename=world.zip`);
