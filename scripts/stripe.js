@@ -1,4 +1,4 @@
-let stripeKey = require("./config.js").getConfig().stripeKey;
+let stripeKey = require("./utils.js").getConfig().stripeKey;
 const stripe = require("stripe")(stripeKey);
 const express = require("express");
 

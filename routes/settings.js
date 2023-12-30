@@ -67,7 +67,7 @@ router.post(`/`, function (req, res) {
     if (keyMatch) {
       //write settings to config.json
       fs.writeFile(
-        "stores/config.json",
+        "stores/utils.json",
         JSON.stringify(settings),
         function (err) {
           if (err) throw err;
