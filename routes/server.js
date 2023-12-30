@@ -453,6 +453,12 @@ router.post(`/new/:id`, function (req, res) {
     ) {
       console.log("deleting " + id);
       files.removeDirectoryRecursive("servers/" + id);
+      const exec = require("child_process").exec;
+      exec(`rm -r servers/${id}`, (error, stdout, stderr) => {
+        if (error) {
+          console.log(error);
+        }
+      });
     }
     if (!fs.existsSync("servers/" + id)) {
       console.log(id);
@@ -925,7 +931,7 @@ router.get("/:id/world", function (req, res) {
     let cwd = path + "/world";
     //some modpacks make a world folder with a capital W, this checks for that
     if (fs.existsSync(path + "/World")) {
-      const { execSync } = require("child_process");
+      const { execSync, exec } = require("child_process");
       let sizeOfLowercase = parseInt(execSync(`du -s ${path}/world | cut -f1`));
       let sizeOfUppercase = parseInt(execSync(`du -s ${path}/World | cut -f1`));
 
