@@ -900,6 +900,7 @@ router.delete(`/:id`, function (req, res) {
 });
 
 router.get("/:id/world", function (req, res) {
+  console.log(req.headers);
   email = req.headers.username;
   token = req.headers.token;
   account = require("../accounts/" + email + ".json");
