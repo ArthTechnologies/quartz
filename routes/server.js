@@ -554,6 +554,7 @@ router.post(`/new/:id`, function (req, res) {
                           subs++;
                         }
                       }
+                      console.log("subs " + subs + " amount " + amount);
                       if (subs > amount) {
                         if (
                           em !== "noemail" &&
