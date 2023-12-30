@@ -6,6 +6,7 @@ let email = "";
 const f = require("../scripts/mc.js");
 const files = require("../scripts/files.js");
 const config = require("../scripts/utils.js").getConfig();
+const getJSON = require("../scripts/utils.js").getJSON();
 const enableAuth = JSON.parse(config.enableAuth);
 
 router.get(`/`, function (req, res) {
@@ -15,15 +16,7 @@ router.get(`/`, function (req, res) {
   if (!enableAuth) email = "noemail";
   //prevents a crash that has occurred
   if (email != undefined) {
-    account = {};
-
-    try {
-      account = JSON.parse(
-        fs.readFileSync("accounts/" + email + ".json", "utf8")
-      );
-    } catch {
-      console.log("error reading account file");
-    }
+    account = getJSON(`accounts/${email}.json`);
     console.log(account);
     console.log("../accounts/" + email + ".json");
   }
