@@ -446,6 +446,13 @@ router.post(`/new/:id`, function (req, res) {
   console.log("../accounts/" + email + ".json");
   console.log("account", account);
   if (token === account.token || !enableAuth) {
+    //sometimes theres a bug where a server's contents are deleted but not the folder itself
+    if (
+      fs.existsSync("servers/" + id) &&
+      !fs.existsSync("servers/" + id + "/server.json")
+    ) {
+      files.removeDirectoryRecursive("servers/" + id);
+    }
     if (!fs.existsSync("servers/" + id)) {
       console.log(id);
       console.log(account.servers);
