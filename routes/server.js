@@ -916,15 +916,10 @@ router.get("/:id/world", function (req, res) {
     let cwd = path + "/world";
     //some modpacks make a world folder with a capital W, this checks for that
     if (fs.existsSync(path + "/World")) {
-      console.log(
-        fs.statSync(path + "/World").size +
-          " " +
-          fs.statSync(path + "/world").size
-      );
+      let sizeOfLowercase = parseInt(execSync(`du -s ${path}/world | cut -f1`));
+      let sizeOfUppercase = parseInt(execSync(`du -s ${path}/World | cut -f1`));
 
-      if (
-        fs.statSync(path + "/World").size > fs.statSync(path + "/world").size
-      ) {
+      if (sizeOfUppercase > sizeOfLowercase) {
         cwd = path + "/World";
       }
     }
