@@ -1,5 +1,5 @@
 const { createHash, scryptSync, randomBytes } = require("crypto");
-const config = require("./config.js").getConfig();
+const config = require("./utils.js").getConfig();
 const fs = require("fs");
 
 function download(file, url) {

@@ -6,7 +6,7 @@ const multer = require("multer");
 const upload = multer({ dest: "assets/uploads/" });
 const data = require("../assets/data.json");
 const JsDiff = require("diff");
-const config = require("../scripts/config.js").getConfig();
+const config = require("../scripts/utils.js").getConfig();
 
 const fs = require("fs");
 

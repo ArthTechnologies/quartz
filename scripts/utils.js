@@ -12,4 +12,14 @@ function getConfig() {
   return config;
 }
 
-module.exports = { getConfig };
+function getJSON(file) {
+  let json = {};
+  try {
+    json = JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch (error) {
+    console.log("error parsing json for " + file, error);
+  }
+  return json;
+}
+
+module.exports = { getConfig, getJSON };
