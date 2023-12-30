@@ -913,16 +913,30 @@ router.get("/:id/world", function (req, res) {
       path += "/server";
     }
     const exec = require("child_process").exec;
-    exec(`zip -r -q -X ../world.zip .`, { cwd: `${path}/world` }, (err) => {
-      res.setHeader("Content-Type", "application/zip");
+    let cwd = path + "/world";
+    //some modpacks make a world folder with a capital W, this checks for that
+    if (fs.existsSync(path + "/World")) {
+      if (
+        fs.statSync(path + "/World").size > fs.statSync(path + "/world").size
+      ) {
+        cwd = path + "/World";
+      }
+    }
 
-      res.setHeader("Content-Disposition", `attachment; filename=world.zip`);
+    try {
+      exec(`zip -r -q -X ../world.zip .`, { cwd: `${path}/world` }, (err) => {
+        res.setHeader("Content-Type", "application/zip");
 
-      res.status(200).download(`${path}/world.zip`, "world.zip", () => {
-        //delete the zip file
-        fs.unlinkSync(`${path}/world.zip`);
+        res.setHeader("Content-Disposition", `attachment; filename=world.zip`);
+
+        res.status(200).download(`${path}/world.zip`, "world.zip", () => {
+          //delete the zip file
+          fs.unlinkSync(`${path}/world.zip`);
+        });
       });
-    });
+    } catch {
+      console.log("error downloading or zipping world");
+    }
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
