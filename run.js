@@ -39,7 +39,7 @@ if (!fs.existsSync("config.txt")) {
         `enableAuth=${settings.enableAuth}\n` +
         `# The maximum amount of servers that this panel is allowed to create:\n` +
         `maxServers=${settings.maxServers}\n` +
-        `# The maximum amount of storage that each server can use (in bytes):\n` +
+        `# The maximum amount of storage that each server can use (in gigaBytes):\n` +
         `serverStorageLimit=${settings.serverStorageLimit}\n\n` +
         `# The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):\n` +
         `curseforgeKey=${secrets.curseforgeKey}\n` +
@@ -90,8 +90,8 @@ if (!fs.existsSync("config.txt")) {
         `enableAuth=false\n` +
         `# The maximum amount of servers that this panel is allowed to create:\n` +
         `maxServers=8\n` +
-        `# The maximum amount of storage that each server can use (in bytes):\n` +
-        `serverStorageLimit=1000000000\n\n` +
+        `# The maximum amount of storage that each server can use (in gigaBytes):\n` +
+        `serverStorageLimit=1\n\n` +
         `# The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):\n` +
         `curseforgeKey=${process.env.curseforge_key}\n` +
         `# The Stripe API Key to use for charging users (You can apply for one at stripe.com):\n` +

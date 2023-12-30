@@ -1560,7 +1560,7 @@ router.get("/:id/storageInfo", function (req, res) {
     let used = files.folderSizeRecursive(`servers/${req.params.id}/`);
 
     if (config.serverStorageLimit !== undefined) {
-      limit = config.serverStorageLimit;
+      limit = config.serverStorageLimit * 1024 * 1024 * 1024;
     }
 
     res.status(200).json({ used: used, limit: limit });
