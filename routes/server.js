@@ -451,6 +451,7 @@ router.post(`/new/:id`, function (req, res) {
       fs.existsSync("servers/" + id) &&
       !fs.existsSync("servers/" + id + "/server.json")
     ) {
+      console.log("deleting " + id);
       files.removeDirectoryRecursive("servers/" + id);
     }
     if (!fs.existsSync("servers/" + id)) {
