@@ -1,0 +1,49 @@
+# The address that servers will be ran under:
+address=arthmc.xyz
+# Do you want to make users pay for servers? (If so, you'll need a Stripe API Key):
+enablePay=false
+# Do you want to make users login to access their servers? (Setting this to false is experimental):
+enableAuth=false
+# The maximum amount of servers that this panel is allowed to create:
+maxServers=8
+# The maximum amount of storage that each server can use (in gigaBytes):
+serverStorageLimit=1
+
+# The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):
+curseforgeKey=undefined
+# The Stripe API Key to use for charging users (You can apply for one at stripe.com):
+stripeKey=undefined
+# The URL that users get sent to after checking out (should probably be yourobserverinstance/subscription-success):
+stripeReturnUrl=
+# The stripe priceId (found in the dashboard, create a product first) of the basic plan:
+basicPlanPriceId=
+# The stripe priceId (found in the dashboard, create a product first) of the modded plan:
+moddedPlanPriceId=
+
+# Advanced Settings:
+
+# The DeepL API Key to use for translating mod descriptions and such (You can apply for one at deepl.com):
+deeplKey=
+# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:
+forwardingSecret=a9ecdadadf2bdc1864afa4c5
+# The JarsMC instance to get server files and more from (Leave this unless you know what this means):
+jarsMcUrl=https://api.jarsmc.xyz/
+# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the domain name here:
+labrinthUrl=https://api.modrinth.com/v2
+# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:
+pepper=54df09516147cca3dacd5438
+
+# Security Settings:
+
+# Virus scans run whenever someone uploads a world file. Read clamav.net's documentation for setup instructions before enabling this:
+enableVirusScan=false
+# Enable cloudflare turnstile, which verifies that users are human:
+enableCloudflareVerify=false
+# The "sitekey" for cloudflare turnstile, found in the cloudflare dashboard:
+cloudflareVerifySiteKey=
+# The secret key for cloudflare turnstile, found in the cloudflare dashboard:
+cloudflareVerifySecretKey=
+# The list of places (can also be on other computers via ssh) to backup to [Seperate with commas]:
+backupsList=
+# The name of this quartz instance (will appear in the backup locations):
+nodeName=somerandomquartzinstance

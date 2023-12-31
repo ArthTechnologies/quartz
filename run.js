@@ -27,109 +27,30 @@ if (!fs.existsSync("config.txt")) {
     fs.existsSync("stores/settings.json") &&
     fs.existsSync("stores/secrets.json")
   ) {
-    const settings = require("./stores/settings.json");
-    const secrets = require("./stores/secrets.json");
-    fs.writeFileSync(
-      "config.txt",
-      `# The address that servers will be ran under:\n` +
-        `address=${settings.address}\n` +
-        `# Do you want to make users pay for servers? (If so, you'll need a Stripe API Key):\n` +
-        `enablePay=${settings.enablePay}\n` +
-        `# Do you want to make users login to access their servers? (Setting this to false is experimental):\n` +
-        `enableAuth=${settings.enableAuth}\n` +
-        `# The maximum amount of servers that this panel is allowed to create:\n` +
-        `maxServers=${settings.maxServers}\n` +
-        `# The maximum amount of storage that each server can use (in gigaBytes):\n` +
-        `serverStorageLimit=${settings.serverStorageLimit}\n\n` +
-        `# The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):\n` +
-        `curseforgeKey=${secrets.curseforgeKey}\n` +
-        `# The Stripe API Key to use for charging users (You can apply for one at stripe.com):\n` +
-        `stripeKey=${secrets.stripeKey}\n` +
-        `# The URL that users get sent to after checking out (should probably be yourobserverinstance/subscription-success):\n` +
-        `stripeReturnUrl=\n` +
-        `# The stripe priceId (found in the dashboard, create a product first) of the basic plan:\n` +
-        `basicPlanPriceId=\n` +
-        `# The stripe priceId (found in the dashboard, create a product first) of the modded plan:\n` +
-        `moddedPlanPriceId=\n\n` +
-        "# Advanced Settings:\n\n" +
-        `# The DeepL API Key to use for translating mod descriptions and such (You can apply for one at deepl.com):\n` +
-        `deeplKey=\n` +
-        `# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:\n` +
-        `forwardingSecret=${secrets.forwardingSecret}\n` +
-        `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
-        `jarsMcUrl=${settings.jarsMcUrl}\n` +
-        `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the domain name here:\n` +
-        `labrinthUrl=modrinth.com\n` +
-        `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
-        `pepper=${secrets.pepper}\n\n` +
-        `# Security Settings:\n\n` +
-        `# Virus scans run whenever someone uploads a world file. Uses 'clamdscan', Read clamav.net's documentation for setup instructions before enabling this:\n` +
-        `enableVirusScan=false\n` +
-        `# Enable cloudflare turnstile, which verifies that users are human:\n` +
-        `enableCloudflareVerify=false\n` +
-        `# The "sitekey" for cloudflare turnstile, found in the cloudflare dashboard:\n` +
-        `cloudflareVerifySiteKey=\n` +
-        `# The secret key for cloudflare turnstile, found in the cloudflare dashboard:\n` +
-        `cloudflareVerifySecretKey=\n``# Enable backups, which will run every 12 hours:\n` +
-        `enableBackups=false\n` +
-        `# The list of places (can also be on other computers via ssh) to backup to [Seperate with commas]:\n` +
-        `backupsList=\n` +
-        `# The name of this quartz instance (will appear in the backup locations):\n` +
-        `nodeName=somerandomquartzinstance\n`
-    );
-    fs.copyFileSync("stores/settings.json", "backup/settings.json");
     fs.unlinkSync("stores/settings.json");
-    fs.copyFileSync("stores/secrets.json", "backup/secrets.json");
     fs.unlinkSync("stores/secrets.json");
-  } else {
-    fs.writeFileSync(
-      "config.txt",
-      `# The address that servers will be ran under:\n` +
-        `address=arthmc.xyz\n` +
-        `# Do you want to make users pay for servers? (If so, you'll need a Stripe API Key):\n` +
-        `enablePay=false\n` +
-        `# Do you want to make users login to access their servers? (Setting this to false is experimental):\n` +
-        `enableAuth=false\n` +
-        `# The maximum amount of servers that this panel is allowed to create:\n` +
-        `maxServers=8\n` +
-        `# The maximum amount of storage that each server can use (in gigaBytes):\n` +
-        `serverStorageLimit=1\n\n` +
-        `# The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):\n` +
-        `curseforgeKey=${process.env.curseforge_key}\n` +
-        `# The Stripe API Key to use for charging users (You can apply for one at stripe.com):\n` +
-        `stripeKey=${process.env.stripe_key}\n` +
-        `# The URL that users get sent to after checking out (should probably be yourobserverinstance/subscription-success):\n` +
-        `stripeReturnUrl=\n` +
-        `# The stripe priceId (found in the dashboard, create a product first) of the basic plan:\n` +
-        `basicPlanPriceId=\n` +
-        `# The stripe priceId (found in the dashboard, create a product first) of the modded plan:\n` +
-        `moddedPlanPriceId=\n\n` +
-        "# Advanced Settings:\n\n" +
-        `# The DeepL API Key to use for translating mod descriptions and such (You can apply for one at deepl.com):\n` +
-        `deeplKey=\n` +
-        `# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:\n` +
-        `forwardingSecret=${crypto.randomBytes(12).toString("hex")}\n` +
-        `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
-        `jarsMcUrl=https://api.jarsmc.xyz/\n` +
-        `# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the domain name here:\n` +
-        `labrinthUrl=https://api.modrinth.com/v2\n` +
-        `# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:\n` +
-        `pepper=${crypto.randomBytes(12).toString("hex")}\n\n` +
-        `# Security Settings:\n\n` +
-        `# Virus scans run whenever someone uploads a world file. Read clamav.net's documentation for setup instructions before enabling this:\n` +
-        `enableVirusScan=false\n` +
-        `# Enable cloudflare turnstile, which verifies that users are human:\n` +
-        `enableCloudflareVerify=false\n` +
-        `# The "sitekey" for cloudflare turnstile, found in the cloudflare dashboard:\n` +
-        `cloudflareVerifySiteKey=\n` +
-        `# The secret key for cloudflare turnstile, found in the cloudflare dashboard:\n` +
-        `cloudflareVerifySecretKey=\n` +
-        `# The list of places (can also be on other computers via ssh) to backup to [Seperate with commas]:\n` +
-        `backupsList=\n` +
-        `# The name of this quartz instance (will appear in the backup locations):\n` +
-        `nodeName=somerandomquartzinstance\n`
-    );
   }
+  fs.copyFileSync("assets/template/config.txt", "config.txt");
+} else {
+  //this compares the current config.txt to the template, and adds any new settings to the config.txt
+  let template = fs
+    .readFileSync("assets/template/config.txt")
+    .toString()
+    .split("\n");
+  let current = fs.readFileSync("config.txt").toString().split("\n");
+  for (let i in template) {
+    for (let j in current) {
+      if (!template[i].startsWith("#") && !current[j].startsWith("#")) {
+        let templateLine = template[i].split("=")[0];
+        let currentLine = current[j].split("=")[0];
+        if (templateLine == currentLine) {
+          template[i] =
+            template[i].split("=")[0] + "=" + current[j].split("=")[1];
+        }
+      }
+    }
+  }
+  fs.writeFileSync("config.txt", template.join("\n"));
 }
 const files = require("./scripts/files.js");
 const config = require("./scripts/utils.js").getConfig();

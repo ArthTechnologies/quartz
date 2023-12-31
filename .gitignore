@@ -21,4 +21,5 @@ servers.json
 /forgelibs
 deleteLog.txt
 config.txt
+!/assets/template/config.txt
 bun.lockb
