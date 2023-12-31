@@ -5,6 +5,11 @@ const config = require("../scripts/utils.js").getConfig();
 
 router.get("/", (req, res) => {
   const exec = require("child_process").exec;
+  console.log(`
+    curl -i -X POST 'https://api-free.deepl.com/v2/translate' \
+    --header 'Authorization: DeepL-Auth-Key ${config.deeplKey}' \
+    --data-urlencode 'text=${req.query.text}!' \
+    --data-urlencode 'target_lang=${req.query.target_lang}' `);
   exec(
     `curl -i -X POST 'https://api-free.deepl.com/v2/translate' \
   --header 'Authorization: DeepL-Auth-Key ${config.deeplKey}' \
