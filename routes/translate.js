@@ -12,10 +12,10 @@ router.get("/", (req, res) => {
   --data-urlencode 'target_lang=${req.query.target_lang}' `,
     (err, stdout, stderr) => {
       let statusCode = stdout.split("HTTP/2 ")[1].split("\n")[0];
-      let res = stdout.split("\n")[stdout.split("\n").length - 1];
+      let res2 = stdout.split("\n")[stdout.split("\n").length - 1];
       if (statusCode == "200") {
         try {
-          res.status(200).json({ text: JSON.parse(res).translations[0].text });
+          res.status(200).json({ text: JSON.parse(res2).translations[0].text });
         } catch {
           res.status(400).json({ msg: "Error translating text" });
         }
