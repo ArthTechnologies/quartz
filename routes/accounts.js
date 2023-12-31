@@ -6,6 +6,7 @@ const s = require("../scripts/stripe.js");
 const { v4: uuidv4 } = require("uuid");
 const files = require("../scripts/files.js");
 const config = require("../scripts/utils.js").getConfig();
+const getJSON = require("../scripts/utils.js").getJSON;
 const enableCloudflareVerify = JSON.parse(config.enableCloudflareVerify);
 
 Router.post("/email/signup/", (req, res) => {
@@ -88,7 +89,7 @@ Router.post("/email/signin/", (req, res) => {
   let password = req.query.password;
   let email = req.query.username;
   if (email.includes("email:")) email = email.replace("email:", "");
-  let account = require("../accounts/email:" + email + ".json");
+  let account = getJSON("../accounts/email:" + email + ".json");
   let response = {};
 
   let salt = account.salt;
@@ -138,7 +139,7 @@ Router.delete("/email", (req, res) => {
   if (email.includes("email:")) email = email.replace("email:", "");
   password = req.query.password;
   token = req.headers.token;
-  let account = require("../accounts/email:" + email + ".json");
+  let account = getJSON("../accounts/email:" + email + ".json");
 
   if (token == account.token) {
     if (account.password == files.hash(password, account.salt).split(":")[1]) {
@@ -161,7 +162,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
   if (email.includes("email:")) email = email.replace("email:", "");
   let confirmPassword = req.query.confirmPassword;
   let last4 = req.query.last4;
-  let account = require("../accounts/email:" + email + ".json");
+  let account = getJSON("../accounts/email:" + email + ".json");
 
   try {
     const creditId = await s.getCreditId(email);
@@ -234,7 +235,7 @@ Router.post("/discord/", (req, res) => {
       }
       //if account exists, so the user is signing in not up...
       if (nameTaken) {
-        let account = require("../accounts/discord:" + username + ".json");
+        let account = getJSON("../accounts/discord:" + username + ".json");
         let response = {};
         account.ips = [];
         if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
@@ -288,7 +289,7 @@ Router.post("/discord/", (req, res) => {
 Router.delete("/discord", (req, res) => {
   username = req.headers.username;
   token = req.headers.token;
-  let account = require("../accounts/discord:" + username + ".json");
+  let account = getJSON("../accounts/discord:" + username + ".json");
 
   if (token == account.token) {
     fs.unlinkSync("accounts/discord:" + username + ".json");

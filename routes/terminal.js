@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const f = require("../scripts/mc.js");
 const config = require("../scripts/utils.js").getConfig();
+const getJSON = require("../scripts/utils.js").getJSON;
 const enableAuth = JSON.parse(config.enableAuth);
 router.get("/:id", (req, res) => {
   email = req.headers.username;
   token = req.headers.token;
-  account = require("../accounts/" + email + ".json");
+  account = getJSON("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     res.send(f.readTerminal(req.params.id));
@@ -18,7 +19,7 @@ router.get("/:id", (req, res) => {
 router.post("/:id", (req, res) => {
   email = req.headers.username;
   token = req.headers.token;
-  account = require("../accounts/" + email + ".json");
+  account = getJSON("../accounts/" + email + ".json");
   server = require("../servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     console.log("revieved request: " + req.query.cmd);
