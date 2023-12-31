@@ -57,11 +57,7 @@ if (!fs.existsSync("config.txt")) {
                 .createHash("sha256")
                 .update(current[j].split("=")[1])
                 .digest("hex");
-          } else if (
-            templateLine == "stripeKey" ||
-            (templateLine == "curseforgeKey" &&
-              current[j].split("=")[1] == "undefined")
-          ) {
+          } else if (current[j].split("=")[1] == "undefined") {
             template[i] = template[i].split("=")[0] + "=";
           } else {
             template[i] =
@@ -71,7 +67,7 @@ if (!fs.existsSync("config.txt")) {
       }
     }
   }
-  template[i] = fs.writeFileSync("config.txt", template.join("\n"));
+  fs.writeFileSync("config.txt", template.join("\n"));
 }
 const files = require("./scripts/files.js");
 const config = require("./scripts/utils.js").getConfig();
