@@ -40,7 +40,7 @@ if (!fs.existsSync("config.txt")) {
   let current = fs.readFileSync("config.txt").toString().split("\n");
   for (let i in template) {
     for (let j in current) {
-      if (!template[i].startsWith("#") && !current[j].startsWith("#")) {
+      if (template[i].includes("=") && current[j].includes("=")) {
         let templateLine = template[i].split("=")[0];
         let currentLine = current[j].split("=")[0];
         if (templateLine == currentLine) {
