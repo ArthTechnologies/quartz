@@ -36,6 +36,8 @@ router.get(`/`, function (req, res) {
   returnObject["enableVirusScan"] = config.enableVirusScan;
   returnObject["enableCloudflareVerify"] = config.enableCloudflareVerify;
   returnObject["cloudflareVerifySiteKey"] = config.cloudflareVerifySiteKey;
+  returnObject["enableDeepL"] =
+    config.deeplKey != "" && config.deeplKey != null;
   for (var key in getJSON("assets/data.json")) {
     returnObject[key] = getJSON("assets/data.json")[key];
   }
