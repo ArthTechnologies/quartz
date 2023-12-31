@@ -52,6 +52,8 @@ if (!fs.existsSync("config.txt")) {
         `# The stripe priceId (found in the dashboard, create a product first) of the modded plan:\n` +
         `moddedPlanPriceId=\n\n` +
         "# Advanced Settings:\n\n" +
+        `# The DeepL API Key to use for translating mod descriptions and such (You can apply for one at deepl.com):\n` +
+        `deeplKey=\n` +
         `# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:\n` +
         `forwardingSecret=${secrets.forwardingSecret}\n` +
         `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
@@ -103,6 +105,8 @@ if (!fs.existsSync("config.txt")) {
         `# The stripe priceId (found in the dashboard, create a product first) of the modded plan:\n` +
         `moddedPlanPriceId=\n\n` +
         "# Advanced Settings:\n\n" +
+        `# The DeepL API Key to use for translating mod descriptions and such (You can apply for one at deepl.com):\n` +
+        `deeplKey=\n` +
         `# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:\n` +
         `forwardingSecret=${crypto.randomBytes(12).toString("hex")}\n` +
         `# The JarsMC instance to get server files and more from (Leave this unless you know what this means):\n` +
@@ -595,6 +599,7 @@ app.use("/settings", require("./routes/settings"));
 app.use("/terminal", require("./routes/terminal"));
 app.use("/accounts", require("./routes/accounts"));
 app.use("/curseforge", require("./routes/curseforge"));
+app.use("/translate", require("./routes/translate"));
 app.use("/node", require("./routes/node"));
 
 // port
