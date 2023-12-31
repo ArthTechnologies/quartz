@@ -245,9 +245,9 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
       path += "/server";
     }
     if (fs.existsSync(`${path}/modrinth.index.json`)) {
-      modpack = getJSON(`../${path}/modrinth.index.json`);
+      modpack = getJSON(`${path}/modrinth.index.json`);
     } else if (fs.existsSync(`${path}/curseforge.index.json`)) {
-      modpack = getJSON(`../${path}/curseforge.index.json`);
+      modpack = getJSON(`${path}/curseforge.index.json`);
     }
 
     fs.readdirSync(`${path}/${modtype}`).forEach((file) => {
@@ -987,7 +987,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                 worldgenMods.push(req.query.worldgenMods);
               }
             }
-            const serverJson = getJSON(`../servers/${id}/server.json`);
+            const serverJson = getJSON(`servers/${id}/server.json`);
             serverJson.addons = worldgenMods;
             fs.writeFileSync(
               `servers/${id}/server.json`,
@@ -1514,7 +1514,7 @@ router.delete("/:id/file/:path", function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
   account = getJSON("accounts/" + email + ".json");
-  server = getJSON(`../servers/${req.params.id}/server.json`);
+  server = getJSON(`servers/${req.params.id}/server.json`);
   if (hasAccess(token, account) && fs.existsSync(`servers/${req.params.id}/`)) {
     let path = req.params.path;
     if (req.params.path.includes("*")) {
@@ -1549,7 +1549,7 @@ router.post("/:id/rename/", function (req, res) {
   let token = req.headers.token;
   let account = getJSON("accounts/" + email + ".json");
   if (hasAccess(token, account) && fs.existsSync(`servers/${req.params.id}/`)) {
-    server = getJSON(`../servers/${req.params.id}/server.json`);
+    server = getJSON(`servers/${req.params.id}/server.json`);
     server.name = req.query.newName;
     fs.writeFileSync(
       `servers/${req.params.id}/server.json`,
