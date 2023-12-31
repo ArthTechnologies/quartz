@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const fs = require("fs");
 const config = require("../scripts/utils.js").getConfig();
+const getJSON = require("../scripts/utils.js").getJSON;
 
 if (process.env.SERVERS_PER_USER) {
   config.serversPerUser = process.env.WEB_PORT;
@@ -35,8 +36,8 @@ router.get(`/`, function (req, res) {
   returnObject["enableVirusScan"] = config.enableVirusScan;
   returnObject["enableCloudflareVerify"] = config.enableCloudflareVerify;
   returnObject["cloudflareVerifySiteKey"] = config.cloudflareVerifySiteKey;
-  for (var key in require("../assets/data.json")) {
-    returnObject[key] = require("../assets/data.json")[key];
+  for (var key in getJSON("../assets/data.json")) {
+    returnObject[key] = getJSON("../assets/data.json")[key];
   }
   res.json(returnObject);
 });

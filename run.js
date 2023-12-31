@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const cors = require("cors");
-
+const getJSON = require("./scripts/utils.js").getJSON;
 const fs = require("fs");
 const crypto = require("crypto");
 
@@ -192,7 +192,7 @@ if (!fs.existsSync("assets/jars")) {
   downloadJars();
 }
 
-const datajson = require("./assets/data.json");
+const datajson = getJSON("./assets/data.json");
 if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
   downloadJars();
   getLatestVersion();
@@ -207,7 +207,7 @@ setInterval(() => {
 }, 1000 * 60 * 60 * 12);
 
 function downloadJars() {
-  const datajson = require("./assets/data.json");
+  const datajson = getJSON("./assets/data.json");
   datajson.lastUpdate = Date.now();
   fs.writeFileSync("assets/data.json", JSON.stringify(datajson));
   //geyser
@@ -438,7 +438,7 @@ function getLatestVersion() {
     "https://launchermeta.mojang.com/mc/game/version_manifest.json",
     (vdata) => {
       let version = JSON.parse(vdata).latest.release;
-      let datajson = require("./assets/data.json");
+      let datajson = getJSON("./assets/data.json");
       data.latestVersion = version;
       fs.writeFileSync("./assets/data.json", JSON.stringify(datajson));
       return version;
@@ -451,7 +451,7 @@ function verifySubscriptions() {
     const accounts = fs.readdirSync("accounts");
     for (i in accounts) {
       if (accounts[i].split(".")[accounts[i].split(".").length - 1] == "json") {
-        const account = require(`./accounts/${accounts[i]}`);
+        const account = getJSON(`./accounts/${accounts[i]}`);
         if (!account.bypassStripe) {
           try {
             const amountOfServers = account.servers.length;
@@ -542,7 +542,7 @@ files.downloadAsync(
   }
 );
 
-const data = require("./assets/data.json");
+const data = getJSON("./assets/data.json");
 const f = require("./scripts/mc.js");
 if (data.serversWithAutomaticStartup != undefined) {
   data.serversWithAutomaticStartup.forEach((server) => {

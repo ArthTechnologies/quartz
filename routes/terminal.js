@@ -8,7 +8,7 @@ router.get("/:id", (req, res) => {
   email = req.headers.username;
   token = req.headers.token;
   account = getJSON("accounts/" + email + ".json");
-  server = require("../servers/" + req.params.id + "/server.json");
+  server = getJSON("../servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     res.send(f.readTerminal(req.params.id));
   } else {
@@ -20,7 +20,7 @@ router.post("/:id", (req, res) => {
   email = req.headers.username;
   token = req.headers.token;
   account = getJSON("accounts/" + email + ".json");
-  server = require("../servers/" + req.params.id + "/server.json");
+  server = getJSON("../servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     console.log("revieved request: " + req.query.cmd);
     f.writeTerminal(req.params.id, req.query.cmd);
