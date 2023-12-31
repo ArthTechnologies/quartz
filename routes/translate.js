@@ -14,6 +14,7 @@ router.get("/", (req, res) => {
       let statusCode = stdout.split("HTTP/2 ")[1].split("\n")[0];
       let res2 = stdout.split("\n")[stdout.split("\n").length - 1];
       if (statusCode == "200") {
+        console.log(res2);
         try {
           res.status(200).json({ text: JSON.parse(res2).translations[0].text });
         } catch {
