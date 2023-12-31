@@ -7,7 +7,7 @@ const getJSON = require("../scripts/utils.js").getJSON;
 router.get("/", (req, res) => {
   let account = getJSON("accounts/" + req.headers.username + ".json");
   if (req.headers.token == account.token) {
-    if (text.split("").length < 500) {
+    if (req.query.text.split("").length < 500) {
       const exec = require("child_process").exec;
       console.log(`
     curl -i -X POST 'https://api-free.deepl.com/v2/translate' \
