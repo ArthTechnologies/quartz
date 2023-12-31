@@ -15,16 +15,16 @@ router.get("/", (req, res) => {
       let res = stdout.split("\n")[stdout.split("\n").length - 1];
       if (statusCode == "200") {
         try {
-          res.send({ text: JSON.parse(res).translations[0].text });
+          res.status(200).json({ text: JSON.parse(res).translations[0].text });
         } catch {
-          res.send({ msg: "Error translating text" });
+          res.status(400).json({ msg: "Error translating text" });
         }
       } else if (statusCode == "456") {
-        res.send({
+        res.status(400).json({
           msg: "Sorry, our DeepL translation access is at capacity.",
         });
       } else {
-        res.send({ msg: "Error translating text" });
+        res.status(400).json({ msg: "Error translating text" });
       }
     }
   );
