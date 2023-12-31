@@ -44,10 +44,8 @@ if (!fs.existsSync("config.txt")) {
         let templateLine = template[i].split("=")[0];
         let currentLine = current[j].split("=")[0];
         if (templateLine == currentLine) {
-          console.log("match " + template[i] + " " + current[j]);
           template[i] =
             template[i].split("=")[0] + "=" + current[j].split("=")[1];
-          console.log("result " + template[i]);
         }
       }
     }
