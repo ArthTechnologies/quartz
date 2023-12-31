@@ -35,7 +35,7 @@ router.get(`/`, function (req, res) {
         account.servers[i] = account.servers[i].id;
       if (fs.existsSync(`servers/${account.servers[i]}/server.json`)) {
         account.servers[i] = getJSON(
-          "../servers/" + account.servers[i] + "/server.json"
+          "servers/" + account.servers[i] + "/server.json"
         );
         account.servers[i].state = f.getState(account.servers[i].id);
       } else {
