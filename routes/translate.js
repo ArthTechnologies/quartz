@@ -7,7 +7,7 @@ router.get("/", (req, res) => {
   const exec = require("child_process").exec;
   exec(
     `curl -i -X POST 'https://api-free.deepl.com/v2/translate' \
-  --header 'Authorization: DeepL-Auth-Key [${config.deeplKey}]' \
+  --header 'Authorization: DeepL-Auth-Key ${config.deeplKey}' \
   --data-urlencode 'text=${req.query.text}!' \
   --data-urlencode 'target_lang=${req.query.target_lang}' `,
     (err, stdout, stderr) => {
