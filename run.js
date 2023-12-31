@@ -44,13 +44,34 @@ if (!fs.existsSync("config.txt")) {
         let templateLine = template[i].split("=")[0];
         let currentLine = current[j].split("=")[0];
         if (templateLine == currentLine) {
-          template[i] =
-            template[i].split("=")[0] + "=" + current[j].split("=")[1];
+          //pepper and forwardingSecret need to have random values generated
+          if (
+            templateLine == "pepper" ||
+            (templateLine == "forwardingSecret" &&
+              current[j].split("=")[1] == "")
+          ) {
+            template[i] =
+              template[i].split("=")[0] +
+              "=" +
+              crypto
+                .createHash("sha256")
+                .update(current[j].split("=")[1])
+                .digest("hex");
+          } else if (
+            templateLine == "stripeKey" ||
+            (templateLine == "curseforgeKey" &&
+              current[j].split("=")[1] == "undefined")
+          ) {
+            template[i] = template[i].split("=")[0] + "=";
+          } else {
+            template[i] =
+              template[i].split("=")[0] + "=" + current[j].split("=")[1];
+          }
         }
       }
     }
   }
-  fs.writeFileSync("config.txt", template.join("\n"));
+  template[i] = fs.writeFileSync("config.txt", template.join("\n"));
 }
 const files = require("./scripts/files.js");
 const config = require("./scripts/utils.js").getConfig();
@@ -372,7 +393,7 @@ function getLatestVersion() {
 }
 
 function verifySubscriptions() {
-  if ((config.stripeKey != undefined || "undefined") && config.enablePay) {
+  if (config.stripeKey != "" && config.enablePay) {
     const accounts = fs.readdirSync("accounts");
     for (i in accounts) {
       if (accounts[i].split(".")[accounts[i].split(".").length - 1] == "json") {

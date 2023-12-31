@@ -4,7 +4,7 @@ const config = require("../scripts/utils.js").getConfig();
 const apiKey = config.curseforgeKey;
 
 Router.get("/search", (req, res) => {
-  if (apiKey != undefined) {
+  if (apiKey != "") {
     let gameVersion = req.query.version;
     let modLoaderType = req.query.loader;
     let searchFilter = req.query.query;
@@ -43,7 +43,7 @@ Router.get("/search", (req, res) => {
 });
 
 Router.get("/:id", (req, res) => {
-  if (apiKey != undefined) {
+  if (apiKey != "") {
     let id = req.params.id;
     const exec = require("child_process").exec;
     exec(
@@ -66,7 +66,7 @@ Router.get("/:id", (req, res) => {
 });
 
 Router.get("/:id/description", (req, res) => {
-  if (apiKey != undefined) {
+  if (apiKey != "") {
     let id = req.params.id;
     const exec = require("child_process").exec;
     exec(
@@ -88,7 +88,7 @@ Router.get("/:id/description", (req, res) => {
 });
 
 Router.get("/:id/versions", (req, res) => {
-  if (apiKey != undefined) {
+  if (apiKey != "") {
     let id = req.params.id;
     const exec = require("child_process").exec;
     exec(
@@ -110,7 +110,7 @@ Router.get("/:id/versions", (req, res) => {
 });
 
 Router.get("/:id/version/:versionId/changelog", (req, res) => {
-  if (apiKey != undefined) {
+  if (apiKey != "") {
     let id = req.params.id;
     let versionId = req.params.versionId;
     const exec = require("child_process").exec;
@@ -133,7 +133,7 @@ Router.get("/:id/version/:versionId/changelog", (req, res) => {
 });
 
 Router.get("/:id/version/:versionId/", (req, res) => {
-  if (apiKey != undefined) {
+  if (apiKey != "") {
     let id = req.params.id;
     let versionId = req.params.versionId;
     const exec = require("child_process").exec;

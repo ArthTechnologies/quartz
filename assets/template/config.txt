@@ -10,9 +10,9 @@ maxServers=8
 serverStorageLimit=1
 
 # The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):
-curseforgeKey=undefined
+curseforgeKey=
 # The Stripe API Key to use for charging users (You can apply for one at stripe.com):
-stripeKey=undefined
+stripeKey=
 # The URL that users get sent to after checking out (should probably be yourobserverinstance/subscription-success):
 stripeReturnUrl=
 # The stripe priceId (found in the dashboard, create a product first) of the basic plan:
@@ -25,13 +25,13 @@ moddedPlanPriceId=
 # The DeepL API Key to use for translating mod descriptions and such (You can apply for one at deepl.com):
 deeplKey=
 # The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:
-forwardingSecret=a9ecdadadf2bdc1864afa4c5
+forwardingSecret=
 # The JarsMC instance to get server files and more from (Leave this unless you know what this means):
 jarsMcUrl=https://api.jarsmc.xyz/
 # Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the domain name here:
 labrinthUrl=https://api.modrinth.com/v2
-# The 'pepper', used to obfuscate things such as IP addresses and forwarding secrets:
-pepper=54df09516147cca3dacd5438
+# The 'pepper', used to obfuscate things such as IP addresses:
+pepper=
 
 # Security Settings:
 
