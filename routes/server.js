@@ -679,27 +679,6 @@ router.post(`/:id/setInfo`, function (req, res) {
     iconUrl = req.body.icon;
     desc = req.body.desc;
 
-    //setting automaticStartup
-    let dataJson = getJSON("assets/data.json");
-    let server = id + ":" + email;
-    if (dataJson.serversWithAutomaticStartup == undefined) {
-      dataJson.serversWithAutomaticStartup = [];
-    }
-    if (req.body.automaticStartup) {
-      if (!dataJson.serversWithAutomaticStartup.includes(server)) {
-        dataJson.serversWithAutomaticStartup.push(server);
-      }
-      fs.writeFileSync("assets/data.json", JSON.stringify(dataJson, null, 2));
-    } else {
-      if (dataJson.serversWithAutomaticStartup.includes(server)) {
-        dataJson.serversWithAutomaticStartup.splice(
-          dataJson.serversWithAutomaticStartup.indexOf(server),
-          1
-        );
-      }
-      fs.writeFileSync("assets/data.json", JSON.stringify(dataJson, null, 2));
-    }
-
     //setting description
     if (f.checkServer(id).software == "velocity") {
       var text = fs.readFileSync(`servers/${id}/velocity.toml`).toString();
@@ -838,11 +817,7 @@ router.get(`/:id/getInfo`, function (req, res) {
     }
 
     let automaticStartup = false;
-    if (data.serversWithAutomaticStartup != undefined) {
-      if (data.serversWithAutomaticStartup.includes(id + ":" + email)) {
-        automaticStartup = true;
-      }
-    }
+
     res.status(200).json({
       msg: `Success: Got server info`,
       iconUrl: iconUrl,
@@ -907,13 +882,6 @@ router.delete(`/:id`, function (req, res) {
             files.removeDirectoryRecursive(`servers/${req.params.id}`);
           }, 5000);
         });
-
-        const data = getJSON("assets/data.json");
-        for (i in data.serversWithAutomaticStartup) {
-          if (data.serversWithAutomaticStartup[i].includes(req.params.id)) {
-            data.serversWithAutomaticStartup.splice(i, 1);
-          }
-        }
       }
     } else {
       res.status(401).json({ msg: `Invalid credentials.` });
