@@ -58,14 +58,11 @@ router.get(`/claimId`, function (req, res) {
                       subs++;
                     }
                   }
-                  console.log(
-                    "subs " + subs + " freeServers " + account.freeServers
-                  );
-                  console.log(
-                    "subs + freeServers " +
-                      (subs + parseInt(account.freeServers))
-                  );
-                  if (subs + parseInt(account.freeServers) > amount) {
+                  let freeServers = 0;
+                  if (account.freeServers != undefined) {
+                    freeServers = parseInt(account.freeServers);
+                  }
+                  if (subs + freeServers > amount) {
                     //find an id to assign to the account
                     let serverFolders = fs.readdirSync("servers");
                     let serverFolder = serverFolders.sort((a, b) => a - b);
