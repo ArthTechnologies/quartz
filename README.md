@@ -24,13 +24,17 @@ You can update quartz by running `git pull` command inside your quartz folder.
 
 ## How to configure
 
-- stores/settings.json is where you can modify settings.
-- stores/secrets.json is where you can enter your stripe key if you want payments enabled.
+- config.txt is where you can configure settings and provide API keys if you want to enable curseForge or stripe support.
 - Advanced: If you want to set up quartz to be proxied by ocelot (a master backend that connects quartz instances), you can use the `POST /node/forwardingSecret` route. Specify the `forwardingSecret` as a query parameter.
 
 ## How to run with docker (Unsupported)
 
 1. Download the image from docker hub with the command `sudo docker pull arthmc/quartz:latest`
+2. Run the image with `sudo docker run -p 4000:4000 10000-20000:10000-20000 arthmc/quartz:latest`. To change the port, replace the first 4000 with the port number you want.
+
+If you are using an ARM-based machine (Like a Mac or Raspberry Pi):
+1. Grab the source code with `git clone https://codeberg.org/arth/quartz`
+2. Inside the quartz folder, run `docker buildx build --platform linux/arm64 . -t arthmc/quartz:latest`
 2. Run the image with `sudo docker run -p 4000:4000 10000-20000:10000-20000 arthmc/quartz:latest`. To change the port, replace the first 4000 with the port number you want.
 
 # Dependencies
@@ -54,10 +58,12 @@ To run a dev server, follow "how to run".
 ✅ Ability to run Minecraft servers with specified versions and softwares  
 ✅ Basic communication with frontend for terminal  
 ✅ Consistent routes  
-✅ Secure accounts and servers with a password system
-✅ Add support for plugins and mods from modrinth  
+✅ Secure accounts and servers with a password system  
+✅ Add support for plugins, mods, and modpacks from modrinth  
+✅ Add support for mods/modpacks from CurseForge  
 🛠️ Make no-stripe/no account modes more stable  
 🛠️ Make modded servers stable  
+🛠️ Make discord accounts more stable  
 🛠️ Add support for ocelot (master backend)  
 ❓ Protect customer assets with end-to-end encryption  
-❓ Add support for mods/plugins from CurseForge
+

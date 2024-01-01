@@ -3,6 +3,8 @@ var eventEmitter = new events.EventEmitter();
 fs = require("fs");
 let states = [];
 const files = require("./files.js");
+const config = require("./utils.js").getConfig();
+const getJSON = require("./utils.js").getJSON;
 const { time, Console } = require("console");
 const { randomBytes } = require("crypto");
 const { stat } = require("fs");
@@ -82,7 +84,7 @@ function checkServer(id) {
   if (states[id] == undefined) {
     states[id] = "false";
   }
-  let server = require("../servers/" + id + "/server.json");
+  let server = getJSON("servers/" + id + "/server.json");
   return {
     version: server.version,
     software: server.software,
@@ -91,8 +93,19 @@ function checkServer(id) {
   };
 }
 
-function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
-  let server = require("../servers/" + id + "/server.json");
+function run(
+  id,
+  software,
+  version,
+  addons,
+  cmd,
+  em,
+  isNew,
+  modpackURL,
+  modpackID,
+  modpackVersionID
+) {
+  let server = getJSON("servers/" + id + "/server.json");
   let out = [];
   states[id] = "starting";
 
@@ -116,7 +129,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
 
-  let path = "../../java/jdk-17.0.5+8/bin/java";
+  let path = "../../assets/java/jdk-17.0.5+8/bin/java";
   let folder = "servers/" + id;
   if (software == "quilt") {
     folder = "servers/" + id + "/server";
@@ -124,7 +137,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       fs.mkdirSync(folder);
     }
   }
-  console.log("software & version", software, version);
+
   let args = [
     "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Daikars.new.flags=true -Dusing.aikars.flags=https://mcflags.emc.gs -jar server.jar",
   ];
@@ -179,45 +192,36 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       break;
   }
 
-  const settings = require("../stores/settings.json");
-  let latestVersion = settings.latestVersion;
-  switch (version) {
-    case latestVersion:
-      version = latestVersion;
-      path = "../../java/jdk-19.0.2+7/bin/java";
-      break;
-    case "1.20.1":
-      path = "../../java/jdk-19.0.2+7/bin/java";
-      break;
-    case "1.19.4":
-      path = "../../java/jdk-19.0.2+7/bin/java";
-      break;
-    case "1.18.2":
-      path = "../../java/jdk-17.0.5+8/bin/java";
-      break;
-    case "1.17.1":
-      path = "../../java/jdk-17.0.5+8/bin/java";
-      break;
-    case "3.2.0":
-      path = "../../java/jdk-17.0.5+8/bin/java";
-    default:
-      path = "../../java/jdk-11.0.18+10/bin/java";
-      break;
-  }
+  const datajson = getJSON("assets/data.json");
+  let latestVersion = datajson.latestVersion;
+  //this selects the correct version of java for the minecraft version
+  if (version == latestVersion) {
+    version = latestVersion;
+    path = "../../assets/java/jdk-19.0.2+7/bin/java";
+  } else if (version.includes("1.20"))
+    path = "../../assets/java/jdk-19.0.2+7/bin/java";
+  else if (version.includes("1.19"))
+    path = "../../assets/java/jdk-19.0.2+7/bin/java";
+  else if (version.includes("1.18"))
+    path = "../../assets/java/jdk-17.0.5+8/bin/java";
+  else if (version.includes("1.17"))
+    path = "../../assets/java/jdk-17.0.5+8/bin/java";
+  else path = "../../assets/java/jdk8u382-b05/bin/java";
 
-  if (software == "velocity") {
-    path = "../../java/jdk-17.0.5+8/bin/java";
-  }
+  if (software == "velocity") path = "../../assets/java/jdk-17.0.5+8/bin/java";
+
   let doneInstalling = false;
 
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
     //fs.writeFileSync(folder + "/world.zip", worldFile);
-    if (!fs.existsSync(folder + "/mods/")) {
-      fs.mkdirSync(folder + "/mods/");
-    }
   }
-
+  if (!fs.existsSync(folder + "/plugins")) {
+    fs.mkdirSync(folder + "/plugins");
+  }
+  if (!fs.existsSync(folder + "/mods/")) {
+    fs.mkdirSync(folder + "/mods/");
+  }
   if (!fs.existsSync(folder + "/.fileVersions")) {
     fs.mkdirSync(folder + "/.fileVersions");
   }
@@ -226,59 +230,21 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     const { exec } = require("child_process");
 
     let modpack;
-
-    files.downloadAsync(
-      folder + "/modpack.mrpack",
-      modpackURL,
-      (error, stdout, stderr) => {
-        exec(
-          "unzip " + folder + "/modpack.mrpack" + " -d " + folder,
-          (error, stdout, stderr) => {
-            exec(
-              "cp -r " + folder + "/overrides/* " + folder + "/",
-              (error, stdout, stderr) => {
-                if (fs.existsSync(folder + "/modrinth.index.json")) {
-                  //there's an odd bug where the file has no read access, so this changes that
-                  exec("chmod +r " + folder + "/modrinth.index.json", (x) => {
-                    modpack = JSON.parse(
-                      fs.readFileSync(folder + "/modrinth.index.json")
-                    );
-
-                    //for each file in modpack.files, download it
-                    for (i in modpack.files) {
-                      //if the path has a backslash, convert it to slash, as backslashes are ignored in linux
-                      if (modpack.files[i].path.includes("\\")) {
-                        modpack.files[i].path = modpack.files[i].path.replace(
-                          /\\/g,
-                          "/"
-                        );
-                      }
-                      files.downloadAsync(
-                        folder + "/" + modpack.files[i].path,
-                        modpack.files[i].downloads[0],
-                        () => {}
-                      );
-                    }
-                  });
-                }
-              }
-            );
-          }
-        );
-      }
-    );
+    if (modpackURL != undefined) {
+      downloadModpack(id, modpackURL, modpackID, modpackVersionID);
+    }
   }
 
   if (software != "quilt") {
-    if (fs.existsSync("data/" + software + "-" + version + ".jar")) {
+    if (fs.existsSync("assets/jars/" + software + "-" + version + ".jar")) {
       fs.copyFileSync(
-        "data/" + software + "-" + version + ".jar",
+        "assets/jars/" + software + "-" + version + ".jar",
         folder + "/server.jar"
       );
     }
   } else {
     fs.copyFileSync(
-      "data/" + software + "-0.5.1.jar",
+      "assets/jars/" + software + "-0.5.1.jar",
       "servers/" + id + "/server.jar"
     );
     args = [
@@ -299,7 +265,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   for (i in addons) {
     if (addons[i] != undefined && addons[i] != "") {
       fs.copyFileSync(
-        "data/" + addons[i] + "-" + version + ".zip",
+        "assets/jars/" + addons[i] + "-" + version + ".zip",
         folder + "/world/datapacks/" + addons[i] + ".zip"
       );
     }
@@ -310,7 +276,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
   let data;
   if (software == "velocity") {
     if (isNew) {
-      data = fs.readFileSync("servers/template/velocity.toml", "utf8");
+      data = fs.readFileSync("assets/template/velocity.toml", "utf8");
     } else {
       data = fs.readFileSync("servers/" + id + "/velocity.toml", "utf8");
     }
@@ -337,11 +303,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   } else {
     if (isNew) {
-      data = fs.readFileSync("servers/template/server.properties", "utf8");
+      data = fs.readFileSync("assets/template/server.properties", "utf8");
       data = data.replace(/spawn-protection=16/g, `spawn-protection=0`);
       if (software == "paper") {
         let paperGlobal = fs.readFileSync(
-          "servers/template/paper-global.yml",
+          "assets/template/paper-global.yml",
           "utf8"
         );
         if (!fs.existsSync(folder + "/config")) {
@@ -364,14 +330,12 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     fs.writeFileSync(folder + "/server.properties", result, "utf8");
   }
 
-  //copy /server/template/Geyser-Spigot.jar to folder/plugins
+  //copy /assets/template/Geyser-Spigot.jar to folder/plugins
 
-  if (!fs.existsSync(folder + "/plugins")) {
-    fs.mkdirSync(folder + "/plugins");
-  }
   const { exec } = require("child_process");
   let ls;
   let interval = 0;
+
   if (installer) {
     if (isNew) {
       interval = 500;
@@ -404,6 +368,9 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       if (doneInstalling & timeToLoad) {
         timeToLoad = false;
         states[id] = "starting";
+
+        let args =
+          "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Daikars.new.flags=true -Dusing.aikars.flags=https://mcflags.emc.gs";
         //-Dlog4j.configurationFile=consoleconfig.xml
         //get the forge version from the name of the folder inside /libraries/net/minecraftforge/forge/
 
@@ -414,9 +381,21 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
           let forgeVersion = fs.readdirSync(
             folder + "/libraries/net/minecraftforge/forge/"
           )[0];
+
           execLine =
             path +
             ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
+          if (version == "1.16.5") {
+            execLine =
+              path +
+              ` @libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-server.jar "$@"`;
+          }
+
+          if (version == "1.12.2") {
+            execLine = path + ` ${args} -jar forge-${forgeVersion}.jar`;
+          }
+
+          console.log(execLine);
         } else {
           path = "../" + path;
           execLine = path + " -jar quilt-server-launch.jar nogui";
@@ -436,7 +415,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
           terminalOutput[id] = out.join("\n");
           if (
-            terminalOutput[id].indexOf("Done") > -1 &&
+            terminalOutput[id].includes("Done (") &&
             states[id] != "stopping"
           ) {
             //replace states[id] with true
@@ -445,16 +424,15 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         });
         let count2 = 0;
         let intervalID = setInterval(() => {
-          console.log(count2 + states[id]);
           if (states[id] == "stopping") {
             if (count2 < 5 * 24) {
               ls.stdin.write("stop\n");
               count2++;
-            } else {
-              ls.kill();
-              states[id] = "false";
-              clearInterval(intervalID);
             }
+          } else if (states[id] == "deleting") {
+            ls.kill();
+            states[id] = "false";
+            clearInterval(intervalID);
           }
         }, 200);
         eventEmitter.on("writeCmd", function () {
@@ -481,7 +459,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       }
 
       terminalOutput[id] = out.join("\n");
-      if (terminalOutput[id].indexOf("Done") > -1 && states[id] != "stopping") {
+      if (terminalOutput[id].includes("Done (") && states[id] != "stopping") {
         //replace states[id] with true
         states[id] = "true";
       }
@@ -494,7 +472,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         if (count2 < 5 * 24) {
           ls.stdin.write("stop\n");
           count2++;
-        } else {
+        } else if (states[id] == "deleting") {
           ls.kill();
           states[id] = "false";
           clearInterval(intervalID);
@@ -518,7 +496,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
   }
 
-  var text = fs.readFileSync("servers/template/geyserconfig.yml", "utf8");
+  var text = fs.readFileSync("assets/template/geyserconfig.yml", "utf8");
   var textByLine = text.split("\n");
   textByLine[15] = "  port: " + port;
 
@@ -526,7 +504,7 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
 
   if (software == "paper" || software == "spigot") {
     if (
-      fs.existsSync("data/cx_geyser-spigot_Geyser.jar") &&
+      fs.existsSync("assets/jars/cx_geyser-spigot_Geyser.jar") &&
       (fs.existsSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar") || isNew)
     ) {
       if (!isNew) {
@@ -534,11 +512,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         fs.unlinkSync(folder + "/plugins/cx_floodgate-spigot_Floodgate.jar");
       }
       fs.copyFileSync(
-        "data/cx_geyser-spigot_Geyser.jar",
+        "assets/jars/cx_geyser-spigot_Geyser.jar",
         folder + "/plugins/cx_geyser-spigot_Geyser.jar"
       );
       fs.copyFileSync(
-        "data/cx_floodgate-spigot_Floodgate.jar",
+        "assets/jars/cx_floodgate-spigot_Floodgate.jar",
         folder + "/plugins/cx_floodgate-spigot_Floodgate.jar"
       );
     }
@@ -551,19 +529,19 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
     }
 
     fs.copyFile(
-      "servers/template/downloading/cx_geyser-spigot_Geyser.jar",
+      "assets/template/downloading/cx_geyser-spigot_Geyser.jar",
       folder + "/plugins/cx_geyser-spigot_Geyser.jar",
       (err) => {}
     );
 
     fs.copyFile(
-      "servers/template/downloading/cx_floodgate-spigot_Floodgate.jar",
+      "assets/template/downloading/cx_floodgate-spigot_Floodgate.jar",
       folder + "/plugins/cx_floodgate-spigot_Floodgate.jar",
       (err) => {}
     );
   } else if (software == "velocity") {
     if (
-      fs.existsSync("data/cx_geyser-velocity_Geyser.jar") &&
+      fs.existsSync("assets/jars/cx_geyser-velocity_Geyser.jar") &&
       (fs.existsSync(folder + "/plugins/cx_geyser-velocity_Geyser.jar") ||
         isNew)
     ) {
@@ -572,11 +550,11 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
         fs.unlinkSync(folder + "/plugins/cx_floodgate-velocity_Floodgate.jar");
       }
       fs.copyFileSync(
-        "data/cx_geyser-velocity_Geyser.jar",
+        "assets/jars/cx_geyser-velocity_Geyser.jar",
         folder + "/plugins/cx_geyser-velocity_Geyser.jar"
       );
       fs.copyFileSync(
-        "data/cx_floodgate-velocity_Floodgate.jar",
+        "assets/jars/cx_floodgate-velocity_Floodgate.jar",
         folder + "/plugins/cx_floodgate-velocity_Floodgate.jar"
       );
     }
@@ -588,13 +566,13 @@ function run(id, software, version, addons, cmd, em, isNew, modpackURL) {
       fs.writeFileSync(folder + "/plugins/Geyser-Velocity/config.yml", text);
     }
     fs.copyFile(
-      "servers/template/downloading/cx_geyser-velocity_Geyser.jar",
+      "assets/template/downloading/cx_geyser-velocity_Geyser.jar",
       folder + "/plugins/cx_geyser-velocity_Geyser.jar",
       (err) => {}
     );
 
     fs.copyFile(
-      "servers/template/downloading/cx_floodgate-velocity_Floodgate.jar",
+      "assets/template/downloading/cx_floodgate-velocity_Floodgate.jar",
       folder + "/plugins/cx_floodgate-velocity_Floodgate.jar",
       (err) => {}
     );
@@ -620,8 +598,24 @@ function stopAsync(id, callback) {
   }
 }
 
+function killAsync(id, callback) {
+  if (states[id] == "false") {
+    callback();
+  } else {
+    states[id] = "deleting";
+    const intervalId = setInterval(() => {
+      if (states[id] === "false") {
+        clearInterval(intervalId); // Clear the interval once the condition is met
+        setTimeout(() => {
+          callback();
+        }, 500);
+      }
+    }, 200);
+  }
+}
+
 function readTerminal(id) {
-  let server = require("../servers/" + id + "/server.json");
+  let server = getJSON("servers/" + id + "/server.json");
   let ret = terminalOutput[id];
 
   ret = files.simplifyTerminal(ret, server.software);
@@ -633,6 +627,134 @@ function writeTerminal(id, cmd) {
   terminalInput = cmd;
   eventEmitter.emit("writeCmd");
 }
+function downloadModpack(id, modpackURL, modpackID, versionID) {
+  const folder = "servers/" + id;
+  let includes = "modrinth.com";
+  try {
+    includes = config.labrinthUrl;
+  } catch {}
+  if (modpackURL.includes(includes)) {
+    files.downloadAsync(
+      folder + "/modpack.mrpack",
+      modpackURL,
+      (error, stdout, stderr) => {
+        exec(
+          "unzip -o " + folder + "/modpack.mrpack" + " -d " + folder,
+          (error, stdout, stderr) => {
+            exec(
+              "cp -r " + folder + "/overrides/* " + folder + "/",
+              (error, stdout, stderr) => {
+                if (fs.existsSync(folder + "/modrinth.index.json")) {
+                  //there's an odd bug where the file has no read access, so this changes that
+                  exec("chmod +r " + folder + "/modrinth.index.json", (x) => {
+                    modpack = JSON.parse(
+                      fs.readFileSync(folder + "/modrinth.index.json")
+                    );
+
+                    //for each file in modpack.files, download it
+                    for (i in modpack.files) {
+                      //if the path has a backslash, convert it to slash, as backslashes are ignored in linux
+                      if (modpack.files[i].path.includes("\\")) {
+                        modpack.files[i].path = modpack.files[i].path.replace(
+                          /\\/g,
+                          "/"
+                        );
+                      }
+                      files.downloadAsync(
+                        folder + "/" + modpack.files[i].path,
+                        modpack.files[i].downloads[0],
+                        () => {}
+                      );
+                    }
+                    //add in modpackID so that it frontends can check for updates later
+                    modpack.projectID = modpackID;
+                    modpack.platform = "mr";
+                    modpack.currentVersionDateAdded = Date.now();
+                    modpack.versionID = versionID;
+                    fs.writeFileSync(
+                      folder + "/modrinth.index.json",
+                      JSON.stringify(modpack)
+                    );
+                    return;
+                  });
+                }
+              }
+            );
+          }
+        );
+      }
+    );
+    //curseforge download URLs are usually from 'forgecdn.net', so we check for 'forge' instead of 'curseforge'.
+  } else if (modpackURL.includes("forge")) {
+    const apiKey = config.curseforgeKey;
+
+    files.downloadAsync(
+      folder + "/modpack.zip",
+      modpackURL,
+      (error, stdout, stderr) => {
+        console.log("downloading modpack from forge...");
+        exec(
+          "unzip -o " + folder + "/modpack.zip" + " -d " + folder,
+          (error, stdout, stderr) => {
+            console.log("unzipping modpack...");
+            console.log(error + " " + stderr);
+            exec(
+              "cp -r " + folder + "/overrides/* " + folder + "/",
+              (error, stdout, stderr) => {
+                if (fs.existsSync(folder + "/manifest.json")) {
+                  //there's an odd bug where the file has no read access, so this changes that
+                  exec("chmod +r " + folder + "/manifest.json", (x) => {
+                    fs.copyFileSync(
+                      folder + "/manifest.json",
+                      folder + "/curseforge.index.json"
+                    );
+                    modpack = JSON.parse(
+                      fs.readFileSync(folder + "/curseforge.index.json")
+                    );
+
+                    for (i in modpack.files) {
+                      let projectID = modpack.files[i].projectID;
+                      let fileID = modpack.files[i].fileID;
+                      console.log(projectID + " " + fileID);
+                      exec(
+                        `curl -X GET "https://api.curseforge.com/v1/mods/${projectID}/files/${fileID}/download-url" -H 'x-api-key: ${apiKey}'`,
+                        (error, stdout, stderr) => {
+                          if (stdout != undefined) {
+                            try {
+                              files.download(
+                                folder + "/mods/cf_" + projectID + "_CFMod.jar",
+                                JSON.parse(stdout).data
+                              );
+                            } catch {
+                              console.log(
+                                "error parsing json for " + projectID
+                              );
+                            }
+                          }
+                        }
+                      );
+                    }
+                    console.log("modpackID:" + modpackID);
+                    //add in modpackID so that it frontends can check for updates later
+                    modpack.projectID = modpackID;
+                    modpack.platform = "cf";
+                    modpack.currentVersionDateAdded = Date.now();
+                    modpack.versionID = versionID;
+                    fs.writeFileSync(
+                      folder + "/curseforge.index.json",
+                      JSON.stringify(modpack)
+                    );
+                    return;
+                  });
+                }
+              }
+            );
+          }
+        );
+      }
+    );
+  }
+}
 
 module.exports = {
   run,
@@ -643,4 +765,6 @@ module.exports = {
   stopAsync,
   proxiesToggle,
   getState,
+  downloadModpack,
+  killAsync,
 };

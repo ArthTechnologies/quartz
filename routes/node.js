@@ -1,37 +1,33 @@
 const express = require("express");
 const Router = express.Router();
 const fs = require("fs");
-const settings = require("../stores/settings.json");
-const data = require("../stores/data.json");
+const getJSON = require("../scripts/utils.js").getJSON;
+const data = getJSON("assets/data.json");
 const files = require("../scripts/files.js");
-const secrets = require("../stores/secrets.json");
+const config = require("../scripts/utils.js").getConfig();
 
 Router.get("/", (req, res) => {
-  //1 is subtracted because of the "template" subdirectory
-  data.numServers = fs.readdirSync("servers").length - 1;
-  fs.writeFileSync("data.json", JSON.stringify(data, null, 2));
+  data.numServers = fs.readdirSync("servers").length;
+  fs.writeFileSync("assets/data.json", JSON.stringify(data, null, 2));
   res.status(200).json({
-    maxServers: settings.maxServers,
+    maxServers: config.maxServers,
     numServers: data.numServers,
   });
 });
 
-
 Router.get("/secrets", (req, res) => {
-  if (secrets.forwardingSecret != undefined) {
-
-    if (files.hashNoSalt(req.query.forwardingSecret) == secrets.forwardingSecret) {
+  if (config.forwardingSecret != undefined) {
+    if (
+      files.hashNoSalt(req.query.forwardingSecret) == config.forwardingSecret
+    ) {
       let serverstoObject = [];
       let accountstoObject = [];
       fs.readdirSync("servers").forEach((server) => {
-        if (server != "template") {
-          const text = fs.readFileSync(`servers/${server}/server.json`);
-          try {
-            serverstoObject.push(JSON.parse(text));
-          } catch {
-            console.log("error parsing " + server)
-          }
-    
+        const text = fs.readFileSync(`servers/${server}/server.json`);
+        try {
+          serverstoObject.push(JSON.parse(text));
+        } catch {
+          console.log("error parsing " + server);
         }
       });
       fs.readdirSync("accounts").forEach((account) => {
@@ -39,7 +35,7 @@ Router.get("/secrets", (req, res) => {
         try {
           accountstoObject.push(JSON.parse(text));
         } catch {
-          console.log("error parsing " + account)
+          console.log("error parsing " + account);
         }
       });
       res
@@ -54,9 +50,16 @@ Router.get("/secrets", (req, res) => {
 });
 
 Router.post("/secrets/forwardingSecret", (req, res) => {
-  if (secrets.forwardingSecret == undefined) {
-    secrets.forwardingSecret = files.hashNoSalt(req.query.forwardingSecret);
-    fs.writeFileSync("stores/secrets.json", JSON.stringify(secrets));
+  if (config.forwardingSecret == undefined) {
+    let configTxt = fs.readFileSync("config.txt", "utf8");
+    //find line including forwardingSecret
+    let line = configTxt.split("\n").find((line) => {
+      return line.includes("forwardingSecret");
+    });
+    configTxt = configTxt.replace(
+      line,
+      `forwardingSecret=${req.query.forwardingSecret}`
+    );
     res.status(200).json({ msg: "Forwarding enabled." });
   } else {
     res.status(401).json({ msg: "Forwarding already enabled." });
@@ -64,9 +67,10 @@ Router.post("/secrets/forwardingSecret", (req, res) => {
 });
 
 Router.post("/account", (req, res) => {
-  if (secrets.forwardingSecret != undefined) {
-
-    if (files.hashNoSalt(req.query.forwardingSecret) == secrets.forwardingSecret) {
+  if (config.forwardingSecret != undefined) {
+    if (
+      files.hashNoSalt(req.query.forwardingSecret) == config.forwardingSecret
+    ) {
       if (req.body.account != undefined) {
         if (fs.existsSync(`accounts/${req.body.account}`)) {
           res.status(200).json({ msg: "Account already exists." });
@@ -79,8 +83,8 @@ Router.post("/account", (req, res) => {
       }
     }
   } else {
-  res.status(401).json({ msg: "This node does not support forwarding." });
-}
+    res.status(401).json({ msg: "This node does not support forwarding." });
+  }
 });
 
 module.exports = Router;

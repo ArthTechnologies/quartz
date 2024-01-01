@@ -1,18 +1,26 @@
 const { createHash, scryptSync, randomBytes } = require("crypto");
-const secrets = require("../stores/secrets.json");
+const config = require("./utils.js").getConfig();
+const fs = require("fs");
 
 function download(file, url) {
-  exec(`curl -o ${file} -LO ${url}`);
+  exec(`curl -o ${file} -LO "${url}"`);
 }
 
 function downloadAsync(file, url, callback) {
-  exec(`curl -o ${file} -LO ${url}`, (error, stdout, stderr) => {
+  url = url.replace(/ /g, "%20");
+  exec(`curl -o ${file} -LO "${url}"`, (error, stdout, stderr) => {
     callback(stdout);
   });
 }
 
 function extract(archive, dir) {
   exec(`tar -xvf ${archive} -C ${dir}`);
+}
+
+function extractAsync(archive, dir, callback) {
+  exec(`tar -xvf ${archive} -C ${dir}`, (error, stdout, stderr) => {
+    callback(stdout);
+  });
 }
 
 function hash(input, salt) {
@@ -24,9 +32,7 @@ function hash(input, salt) {
 }
 
 function hashNoSalt(input) {
-  return scryptSync(input, secrets.pepper, 48).toString(
-    "hex"
-  );
+  return scryptSync(input, config.pepper, 48).toString("hex");
 }
 
 function folderSizeRecursive(directoryPath) {
@@ -63,12 +69,12 @@ function readFilesRecursive(directoryPath) {
     if (file.charAt(0) != ".") {
       const curPath = `${directoryPath}/${file}`;
 
-    if (fs.lstatSync(curPath).isDirectory()) {
-      const subDir = readFilesRecursive(curPath);
-      result.push([file + ":" + curPath, subDir]);
-    } else {
-      result.push(file + ":" + curPath);
-    }
+      if (fs.lstatSync(curPath).isDirectory()) {
+        const subDir = readFilesRecursive(curPath);
+        result.push([file + ":" + curPath, subDir]);
+      } else {
+        result.push(file + ":" + curPath);
+      }
     }
   });
 
@@ -76,63 +82,51 @@ function readFilesRecursive(directoryPath) {
 }
 
 function removeDirectoryRecursive(directoryPath) {
-  if (fs.existsSync(directoryPath)) {
-    fs.readdirSync(directoryPath).forEach((file) => {
-      const curPath = `${directoryPath}/${file}`;
+  const exec = require("child_process").execSync;
+  //check if directory exists
+  //fs cannot be relied upon for this because of a bug
+  //where if a directory itself exists but there are no files,
+  //it says it doesn't exist
 
-      if (fs.lstatSync(curPath).isDirectory()) {
-        // Recursive call if the file is a directory
-        removeDirectoryRecursive(curPath);
+  exec(
+    `[ -e ${directoryPath}} ] && echo "File exists" || echo "File does not exist"`,
+    (error, stdout, stderr) => {
+      if (stdout.includes("File exists")) {
+        //check if directory path is inside the server folder
+        if (directoryPath.startsWith("servers")) {
+          exec(`rm -r ${directoryPath}`);
+        } else {
+          console.log("Directory path is not inside servers folder");
+        }
       } else {
-        // Delete the file
-        fs.unlinkSync(curPath);
+        console.log(`Directory "${directoryPath}" does not exist.`);
       }
-    });
-
-    // Remove the directory itself
-    fs.rmdirSync(directoryPath);
-    console.log(`Directory "${directoryPath}" removed.`);
-    return;
-  } else {
-    console.log(`Directory "${directoryPath}" does not exist.`);
-    return;
-  }
+    }
+  );
 }
 
 function removeDirectoryRecursiveAsync(directoryPath, callback) {
+  const exec = require("child_process").exec;
+  //check if directory exists
   if (fs.existsSync(directoryPath)) {
-    fs.readdirSync(directoryPath).forEach((file) => {
-      const curPath = `${directoryPath}/${file}`;
-
-      if (fs.lstatSync(curPath).isDirectory()) {
-        // Recursive call if the file is a directory
-        removeDirectoryRecursiveAsync(curPath);
-      } else {
-        // Delete the file
-        fs.unlinkSync(curPath);
-      }
-    });
-
-    // Remove the directory itself
-    fs.rmdirSync(directoryPath);
-    console.log(`Directory "${directoryPath}" removed.`);
-    if (callback != undefined) {
-      callback();
+    //check if directory path is inside the server folder
+    if (directoryPath.startsWith("servers")) {
+      exec(`rm -rf ${directoryPath}`, (error, stdout, stderr) => {
+        if (callback != undefined) {
+          callback(stdout);
+        }
+      });
+    } else {
+      console.log("Directory path is not inside servers folder");
+      callback("Directory path is not inside servers folder");
     }
   } else {
     console.log(`Directory "${directoryPath}" does not exist.`);
+    callback(`Directory "${directoryPath}" does not exist.`);
   }
 }
-
 function getIPID(ip) {
-  const secrets = require("../stores/secrets.json");
-
-  if (secrets.pepper == undefined) {
-    secrets.pepper = randomBytes(12).toString("hex");
-
-    fs.writeFileSync("stores/secrets.json", JSON.stringify(secrets));
-  }
-  return hash(ip, secrets.pepper).split(":")[1];
+  return hash(ip, config.pepper).split(":")[1];
 }
 
 function write(file, content) {
@@ -255,8 +249,7 @@ function getIndex(callback) {
           file = "floodgate-spigot.jar";
           break;
       }
-        
-      
+
       if (file.includes("-")) {
         let software = file.split("-")[0];
         let version = "";
@@ -270,8 +263,8 @@ function getIndex(callback) {
           index[software] = [];
         }
         let date;
-        if (fs.existsSync("./data/" + file)) {
-          date = fs.statSync("./data/" + file).mtime;
+        if (fs.existsSync("./assets/jars/" + file)) {
+          date = fs.statSync("./assets/jars/" + file).mtime;
         }
         index[software].push({
           version: version,
@@ -279,19 +272,17 @@ function getIndex(callback) {
           date: date,
           software: software,
         });
-        
       }
-    
     });
     callback(index);
   });
-
 }
 module.exports = {
   hash,
   hashNoSalt,
   download,
   extract,
+  extractAsync,
   write,
   GET,
   getIPID,
@@ -301,5 +292,5 @@ module.exports = {
   readFilesRecursive,
   simplifyTerminal,
   folderSizeRecursive,
-  getIndex
+  getIndex,
 };
