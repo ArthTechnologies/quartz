@@ -63,6 +63,7 @@ Router.post("/email/signup/", (req, res) => {
           account.type = "email";
           account.servers = [];
           account.email = email;
+          account.freeServers = 0;
           fs.writeFileSync(
             "accounts/email:" + email + ".json",
             JSON.stringify(account, null, 4),
@@ -143,6 +144,9 @@ Router.delete("/email", (req, res) => {
 
   if (token == account.token) {
     if (account.password == files.hash(password, account.salt).split(":")[1]) {
+      for (i in account.servers) {
+        files.removeDirectoryRecursiveAsync("servers/" + account.servers[i]);
+      }
       fs.unlinkSync("accounts/email:" + email + ".json");
 
       res.status(200).send({ success: true });
@@ -266,6 +270,7 @@ Router.post("/discord/", (req, res) => {
         account.type = "discord";
         account.email = res2.email;
         account.servers = [];
+        account.freeServers = 0;
         fs.writeFileSync(
           "accounts/discord:" + username + ".json",
           JSON.stringify(account, null, 4),
@@ -292,6 +297,10 @@ Router.delete("/discord", (req, res) => {
   let account = getJSON("accounts/discord:" + username + ".json");
 
   if (token == account.token) {
+    for (i in account.servers) {
+      files.removeDirectoryRecursiveAsync("servers/" + account.servers[i]);
+    }
+
     fs.unlinkSync("accounts/discord:" + username + ".json");
 
     res.status(200).send({ success: true });

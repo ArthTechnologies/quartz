@@ -394,7 +394,7 @@ function verifySubscriptions() {
     for (i in accounts) {
       if (accounts[i].split(".")[accounts[i].split(".").length - 1] == "json") {
         const account = getJSON(`./accounts/${accounts[i]}`);
-        if (!account.bypassStripe) {
+        if (account.freeServers == undefined) {
           try {
             const amountOfServers = account.servers.length;
             s.checkSubscription(account.email, (data) => {
@@ -483,26 +483,51 @@ files.downloadAsync(
     });
   }
 );
+const f = require("./scripts/mc.js");
+//this gets the server states every 5 minutes so that if quartz restarts, servers that were up will startup again
+function getServerStates() {
+  const data = getJSON("./assets/data.json");
+
+  if (data.serverStates == undefined) {
+    data.serverStates = [];
+  }
+  fs.readdirSync("servers").forEach((file) => {
+    data.serverStates[file] = file + ":" + f.getState(file);
+  });
+
+  fs.writeFileSync("./assets/data.json", JSON.stringify(data));
+}
+
+setInterval(() => {
+  getServerStates();
+}, 1000 * 60 * 2);
 
 const data = getJSON("./assets/data.json");
-const f = require("./scripts/mc.js");
-if (data.serversWithAutomaticStartup != undefined) {
-  data.serversWithAutomaticStartup.forEach((server) => {
-    let id = server.split(":")[0];
-    let email = server.split(":")[1] + ":" + server.split(":")[2];
-    if (fs.existsSync("servers/" + id)) {
-      f.run(id, undefined, undefined, undefined, undefined, email, false);
+for (i in data.serverStates) {
+  if (data.serverStates[i].split(":")[1] == "true") {
+    if (
+      fs.existsSync(
+        "servers/" + data.serverStates[i].split(":")[0] + "/server.json"
+      )
+    ) {
+      f.run(
+        data.serverStates[i].split(":")[0],
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        false
+      );
     }
-  });
-} else {
-  data.serversWithAutomaticStartup = [];
-  fs.writeFileSync("./assets/data.json", JSON.stringify(data));
+  }
 }
 
 app.get("/", (req, res) => {
   res.status(200).sendFile(path.join(__dirname, "assets/clientMessage.html"));
 });
 const rateLimit = require("express-rate-limit");
+const { get } = require("http");
 const limiter = rateLimit({
   max: 300,
   windowMs: 1000,

@@ -24,7 +24,7 @@ router.get(`/claimId`, function (req, res) {
   account = getJSON("accounts/" + email + ".json");
 
   if (token === account.token) {
-    if (enablePay && account.bypassStripe == false) {
+    if (enablePay) {
       //check if the user is subscribed
       let amount = account.servers.length;
       stripe.customers.list(
@@ -58,7 +58,12 @@ router.get(`/claimId`, function (req, res) {
                       subs++;
                     }
                   }
-                  if (subs > amount) {
+                  let freeServers = 0;
+                  if (account.freeServers != undefined) {
+                    freeServers = parseInt(account.freeServers);
+                  }
+                  console.log("subs: " + subs + " freeServers: " + freeServers);
+                  if (subs + freeServers > amount) {
                     //find an id to assign to the account
                     let serverFolders = fs.readdirSync("servers");
                     let serverFolder = serverFolders.sort((a, b) => a - b);
@@ -80,6 +85,7 @@ router.get(`/claimId`, function (req, res) {
                     if (fs.existsSync("accounts/" + email + ".json")) {
                       emailExists = true;
                     }
+                    fs.mkdirSync("servers/" + id);
                     console.log("debug log claiming id");
                     if (id != -1 && id < config.maxServers) {
                       if (account.servers == undefined) account.servers = [];
@@ -143,6 +149,7 @@ router.get(`/claimId`, function (req, res) {
           "accounts/" + email + ".json",
           JSON.stringify(account, null, 4)
         );
+        fs.mkdirSync("servers/" + id);
 
         res.status(200).json({ id: id });
       } else {
@@ -455,21 +462,7 @@ router.post(`/new/:id`, function (req, res) {
   console.log("../accounts/" + email + ".json");
   console.log("account", account);
   if (token === account.token || !enableAuth) {
-    //sometimes theres a bug where a server's contents are deleted but not the folder itself
-    if (
-      fs.existsSync("servers/" + id) &&
-      !fs.existsSync("servers/" + id + "/server.json")
-    ) {
-      console.log("deleting " + id);
-      files.removeDirectoryRecursive("servers/" + id);
-      const exec = require("child_process").exec;
-      exec(`rm -r servers/${id}`, (error, stdout, stderr) => {
-        if (error) {
-          console.log(error);
-        }
-      });
-    }
-    if (!fs.existsSync("servers/" + id)) {
+    if (!fs.existsSync("servers/" + id + "/server.json")) {
       console.log(id);
       console.log(account.servers);
       if (JSON.stringify(account.servers).includes(id)) {
@@ -478,7 +471,8 @@ router.post(`/new/:id`, function (req, res) {
         let amount = 0;
         for (i in account.servers) {
           if (account.servers[i] != undefined) {
-            if (fs.existsSync("servers/" + account.servers[i])) amount++;
+            if (fs.existsSync("servers/" + account.servers[i] + "/server.json"))
+              amount++;
           }
         }
         //add cors header
@@ -493,7 +487,7 @@ router.post(`/new/:id`, function (req, res) {
         let cid = "";
         console.log("debug: " + email + req.headers.username + em);
         if (
-          (!enablePay || account.bypassStripe == true) &&
+          !enablePay &&
           (config.maxServers > data.numServers ||
             config.maxServers == undefined ||
             data.numServers == undefined)
@@ -577,8 +571,11 @@ router.post(`/new/:id`, function (req, res) {
                           subs++;
                         }
                       }
-                      console.log("subs " + subs + " amount " + amount);
-                      if (subs > amount) {
+                      let freeServers = 0;
+                      if (account.freeServers != undefined) {
+                        freeServers = parseInt(account.freeServers);
+                      }
+                      if (subs + freeServers > amount) {
                         if (
                           em !== "noemail" &&
                           req.body.software !== "undefined" &&
@@ -678,27 +675,6 @@ router.post(`/:id/setInfo`, function (req, res) {
     id = req.params.id;
     iconUrl = req.body.icon;
     desc = req.body.desc;
-
-    //setting automaticStartup
-    let dataJson = getJSON("assets/data.json");
-    let server = id + ":" + email;
-    if (dataJson.serversWithAutomaticStartup == undefined) {
-      dataJson.serversWithAutomaticStartup = [];
-    }
-    if (req.body.automaticStartup) {
-      if (!dataJson.serversWithAutomaticStartup.includes(server)) {
-        dataJson.serversWithAutomaticStartup.push(server);
-      }
-      fs.writeFileSync("assets/data.json", JSON.stringify(dataJson, null, 2));
-    } else {
-      if (dataJson.serversWithAutomaticStartup.includes(server)) {
-        dataJson.serversWithAutomaticStartup.splice(
-          dataJson.serversWithAutomaticStartup.indexOf(server),
-          1
-        );
-      }
-      fs.writeFileSync("assets/data.json", JSON.stringify(dataJson, null, 2));
-    }
 
     //setting description
     if (f.checkServer(id).software == "velocity") {
@@ -838,11 +814,7 @@ router.get(`/:id/getInfo`, function (req, res) {
     }
 
     let automaticStartup = false;
-    if (data.serversWithAutomaticStartup != undefined) {
-      if (data.serversWithAutomaticStartup.includes(id + ":" + email)) {
-        automaticStartup = true;
-      }
-    }
+
     res.status(200).json({
       msg: `Success: Got server info`,
       iconUrl: iconUrl,
@@ -907,13 +879,6 @@ router.delete(`/:id`, function (req, res) {
             files.removeDirectoryRecursive(`servers/${req.params.id}`);
           }, 5000);
         });
-
-        const data = getJSON("assets/data.json");
-        for (i in data.serversWithAutomaticStartup) {
-          if (data.serversWithAutomaticStartup[i].includes(req.params.id)) {
-            data.serversWithAutomaticStartup.splice(i, 1);
-          }
-        }
       }
     } else {
       res.status(401).json({ msg: `Invalid credentials.` });
