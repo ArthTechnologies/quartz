@@ -394,7 +394,7 @@ function verifySubscriptions() {
     for (i in accounts) {
       if (accounts[i].split(".")[accounts[i].split(".").length - 1] == "json") {
         const account = getJSON(`./accounts/${accounts[i]}`);
-        if (!account.bypassStripe) {
+        if (account.freeServers == undefined) {
           try {
             const amountOfServers = account.servers.length;
             s.checkSubscription(account.email, (data) => {

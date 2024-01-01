@@ -24,7 +24,7 @@ router.get(`/claimId`, function (req, res) {
   account = getJSON("accounts/" + email + ".json");
 
   if (token === account.token) {
-    if (enablePay && account.bypassStripe == false) {
+    if (enablePay) {
       //check if the user is subscribed
       let amount = account.servers.length;
       stripe.customers.list(
@@ -58,7 +58,7 @@ router.get(`/claimId`, function (req, res) {
                       subs++;
                     }
                   }
-                  if (subs > amount) {
+                  if (subs + parseInt(account.freeServers) > amount) {
                     //find an id to assign to the account
                     let serverFolders = fs.readdirSync("servers");
                     let serverFolder = serverFolders.sort((a, b) => a - b);
@@ -493,7 +493,7 @@ router.post(`/new/:id`, function (req, res) {
         let cid = "";
         console.log("debug: " + email + req.headers.username + em);
         if (
-          (!enablePay || account.bypassStripe == true) &&
+          !enablePay &&
           (config.maxServers > data.numServers ||
             config.maxServers == undefined ||
             data.numServers == undefined)

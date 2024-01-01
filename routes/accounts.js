@@ -63,6 +63,7 @@ Router.post("/email/signup/", (req, res) => {
           account.type = "email";
           account.servers = [];
           account.email = email;
+          account.freeServers = 0;
           fs.writeFileSync(
             "accounts/email:" + email + ".json",
             JSON.stringify(account, null, 4),
@@ -266,6 +267,7 @@ Router.post("/discord/", (req, res) => {
         account.type = "discord";
         account.email = res2.email;
         account.servers = [];
+        account.freeServers = 0;
         fs.writeFileSync(
           "accounts/discord:" + username + ".json",
           JSON.stringify(account, null, 4),
