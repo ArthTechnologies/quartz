@@ -471,7 +471,8 @@ router.post(`/new/:id`, function (req, res) {
         let amount = 0;
         for (i in account.servers) {
           if (account.servers[i] != undefined) {
-            if (fs.existsSync("servers/" + account.servers[i])) amount++;
+            if (fs.existsSync("servers/" + account.servers[i] + "/server.json"))
+              amount++;
           }
         }
         //add cors header
