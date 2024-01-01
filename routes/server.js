@@ -80,6 +80,7 @@ router.get(`/claimId`, function (req, res) {
                     if (fs.existsSync("accounts/" + email + ".json")) {
                       emailExists = true;
                     }
+                    fs.mkdirSync("servers/" + id);
                     console.log("debug log claiming id");
                     if (id != -1 && id < config.maxServers) {
                       if (account.servers == undefined) account.servers = [];
