@@ -489,7 +489,7 @@ const f = require("./scripts/mc.js");
 if (data.serversWithAutomaticStartup != undefined) {
   data.serversWithAutomaticStartup.forEach((server) => {
     let id = server.split(":")[0];
-    let email = server.split(":")[1];
+    let email = server.split(":")[1] + ":" + server.split(":")[2];
     if (fs.existsSync("servers/" + id)) {
       f.run(id, undefined, undefined, undefined, undefined, email, false);
     }
