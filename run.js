@@ -510,7 +510,15 @@ for (i in data.serverStates) {
         "servers/" + data.serverStates[i].split(":")[0] + "/server.json"
       )
     ) {
-      f.run(id, undefined, undefined, undefined, undefined, undefined, false);
+      f.run(
+        data.serverStates[i].split(":")[0],
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        false
+      );
     }
   }
 }
