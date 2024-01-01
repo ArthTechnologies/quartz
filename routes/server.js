@@ -573,7 +573,7 @@ router.post(`/new/:id`, function (req, res) {
                       if (account.freeServers != undefined) {
                         freeServers = parseInt(account.freeServers);
                       }
-                      if (subs > amount) {
+                      if (subs + freeServers > amount) {
                         if (
                           em !== "noemail" &&
                           req.body.software !== "undefined" &&
