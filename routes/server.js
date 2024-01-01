@@ -24,7 +24,7 @@ router.get(`/claimId`, function (req, res) {
   account = getJSON("accounts/" + email + ".json");
 
   if (token === account.token) {
-    if (enablePay) {
+    if (enablePay && account.bypassStripe == false) {
       //check if the user is subscribed
       let amount = account.servers.length;
       stripe.customers.list(
