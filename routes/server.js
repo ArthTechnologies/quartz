@@ -94,6 +94,13 @@ router.get(`/claimId`, function (req, res) {
                         msg: `We're at capacity. Contact support for a refund.`,
                       });
                     }
+                  } else {
+                    res.status(200).json({
+                      success: false,
+                      msg: `You haven't paid for this server.`,
+                      subscriptions: subs,
+                      isCustomer: true,
+                    });
                   }
                 }
               );
