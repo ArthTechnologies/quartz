@@ -143,6 +143,7 @@ router.get(`/claimId`, function (req, res) {
           "accounts/" + email + ".json",
           JSON.stringify(account, null, 4)
         );
+        fs.mkdirSync("servers/" + id);
 
         res.status(200).json({ id: id });
       } else {
@@ -455,21 +456,7 @@ router.post(`/new/:id`, function (req, res) {
   console.log("../accounts/" + email + ".json");
   console.log("account", account);
   if (token === account.token || !enableAuth) {
-    //sometimes theres a bug where a server's contents are deleted but not the folder itself
-    if (
-      fs.existsSync("servers/" + id) &&
-      !fs.existsSync("servers/" + id + "/server.json")
-    ) {
-      console.log("deleting " + id);
-      files.removeDirectoryRecursive("servers/" + id);
-      const exec = require("child_process").exec;
-      exec(`rm -r servers/${id}`, (error, stdout, stderr) => {
-        if (error) {
-          console.log(error);
-        }
-      });
-    }
-    if (!fs.existsSync("servers/" + id)) {
+    if (!fs.existsSync("servers/" + id + "/server.json")) {
       console.log(id);
       console.log(account.servers);
       if (JSON.stringify(account.servers).includes(id)) {
