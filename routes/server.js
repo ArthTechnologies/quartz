@@ -569,7 +569,10 @@ router.post(`/new/:id`, function (req, res) {
                           subs++;
                         }
                       }
-                      console.log("subs " + subs + " amount " + amount);
+                      let freeServers = 0;
+                      if (account.freeServers != undefined) {
+                        freeServers = parseInt(account.freeServers);
+                      }
                       if (subs > amount) {
                         if (
                           em !== "noemail" &&
