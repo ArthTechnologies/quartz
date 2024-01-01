@@ -504,9 +504,12 @@ setInterval(() => {
 
 const data = getJSON("./assets/data.json");
 for (i in data.serverStates) {
-  console.log(i + data.serverStates[i]);
   if (data.serverStates[i].split(":")[1] == "true") {
-    if (fs.existsSync("servers/" + id + "/server.json")) {
+    if (
+      fs.existsSync(
+        "servers/" + data.serverStates[i].split(":")[0] + "/server.json"
+      )
+    ) {
       f.run(id, undefined, undefined, undefined, undefined, undefined, false);
     }
   }
