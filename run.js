@@ -456,6 +456,21 @@ process.stdin.on("data", (data) => {
   }
 });
 
+let stdout = "";
+process.stdout.write = (function (write) {
+  return function (string, encoding, fd) {
+    stdout += string;
+    write.apply(process.stdout, arguments);
+  };
+})(process.stdout.write);
+
+//this logs the terminal every 5 minutes
+setInterval(() => {
+  if (stdout != "") {
+    fs.writeFileSync("assets/terminal-log.txt", stdout);
+  }
+}, 1000 * 60 * 5);
+
 files.downloadAsync(
   "assets/java/java19.tar.gz",
   "https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.2%2B7/OpenJDK19U-jdk_x64_linux_hotspot_19.0.2_7.tar.gz",
