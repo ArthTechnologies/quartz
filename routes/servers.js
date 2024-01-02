@@ -85,10 +85,12 @@ router.get(`/purchases`, function (req, res) {
                     subscriptions2.data[i].plan.id == config.moddedPlanPriceId
                   ) {
                     moddedSubscriptions++;
+                    subscriptions++;
                   } else if (
                     subscriptions2.data[i].plan.id == config.basicPlanPriceId
                   ) {
                     basicSubscriptions++;
+                    subscriptions++;
                   }
                 } else {
                   subscriptions++;
