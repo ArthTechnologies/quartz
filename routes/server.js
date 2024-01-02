@@ -563,10 +563,11 @@ router.post(`/new/:id`, function (req, res) {
                       limit: 100,
                     },
                     function (err, subscriptions) {
-                      console.log(subscriptions);
                       let subs = 0;
                       //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
                       for (i in subscriptions.data) {
+                        console.log("plan object");
+                        console.log(subscriptions.data[i].plan);
                         if (subscriptions.data[i] != undefined) {
                           subs++;
                         }
