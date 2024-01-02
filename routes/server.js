@@ -575,7 +575,39 @@ router.post(`/new/:id`, function (req, res) {
                       if (account.freeServers != undefined) {
                         freeServers = parseInt(account.freeServers);
                       }
-                      if (subs + freeServers > amount) {
+                      let canCreateServer = subs + freeServers > amount;
+                      if (config.moddedPlanPriceId != "") {
+                        let basicServers = 0;
+                        let moddedServers = 0;
+                        for (i in account.servers) {
+                          let server = getJSON(
+                            "servers/" + account.servers[i] + "/server.json"
+                          );
+                          switch (server.software.toLowerCase()) {
+                            case "forge":
+                              moddedServers++;
+                              break;
+                            case "fabric":
+                              moddedServers++;
+                              break;
+                            case "quilt":
+                              moddedServers++;
+                              break;
+                            default:
+                              basicServers++;
+                          }
+                        }
+                        if (
+                          body.software == "forge" ||
+                          body.software == "fabric" ||
+                          body.software == "quilt"
+                        ) {
+                          createServer = moddedServers + freeServers > amount;
+                        } else {
+                          createServer = basicServers + freeServers > amount;
+                        }
+                      }
+                      if (canCreateServer) {
                         if (
                           em !== "noemail" &&
                           req.body.software !== "undefined" &&
