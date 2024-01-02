@@ -54,7 +54,7 @@ router.get(`/`, function (req, res) {
 router.get(`/subscriptions`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-
+  account = getJSON(`accounts/${email}.json`);
   if (!enableAuth) email = "noemail";
   if (token === account.token || !enableAuth) {
     stripe.customers.list(
