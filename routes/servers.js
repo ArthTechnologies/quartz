@@ -8,6 +8,8 @@ const files = require("../scripts/files.js");
 const config = require("../scripts/utils.js").getConfig();
 const getJSON = require("../scripts/utils.js").getJSON;
 const enableAuth = JSON.parse(config.enableAuth);
+const stripeKey = config.stripeKey;
+const stripe = require("stripe")(stripeKey);
 
 router.get(`/`, function (req, res) {
   email = req.headers.username;
