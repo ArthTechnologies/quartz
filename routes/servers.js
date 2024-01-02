@@ -81,11 +81,11 @@ router.get(`/purchases`, function (req, res) {
               for (i in subscriptions2.data) {
                 if (config.moddedPlanPriceId != "") {
                   if (
-                    subscriptions.data[i].plan.id == config.moddedPlanPriceId
+                    subscriptions[i].data.plan.id == config.moddedPlanPriceId
                   ) {
                     moddedSubscriptions++;
                   } else if (
-                    subscriptions.data[i].plan.id == config.basicPlanPriceId
+                    subscriptions[i].data.plan.id == config.basicPlanPriceId
                   ) {
                     basicSubscriptions++;
                   }
