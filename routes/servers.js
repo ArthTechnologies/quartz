@@ -78,15 +78,15 @@ router.get(`/purchases`, function (req, res) {
               let moddedSubscriptions = 0;
               let basicSubscriptions = 0;
               let subscriptions = 0;
-              console.log(subscriptions2);
-              for (i in subscriptions2) {
+
+              for (i in subscriptions2.data) {
                 if (config.moddedPlanPriceId != "") {
                   if (
-                    subscriptions2[i].data.plan.id == config.moddedPlanPriceId
+                    subscriptions2.data[i].plan.id == config.moddedPlanPriceId
                   ) {
                     moddedSubscriptions++;
                   } else if (
-                    subscriptions2[i].data.plan.id == config.basicPlanPriceId
+                    subscriptions2.data[i].plan.id == config.basicPlanPriceId
                   ) {
                     basicSubscriptions++;
                   }
