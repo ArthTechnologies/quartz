@@ -72,11 +72,11 @@ router.get(`/purchases`, function (req, res) {
               customer: cid,
               limit: 100,
             },
-            function (err, subscriptions) {
+            function (err, subscriptions2) {
               let moddedSubscriptions = 0;
               let basicSubscriptions = 0;
               let subscriptions = 0;
-              for (i in subscriptions.data) {
+              for (i in subscriptions2.data) {
                 if (config.moddedPlanPriceId != "") {
                   if (
                     subscriptions.data[i].plan.id == config.moddedPlanPriceId
