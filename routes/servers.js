@@ -49,6 +49,63 @@ router.get(`/`, function (req, res) {
   }
 });
 
+router.get(`/purchases`, function (req, res) {
+  email = req.headers.username;
+  token = req.headers.token;
+
+  if (!enableAuth) email = "noemail";
+  if (token === account.token || !enableAuth) {
+    stripe.customers.list(
+      {
+        limit: 100,
+        email: account.email,
+      },
+      function (err, customers) {
+        if (err) {
+          console.log("err", err);
+        } else {
+          cid = customers.data[0].id;
+
+          //check the customer's subscriptions and return it
+          stripe.subscriptions.list(
+            {
+              customer: cid,
+              limit: 100,
+            },
+            function (err, subscriptions) {
+              let moddedSubscriptions = 0;
+              let basicSubscriptions = 0;
+              let subscriptions = 0;
+              for (i in subscriptions.data) {
+                if (config.moddedPlanPriceId != "") {
+                  if (
+                    subscriptions.data[i].plan.id == config.moddedPlanPriceId
+                  ) {
+                    moddedSubscriptions++;
+                  } else if (
+                    subscriptions.data[i].plan.id == config.basicPlanPriceId
+                  ) {
+                    basicSubscriptions++;
+                  }
+                } else {
+                  subscriptions++;
+                }
+              }
+              res.status(200).json({
+                moddedSubscriptions: moddedSubscriptions,
+                basicSubscriptions: basicSubscriptions,
+                subscriptions: subscriptions,
+              });
+            }
+          );
+        }
+      }
+    );
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
+});
+
 router.get(`/worldgenMods`, function (req, res) {
   //for each file in worldgen, if it has req.query.version, add filename.split("-")[0] to the returj array
   let wmods = ["terralith", "incendium", "nullscape", "structory"];
