@@ -51,7 +51,7 @@ router.get(`/`, function (req, res) {
   }
 });
 
-router.get(`/purchases`, function (req, res) {
+router.get(`/subscriptions`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
 
@@ -100,6 +100,7 @@ router.get(`/purchases`, function (req, res) {
                 moddedSubscriptions: moddedSubscriptions,
                 basicSubscriptions: basicSubscriptions,
                 subscriptions: subscriptions,
+                freeServers: account.freeServers,
               });
             }
           );
