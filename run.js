@@ -440,8 +440,11 @@ process.stdin.on("data", (data) => {
       process.exit(0);
     case "help":
       console.log(
-        "Commands:\nstop\nend\nexit\nhelp\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
+        "Commands:\nstop\nend\nexit\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
       );
+      break;
+    case "clear":
+      process.stdout.write("\x1B[2J\x1B[0f");
       break;
     case "refresh":
       getLatestVersion();
