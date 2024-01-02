@@ -80,6 +80,7 @@ router.get(`/purchases`, function (req, res) {
               let subscriptions = 0;
               for (i in subscriptions2) {
                 if (config.moddedPlanPriceId != "") {
+                  console.log(subscriptions2[i].data);
                   if (
                     subscriptions2[i].data.plan.id == config.moddedPlanPriceId
                   ) {
