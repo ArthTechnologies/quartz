@@ -575,8 +575,7 @@ app.use(limiter, express.json(), cors());
 
 app.use("/server", require("./routes/server"));
 app.use("/checkout", require("./routes/checkout"));
-app.use("/servers", require("./routes/servers"));
-app.use("/settings", require("./routes/settings"));
+app.use("/info", require("./routes/info.js"));
 app.use("/terminal", require("./routes/terminal"));
 app.use("/accounts", require("./routes/accounts"));
 app.use("/curseforge", require("./routes/curseforge"));

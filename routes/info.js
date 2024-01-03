@@ -11,7 +11,7 @@ const enableAuth = JSON.parse(config.enableAuth);
 const stripeKey = config.stripeKey;
 const stripe = require("stripe")(stripeKey);
 
-router.get(`/`, function (req, res) {
+router.get(`/servers`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
 
@@ -110,6 +110,31 @@ router.get(`/subscriptions`, function (req, res) {
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
+});
+
+router.get(`/`, function (req, res) {
+  //add cors header
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  let returnObject = {};
+  //add every non-secret from config and everything from data.json to returnObject
+  returnObject["address"] = config.address;
+  returnObject["enablePay"] = config.enablePay;
+  returnObject["enableAuth"] = config.enableAuth;
+  returnObject["maxServers"] = config.maxServers;
+  returnObject["serverStorageLimit"] = config.serverStorageLimit;
+  returnObject["enableVirusScan"] = config.enableVirusScan;
+  returnObject["enableCloudflareVerify"] = config.enableCloudflareVerify;
+  returnObject["cloudflareVerifySiteKey"] = config.cloudflareVerifySiteKey;
+  returnObject["enableDeepL"] =
+    config.deeplKey != "" && config.deeplKey != null;
+  for (var key in getJSON("assets/data.json")) {
+    returnObject[key] = getJSON("assets/data.json")[key];
+  }
+  res.json(returnObject);
 });
 
 router.get(`/worldgenMods`, function (req, res) {
