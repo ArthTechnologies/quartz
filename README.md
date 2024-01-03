@@ -43,11 +43,13 @@ If you are using an ARM-based machine (Like a Mac or Raspberry Pi):
 
 # Contributing
 
-To run a dev server, follow "how to run".
+Make sure to run `git checkout next` to switch to the next branch, where future updates are being worked on.
 
-## Contributing Guidelines
+## How to run a dev server
 
-- Please format your code with the Prettier VSCode extension or an alternative that achieves the same results.
+- Make sure you install/update the packages by running `npm i`
+- To run a dev server, enter the command `npm run dev`
+- If you need to mimic a production environment for something like working with Service Workers, enter `npm run preview` instead.
 
 ### Check out our [frontend](https://github.com/arthmc/observer)'s progress
 
