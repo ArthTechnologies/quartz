@@ -23,7 +23,7 @@ router.get(`/claimId`, function (req, res) {
   token = req.headers.token;
   account = getJSON("accounts/" + email + ".json");
 
-  if (token === account.token) {
+  if (token === account.token || !enableAuth) {
     if (enablePay) {
       //check if the user is subscribed
       let amount = account.servers.length;
@@ -551,7 +551,6 @@ router.post(`/new/:id`, function (req, res) {
                 return "no";
               } else {
                 console.log("debug: " + email + req.headers.username + em);
-                console.log(customers);
 
                 if (customers.data.length > 0) {
                   cid = customers.data[0].id;
@@ -563,10 +562,11 @@ router.post(`/new/:id`, function (req, res) {
                       limit: 100,
                     },
                     function (err, subscriptions) {
-                      console.log(subscriptions);
                       let subs = 0;
                       //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
                       for (i in subscriptions.data) {
+                        console.log("plan object");
+                        console.log(subscriptions.data[i].plan);
                         if (subscriptions.data[i] != undefined) {
                           subs++;
                         }
@@ -575,7 +575,39 @@ router.post(`/new/:id`, function (req, res) {
                       if (account.freeServers != undefined) {
                         freeServers = parseInt(account.freeServers);
                       }
-                      if (subs + freeServers > amount) {
+                      let canCreateServer = subs + freeServers > amount;
+                      if (config.moddedPlanPriceId != "") {
+                        let basicServers = 0;
+                        let moddedServers = 0;
+                        for (i in account.servers) {
+                          let server = getJSON(
+                            "servers/" + account.servers[i] + "/server.json"
+                          );
+                          switch (server.software.toLowerCase()) {
+                            case "forge":
+                              moddedServers++;
+                              break;
+                            case "fabric":
+                              moddedServers++;
+                              break;
+                            case "quilt":
+                              moddedServers++;
+                              break;
+                            default:
+                              basicServers++;
+                          }
+                        }
+                        if (
+                          body.software == "forge" ||
+                          body.software == "fabric" ||
+                          body.software == "quilt"
+                        ) {
+                          createServer = moddedServers + freeServers > amount;
+                        } else {
+                          createServer = basicServers + freeServers > amount;
+                        }
+                      }
+                      if (canCreateServer) {
                         if (
                           em !== "noemail" &&
                           req.body.software !== "undefined" &&

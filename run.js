@@ -74,7 +74,10 @@ const config = require("./scripts/utils.js").getConfig();
 
 if (!fs.existsSync("accounts")) {
   fs.mkdirSync("accounts");
-  fs.writeFileSync("accounts/noemail.json", `{"accountId":"noemail"}`);
+  fs.writeFileSync(
+    "accounts/noemail.json",
+    `{"accountId":"noemail", "servers":[]}`
+  );
 }
 
 //Migration from old file-based servers & accounts format from 1.2 to the 1.3 folder-based one
@@ -440,8 +443,11 @@ process.stdin.on("data", (data) => {
       process.exit(0);
     case "help":
       console.log(
-        "Commands:\nstop\nend\nexit\nhelp\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
+        "Commands:\nstop\nend\nexit\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
       );
+      break;
+    case "clear":
+      process.stdout.write("\x1B[2J\x1B[0f");
       break;
     case "refresh":
       getLatestVersion();
@@ -455,6 +461,21 @@ process.stdin.on("data", (data) => {
       console.log('Unknown command. Type "help" for a list of commands.');
   }
 });
+
+let stdout = "";
+process.stdout.write = (function (write) {
+  return function (string, encoding, fd) {
+    stdout += string;
+    write.apply(process.stdout, arguments);
+  };
+})(process.stdout.write);
+
+//this logs the terminal every 5 minutes
+setInterval(() => {
+  if (stdout != "") {
+    fs.writeFileSync("assets/terminal-log.txt", stdout);
+  }
+}, 1000 * 60 * 5);
 
 files.downloadAsync(
   "assets/java/java19.tar.gz",
@@ -557,8 +578,7 @@ app.use(limiter, express.json(), cors());
 
 app.use("/server", require("./routes/server"));
 app.use("/checkout", require("./routes/checkout"));
-app.use("/servers", require("./routes/servers"));
-app.use("/settings", require("./routes/settings"));
+app.use("/info", require("./routes/info.js"));
 app.use("/terminal", require("./routes/terminal"));
 app.use("/accounts", require("./routes/accounts"));
 app.use("/curseforge", require("./routes/curseforge"));
