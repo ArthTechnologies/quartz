@@ -74,7 +74,10 @@ const config = require("./scripts/utils.js").getConfig();
 
 if (!fs.existsSync("accounts")) {
   fs.mkdirSync("accounts");
-  fs.writeFileSync("accounts/noemail.json", `{"accountId":"noemail"}`);
+  fs.writeFileSync(
+    "accounts/noemail.json",
+    `{"accountId":"noemail", "servers":[]}`
+  );
 }
 
 //Migration from old file-based servers & accounts format from 1.2 to the 1.3 folder-based one
