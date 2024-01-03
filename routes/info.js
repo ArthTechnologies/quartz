@@ -182,4 +182,9 @@ router.get(`/jarsIndex`, function (req, res) {
   });
 });
 
+router.get(`isAtCapacity`, function (req, res) {
+  let numServers = fs.readdirSync("servers").length;
+  res.status(200).json(numServers >= config.maxServers);
+});
+
 module.exports = router;
