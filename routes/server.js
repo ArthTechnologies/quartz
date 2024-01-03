@@ -583,7 +583,7 @@ router.post(`/new/:id`, function (req, res) {
                           let server = getJSON(
                             "servers/" + account.servers[i] + "/server.json"
                           );
-                          switch (server.software.toLowerCase()) {
+                          switch (req.body.software.toLowerCase()) {
                             case "forge":
                               moddedServers++;
                               break;
@@ -598,9 +598,9 @@ router.post(`/new/:id`, function (req, res) {
                           }
                         }
                         if (
-                          body.software == "forge" ||
-                          body.software == "fabric" ||
-                          body.software == "quilt"
+                          req.body.software == "forge" ||
+                          req.body.software == "fabric" ||
+                          req.body.software == "quilt"
                         ) {
                           createServer = moddedServers + freeServers > amount;
                         } else {
