@@ -686,12 +686,15 @@ router.post(`/new/:id`, function (req, res) {
           );
         }
       } else {
-        res.status(401).json({ success: false, msg: `You don't own this ID.` });
+        res.status(401).json({
+          success: false,
+          msg: `You don't own (ID: ${req.params.id}).`,
+        });
       }
     } else {
       res.status(401).json({
         success: false,
-        msg: `There's already a server using this ID. Contact support if you think this is a mistake.`,
+        msg: `There's already a server using (ID: ${req.params.id}). Contact support if you think this is a mistake.`,
       });
     }
   } else {
