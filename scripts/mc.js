@@ -134,7 +134,11 @@ function run(
   if (software == "quilt") {
     folder = "servers/" + id + "/server";
     if (!fs.existsSync(folder)) {
-      fs.mkdirSync(folder);
+      try {
+        fs.mkdirSync(folder);
+      } catch {
+        console.log("error creating server folder");
+      }
     }
   }
 
@@ -213,7 +217,11 @@ function run(
   let doneInstalling = false;
 
   if (!fs.existsSync(folder)) {
-    fs.mkdirSync(folder);
+    try {
+      fs.mkdirSync(folder);
+    } catch {
+      console.log("error creating server folder");
+    }
     //fs.writeFileSync(folder + "/world.zip", worldFile);
   }
   if (!fs.existsSync(folder + "/plugins")) {
