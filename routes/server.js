@@ -583,7 +583,7 @@ router.post(`/new/:id`, function (req, res) {
                           let server = getJSON(
                             "servers/" + account.servers[i] + "/server.json"
                           );
-                          switch (server.software.toLowerCase()) {
+                          switch (req.body.software.toLowerCase()) {
                             case "forge":
                               moddedServers++;
                               break;
