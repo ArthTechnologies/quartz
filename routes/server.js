@@ -23,7 +23,7 @@ router.get(`/claimId`, function (req, res) {
   token = req.headers.token;
   account = getJSON("accounts/" + email + ".json");
 
-  if (token === account.token) {
+  if (token === account.token || !enableAuth) {
     if (enablePay) {
       //check if the user is subscribed
       let amount = account.servers.length;
