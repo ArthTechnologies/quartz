@@ -598,9 +598,9 @@ router.post(`/new/:id`, function (req, res) {
                           }
                         }
                         if (
-                          body.software == "forge" ||
-                          body.software == "fabric" ||
-                          body.software == "quilt"
+                          req.body.software == "forge" ||
+                          req.body.software == "fabric" ||
+                          req.body.software == "quilt"
                         ) {
                           createServer = moddedServers + freeServers > amount;
                         } else {
