@@ -17,9 +17,7 @@ Router.get("/", (req, res) => {
 
 Router.get("/secrets", (req, res) => {
   if (config.forwardingSecret != undefined) {
-    if (
-      files.hashNoSalt(req.query.forwardingSecret) == config.forwardingSecret
-    ) {
+    if (req.query.forwardingSecret == config.forwardingSecret) {
       let serverstoObject = [];
       let accountstoObject = [];
       fs.readdirSync("servers").forEach((server) => {
