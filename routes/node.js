@@ -18,20 +18,24 @@ Router.get("/", (req, res) => {
 Router.get("/secrets", (req, res) => {
   if (config.forwardingSecret != undefined) {
     if (req.query.forwardingSecret == config.forwardingSecret) {
-      let serverstoObject = [];
-      let accountstoObject = [];
+      let serverstoObject = {};
+      let accountstoObject = {};
       fs.readdirSync("servers").forEach((server) => {
-        const text = fs.readFileSync(`servers/${server}/server.json`);
-        try {
-          serverstoObject.push(JSON.parse(text));
-        } catch {
-          console.log("error parsing " + server);
+        if (fs.existsSync(`servers/${server}/server.json`)) {
+          const text = fs.readFileSync(`servers/${server}/server.json`);
+          try {
+            serverstoObject[server] = JSON.parse(text);
+          } catch {
+            console.log("error parsing " + server);
+          }
+        } else {
+          console.log("server.json not found for " + server);
         }
       });
       fs.readdirSync("accounts").forEach((account) => {
         const text = fs.readFileSync(`accounts/${account}`);
         try {
-          accountstoObject.push(JSON.parse(text));
+          accountstoObject[account] = JSON.parse(text);
         } catch {
           console.log("error parsing " + account);
         }
