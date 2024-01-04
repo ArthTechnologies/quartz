@@ -29,7 +29,7 @@ Router.get("/secrets", (req, res) => {
             console.log("error parsing " + server);
           }
         } else {
-          console.log("server.json not found for " + server);
+          serverstoObject[server] = "not created yet";
         }
       });
       fs.readdirSync("accounts").forEach((account) => {
