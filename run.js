@@ -7,6 +7,8 @@ const readJSON = require("./scripts/utils.js").readJSON;
 const writeJSON = require("./scripts/utils.js").writeJSON;
 const fs = require("fs");
 const crypto = require("crypto");
+const files = require("./scripts/files.js");
+const config = require("./scripts/utils.js").getConfig();
 
 exec = require("child_process").exec;
 require("dotenv").config();
@@ -77,8 +79,6 @@ if (!fs.existsSync("config.txt")) {
   }
   fs.writeFileSync("config.txt", template.join("\n"));
 }
-const files = require("./scripts/files.js");
-const config = require("./scripts/utils.js").getConfig();
 
 if (!fs.existsSync("accounts")) {
   fs.mkdirSync("accounts");
