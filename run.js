@@ -64,7 +64,7 @@ if (!fs.existsSync("config.txt")) {
             template[i] =
               template[i].split("=")[0] +
               "=hash_" +
-              hashNoSalt(current[j].split("=")[1]);
+              files.hashNoSalt(current[j].split("=")[1]);
           } else if (current[j].split("=")[1] == "undefined") {
             template[i] = template[i].split("=")[0] + "=";
           } else {
