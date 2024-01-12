@@ -1,8 +1,8 @@
 const express = require("express");
 const Router = express.Router();
 const fs = require("fs");
-const getJSON = require("../scripts/utils.js").getJSON;
-const data = getJSON("assets/data.json");
+const readJSON = require("../scripts/utils.js").readJSON;
+const data = readJSON("assets/data.json");
 const files = require("../scripts/files.js");
 const config = require("../scripts/utils.js").getConfig();
 

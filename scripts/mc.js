@@ -4,7 +4,7 @@ fs = require("fs");
 let states = [];
 const files = require("./files.js");
 const config = require("./utils.js").getConfig();
-const getJSON = require("./utils.js").getJSON;
+const readJSON = require("./utils.js").readJSON;
 const { time, Console } = require("console");
 const { randomBytes } = require("crypto");
 const { stat } = require("fs");
@@ -84,7 +84,7 @@ function checkServer(id) {
   if (states[id] == undefined) {
     states[id] = "false";
   }
-  let server = getJSON("servers/" + id + "/server.json");
+  let server = readJSON("servers/" + id + "/server.json");
   return {
     version: server.version,
     software: server.software,
@@ -105,7 +105,7 @@ function run(
   modpackID,
   modpackVersionID
 ) {
-  let server = getJSON("servers/" + id + "/server.json");
+  let server = readJSON("servers/" + id + "/server.json");
   let out = [];
   states[id] = "starting";
 
@@ -196,7 +196,7 @@ function run(
       break;
   }
 
-  const datajson = getJSON("assets/data.json");
+  const datajson = readJSON("assets/data.json");
   let latestVersion = datajson.latestVersion;
   //this selects the correct version of java for the minecraft version
   if (version == latestVersion) {
@@ -623,7 +623,7 @@ function killAsync(id, callback) {
 }
 
 function readTerminal(id) {
-  let server = getJSON("servers/" + id + "/server.json");
+  let server = readJSON("servers/" + id + "/server.json");
   let ret = terminalOutput[id];
 
   ret = files.simplifyTerminal(ret, server.software);

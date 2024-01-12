@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 const f = require("../scripts/mc.js");
 const config = require("../scripts/utils.js").getConfig();
-const getJSON = require("../scripts/utils.js").getJSON;
+const readJSON = require("../scripts/utils.js").readJSON;
 const enableAuth = JSON.parse(config.enableAuth);
 router.get("/:id", (req, res) => {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     res.send(f.readTerminal(req.params.id));
   } else {
@@ -19,8 +19,8 @@ router.get("/:id", (req, res) => {
 router.post("/:id", (req, res) => {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     console.log("revieved request: " + req.query.cmd);
     f.writeTerminal(req.params.id, req.query.cmd);

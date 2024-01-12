@@ -12,7 +12,7 @@ function getConfig() {
   return config;
 }
 
-function getJSON(file) {
+function readJSON(file) {
   let json = {};
   try {
     json = JSON.parse(fs.readFileSync(file, "utf8"));
@@ -22,4 +22,4 @@ function getJSON(file) {
   return json;
 }
 
-module.exports = { getConfig, getJSON };
+module.exports = { getConfig, readJSON };

@@ -4,8 +4,8 @@ const files = require("../scripts/files.js");
 const f = require("../scripts/mc.js");
 const multer = require("multer");
 const upload = multer({ dest: "assets/uploads/" });
-const getJSON = require("../scripts/utils.js").getJSON;
-const data = getJSON("assets/data.json");
+const readJSON = require("../scripts/utils.js").readJSON;
+const data = readJSON("assets/data.json");
 const JsDiff = require("diff");
 const config = require("../scripts/utils.js").getConfig();
 
@@ -21,7 +21,7 @@ router.get(`/claimId`, function (req, res) {
   console.log("debug1");
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
+  account = readJSON("accounts/" + email + ".json");
 
   if (token === account.token || !enableAuth) {
     if (enablePay) {
@@ -165,8 +165,8 @@ router.get(`/claimId`, function (req, res) {
 router.get(`/:id`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
 
   if (hasAccess(token, account)) {
     //add cors header
@@ -180,8 +180,8 @@ router.get(`/:id`, function (req, res) {
 router.post(`/:id/state/:state`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     state = req.params.state;
     id = req.params.id;
@@ -217,8 +217,8 @@ router.post(`/:id/state/:state`, function (req, res) {
 router.delete(`/:id/:modtype(plugin|mod)`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     id = req.params.id;
     pluginId = req.query.pluginId;
@@ -246,8 +246,8 @@ router.delete(`/:id/:modtype(plugin|mod)`, function (req, res) {
 router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     let modtype = req.params.modtype;
     let mods = [];
@@ -260,9 +260,9 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
       path += "/server";
     }
     if (fs.existsSync(`${path}/modrinth.index.json`)) {
-      modpack = getJSON(`${path}/modrinth.index.json`);
+      modpack = readJSON(`${path}/modrinth.index.json`);
     } else if (fs.existsSync(`${path}/curseforge.index.json`)) {
-      modpack = getJSON(`${path}/curseforge.index.json`);
+      modpack = readJSON(`${path}/curseforge.index.json`);
     }
 
     fs.readdirSync(`${path}/${modtype}`).forEach((file) => {
@@ -330,8 +330,8 @@ router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
 router.post(`/:id/version/`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     id = req.params.id;
     version = req.query.version;
@@ -355,8 +355,8 @@ let lastPlugin = "";
 router.post(`/:id/add/:modtype(plugin|mod)`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
@@ -393,8 +393,8 @@ router.post(`/:id/add/:modtype(plugin|mod)`, function (req, res) {
 router.post(`/:id/modpack`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     f.stopAsync(req.params.id, () => {
       f.downloadModpack(
@@ -413,8 +413,8 @@ router.post(`/:id/modpack`, function (req, res) {
 router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     id = req.params.id;
     filename = req.query.filename;
@@ -452,7 +452,7 @@ router.post(`/new/:id`, function (req, res) {
   token = req.headers.token;
   id = req.params.id;
   if (!enableAuth) email = "noemail";
-  account = getJSON("accounts/" + email + ".json");
+  account = readJSON("accounts/" + email + ".json");
   console.log(
     "creating server for " +
       email +
@@ -478,7 +478,7 @@ router.post(`/new/:id`, function (req, res) {
         //add cors header
         res.header("Access-Control-Allow-Origin", "*");
 
-        const datajson = getJSON("assets/data.json");
+        const datajson = readJSON("assets/data.json");
         let serverFolders = fs.readdirSync("servers");
         datajson.numServers = serverFolders.length;
         fs.writeFileSync("assets/data.json", JSON.stringify(datajson, null, 2));
@@ -580,7 +580,7 @@ router.post(`/new/:id`, function (req, res) {
                         let basicServers = 0;
                         let moddedServers = 0;
                         for (i in account.servers) {
-                          let server = getJSON(
+                          let server = readJSON(
                             "servers/" + account.servers[i] + "/server.json"
                           );
                           switch (req.body.software.toLowerCase()) {
@@ -704,8 +704,8 @@ router.post(`/new/:id`, function (req, res) {
 router.post(`/:id/setInfo`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     id = req.params.id;
     iconUrl = req.body.icon;
@@ -790,8 +790,8 @@ router.post(`/:id/setInfo`, function (req, res) {
 router.get(`/:id/getInfo`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     //send the motd and iconUrl
     let iconUrl = "/images/placeholder.webp";
@@ -881,8 +881,8 @@ router.delete(`/:id`, function (req, res) {
   console.log("deleting " + req.params.id);
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     if (
       files.hash(req.query.password, account.salt).split(":")[1] ==
@@ -927,8 +927,8 @@ router.get("/:id/world", function (req, res) {
   console.log(req.headers);
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     //zip /servers/id/world and send it to the client
     id = req.params.id;
@@ -974,8 +974,8 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   id = req.params.id;
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     let lock = false;
     let lock2 = false;
@@ -995,7 +995,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                 worldgenMods.push(req.query.worldgenMods);
               }
             }
-            const serverJson = getJSON(`servers/${id}/server.json`);
+            const serverJson = readJSON(`servers/${id}/server.json`);
             serverJson.addons = worldgenMods;
             fs.writeFileSync(
               `servers/${id}/server.json`,
@@ -1124,8 +1124,8 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
 router.get("/:id/proxy/info", function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     if (f.checkServer(req.params.id)["software"] == "velocity") {
       let lobbyName;
@@ -1157,8 +1157,8 @@ router.get("/:id/proxy/info", function (req, res) {
 router.post("/:id/proxy/info", function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(
@@ -1184,8 +1184,8 @@ router.post("/:id/proxy/info", function (req, res) {
 router.get("/:id/proxy/servers", function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(
@@ -1227,8 +1227,8 @@ router.get("/:id/proxy/servers", function (req, res) {
 router.post("/:id/proxy/servers", function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(
@@ -1278,7 +1278,7 @@ router.post("/:id/proxy/servers", function (req, res) {
       if (req.query.ip.split(":")[0] == config.address) {
         let subserverId = parseInt(req.query.ip.split(":")[1]) - 10000;
         if (
-          getJSON("servers/" + subserverId + "/server.json").accountId ==
+          readJSON("servers/" + subserverId + "/server.json").accountId ==
           account.accountId
         ) {
           f.proxiesToggle(subserverId, true, req.query.secret);
@@ -1323,8 +1323,8 @@ router.post("/:id/proxy/servers", function (req, res) {
 router.delete("/:id/proxy/servers", function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     if (f.checkServer(req.params.id)["software"] === "velocity") {
       let config = fs.readFileSync(
@@ -1378,8 +1378,8 @@ router.delete("/:id/proxy/servers", function (req, res) {
 router.get("/:id/files", function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     if (fs.existsSync(`servers/${req.params.id}/`)) {
       res
@@ -1394,8 +1394,8 @@ router.get("/:id/files", function (req, res) {
 router.get("/:id/file/:path", function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account)) {
     let path = req.params.path.split("*").join("/");
     if (fs.existsSync(`servers/${req.params.id}/${path}`)) {
@@ -1454,8 +1454,8 @@ router.get("/:id/file/:path", function (req, res) {
 router.post("/:id/file/:path", function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON("servers/" + req.params.id + "/server.json");
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account) && fs.existsSync(`servers/${req.params.id}/`)) {
     let path = req.params.path;
     if (req.params.path.includes("*")) {
@@ -1521,8 +1521,8 @@ router.post("/:id/file/:path", function (req, res) {
 router.delete("/:id/file/:path", function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON("accounts/" + email + ".json");
-  server = getJSON(`servers/${req.params.id}/server.json`);
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON(`servers/${req.params.id}/server.json`);
   if (hasAccess(token, account) && fs.existsSync(`servers/${req.params.id}/`)) {
     let path = req.params.path;
     if (req.params.path.includes("*")) {
@@ -1555,16 +1555,16 @@ router.delete("/:id/file/:path", function (req, res) {
 router.post("/:id/rename/", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
-  let account = getJSON("accounts/" + email + ".json");
+  let account = readJSON("accounts/" + email + ".json");
   if (hasAccess(token, account) && fs.existsSync(`servers/${req.params.id}/`)) {
-    server = getJSON(`servers/${req.params.id}/server.json`);
+    server = readJSON(`servers/${req.params.id}/server.json`);
     server.name = req.query.newName;
     fs.writeFileSync(
       `servers/${req.params.id}/server.json`,
       JSON.stringify(server, null, 2)
     );
 
-    account = getJSON("accounts/" + email + ".json");
+    account = readJSON("accounts/" + email + ".json");
     fs.writeFileSync(
       `accounts/${email}.json`,
       JSON.stringify(account, null, 2)
@@ -1578,7 +1578,7 @@ router.post("/:id/rename/", function (req, res) {
 router.get("/:id/storageInfo", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
-  let account = getJSON("accounts/" + email + ".json");
+  let account = readJSON("accounts/" + email + ".json");
   if (hasAccess(token, account) && fs.existsSync(`servers/${req.params.id}/`)) {
     let limit = -1;
     let used = files.folderSizeRecursive(`servers/${req.params.id}/`);
