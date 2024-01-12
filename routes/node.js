@@ -4,11 +4,12 @@ const fs = require("fs");
 const readJSON = require("../scripts/utils.js").readJSON;
 const data = readJSON("assets/data.json");
 const files = require("../scripts/files.js");
+const writeJSON = require("../scripts/utils.js").writeJSON;
 const config = require("../scripts/utils.js").getConfig();
 
 Router.get("/", (req, res) => {
   data.numServers = fs.readdirSync("servers").length;
-  fs.writeFileSync("assets/data.json", JSON.stringify(data, null, 2));
+  writeJSON("assets/data.json", data);
   res.status(200).json({
     maxServers: config.maxServers,
     numServers: data.numServers,
@@ -77,7 +78,7 @@ Router.post("/account", (req, res) => {
         if (fs.existsSync(`accounts/${req.body.account}`)) {
           res.status(200).json({ msg: "Account already exists." });
         } else {
-          fs.writeFileSync(`accounts/${req.body.account}`, JSON.stringify({}));
+          writeJSON(`accounts/${req.body.account}`, {});
           res.status(200).json({ msg: "Account created." });
         }
       } else {

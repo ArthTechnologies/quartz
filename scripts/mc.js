@@ -8,6 +8,7 @@ const readJSON = require("./utils.js").readJSON;
 const { time, Console } = require("console");
 const { randomBytes } = require("crypto");
 const { stat } = require("fs");
+const writeJSON = require("./utils.js").writeJSON;
 let terminalOutput = [];
 let terminalInput = "";
 
@@ -679,10 +680,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                     modpack.platform = "mr";
                     modpack.currentVersionDateAdded = Date.now();
                     modpack.versionID = versionID;
-                    fs.writeFileSync(
-                      folder + "/modrinth.index.json",
-                      JSON.stringify(modpack)
-                    );
+                    writeJSON(folder + "/modrinth.index.json", modpack);
                     return;
                   });
                 }
@@ -748,10 +746,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                     modpack.platform = "cf";
                     modpack.currentVersionDateAdded = Date.now();
                     modpack.versionID = versionID;
-                    fs.writeFileSync(
-                      folder + "/curseforge.index.json",
-                      JSON.stringify(modpack)
-                    );
+                    writeJSON(folder + "/curseforge.index.json", modpack);
                     return;
                   });
                 }

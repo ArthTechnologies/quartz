@@ -10,6 +10,7 @@ const JsDiff = require("diff");
 const config = require("../scripts/utils.js").getConfig();
 
 const fs = require("fs");
+const writeJSON = require("../scripts/utils.js").writeJSON;
 
 const stripeKey = config.stripeKey;
 const stripe = require("stripe")(stripeKey);
@@ -91,10 +92,7 @@ router.get(`/claimId`, function (req, res) {
                       if (account.servers == undefined) account.servers = [];
                       if (!account.servers.includes(id))
                         account.servers.push(id);
-                      fs.writeFileSync(
-                        "accounts/" + email + ".json",
-                        JSON.stringify(account, null, 4)
-                      );
+                      writeJSON("accounts/" + email + ".json", account);
                       res.status(200).json({ id: id });
                     } else {
                       res.status(400).json({
@@ -145,10 +143,7 @@ router.get(`/claimId`, function (req, res) {
 
         if (!account.servers.includes(id)) account.servers.push(id);
 
-        fs.writeFileSync(
-          "accounts/" + email + ".json",
-          JSON.stringify(account, null, 4)
-        );
+        writeJSON("accounts/" + email + ".json", account);
         fs.mkdirSync("servers/" + id);
 
         res.status(200).json({ id: id });
@@ -337,10 +332,7 @@ router.post(`/:id/version/`, function (req, res) {
     version = req.query.version;
 
     server.version = version;
-    fs.writeFileSync(
-      "servers/" + id + "/server.json",
-      JSON.stringify(server, null, 2)
-    );
+    writeJSON("servers/" + id + "/server.json", server);
 
     f.stopAsync(id, () => {
       f.run(id, undefined, undefined, undefined, undefined, email, false);
@@ -481,7 +473,7 @@ router.post(`/new/:id`, function (req, res) {
         const datajson = readJSON("assets/data.json");
         let serverFolders = fs.readdirSync("servers");
         datajson.numServers = serverFolders.length;
-        fs.writeFileSync("assets/data.json", JSON.stringify(datajson, null, 2));
+        writeJSON("assets/data.json", datajson);
         em = req.headers.username;
 
         let cid = "";
@@ -508,15 +500,9 @@ router.post(`/new/:id`, function (req, res) {
             if (!fs.existsSync("servers/" + id)) {
               fs.mkdirSync("servers/" + id);
             }
-            fs.writeFileSync(
-              "servers/" + id + "/server.json",
-              JSON.stringify(server, null, 4)
-            );
+            writeJSON("servers/" + id + "/server.json", server);
             console.log("debuglog2 " + id + server.id);
-            fs.writeFileSync(
-              "accounts/" + email + ".json",
-              JSON.stringify(account, null, 4)
-            );
+            writeJSON("accounts/" + email + ".json", account);
           }
 
           f.run(
@@ -627,16 +613,8 @@ router.post(`/new/:id`, function (req, res) {
                           if (!fs.existsSync("servers/" + id)) {
                             fs.mkdirSync("servers/" + id);
                           }
-                          fs.writeFileSync(
-                            "servers/" + id + "/server.json",
-                            JSON.stringify(server, null, 4)
-                          );
-                          console.log("debuglog2 " + id + server.id);
-
-                          fs.writeFileSync(
-                            "accounts/" + email + ".json",
-                            JSON.stringify(account, null, 4)
-                          );
+                          writeJSON("servers/" + id + "/server.json", server);
+                          writeJSON("accounts/" + email + ".json", account);
                           console.log(req.body);
                         }
                         console.log(
@@ -901,8 +879,7 @@ router.delete(`/:id`, function (req, res) {
 
       function deleteServer() {
         console.log("deleting " + req.params.id);
-
-        fs.writeFileSync(`accounts/${email}.json`, JSON.stringify(account));
+        writeJSON(`accounts/${email}.json`, account);
 
         files.removeDirectoryRecursiveAsync(`servers/${req.params.id}`, () => {
           res.status(200).json({ msg: `Deleted server` });
@@ -997,10 +974,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             }
             const serverJson = readJSON(`servers/${id}/server.json`);
             serverJson.addons = worldgenMods;
-            fs.writeFileSync(
-              `servers/${id}/server.json`,
-              JSON.stringify(serverJson, null, 2)
-            );
+            writeJSON(`servers/${id}/server.json`, serverJson);
             files.removeDirectoryRecursive(`servers/${id}/world`);
             fs.mkdirSync(`servers/${id}/world`);
             fs.mkdirSync(`servers/${id}/world/datapacks`);
@@ -1559,16 +1533,11 @@ router.post("/:id/rename/", function (req, res) {
   if (hasAccess(token, account) && fs.existsSync(`servers/${req.params.id}/`)) {
     server = readJSON(`servers/${req.params.id}/server.json`);
     server.name = req.query.newName;
-    fs.writeFileSync(
-      `servers/${req.params.id}/server.json`,
-      JSON.stringify(server, null, 2)
-    );
+    writeJSON(`servers/${req.params.id}/server.json`, server);
 
     account = readJSON("accounts/" + email + ".json");
-    fs.writeFileSync(
-      `accounts/${email}.json`,
-      JSON.stringify(account, null, 2)
-    );
+
+    writeJSON(`accounts/${email}.json`, account);
     res.status(200).json({ msg: "Done" });
   } else {
     res.status(401).json({ msg: "Invalid credentials." });

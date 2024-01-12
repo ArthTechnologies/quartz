@@ -4,6 +4,7 @@ const app = express();
 const path = require("path");
 const cors = require("cors");
 const readJSON = require("./scripts/utils.js").readJSON;
+const writeJSON = require("./scripts/utils.js").writeJSON;
 const fs = require("fs");
 const crypto = require("crypto");
 
@@ -93,13 +94,10 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
       if (oldServers[j].accountId == oldAccounts[i].accountId) {
         oldServers[j].id = j;
         newAccount.servers.push(oldServers[j]);
-        fs.writeFileSync(
-          `servers/${j}/server.json`,
-          JSON.stringify(oldServers[j])
-        );
+        writeJSON(`servers/${j}/server.json`, oldServers[j]);
       }
     }
-    fs.writeFileSync(`accounts/${i}.json`, JSON.stringify(newAccount));
+    writeJSON(`accounts/${i}.json`, newAccount);
   }
 
   fs.copyFileSync("accounts.json", "backup/accounts.json");
@@ -154,7 +152,7 @@ setInterval(() => {
 function downloadJars() {
   const datajson = readJSON("./assets/data.json");
   datajson.lastUpdate = Date.now();
-  fs.writeFileSync("assets/data.json", JSON.stringify(datajson));
+  writeJSON("assets/data.json", datajson);
   //geyser
   files.downloadAsync(
     "assets/jars/downloads/cx_geyser-spigot_Geyser.jar",
@@ -385,7 +383,7 @@ function getLatestVersion() {
       let version = JSON.parse(vdata).latest.release;
       let datajson = readJSON("./assets/data.json");
       data.latestVersion = version;
-      fs.writeFileSync("./assets/data.json", JSON.stringify(datajson));
+      writeJSON("./assets/data.json", datajson);
       return version;
     }
   );
@@ -516,7 +514,7 @@ function getServerStates() {
     data.serverStates[file] = file + ":" + f.getState(file);
   });
 
-  fs.writeFileSync("./assets/data.json", JSON.stringify(data));
+  writeJSON("./assets/data.json", data);
 }
 
 setInterval(() => {
@@ -549,6 +547,7 @@ app.get("/", (req, res) => {
 });
 const rateLimit = require("express-rate-limit");
 const { get } = require("http");
+
 const limiter = rateLimit({
   max: 300,
   windowMs: 1000,

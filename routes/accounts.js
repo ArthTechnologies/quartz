@@ -5,6 +5,7 @@ const s = require("../scripts/stripe.js");
 
 const { v4: uuidv4 } = require("uuid");
 const files = require("../scripts/files.js");
+const writeJSON = require("../scripts/utils.js").writeJSON;
 const config = require("../scripts/utils.js").getConfig();
 const readJSON = require("../scripts/utils.js").readJSON;
 const enableCloudflareVerify = JSON.parse(config.enableCloudflareVerify);
@@ -64,13 +65,7 @@ Router.post("/email/signup/", (req, res) => {
           account.servers = [];
           account.email = email;
           account.freeServers = 0;
-          fs.writeFileSync(
-            "accounts/email:" + email + ".json",
-            JSON.stringify(account, null, 4),
-            {
-              encoding: "utf8",
-            }
-          );
+          writeJSON("accounts/email:" + email + ".json", account);
           res.status(200).send({ token: account.token, accountId: accountId });
         } else {
           res.status(400).send({ token: -1, reason: "Email already exists" });
@@ -204,16 +199,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
     console.log(err);
     res.status(500).send({ success: false, reason: "An error occurred" });
   }
-
-  //write account file
-  fs.writeFileSync(
-    "accounts/email:" + email + ".json",
-    JSON.stringify(account, null, 4),
-
-    {
-      encoding: "utf8",
-    }
-  );
+  writeJSON("accounts/email:" + email + ".json", account);
 });
 
 //combined signin and signup for discord
@@ -271,13 +257,7 @@ Router.post("/discord/", (req, res) => {
         account.email = res2.email;
         account.servers = [];
         account.freeServers = 0;
-        fs.writeFileSync(
-          "accounts/discord:" + username + ".json",
-          JSON.stringify(account, null, 4),
-          {
-            encoding: "utf8",
-          }
-        );
+        writeJSON("accounts/discord:" + username + ".json", account);
         res.status(200).send({
           token: account.token,
           accountId: accountId,
