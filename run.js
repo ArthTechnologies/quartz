@@ -47,9 +47,8 @@ if (!fs.existsSync("config.txt")) {
         if (templateLine == currentLine) {
           //pepper and forwardingSecret need to have random values generated
           if (
-            templateLine == "pepper" ||
-            (templateLine == "forwardingSecret" &&
-              current[j].split("=")[1] == "")
+            (templateLine == "pepper" || templateLine == "forwardingSecret") &&
+            current[j].split("=")[1] == ""
           ) {
             template[i] =
               template[i].split("=")[0] +
@@ -58,6 +57,14 @@ if (!fs.existsSync("config.txt")) {
                 .createHash("sha256")
                 .update(current[j].split("=")[1])
                 .digest("hex");
+          } else if (
+            templateLine == "forwardingSecret" &&
+            !current[j].includes("hash_")
+          ) {
+            template[i] =
+              template[i].split("=")[0] +
+              "=hash_" +
+              hashNoSalt(current[j].split("=")[1]);
           } else if (current[j].split("=")[1] == "undefined") {
             template[i] = template[i].split("=")[0] + "=";
           } else {
