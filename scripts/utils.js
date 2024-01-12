@@ -22,4 +22,12 @@ function readJSON(file) {
   return json;
 }
 
-module.exports = { getConfig, readJSON };
+function writeJSON(file, json) {
+  try {
+    fs.writeFileSync(file, JSON.stringify(json, null, 2));
+  } catch (error) {
+    console.log("error writing json for " + file, error);
+  }
+}
+
+module.exports = { getConfig, readJSON, writeJSON };
