@@ -19,6 +19,9 @@ stripeReturnUrl=
 basicPlanPriceId=
 # The stripe priceId (found in the dashboard, create a product first) of the modded plan:
 moddedPlanPriceId=
+# The amount of RAM allocated to basic servers (in GB)
+basicPlanRAM=3
+moddedPlanRAM=4
 
 # Advanced Settings:
 
