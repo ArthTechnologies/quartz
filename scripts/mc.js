@@ -527,10 +527,6 @@ function run(
       fs.existsSync("assets/jars/cx_geyser-spigot_Geyser.jar") &&
       (fs.existsSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar") || isNew)
     ) {
-      if (!isNew) {
-        fs.unlinkSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar");
-        fs.unlinkSync(folder + "/plugins/cx_floodgate-spigot_Floodgate.jar");
-      }
       fs.copyFileSync(
         "assets/jars/cx_geyser-spigot_Geyser.jar",
         folder + "/plugins/cx_geyser-spigot_Geyser.jar"
