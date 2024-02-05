@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const fs = require("fs");
 const config = require("../scripts/utils.js").getConfig();
-const getJSON = require("../scripts/utils.js").getJSON;
+const readJSON = require("../scripts/utils.js").readJSON;
 
 router.get("/", (req, res) => {
-  let account = getJSON("accounts/" + req.headers.username + ".json");
+  let account = readJSON("accounts/" + req.headers.username + ".json");
   if (req.headers.token == account.token) {
     if (req.query.text.split("").length < 500) {
       const exec = require("child_process").exec;

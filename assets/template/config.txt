@@ -19,23 +19,31 @@ stripeReturnUrl=
 basicPlanPriceId=
 # The stripe priceId (found in the dashboard, create a product first) of the modded plan:
 moddedPlanPriceId=
+# The amount of RAM allocated to basic servers (in GB)
+basicPlanRAM=3
+moddedPlanRAM=4
 
 # Advanced Settings:
 
 # The DeepL API Key to use for translating mod descriptions and such (You can apply for one at deepl.com):
 deeplKey=
-# The forwarding secret to use for connecting to an ocelot (software that connects quartz instances) instance:
+# Wether or not to use a ocelot (software that connects multiple quartz instances to increaese capacity):
+enableOcelot=false
+# The forwarding secret used for connecting to an ocelot instance
+# (Will be scrambled upon running the program, make sure you remember it):
 forwardingSecret=
 # The JarsMC instance to get server files and more from (Leave this unless you know what this means):
 jarsMcUrl=https://api.jarsmc.xyz/
-# Labrinth is the software behind modrinth, so if you want to use a different labrinth-based site for some reason, enter the domain name here:
+# Labrinth is the software behind modrinth, so if you want to use a different 
+# labrinth-based site for some reason, enter the domain name here:
 labrinthUrl=https://api.modrinth.com/v2
 # The 'pepper', used to obfuscate things such as IP addresses:
 pepper=
 
 # Security Settings:
 
-# Virus scans run whenever someone uploads a world file. Read clamav.net's documentation for setup instructions before enabling this:
+# Virus scans run whenever someone uploads a world file. Read clamav.net's documentation for setup 
+# instructions and make sure clamdscan in specific is set up:
 enableVirusScan=false
 # Enable cloudflare turnstile, which verifies that users are human:
 enableCloudflareVerify=false

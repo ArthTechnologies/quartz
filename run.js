@@ -3,9 +3,12 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const cors = require("cors");
-const getJSON = require("./scripts/utils.js").getJSON;
+const readJSON = require("./scripts/utils.js").readJSON;
+const writeJSON = require("./scripts/utils.js").writeJSON;
 const fs = require("fs");
 const crypto = require("crypto");
+const files = require("./scripts/files.js");
+const config = require("./scripts/utils.js").getConfig();
 
 exec = require("child_process").exec;
 require("dotenv").config();
@@ -46,9 +49,8 @@ if (!fs.existsSync("config.txt")) {
         if (templateLine == currentLine) {
           //pepper and forwardingSecret need to have random values generated
           if (
-            templateLine == "pepper" ||
-            (templateLine == "forwardingSecret" &&
-              current[j].split("=")[1] == "")
+            (templateLine == "pepper" || templateLine == "forwardingSecret") &&
+            current[j].split("=")[1] == ""
           ) {
             template[i] =
               template[i].split("=")[0] +
@@ -57,6 +59,14 @@ if (!fs.existsSync("config.txt")) {
                 .createHash("sha256")
                 .update(current[j].split("=")[1])
                 .digest("hex");
+          } else if (
+            templateLine == "forwardingSecret" &&
+            !current[j].includes("hash_")
+          ) {
+            template[i] =
+              template[i].split("=")[0] +
+              "=hash_" +
+              files.hashNoSalt(current[j].split("=")[1]);
           } else if (current[j].split("=")[1] == "undefined") {
             template[i] = template[i].split("=")[0] + "=";
           } else {
@@ -69,8 +79,6 @@ if (!fs.existsSync("config.txt")) {
   }
   fs.writeFileSync("config.txt", template.join("\n"));
 }
-const files = require("./scripts/files.js");
-const config = require("./scripts/utils.js").getConfig();
 
 if (!fs.existsSync("accounts")) {
   fs.mkdirSync("accounts");
@@ -93,13 +101,10 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
       if (oldServers[j].accountId == oldAccounts[i].accountId) {
         oldServers[j].id = j;
         newAccount.servers.push(oldServers[j]);
-        fs.writeFileSync(
-          `servers/${j}/server.json`,
-          JSON.stringify(oldServers[j])
-        );
+        writeJSON(`servers/${j}/server.json`, oldServers[j]);
       }
     }
-    fs.writeFileSync(`accounts/${i}.json`, JSON.stringify(newAccount));
+    writeJSON(`accounts/${i}.json`, newAccount);
   }
 
   fs.copyFileSync("accounts.json", "backup/accounts.json");
@@ -137,7 +142,7 @@ if (!fs.existsSync("assets/jars")) {
   downloadJars();
 }
 
-const datajson = getJSON("./assets/data.json");
+const datajson = readJSON("./assets/data.json");
 if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
   downloadJars();
   getLatestVersion();
@@ -152,9 +157,9 @@ setInterval(() => {
 }, 1000 * 60 * 60 * 12);
 
 function downloadJars() {
-  const datajson = getJSON("./assets/data.json");
+  const datajson = readJSON("./assets/data.json");
   datajson.lastUpdate = Date.now();
-  fs.writeFileSync("assets/data.json", JSON.stringify(datajson));
+  writeJSON("assets/data.json", datajson);
   //geyser
   files.downloadAsync(
     "assets/jars/downloads/cx_geyser-spigot_Geyser.jar",
@@ -383,9 +388,9 @@ function getLatestVersion() {
     "https://launchermeta.mojang.com/mc/game/version_manifest.json",
     (vdata) => {
       let version = JSON.parse(vdata).latest.release;
-      let datajson = getJSON("./assets/data.json");
+      let datajson = readJSON("./assets/data.json");
       data.latestVersion = version;
-      fs.writeFileSync("./assets/data.json", JSON.stringify(datajson));
+      writeJSON("./assets/data.json", datajson);
       return version;
     }
   );
@@ -396,7 +401,7 @@ function verifySubscriptions() {
     const accounts = fs.readdirSync("accounts");
     for (i in accounts) {
       if (accounts[i].split(".")[accounts[i].split(".").length - 1] == "json") {
-        const account = getJSON(`./accounts/${accounts[i]}`);
+        const account = readJSON(`./accounts/${accounts[i]}`);
         if (account.freeServers == undefined) {
           try {
             const amountOfServers = account.servers.length;
@@ -507,7 +512,7 @@ files.downloadAsync(
 const f = require("./scripts/mc.js");
 //this gets the server states every 5 minutes so that if quartz restarts, servers that were up will startup again
 function getServerStates() {
-  const data = getJSON("./assets/data.json");
+  const data = readJSON("./assets/data.json");
 
   if (data.serverStates == undefined) {
     data.serverStates = [];
@@ -516,14 +521,14 @@ function getServerStates() {
     data.serverStates[file] = file + ":" + f.getState(file);
   });
 
-  fs.writeFileSync("./assets/data.json", JSON.stringify(data));
+  writeJSON("./assets/data.json", data);
 }
 
 setInterval(() => {
   getServerStates();
 }, 1000 * 60 * 2);
 
-const data = getJSON("./assets/data.json");
+const data = readJSON("./assets/data.json");
 for (i in data.serverStates) {
   if (data.serverStates[i].split(":")[1] == "true") {
     if (
@@ -549,6 +554,7 @@ app.get("/", (req, res) => {
 });
 const rateLimit = require("express-rate-limit");
 const { get } = require("http");
+
 const limiter = rateLimit({
   max: 300,
   windowMs: 1000,

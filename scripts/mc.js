@@ -4,10 +4,11 @@ fs = require("fs");
 let states = [];
 const files = require("./files.js");
 const config = require("./utils.js").getConfig();
-const getJSON = require("./utils.js").getJSON;
+const readJSON = require("./utils.js").readJSON;
 const { time, Console } = require("console");
 const { randomBytes } = require("crypto");
 const { stat } = require("fs");
+const writeJSON = require("./utils.js").writeJSON;
 let terminalOutput = [];
 let terminalInput = "";
 
@@ -84,7 +85,7 @@ function checkServer(id) {
   if (states[id] == undefined) {
     states[id] = "false";
   }
-  let server = getJSON("servers/" + id + "/server.json");
+  let server = readJSON("servers/" + id + "/server.json");
   return {
     version: server.version,
     software: server.software,
@@ -105,7 +106,7 @@ function run(
   modpackID,
   modpackVersionID
 ) {
-  let server = getJSON("servers/" + id + "/server.json");
+  let server = readJSON("servers/" + id + "/server.json");
   let out = [];
   states[id] = "starting";
 
@@ -141,9 +142,20 @@ function run(
       }
     }
   }
-
+  let allocatedRAM;
+  if (software == "paper" || software == "velocity") {
+    allocatedRAM = parseInt(config.basicPlanRAM);
+  } else if (
+    software == "forge" ||
+    software == "fabric" ||
+    software == "quilt"
+  ) {
+    allocatedRAM = parseInt(config.moddedPlanRAM);
+  }
   let args = [
-    "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Daikars.new.flags=true -Dusing.aikars.flags=https://mcflags.emc.gs -jar server.jar",
+    "-Xmx" +
+      allocatedRAM +
+      "G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Daikars.new.flags=true -Dusing.aikars.flags=https://mcflags.emc.gs -jar server.jar",
   ];
   //make a new folder called name using fs
   let s = "paper";
@@ -196,7 +208,7 @@ function run(
       break;
   }
 
-  const datajson = getJSON("assets/data.json");
+  const datajson = readJSON("assets/data.json");
   let latestVersion = datajson.latestVersion;
   //this selects the correct version of java for the minecraft version
   if (version == latestVersion) {
@@ -513,10 +525,6 @@ function run(
       fs.existsSync("assets/jars/cx_geyser-spigot_Geyser.jar") &&
       (fs.existsSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar") || isNew)
     ) {
-      if (!isNew) {
-        fs.unlinkSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar");
-        fs.unlinkSync(folder + "/plugins/cx_floodgate-spigot_Floodgate.jar");
-      }
       fs.copyFileSync(
         "assets/jars/cx_geyser-spigot_Geyser.jar",
         folder + "/plugins/cx_geyser-spigot_Geyser.jar"
@@ -621,7 +629,7 @@ function killAsync(id, callback) {
 }
 
 function readTerminal(id) {
-  let server = getJSON("servers/" + id + "/server.json");
+  let server = readJSON("servers/" + id + "/server.json");
   let ret = terminalOutput[id];
 
   ret = files.simplifyTerminal(ret, server.software);
@@ -685,10 +693,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                     modpack.platform = "mr";
                     modpack.currentVersionDateAdded = Date.now();
                     modpack.versionID = versionID;
-                    fs.writeFileSync(
-                      folder + "/modrinth.index.json",
-                      JSON.stringify(modpack)
-                    );
+                    writeJSON(folder + "/modrinth.index.json", modpack);
                     return;
                   });
                 }
@@ -758,10 +763,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                     modpack.platform = "cf";
                     modpack.currentVersionDateAdded = Date.now();
                     modpack.versionID = versionID;
-                    fs.writeFileSync(
-                      folder + "/curseforge.index.json",
-                      JSON.stringify(modpack)
-                    );
+                    writeJSON(folder + "/curseforge.index.json", modpack);
                     return;
                   });
                 }
