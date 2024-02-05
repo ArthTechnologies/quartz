@@ -723,7 +723,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
             let overridesFolder = "overrides/*";
             //if theres no overrides folder, get the name of the folder inside temp
             if (!fs.existsSync(folder + "/temp/overrides")) {
-              overridesFolder = fs.readdir(folder + "/temp")[0] + "/*";
+              overridesFolder = fs.readdirSync(folder + "/temp")[0] + "/*";
               console.log(overridesFolder);
             }
 
