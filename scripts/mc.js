@@ -92,7 +92,7 @@ function checkServer(id) {
     state: states[id],
   };
 }
-
+let doneInstallingModpack = false;
 function run(
   id,
   software,
@@ -214,7 +214,7 @@ function run(
 
   if (software == "velocity") path = "../../assets/java/jdk-17.0.5+8/bin/java";
 
-  let doneInstalling = false;
+  let doneInstallingServer = false;
 
   if (!fs.existsSync(folder)) {
     try {
@@ -234,14 +234,7 @@ function run(
     fs.mkdirSync(folder + "/.fileVersions");
   }
 
-  if (c == "modded") {
-    const { exec } = require("child_process");
 
-    let modpack;
-    if (modpackURL != undefined) {
-      downloadModpack(id, modpackURL, modpackID, modpackVersionID);
-    }
-  }
 
   if (software != "quilt") {
     if (fs.existsSync("assets/jars/" + software + "-" + version + ".jar")) {
@@ -346,12 +339,17 @@ function run(
 
   if (installer) {
     if (isNew) {
+      if (c == "modded") {
+        if (modpackURL != undefined) {
+          downloadModpack(id, modpackURL, modpackID, modpackVersionID);
+        }
+      }
       interval = 500;
       states[id] = "installing";
 
       if (software == "forge") {
         exec(path + " -jar server.jar --installServer", { cwd: folder }, () => {
-          doneInstalling = true;
+          doneInstallingServer = true;
         });
       } else {
         //quilt
@@ -362,18 +360,18 @@ function run(
             console.log(error);
             console.log(stdout);
             console.log(stderr);
-            doneInstalling = true;
+            doneInstallingServer = true;
           }
         );
       }
     } else {
-      doneInstalling = true;
+      doneInstallingServer = true;
     }
     let timeToLoad = true;
 
     //wait for forge to install
     setInterval(() => {
-      if (doneInstalling & timeToLoad) {
+      if (doneInstallingServer && doneInstallingModpack && timeToLoad) {
         timeToLoad = false;
         states[id] = "starting";
 
@@ -636,6 +634,8 @@ function writeTerminal(id, cmd) {
   eventEmitter.emit("writeCmd");
 }
 function downloadModpack(id, modpackURL, modpackID, versionID) {
+  let mods = 0;
+  let modsDownloaded = 0;
   const folder = "servers/" + id;
   let includes = "modrinth.com";
   try {
@@ -658,6 +658,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                     modpack = JSON.parse(
                       fs.readFileSync(folder + "/modrinth.index.json")
                     );
+                    mods=modpack.files.length;
 
                     //for each file in modpack.files, download it
                     for (i in modpack.files) {
@@ -671,7 +672,12 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                       files.downloadAsync(
                         folder + "/" + modpack.files[i].path,
                         modpack.files[i].downloads[0],
-                        () => {}
+                        () => {
+                          setTimeout(() => {
+                            modsDownloaded++;
+                          },200);
+
+                        }
                       );
                     }
                     //add in modpackID so that it frontends can check for updates later
@@ -719,7 +725,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                     modpack = JSON.parse(
                       fs.readFileSync(folder + "/curseforge.index.json")
                     );
-
+                    mods=modpack.files.length;
                     for (i in modpack.files) {
                       let projectID = modpack.files[i].projectID;
                       let fileID = modpack.files[i].fileID;
@@ -729,10 +735,14 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                         (error, stdout, stderr) => {
                           if (stdout != undefined) {
                             try {
-                              files.download(
+                              files.downloadAsync(
                                 folder + "/mods/cf_" + projectID + "_CFMod.jar",
                                 JSON.parse(stdout).data
-                              );
+                              ).then(() => {
+                                setTimeout(() => {
+                                  modsDownloaded++;
+                                },200);
+                              });
                             } catch {
                               console.log(
                                 "error parsing json for " + projectID
