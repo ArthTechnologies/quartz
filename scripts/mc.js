@@ -720,10 +720,10 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
         exec(
           "unzip -o " + folder + "/modpack.zip" + " -d " + folder + "/temp",
           (error, stdout, stderr) => {
-            let overridesFolder = "overrides/*";
+            let overridesFolder = "/overrides/*";
             //if theres no overrides folder, get the name of the folder inside temp
             if (!fs.existsSync(folder + "/temp/overrides")) {
-              overridesFolder = fs.readdirSync(folder + "/temp")[0] + "/*";
+              overridesFolder = +"/temp/"+fs.readdirSync(folder + "/temp")[0] + "/*";
               console.log(overridesFolder);
             }
 
@@ -732,7 +732,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
             console.log("unzipping modpack...");
             console.log(error + " " + stderr);
             exec(
-              "cp -r " + folder + +"/"+ overridesFolder+" " + folder + "/",
+              "cp -r " + folder + overridesFolder+" " + folder + "/",
               (error, stdout, stderr) => {
                 if (fs.existsSync(folder + "/manifest.json")) {
                   //there's an odd bug where the file has no read access, so this changes that
