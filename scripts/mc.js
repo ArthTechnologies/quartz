@@ -245,8 +245,6 @@ function run(
     fs.mkdirSync(folder + "/.fileVersions");
   }
 
-
-
   if (software != "quilt") {
     if (fs.existsSync("assets/jars/" + software + "-" + version + ".jar")) {
       fs.copyFileSync(
@@ -445,6 +443,10 @@ function run(
             if (count2 < 5 * 24) {
               ls.stdin.write("stop\n");
               count2++;
+            } else {
+              ls.kill();
+              states[id] = "false";
+              clearInterval(intervalID);
             }
           } else if (states[id] == "deleting") {
             ls.kill();
@@ -676,9 +678,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                       files.downloadAsync(
                         folder + "/" + modpack.files[i].path,
                         modpack.files[i].downloads[0],
-                        () => {
-
-                        }
+                        () => {}
                       );
                     }
                     //add in modpackID so that it frontends can check for updates later
@@ -713,16 +713,15 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
             let overridesFolder = "/overrides/*";
             //if theres no overrides folder, get the name of the folder inside temp
             if (!fs.existsSync(folder + "/temp/overrides")) {
-              overridesFolder = "/temp/"+fs.readdirSync(folder + "/temp")[0] + "/*";
+              overridesFolder =
+                "/temp/" + fs.readdirSync(folder + "/temp")[0] + "/*";
               console.log(overridesFolder);
             }
-
-
 
             console.log("unzipping modpack...");
             console.log(error + " " + stderr);
             exec(
-              "cp -r " + folder + overridesFolder+" " + folder + "/",
+              "cp -r " + folder + overridesFolder + " " + folder + "/",
               (error, stdout, stderr) => {
                 if (fs.existsSync(folder + "/manifest.json")) {
                   //there's an odd bug where the file has no read access, so this changes that
@@ -743,11 +742,15 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                         (error, stdout, stderr) => {
                           if (stdout != undefined) {
                             try {
-                              files.downloadAsync(
-                                folder + "/mods/cf_" + projectID + "_CFMod.jar",
-                                JSON.parse(stdout).data
-                              ).then(() => {
-                              });
+                              files
+                                .downloadAsync(
+                                  folder +
+                                    "/mods/cf_" +
+                                    projectID +
+                                    "_CFMod.jar",
+                                  JSON.parse(stdout).data
+                                )
+                                .then(() => {});
                             } catch {
                               console.log(
                                 "error parsing json for " + projectID
