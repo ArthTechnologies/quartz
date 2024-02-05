@@ -761,6 +761,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                                 setTimeout(() => {
                                   modsDownloaded++;
                                 },200);
+                                console.log(mods + " " + modsDownloaded);
                                 if (mods == modsDownloaded) {
                                   doneInstallingModpack = true;
                                 }
