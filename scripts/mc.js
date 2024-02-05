@@ -683,6 +683,9 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                         () => {
                           setTimeout(() => {
                             modsDownloaded++;
+                            if (mods == modsDownloaded) {
+                              doneInstallingModpack = true;
+                            }
                           },200);
 
                         }
@@ -747,6 +750,9 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                                 setTimeout(() => {
                                   modsDownloaded++;
                                 },200);
+                                if (mods == modsDownloaded) {
+                                  doneInstallingModpack = true;
+                                }
                               });
                             } catch {
                               console.log(
