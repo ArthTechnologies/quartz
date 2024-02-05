@@ -93,7 +93,6 @@ function checkServer(id) {
     state: states[id],
   };
 }
-let doneInstallingModpack = false;
 function run(
   id,
   software,
@@ -383,7 +382,7 @@ function run(
 
     //wait for forge to install
     setInterval(() => {
-      if (doneInstallingServer && doneInstallingModpack && timeToLoad) {
+      if (doneInstallingServer && timeToLoad) {
         timeToLoad = false;
         states[id] = "starting";
 
@@ -642,8 +641,6 @@ function writeTerminal(id, cmd) {
   eventEmitter.emit("writeCmd");
 }
 function downloadModpack(id, modpackURL, modpackID, versionID) {
-  let mods = 0;
-  let modsDownloaded = 0;
   const folder = "servers/" + id;
   let includes = "modrinth.com";
   try {
@@ -666,7 +663,6 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                     modpack = JSON.parse(
                       fs.readFileSync(folder + "/modrinth.index.json")
                     );
-                    mods=modpack.files.length;
 
                     //for each file in modpack.files, download it
                     for (i in modpack.files) {
@@ -681,12 +677,6 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                         folder + "/" + modpack.files[i].path,
                         modpack.files[i].downloads[0],
                         () => {
-                          setTimeout(() => {
-                            modsDownloaded++;
-                            if (mods == modsDownloaded) {
-                              doneInstallingModpack = true;
-                            }
-                          },200);
 
                         }
                       );
@@ -744,7 +734,6 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                     modpack = JSON.parse(
                       fs.readFileSync(folder + "/curseforge.index.json")
                     );
-                    mods=modpack.files.length;
                     for (i in modpack.files) {
                       let projectID = modpack.files[i].projectID;
                       let fileID = modpack.files[i].fileID;
@@ -758,13 +747,6 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                                 folder + "/mods/cf_" + projectID + "_CFMod.jar",
                                 JSON.parse(stdout).data
                               ).then(() => {
-                                setTimeout(() => {
-                                  modsDownloaded++;
-                                },200);
-                                console.log(mods + " " + modsDownloaded);
-                                if (mods == modsDownloaded) {
-                                  doneInstallingModpack = true;
-                                }
                               });
                             } catch {
                               console.log(
