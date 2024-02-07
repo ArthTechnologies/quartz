@@ -78,12 +78,14 @@ function proxiesToggle(id, toggle, secret) {
 function getState(id) {
   if (states[id] == undefined) {
     states[id] = "false";
+    console.log("setting status of " + id + " to false on line #1");
   }
   return states[id];
 }
 function checkServer(id) {
   if (states[id] == undefined) {
     states[id] = "false";
+    console.log("setting status of " + id + " to false on line #2");
   }
   let server = readJSON("servers/" + id + "/server.json");
   return {
@@ -420,6 +422,7 @@ function run(
           console.log(path + " " + cwd);
           terminalOutput[id] = stdout;
           states[id] = "false";
+          console.log("setting status of " + id + " to false on line #3");
         });
 
         ls.stdout.on("data", (data) => {
@@ -439,6 +442,7 @@ function run(
             terminalOutput[id].includes("Failed to start the minecraft server")
           ) {
             states[id] = "false";
+            console.log("setting status of " + id + " to false on line #4");
             ls.kill();
           }
         });
@@ -451,11 +455,13 @@ function run(
             } else {
               ls.kill();
               states[id] = "false";
+              console.log("setting status of " + id + " to false on line #5");
               clearInterval(intervalID);
             }
           } else if (states[id] == "deleting") {
             ls.kill();
             states[id] = "false";
+            console.log("setting status of " + id + " to false on line #6");
             clearInterval(intervalID);
           }
         }, 200);
@@ -464,6 +470,7 @@ function run(
         });
         ls.on("exit", () => {
           states[id] = "false";
+          console.log("setting status of " + id + " to false on line #7");
           terminalOutput[id] = out.join("\n");
           clearInterval(intervalID);
         });
@@ -475,6 +482,7 @@ function run(
     ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
       terminalOutput[id] = stdout;
       states[id] = "false";
+      console.log("setting status of " + id + " to false on line #8");
     });
     ls.stdout.on("data", (data) => {
       count++;
@@ -490,6 +498,7 @@ function run(
         terminalOutput[id].includes("Failed to start the minecraft server")
       ) {
         states[id] = "false";
+        console.log("setting status of " + id + " to false on line #9");
         ls.kill();
       }
     });
@@ -504,6 +513,7 @@ function run(
         } else if (states[id] == "deleting") {
           ls.kill();
           states[id] = "false";
+          console.log("setting status of " + id + " to false on line #10");
           clearInterval(intervalID);
         }
       }
@@ -513,6 +523,7 @@ function run(
     });
     ls.on("exit", () => {
       states[id] = "false";
+      console.log("setting status of " + id + " to false on line #11");
       terminalOutput[id] = out.join("\n");
       clearInterval(intervalID);
     });
