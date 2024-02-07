@@ -435,6 +435,11 @@ function run(
           ) {
             //replace states[id] with true
             states[id] = "true";
+          } else if (
+            terminalOutput[id].includes("Failed to start the minecraft server")
+          ) {
+            states[id] = "false";
+            ls.kill();
           }
         });
         let count2 = 0;
@@ -481,6 +486,11 @@ function run(
       if (terminalOutput[id].includes("Done (") && states[id] != "stopping") {
         //replace states[id] with true
         states[id] = "true";
+      } else if (
+        terminalOutput[id].includes("Failed to start the minecraft server")
+      ) {
+        states[id] = "false";
+        ls.kill();
       }
     });
 
