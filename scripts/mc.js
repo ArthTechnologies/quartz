@@ -364,7 +364,8 @@ function run(
           if (!err.toString().includes("Command failed")){
           doneInstallingServer = true;
           } else if (out.toString().includes("authserver.mojang.com: Name or service not known")) {
-            terminalOutput[id] = "Error: Minecraft's auth servers are down. Try again later.";
+            terminalOutput[id] = "Error]: Minecraft's auth servers are down. Try again later.";
+            states[id] = "false";
           }
         });
       } else {
