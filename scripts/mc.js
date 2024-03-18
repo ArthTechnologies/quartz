@@ -360,7 +360,7 @@ function run(
 
       if (software == "forge") {
         exec(path + " -jar server.jar --installServer", { cwd: folder }, (err, out) => {
-          console.log("forgeInstall: "+x);
+
           if (err.toString().includes("Command failed")){
           doneInstallingServer = true;
           } else if (out.toString().includes("authserver.mojang.com: Name or service not known")) {
