@@ -25,7 +25,7 @@ Router.get("/search", (req, res) => {
         `&index=${index}` +
         `&pageSize=15` +
         `&sortField=${sortField}` +
-        `&sortOrder=desc"` +
+        `&sortOrder=desc` +
         `&categoryIds=${categories}"` +
         ` -H 'x-api-key: ${apiKey}'`,
       (error, stdout, stderr) => {
