@@ -12,6 +12,7 @@ Router.get("/search", (req, res) => {
     let index = req.query.index || 0;
     let sortField = req.query.sortField || 1;
     let results = [];
+    let categories = req.query.categories || "";
     console.log(index);
     const exec = require("child_process").exec;
     exec(
@@ -25,6 +26,7 @@ Router.get("/search", (req, res) => {
         `&pageSize=15` +
         `&sortField=${sortField}` +
         `&sortOrder=desc"` +
+        `&categoryIds=${categories}"` +
         ` -H 'x-api-key: ${apiKey}'`,
       (error, stdout, stderr) => {
         if (!error && stdout != undefined) {
