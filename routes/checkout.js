@@ -22,6 +22,7 @@ Router.post("/:plan", async (req, res) => {
   } else if (plan == "modded") {
     priceId = config.moddedPlanPriceId;
   }
+  console.log("Customer Email: "+customer_email);
   try {
   const session = await stripe.checkout.sessions.create({
     ui_mode: "embedded",
