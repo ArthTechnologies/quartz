@@ -26,7 +26,7 @@ Router.post("/:plan", async (req, res) => {
   try {
   const session = await stripe.checkout.sessions.create({
     ui_mode: "embedded",
-    customer_email: customer_email,
+    ...(customer_email && { customer_email: customer_email }), // This line will only add the customer_email field if it's not null
     currency: currency,
     locale: locale,
     allow_promotion_codes: true,
