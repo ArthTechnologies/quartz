@@ -12,8 +12,24 @@ Router.get("/search", (req, res) => {
     let index = req.query.index || 0;
     let sortField = req.query.sortField || 1;
     let results = [];
+    let categories = req.query.categories || "";
     console.log(index);
     const exec = require("child_process").exec;
+    console.log(
+      "request url = " +
+        `curl -X GET "https://api.curseforge.com/v1/mods/search` +
+        `?gameId=432` +
+        `&gameVersion=${gameVersion}` +
+        `&modLoaderType=${modLoaderType}` +
+        `&searchFilter=${searchFilter}` +
+        `&classId=${classId}` +
+        `&index=${index}` +
+        `&pageSize=15` +
+        `&sortField=${sortField}` +
+        `&sortOrder=desc` +
+        `&categoryIds=${categories}"` +
+        ` -H 'x-api-key: ${apiKey}'`
+    );
     exec(
       `curl -X GET "https://api.curseforge.com/v1/mods/search` +
         `?gameId=432` +
@@ -24,7 +40,8 @@ Router.get("/search", (req, res) => {
         `&index=${index}` +
         `&pageSize=15` +
         `&sortField=${sortField}` +
-        `&sortOrder=desc"` +
+        `&sortOrder=desc` +
+        `&categoryIds=${categories}"` +
         ` -H 'x-api-key: ${apiKey}'`,
       (error, stdout, stderr) => {
         if (!error && stdout != undefined) {

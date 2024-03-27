@@ -963,57 +963,64 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
         if (!lock2) {
           lock2 = true;
           if (!req.file) {
-            console.log("no file");
-            let worldgenMods = [];
-            if (req.query.worldgenMods != undefined) {
-              if (req.query.worldgenMods.indexOf(",") > -1) {
-                worldgenMods = req.query.worldgenMods.split(",");
-              } else if (req.query.worldgenMods != "") {
-                worldgenMods.push(req.query.worldgenMods);
+            files.removeDirectoryRecursiveAsync(`servers/${id}/world`, () => {
+              console.log("no file");
+              let worldgenMods = [];
+              if (req.query.worldgenMods != undefined) {
+                if (req.query.worldgenMods.indexOf(",") > -1) {
+                  worldgenMods = req.query.worldgenMods.split(",");
+                } else if (req.query.worldgenMods != "") {
+                  worldgenMods.push(req.query.worldgenMods);
+                }
               }
-            }
-            const serverJson = readJSON(`servers/${id}/server.json`);
-            serverJson.addons = worldgenMods;
-            writeJSON(`servers/${id}/server.json`, serverJson);
-            files.removeDirectoryRecursive(`servers/${id}/world`);
-            fs.mkdirSync(`servers/${id}/world`);
-            fs.mkdirSync(`servers/${id}/world/datapacks`);
-            files.removeDirectoryRecursive(`servers/${id}/world_nether`);
-            files.removeDirectoryRecursive(`servers/${id}/world_the_end`);
+              const serverJson = readJSON(`servers/${id}/server.json`);
+              serverJson.addons = worldgenMods;
+              writeJSON(`servers/${id}/server.json`, serverJson);
+              fs.mkdirSync(`servers/${id}/world`);
+              fs.mkdirSync(`servers/${id}/world/datapacks`);
+              files.removeDirectoryRecursive(`servers/${id}/world_nether`);
+              files.removeDirectoryRecursive(`servers/${id}/world_the_end`);
 
-            if (req.query.seed == undefined) {
-              req.query.seed = "";
-            }
-            //read server.properties, find the line with the seed, replace it with 'seed={req.query.seed}'
-            var text = fs
-              .readFileSync(`servers/${id}/server.properties`)
-              .toString();
-            var textByLine = text.split("\n");
-            var index = textByLine.findIndex((line) =>
-              line.startsWith("level-seed")
-            );
-            textByLine[index] = `level-seed=${req.query.seed}`;
-            var index2 = textByLine.findIndex((line) =>
-              line.startsWith("level-type")
-            );
-            textByLine[index2] = `level-type=minecraft:${req.query.worldType}`;
-            var newText = textByLine.join("\n");
-
-            fs.writeFile(`servers/${id}/server.properties`, newText, (err) => {
-              if (err) {
-                console.log(err);
+              if (req.query.seed == undefined) {
+                req.query.seed = "";
               }
-
-              f.run(
-                id,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                email,
-                false
+              //read server.properties, find the line with the seed, replace it with 'seed={req.query.seed}'
+              var text = fs
+                .readFileSync(`servers/${id}/server.properties`)
+                .toString();
+              var textByLine = text.split("\n");
+              var index = textByLine.findIndex((line) =>
+                line.startsWith("level-seed")
               );
-              res.status(200).json({ msg: `Done` });
+              textByLine[index] = `level-seed=${req.query.seed}`;
+              var index2 = textByLine.findIndex((line) =>
+                line.startsWith("level-type")
+              );
+              textByLine[
+                index2
+              ] = `level-type=minecraft:${req.query.worldType}`;
+              var newText = textByLine.join("\n");
+
+              fs.writeFile(
+                `servers/${id}/server.properties`,
+                newText,
+                (err) => {
+                  if (err) {
+                    console.log(err);
+                  }
+
+                  f.run(
+                    id,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    email,
+                    false
+                  );
+                  res.status(200).json({ msg: `Done` });
+                }
+              );
             });
           } else {
             console.log("yes file");
@@ -1448,7 +1455,7 @@ router.post("/:id/file/:path", function (req, res) {
       filename != "velocity.toml" &&
       filename != "modrinth.index.json" &&
       filename != "curseforge.index.json" &&
-      filename != "config.yml" &&
+      !path.includes("Geyser-") &&
       fs.statSync(`servers/${req.params.id}/${path}`).size <= 500000
     ) {
       if (
