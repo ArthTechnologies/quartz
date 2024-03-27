@@ -8,8 +8,11 @@ Router.post("/:plan", async (req, res) => {
   let plan = req.params.plan;
   let quantity = req.query.quantity || 1;
   let customer_email = req.query.customer_email || null;
+  if (customer_email == "") customer_email = null;
   let currency = req.query.currency || "usd";
+  if (currency == "") currency = "usd";
   let locale = req.query.locale || "en";
+  if (locale == "") locale = "en";
   if (quantity == undefined) {
     quantity = 1;
   }
@@ -19,7 +22,7 @@ Router.post("/:plan", async (req, res) => {
   } else if (plan == "modded") {
     priceId = config.moddedPlanPriceId;
   }
-
+  try {
   const session = await stripe.checkout.sessions.create({
     ui_mode: "embedded",
     customer_email: customer_email,
@@ -39,6 +42,9 @@ Router.post("/:plan", async (req, res) => {
   });
 
   res.send({ clientSecret: session.client_secret });
+} catch (err) {
+  console.log(err);
+  res.status(500).send({ error: err });
 });
 
 module.exports = Router;
