@@ -25,7 +25,7 @@ Router.post("/:plan", async (req, res) => {
     customer_email: customer_email,
     currency: currency,
     locale: locale,
-    allow_promo_codes: true,
+    allow_promotion_codes: true,
     line_items: [
       {
         // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
