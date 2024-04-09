@@ -163,7 +163,7 @@ function downloadJars() {
   //geyser
   files.downloadAsync(
     "assets/jars/downloads/cx_geyser-spigot_Geyser.jar",
-    "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
+    "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot",
     (data) => {
       if (fs.existsSync(`assets/jars/cx_geyser-spigot_Geyser.jar`)) {
         fs.unlinkSync(`assets/jars/cx_geyser-spigot_Geyser.jar`);
@@ -177,7 +177,7 @@ function downloadJars() {
   );
   files.downloadAsync(
     "assets/jars/downloads/cx_floodgate-spigot_Floodgate.jar",
-    "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
+    "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot",
     (data) => {
       if (fs.existsSync(`assets/jars/cx_floodgate-spigot_Floodgate.jar`)) {
         fs.unlinkSync(`assets/jars/cx_floodgate-spigot_Floodgate.jar`);
@@ -191,7 +191,7 @@ function downloadJars() {
   );
   files.downloadAsync(
     "assets/jars/downloads/cx_geyser-velocity_Geyser.jar",
-    "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/velocity/build/libs/Geyser-Velocity.jar",
+    "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity",
     (data) => {
       if (fs.existsSync(`assets/jars/cx_geyser-velocity_Geyser.jar`)) {
         fs.unlinkSync(`assets/jars/cx_geyser-velocity_Geyser.jar`);
@@ -205,7 +205,7 @@ function downloadJars() {
   );
   files.downloadAsync(
     "assets/jars/downloads/cx_floodgate-velocity_Floodgate.jar",
-    "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/velocity/build/libs/floodgate-velocity.jar",
+    "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity",
     (data) => {
       if (fs.existsSync(`assets/jars/cx_floodgate-velocity_Floodgate.jar`)) {
         fs.unlinkSync(`assets/jars/cx_floodgate-velocity_Floodgate.jar`);
