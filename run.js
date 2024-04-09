@@ -284,7 +284,7 @@ function downloadJars() {
                 if (
                   fs.statSync(
                     `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
-                  ).size > 1000
+                  ).size > 4096
                 ) {
                   fs.copyFileSync(
                     `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`,
@@ -293,6 +293,8 @@ function downloadJars() {
                   fs.unlinkSync(
                     `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
                   );
+                } else {
+                  
                 }
               }
             );
@@ -321,7 +323,10 @@ function downloadJars() {
                   ) ||
                   fs.readFileSync(
                     `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
-                  ).length == 26351
+                  ).length == 26351 ||
+                  fs.readFileSync(
+                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
+                  ).length <= 4096
                 ) {
                   downloadFromJarsMC();
                   return;
