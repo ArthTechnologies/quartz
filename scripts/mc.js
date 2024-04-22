@@ -363,7 +363,7 @@ function run(
           path + " -jar server.jar --installServer",
           { cwd: folder },
           (err, out) => {
-            if (err != null && !err.toString().includes("Command failed")) {
+            if (err == null || !err.toString().includes("Command failed")) {
               doneInstallingServer = true;
             } else if (
               out
