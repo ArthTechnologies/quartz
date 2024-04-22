@@ -359,15 +359,23 @@ function run(
       states[id] = "installing";
 
       if (software == "forge") {
-        exec(path + " -jar server.jar --installServer", { cwd: folder }, (err, out) => {
-
-          if (!err.toString().includes("Command failed")){
-          doneInstallingServer = true;
-          } else if (out.toString().includes("authserver.mojang.com: Name or service not known")) {
-            terminalOutput[id] = "Error]: Minecraft's auth servers are down. Try again later.";
-            states[id] = "false";
+        exec(
+          path + " -jar server.jar --installServer",
+          { cwd: folder },
+          (err, out) => {
+            if (err != null && !err.toString().includes("Command failed")) {
+              doneInstallingServer = true;
+            } else if (
+              out
+                .toString()
+                .includes("authserver.mojang.com: Name or service not known")
+            ) {
+              terminalOutput[id] =
+                "Error]: Minecraft's auth servers are down. Try again later.";
+              states[id] = "false";
+            }
           }
-        });
+        );
       } else {
         //quilt
         exec(
