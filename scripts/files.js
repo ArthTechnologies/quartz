@@ -9,12 +9,10 @@ function download(file, url) {
 function downloadAsync(file, url, callback) {
   url = url.replace(/ /g, "%20");
   exec(`curl -o ${file} -LO "${url}"`, (error, stdout, stderr) => {
-    if (stdout != undefined) {
+    try {
       callback(stdout);
-    } else if (stderr != undefined) {
-      callback(stderr);
-    } else {
-      callback("No response");
+    } catch {
+      console.log("Error in callback whislst downloading " + file);
     }
   });
 }
