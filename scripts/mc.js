@@ -745,73 +745,75 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
         exec(
           "unzip -o " + folder + "/modpack.zip" + " -d " + folder + "/temp",
           (error, stdout, stderr) => {
-            let overridesFolder = "/overrides/*";
+            let overridesFolder = "/overrides";
             //if theres no overrides folder, get the name of the folder inside temp
             if (!fs.existsSync(folder + "/temp/overrides")) {
               //deletes .txt files, so it only moves over mods and configs and such
               exec(
-                "find " +
+                "find " + folder + "/temp -type f -name '*.txt' -delete",
+                () => {}
+              );
 
-                  folder +
-                  "/temp -type f -name '*.txt' -delete",
-                () => {});
-
-              overridesFolder =
-                "/temp/*";
+              overridesFolder = "/temp";
               console.log(overridesFolder);
             }
 
             console.log("unzipping modpack...");
             console.log(error + " " + stderr);
             exec(
-              "cp -r " + folder + overridesFolder + " " + folder + "/",
+              "cp -r " + folder + overridesFolder + "/* " + folder + "/",
               (error, stdout, stderr) => {
-                if (fs.existsSync(folder + "/manifest.json")) {
+                if (
+                  fs.existsSync(folder + overridesFolder + "/manifest.json")
+                ) {
                   //there's an odd bug where the file has no read access, so this changes that
-                  exec("chmod +r " + folder + "/manifest.json", (x) => {
-                    fs.copyFileSync(
-                      folder + "/manifest.json",
-                      folder + "/curseforge.index.json"
-                    );
-                    modpack = JSON.parse(
-                      fs.readFileSync(folder + "/curseforge.index.json")
-                    );
-                    for (i in modpack.files) {
-                      let projectID = modpack.files[i].projectID;
-                      let fileID = modpack.files[i].fileID;
-                      console.log(projectID + " " + fileID);
-                      exec(
-                        `curl -X GET "https://api.curseforge.com/v1/mods/${projectID}/files/${fileID}/download-url" -H 'x-api-key: ${apiKey}'`,
-                        (error, stdout, stderr) => {
-                          if (stdout != undefined) {
-                            try {
-                              files
-                                .downloadAsync(
-                                  folder +
-                                    "/mods/cf_" +
-                                    projectID +
-                                    "_CFMod.jar",
-                                  JSON.parse(stdout).data
-                                )
-                                .then(() => {});
-                            } catch {
-                              console.log(
-                                "error parsing json for " + projectID
-                              );
+                  exec(
+                    "chmod +r " + folder + overridesFolder + "/manifest.json",
+                    (x) => {
+                      fs.copyFileSync(
+                        folder + "/manifest.json",
+                        folder + "/curseforge.index.json"
+                      );
+                      modpack = JSON.parse(
+                        fs.readFileSync(folder + "/curseforge.index.json")
+                      );
+                      for (i in modpack.files) {
+                        let projectID = modpack.files[i].projectID;
+                        let fileID = modpack.files[i].fileID;
+                        console.log(projectID + " " + fileID);
+                        exec(
+                          `curl -X GET "https://api.curseforge.com/v1/mods/${projectID}/files/${fileID}/download-url" -H 'x-api-key: ${apiKey}'`,
+                          (error, stdout, stderr) => {
+                            if (stdout != undefined) {
+                              try {
+                                files
+                                  .downloadAsync(
+                                    folder +
+                                      "/mods/cf_" +
+                                      projectID +
+                                      "_CFMod.jar",
+                                    JSON.parse(stdout).data
+                                  )
+                                  .then(() => {});
+                              } catch {
+                                console.log(
+                                  "error parsing json for " + projectID
+                                );
+                              }
                             }
                           }
-                        }
-                      );
+                        );
+                      }
+                      console.log("modpackID:" + modpackID);
+                      //add in modpackID so that it frontends can check for updates later
+                      modpack.projectID = modpackID;
+                      modpack.platform = "cf";
+                      modpack.currentVersionDateAdded = Date.now();
+                      modpack.versionID = versionID;
+                      writeJSON(folder + "/curseforge.index.json", modpack);
+                      return;
                     }
-                    console.log("modpackID:" + modpackID);
-                    //add in modpackID so that it frontends can check for updates later
-                    modpack.projectID = modpackID;
-                    modpack.platform = "cf";
-                    modpack.currentVersionDateAdded = Date.now();
-                    modpack.versionID = versionID;
-                    writeJSON(folder + "/curseforge.index.json", modpack);
-                    return;
-                  });
+                  );
                 }
               }
             );
