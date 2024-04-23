@@ -767,7 +767,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                   //there's an odd bug where the file has no read access, so this changes that
                   exec("chmod +r " + folder + "/temp/manifest.json", (x) => {
                     fs.copyFileSync(
-                      folder + "/manifest.json",
+                      folder + "/temp/manifest.json",
                       folder + "/curseforge.index.json"
                     );
                     modpack = JSON.parse(
