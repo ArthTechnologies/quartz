@@ -748,8 +748,16 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
             let overridesFolder = "/overrides/*";
             //if theres no overrides folder, get the name of the folder inside temp
             if (!fs.existsSync(folder + "/temp/overrides")) {
+              //deletes .txt files, so it only moves over mods and configs and such
+              exec(
+                "find " +
+
+                  folder +
+                  "/temp -type f -name '*.txt' -delete",
+                () => {});
+
               overridesFolder =
-                "/temp/" + fs.readdirSync(folder + "/temp")[0] + "/*";
+                "/temp/*";
               console.log(overridesFolder);
             }
 
