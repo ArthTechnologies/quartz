@@ -9,7 +9,13 @@ function download(file, url) {
 function downloadAsync(file, url, callback) {
   url = url.replace(/ /g, "%20");
   exec(`curl -o ${file} -LO "${url}"`, (error, stdout, stderr) => {
-    callback(stdout);
+    if (stdout != undefined) {
+      callback(stdout);
+    } else if (stderr != undefined) {
+      callback(stderr);
+    } else {
+      callback("No response");
+    }
   });
 }
 
