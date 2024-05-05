@@ -8,6 +8,7 @@ function download(file, url) {
 
 function downloadAsync(file, url, callback) {
   url = url.replace(/ /g, "%20");
+  console.log("download command: " + `curl -o ${file} -LO "${url}"`);
   exec(`curl -o ${file} -LO "${url}"`, (error, stdout, stderr) => {
     try {
       callback(stdout);
