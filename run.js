@@ -309,7 +309,7 @@ function downloadJars() {
                 jar.version +
                 "." +
                 extension,
-              "https://serverjars.com/api/fetchJar/" +
+              "https://api.serverjars.com/api/fetchJar/" +
                 c +
                 "/" +
                 jar.software +
@@ -330,17 +330,6 @@ function downloadJars() {
                   downloadFromJarsMC();
                   return;
                 } else {
-                  //temporary debug log
-                  if (jar.software == "paper" && jar.version == "1.18.2") {
-                    console.log(
-                      "downloaded paper 1.18.2 succesfully from https://api.serverjars.com/api/fetchJar/" +
-                        c +
-                        "/" +
-                        jar.software +
-                        "/" +
-                        jar.version
-                    );
-                  }
                   fs.copyFileSync(
                     `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`,
                     `assets/jars/${jar.software}-${jar.version}.${extension}`
