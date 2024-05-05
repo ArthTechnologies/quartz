@@ -327,18 +327,19 @@ function downloadJars() {
                     `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
                   ).length <= 4096
                 ) {
-                  //temporary debug log
-                  if (jar.software == "paper" && jar.version == "1.18.2") {
-                    console.log(
-                      "downloaded paper 1.18.2 unsuccessfully from serverjars.com, downloading from JarsMC instead."
-                    );
-                  }
                   downloadFromJarsMC();
                   return;
                 } else {
                   //temporary debug log
                   if (jar.software == "paper" && jar.version == "1.18.2") {
-                    console.log("downloaded paper 1.18.2 succesfully");
+                    console.log(
+                      "downloaded paper 1.18.2 succesfully from https://api.serverjars.com/api/fetchJar/" +
+                        c +
+                        "/" +
+                        jar.software +
+                        "/" +
+                        jar.version
+                    );
                   }
                   fs.copyFileSync(
                     `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`,
