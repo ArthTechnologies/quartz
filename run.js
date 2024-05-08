@@ -487,8 +487,8 @@ setInterval(() => {
 }, 1000 * 60 * 5);
 
 files.downloadAsync(
-  "assets/java/java19.tar.gz",
-  "https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.2%2B7/OpenJDK19U-jdk_x64_linux_hotspot_19.0.2_7.tar.gz",
+  "assets/java/java22.tar.gz",
+  "https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.1.1%2B1/OpenJDK22U-jdk_s390x_linux_hotspot_22.0.1.1_1.tar.gz",
   (data) => {
     files.extractAsync("assets/java/java19.tar.gz", "assets/java", () => {
       fs.unlinkSync("assets/java/java19.tar.gz");
