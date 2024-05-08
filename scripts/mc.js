@@ -214,11 +214,11 @@ function run(
   //this selects the correct version of java for the minecraft version
   if (version == latestVersion) {
     version = latestVersion;
-    path = "../../assets/java/jdk-19.0.2+7/bin/java";
+    path = "../../assets/java/jdk-22.0.1.1+1/bin/java";
   } else if (version.includes("1.20"))
-    path = "../../assets/java/jdk-19.0.2+7/bin/java";
+    path = "../../assets/java/jdk-22.0.1.1+1/bin/java";
   else if (version.includes("1.19"))
-    path = "../../assets/java/jdk-19.0.2+7/bin/java";
+    path = "../../assets/java/jdk-22.0.1.1+1/bin/java";
   else if (version.includes("1.18"))
     path = "../../assets/java/jdk-17.0.5+8/bin/java";
   else if (version.includes("1.17"))

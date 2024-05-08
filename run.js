@@ -490,8 +490,8 @@ files.downloadAsync(
   "assets/java/java22.tar.gz",
   "https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.1.1%2B1/OpenJDK22U-jdk_s390x_linux_hotspot_22.0.1.1_1.tar.gz",
   (data) => {
-    files.extractAsync("assets/java/java19.tar.gz", "assets/java", () => {
-      fs.unlinkSync("assets/java/java19.tar.gz");
+    files.extractAsync("assets/java/java22.tar.gz", "assets/java", () => {
+      fs.unlinkSync("assets/java/java22.tar.gz");
     });
   }
 );
