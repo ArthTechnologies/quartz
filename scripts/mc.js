@@ -527,12 +527,12 @@ function run(
         if (count2 < 5 * 24) {
           ls.stdin.write("stop\n");
           count2++;
-        } else if (states[id] == "deleting") {
-          ls.kill();
-          states[id] = "false";
-          console.log("setting status of " + id + " to false on line #10");
-          clearInterval(intervalID);
-        }
+        } 
+      }else if (states[id] == "deleting") {
+        ls.kill();
+        states[id] = "false";
+        console.log("setting status of " + id + " to false on line #10");
+        clearInterval(intervalID);
       }
     }, 200);
     eventEmitter.on("writeCmd", function () {
