@@ -866,7 +866,7 @@ router.delete(`/:id`, function (req, res) {
     );
   }
 
-  console.log("deleting " + req.params.id);
+  console.log("deleting1 " + req.params.id);
   email = req.headers.username;
   token = req.headers.token;
   account = readJSON("accounts/" + email + ".json");
@@ -878,7 +878,7 @@ router.delete(`/:id`, function (req, res) {
       !enableAuth ||
       account.type != "email"
     ) {
-      console.log("deleting " + req.params.id);
+      console.log("deleting2 " + req.params.id);
       if (f.getState(req.params.id) == "true") {
         f.killAsync(req.params.id, () => {
           deleteServer();
@@ -888,10 +888,11 @@ router.delete(`/:id`, function (req, res) {
       }
 
       function deleteServer() {
-        console.log("deleting " + req.params.id);
+        console.log("deleting3 " + req.params.id);
         writeJSON(`accounts/${email}.json`, account);
-
+        console.log("deleting4 " + req.params.id);
         files.removeDirectoryRecursiveAsync(`servers/${req.params.id}`, () => {
+          console.log("deleting5 " + req.params.id);
           res.status(200).json({ msg: `Deleted server` });
           console.log("checking if server still exists...");
           setTimeout(() => {
