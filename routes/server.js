@@ -795,13 +795,21 @@ router.get(`/:id/getInfo`, function (req, res) {
         return line.includes("motd");
       });
       desc = textByLine[index].split("=")[1];
-      secret = fs.readFileSync(`servers/${id}/config/paper-global.yml`, "utf8");
+      if (f.checkServer(id).software == "paper") {
+        secret = fs.readFileSync(
+          `servers/${id}/config/paper-global.yml`,
+          "utf8"
+        );
 
-      let secretLines = secret.split("\n");
+        let secretLines = secret.split("\n");
 
-      let index2 = secretLines.findIndex((line) => {
-        return line.includes("secret:");
-      });
+        let index2 = secretLines.findIndex((line) => {
+          return line.includes("secret:");
+        });
+        secret = secretLines[index2].split(":")[1].trim();
+        //cut quotes off of secret
+        secret = secret.substring(1, secret.length - 1);
+      }
 
       let onlineMode = textByLine[
         textByLine.findIndex((line) => {
@@ -816,10 +824,6 @@ router.get(`/:id/getInfo`, function (req, res) {
       } else {
         proxiesEnabled = true;
       }
-
-      secret = secretLines[index2].split(":")[1].trim();
-      //cut quotes off of secret
-      secret = secret.substring(1, secret.length - 1);
     }
 
     if (fs.existsSync(`servers/${id}/iconurl.txt`)) {
