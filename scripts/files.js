@@ -226,7 +226,7 @@ function simplifyTerminal(terminal, software) {
         break;
     }
   }
-  if (!terminalLines[0].includes("[") && terminalLines[0] != "" && software != "velocity") {
+  if (terminalLines[0] != "" && !terminalLines[0].includes("[") && software != "velocity") {
     return "[" + terminalLines.join("\n[");
   }
 
