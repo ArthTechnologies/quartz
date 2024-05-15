@@ -880,7 +880,9 @@ router.delete(`/:id`, function (req, res) {
     ) {
       console.log("deleting2 " + req.params.id);
       if (f.getState(req.params.id) == "true") {
+        console.log("deleting2.5 server is still on, killing it...")
         f.killAsync(req.params.id, () => {
+          console.log("deleting2.6 server killed");
           deleteServer();
         });
       } else {
