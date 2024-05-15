@@ -226,8 +226,12 @@ function simplifyTerminal(terminal, software) {
         break;
     }
   }
-  if (terminalLines[0] != "" && !terminalLines[0].includes("[") && software != "velocity") {
+  if (terminalLines[0] != ""  && software != "velocity") {
+    if (!terminalLines[0].includes("[")) {
     return "[" + terminalLines.join("\n[");
+    }else {
+      return terminalLines.join("\n[");
+    }
   }
 
   return terminalLines.join("\n[");
