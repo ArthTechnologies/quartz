@@ -701,7 +701,13 @@ router.post(`/:id/setInfo`, function (req, res) {
 
       fs.writeFileSync(`servers/${id}/velocity.toml`, text);
     } else {
-      f.proxiesToggle(req.params.id, req.body.proxiesEnabled, req.body.fSecret);
+      if (f.checkServer(id).software == "paper") {
+        f.proxiesToggle(
+          req.params.id,
+          req.body.proxiesEnabled,
+          req.body.fSecret
+        );
+      }
       var text = fs.readFileSync(`servers/${id}/server.properties`).toString();
       var textByLine = text.split("\n");
       let index = textByLine.findIndex((line) => {
