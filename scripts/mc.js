@@ -357,6 +357,9 @@ function run(
       }
       interval = 500;
       states[id] = "installing";
+      //previous terminals should be cleared
+      //so give extra feedback the server is installing
+      terminalOutput[id] = "Installing " + software.charAt(0).toUpperCase() + software.slice(1) + "...";
 
       if (software == "forge") {
         exec(
