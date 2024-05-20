@@ -456,12 +456,12 @@ process.stdin.on("data", (data) => {
       );
       break;
     case "broadcast":
-      console.log("Enter broadcast message:");
+      console.log(`Enter broadcast message (ex: "Server shutting down in 5 minutes"):`);
       process.stdin.once("data", (data) => {
         const message = data.trim();
         for (let i in fs.readdirSync("servers")) {
           const serverId = fs.readdirSync("servers")[i];
-          f.writeTerminal(serverId, message);
+          f.writeTerminal(serverId, "say [Broadcast] " + message);
         }
       });
       break;
