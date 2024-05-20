@@ -5,6 +5,7 @@ const stripe = require("stripe")(stripeKey);
 const config = require("../scripts/utils.js").getConfig();
 
 Router.post("/:plan", async (req, res) => {
+  try {
   let plan = req.params.plan;
   let quantity = req.query.quantity || 1;
   let customer_email = req.query.customer_email || null;
@@ -23,7 +24,7 @@ Router.post("/:plan", async (req, res) => {
     priceId = config.moddedPlanPriceId;
   }
   console.log("Customer Email: "+customer_email);
-  try {
+
   const session = await stripe.checkout.sessions.create({
     ui_mode: "embedded",
     ...(customer_email && { customer_email: customer_email }), // This line will only add the customer_email field if it's not null
