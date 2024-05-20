@@ -460,8 +460,8 @@ process.stdin.on("data", (data) => {
       process.stdin.once("data", (data) => {
         const message = data.trim();
         for (let i in fs.readdirSync("servers")) {
-          console.log("Broadcasting to " + i);
-          f.writeTerminal(i, message);
+          const serverId = fs.readdirSync("servers")[i];
+          f.writeTerminal(serverId, message);
         }
       });
       break;

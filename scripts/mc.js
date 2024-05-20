@@ -483,7 +483,7 @@ function run(
             clearInterval(intervalID);
           }
         }, 200);
-        eventEmitter.on("writeCmd", function () {
+        eventEmitter.on("writeCmd:"+id, function () {
           ls.stdin.write(terminalInput + "\n");
         });
         ls.on("exit", () => {
@@ -536,7 +536,7 @@ function run(
         clearInterval(intervalID);
       }
     }, 200);
-    eventEmitter.on("writeCmd", function () {
+    eventEmitter.on("writeCmd:"+id, function () {
       ls.stdin.write(terminalInput + "\n");
     });
     ls.on("exit", () => {
@@ -682,7 +682,7 @@ function readTerminal(id) {
 
 function writeTerminal(id, cmd) {
   terminalInput = cmd;
-  eventEmitter.emit("writeCmd");
+  eventEmitter.emit("writeCmd:"+id);
 }
 function downloadModpack(id, modpackURL, modpackID, versionID) {
   const folder = "servers/" + id;
