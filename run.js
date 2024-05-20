@@ -452,8 +452,18 @@ process.stdin.on("data", (data) => {
       process.exit(0);
     case "help":
       console.log(
-        "Commands:\nstop\nend\nexit\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
+        "Commands:\nstop\nend\nexit\nbroadcast\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
       );
+      break;
+    case "broadcast":
+      console.log("Enter broadcast message:");
+      process.stdin.once("data", (data) => {
+        const message = data.trim();
+        for (let i in fs.readdirSync("servers")) {
+          console.log("Broadcasting to " + i);
+          f.writeTerminal(i, message);
+        }
+      });
       break;
     case "clear":
       process.stdout.write("\x1B[2J\x1B[0f");
