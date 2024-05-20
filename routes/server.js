@@ -158,6 +158,7 @@ router.get(`/claimId`, function (req, res) {
   }
 });
 router.get(`/:id`, function (req, res) {
+  try{
   email = req.headers.username;
   token = req.headers.token;
   account = readJSON("accounts/" + email + ".json");
@@ -171,6 +172,10 @@ router.get(`/:id`, function (req, res) {
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
+} catch (err) {
+  console.log(err);
+  res.status(500).send({ error: err });
+}
 });
 router.post(`/:id/state/:state`, function (req, res) {
   email = req.headers.username;
@@ -440,6 +445,7 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
 });
 
 router.post(`/new/:id`, function (req, res) {
+  try{
   email = req.headers.username;
   token = req.headers.token;
   id = req.params.id;
@@ -678,6 +684,10 @@ router.post(`/new/:id`, function (req, res) {
   } else {
     res.status(401).json({ success: false, msg: `Invalid credentials.` });
   }
+} catch (err) {
+  console.log(err);
+  res.status(500).send({ error: err });
+}
 });
 router.post(`/:id/setInfo`, function (req, res) {
   email = req.headers.username;
@@ -852,6 +862,7 @@ router.get(`/:id/getInfo`, function (req, res) {
 });
 
 router.delete(`/:id`, function (req, res) {
+  try{
   //log
 
   if (!fs.existsSync("deleteLog.txt")) {
@@ -911,6 +922,10 @@ router.delete(`/:id`, function (req, res) {
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
+} catch (err) {
+  console.log(err);
+  res.status(500).send({ error: err });
+}
 });
 
 router.get("/:id/world", function (req, res) {
