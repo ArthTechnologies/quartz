@@ -435,13 +435,14 @@ function run(
           path = "../" + path;
           execLine = path + " -jar quilt-server-launch.jar nogui";
         }
-
+        if (fs.existsSync(path)) {
         ls = exec(execLine, { cwd: cwd }, (error, stdout, stderr) => {
           console.log(path + " " + cwd);
           terminalOutput[id] = stdout;
           states[id] = "false";
           console.log("setting status of " + id + " to false on line #3");
         });
+      }
 
         ls.stdout.on("data", (data) => {
           count++;
