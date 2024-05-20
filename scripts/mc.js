@@ -107,6 +107,7 @@ function run(
   modpackID,
   modpackVersionID
 ) {
+  try{
   let server = readJSON("servers/" + id + "/server.json");
   let out = [];
   states[id] = "starting";
@@ -632,6 +633,9 @@ function run(
   }
 
   let count = 0;
+} catch (e) {
+  console.log(e);
+}
 }
 function stop(id) {
   states[id] = "stopping";
