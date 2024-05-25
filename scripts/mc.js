@@ -421,9 +421,6 @@ function run(
             let forgeVersion = fs.readdirSync(
               folder + "/libraries/net/minecraftforge/forge/"
             )[0];
-            if (parseInt(version.split(".")[1]) >= 20) {
-              forgeVersion = version + "-" + forgeVersion;
-            }
 
             execLine =
               path +
