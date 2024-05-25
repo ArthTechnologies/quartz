@@ -431,9 +431,10 @@ function run(
               path +
               ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
 
-            if (parseInt(version.split(".")[1]) >= 17) {
+            if (parseInt(version.split(".")[1]) >= 20) {
               execLine = path + ` -jar forge-${forgeVersion}-shim.jar`;
             }
+
             if (version.includes("1.16")) {
               execLine = path + ` -jar forge-${forgeVersion}.jar`;
             }
