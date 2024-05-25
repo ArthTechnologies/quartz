@@ -362,7 +362,7 @@ function run(
         //previous terminals should be cleared
         //so give extra feedback the server is installing
         terminalOutput[id] =
-          "Installing " +
+          "[System] Installing " +
           software.charAt(0).toUpperCase() +
           software.slice(1) +
           "...";
@@ -398,8 +398,13 @@ function run(
             }
           );
         }
-      } else {
+      } else if (
+        fs.existsSync(folder + "/libraries/net/minecraftforge/forge")
+      ) {
         doneInstallingServer = true;
+      } else {
+        states[id] = "false";
+        terminalOutput[id] = "[Error]: Forge failed to install.";
       }
       let timeToLoad = true;
 
@@ -425,10 +430,12 @@ function run(
             execLine =
               path +
               ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
+
+            if (parseInt(version.split(".")[1]) >= 17) {
+              execLine = path + ` -jar forge-${forgeVersion}-shim.jar`;
+            }
             if (version.includes("1.16")) {
-              execLine =
-                path +
-                ` @libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-server.jar "$@"`;
+              execLine = path + ` -jar forge-${forgeVersion}.jar`;
             }
 
             if (version.includes("1.12")) {
@@ -440,68 +447,66 @@ function run(
             path = "../" + path;
             execLine = path + " -jar quilt-server-launch.jar nogui";
           }
-          if (fs.existsSync(path)) {
-            ls = exec(execLine, { cwd: cwd }, (error, stdout, stderr) => {
-              console.log(path + " " + cwd);
-              terminalOutput[id] = stdout;
+
+          ls = exec(execLine, { cwd: cwd }, (error, stdout, stderr) => {
+            console.log(path + " " + cwd);
+            terminalOutput[id] = stdout;
+            states[id] = "false";
+            console.log("setting status of " + id + " to false on line #3");
+          });
+
+          ls.stdout.on("data", (data) => {
+            count++;
+            if (count >= 9) {
+              console.log(data);
+              out.push(data);
+            }
+
+            terminalOutput[id] = out.join("\n");
+            if (
+              terminalOutput[id].includes("Done (") &&
+              states[id] != "stopping"
+            ) {
+              //replace states[id] with true
+              states[id] = "true";
+            } else if (
+              terminalOutput[id].includes(
+                "Failed to start the minecraft server"
+              )
+            ) {
               states[id] = "false";
-              console.log("setting status of " + id + " to false on line #3");
-            });
-
-            ls.stdout.on("data", (data) => {
-              count++;
-              if (count >= 9) {
-                out.push(data);
-              }
-
-              terminalOutput[id] = out.join("\n");
-              if (
-                terminalOutput[id].includes("Done (") &&
-                states[id] != "stopping"
-              ) {
-                //replace states[id] with true
-                states[id] = "true";
-              } else if (
-                terminalOutput[id].includes(
-                  "Failed to start the minecraft server"
-                )
-              ) {
-                states[id] = "false";
-                console.log("setting status of " + id + " to false on line #4");
-                ls.kill();
-              }
-            });
-            let count2 = 0;
-            let intervalID = setInterval(() => {
-              if (states[id] == "stopping") {
-                if (count2 < 5 * 24) {
-                  ls.stdin.write("stop\n");
-                  count2++;
-                } else {
-                  ls.kill();
-                  states[id] = "false";
-                  console.log(
-                    "setting status of " + id + " to false on line #5"
-                  );
-                  clearInterval(intervalID);
-                }
-              } else if (states[id] == "deleting") {
+              console.log("setting status of " + id + " to false on line #4");
+              ls.kill();
+            }
+          });
+          let count2 = 0;
+          let intervalID = setInterval(() => {
+            if (states[id] == "stopping") {
+              if (count2 < 5 * 24) {
+                ls.stdin.write("stop\n");
+                count2++;
+              } else {
                 ls.kill();
                 states[id] = "false";
-                console.log("setting status of " + id + " to false on line #6");
+                console.log("setting status of " + id + " to false on line #5");
                 clearInterval(intervalID);
               }
-            }, 200);
-            eventEmitter.on("writeCmd:" + id, function () {
-              ls.stdin.write(terminalInput + "\n");
-            });
-            ls.on("exit", () => {
+            } else if (states[id] == "deleting") {
+              ls.kill();
               states[id] = "false";
-              console.log("setting status of " + id + " to false on line #7");
-              terminalOutput[id] = out.join("\n");
+              console.log("setting status of " + id + " to false on line #6");
               clearInterval(intervalID);
-            });
-          }
+            }
+          }, 200);
+          eventEmitter.on("writeCmd:" + id, function () {
+            ls.stdin.write(terminalInput + "\n");
+          });
+          ls.on("exit", () => {
+            states[id] = "false";
+            console.log("setting status of " + id + " to false on line #7");
+            terminalOutput[id] = out.join("\n");
+            clearInterval(intervalID);
+          });
         }
       }, interval);
     } else {
