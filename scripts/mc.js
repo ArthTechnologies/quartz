@@ -421,17 +421,20 @@ function run(
             let forgeVersion = fs.readdirSync(
               folder + "/libraries/net/minecraftforge/forge/"
             )[0];
+            if (parseInt(version.split(".")[1]) >= 20) {
+              forgeVersion = version + "-" + forgeVersion;
+            }
 
             execLine =
               path +
               ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
-            if (version == "1.16.5") {
+            if (version.includes("1.16")) {
               execLine =
                 path +
                 ` @libraries/net/minecraftforge/forge/${forgeVersion}/forge-${forgeVersion}-server.jar "$@"`;
             }
 
-            if (version == "1.12.2") {
+            if (version.includes("1.12")) {
               execLine = path + ` ${args} -jar forge-${forgeVersion}.jar`;
             }
 
