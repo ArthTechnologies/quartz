@@ -145,7 +145,11 @@ function run(
       }
     }
     let allocatedRAM;
-    if (software == "paper" || software == "velocity") {
+    if (
+      software == "paper" ||
+      software == "velocity" ||
+      software == "snapshot"
+    ) {
       allocatedRAM = parseInt(config.basicPlanRAM);
     } else if (
       software == "forge" ||
@@ -228,6 +232,10 @@ function run(
 
     if (software == "velocity")
       path = "../../assets/java/jdk-17.0.5+8/bin/java";
+
+    if (software == "snapshot") {
+      path = "../../assets/java/jdk-21.0.3+9/bin/java";
+    }
 
     let doneInstallingServer = false;
 
