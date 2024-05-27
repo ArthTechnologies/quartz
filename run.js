@@ -309,7 +309,7 @@ function downloadJars() {
                 jar.version +
                 "." +
                 extension,
-              "https://api.serverjars.com/api/fetchJar/" +
+              "https://centrojars.com/api/fetchJar/" +
                 c +
                 "/" +
                 jar.software +
@@ -456,7 +456,9 @@ process.stdin.on("data", (data) => {
       );
       break;
     case "broadcast":
-      console.log(`Enter broadcast message (ex: "Server shutting down in 5 minutes"):`);
+      console.log(
+        `Enter broadcast message (ex: "Server shutting down in 5 minutes"):`
+      );
       process.stdin.once("data", (data) => {
         const message = data.trim();
         for (let i in fs.readdirSync("servers")) {
