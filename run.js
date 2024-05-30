@@ -444,6 +444,7 @@ process.stdout.write(
 );
 
 process.stdin.on("data", (data) => {
+  let userInput = false;
   const input = data.trim(); // Remove leading/trailing whitespace
   switch (input) {
     case "stop":
@@ -452,14 +453,16 @@ process.stdin.on("data", (data) => {
       process.exit(0);
     case "help":
       console.log(
-        "Commands:\nstop\nend\nexit\nbroadcast\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
+        "Commands:\nstop\nend\nexit\nscanAccountIds\nscanAccountServers\nbroadcast\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
       );
       break;
     case "broadcast":
+      userInput = true;
       console.log(
         `Enter broadcast message (ex: "Server shutting down in 5 minutes"):`
       );
       process.stdin.once("data", (data) => {
+        userInput = false;
         const message = data.trim();
         for (let i in fs.readdirSync("servers")) {
           const serverId = fs.readdirSync("servers")[i];
@@ -478,8 +481,29 @@ process.stdin.on("data", (data) => {
         "downloading latest jars, verifying subscriptions and getting latest version"
       );
       break;
+    case "scanAccountIds":
+      fs.readdirSync("accounts").forEach((file) => {
+        try {
+          let account = readJSON(`accounts/${file}`);
+          console.log(file + " " + account.accountId);
+        } catch {
+          console.log("error scanning account " + file);
+        }
+      });
+    case "scanAccountServers":
+      fs.readdirSync("accounts").forEach((file) => {
+        try {
+          let account = readJSON(`accounts/${file}`);
+          console.log(file + " " + account.servers);
+        } catch {
+          console.log("error scanning account " + file);
+        }
+      });
+
     default:
-      console.log('Unknown command. Type "help" for a list of commands.');
+      if (!userInput) {
+        console.log('Unknown command. Type "help" for a list of commands.');
+      }
   }
 });
 
