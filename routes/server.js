@@ -73,7 +73,7 @@ router.get(`/claimId`, function (req, res) {
                     for (let i = 0; i < serverFolder.length; i++) {
                       let num = serverFolder[i].split(".")[0];
                       console.log("claiming:" + num, i);
-                      if (num !== i) {
+                      if (parseInt(num) !== i) {
                         id = i;
                         break; // Break out of the loop when the first available ID is found.
                       }
