@@ -158,24 +158,24 @@ router.get(`/claimId`, function (req, res) {
   }
 });
 router.get(`/:id`, function (req, res) {
-  try{
-  email = req.headers.username;
-  token = req.headers.token;
-  account = readJSON("accounts/" + email + ".json");
-  server = readJSON("servers/" + req.params.id + "/server.json");
+  try {
+    email = req.headers.username;
+    token = req.headers.token;
+    account = readJSON("accounts/" + email + ".json");
+    server = readJSON("servers/" + req.params.id + "/server.json");
 
-  if (hasAccess(token, account)) {
-    //add cors header
-    res.header("Access-Control-Allow-Origin", "*");
-    id = req.params.id;
-    res.status(200).json(f.checkServer(id));
-  } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
+    if (hasAccess(token, account)) {
+      //add cors header
+      res.header("Access-Control-Allow-Origin", "*");
+      id = req.params.id;
+      res.status(200).json(f.checkServer(id));
+    } else {
+      res.status(401).json({ msg: `Invalid credentials.` });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ error: err });
   }
-} catch (err) {
-  console.log(err);
-  res.status(500).send({ error: err });
-}
 });
 router.post(`/:id/state/:state`, function (req, res) {
   email = req.headers.username;
@@ -445,249 +445,248 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
 });
 
 router.post(`/new/:id`, function (req, res) {
-  try{
-  email = req.headers.username;
-  token = req.headers.token;
-  id = req.params.id;
-  if (!enableAuth) email = "noemail";
-  account = readJSON("accounts/" + email + ".json");
-  console.log(
-    "creating server for " +
-      email +
-      "owns id? " +
-      JSON.stringify(account.servers).includes(id)
-  );
-  console.log("../accounts/" + email + ".json");
-  console.log("account", account);
-  if (token === account.token || !enableAuth) {
-    if (!fs.existsSync("servers/" + id + "/server.json")) {
-      console.log(id);
-      console.log(account.servers);
-      if (JSON.stringify(account.servers).includes(id)) {
-        console.log("debug: " + email + req.headers.username);
-        if (account.servers == undefined) account.servers = [];
-        let amount = 0;
-        for (i in account.servers) {
-          if (account.servers[i] != undefined) {
-            if (fs.existsSync("servers/" + account.servers[i] + "/server.json"))
-              amount++;
-          }
-        }
-        //add cors header
-        res.header("Access-Control-Allow-Origin", "*");
-
-        const datajson = readJSON("assets/data.json");
-        let serverFolders = fs.readdirSync("servers");
-        datajson.numServers = serverFolders.length;
-        writeJSON("assets/data.json", datajson);
-        em = req.headers.username;
-
-        let cid = "";
-        console.log("debug: " + email + req.headers.username + em);
-        if (
-          !enablePay &&
-          (config.maxServers > data.numServers ||
-            config.maxServers == undefined ||
-            data.numServers == undefined)
-        ) {
-          console.log("debug");
-          if (
-            req.body.software !== "undefined" &&
-            req.body.version !== "undefined" &&
-            req.body.name !== "undefined"
-          ) {
-            server = {};
-            server.name = req.body.name;
-            server.software = req.body.software;
-            server.version = req.body.version;
-            server.addons = req.body.addons;
-            server.accountId = account.accountId;
-            server.id = id;
-            if (!fs.existsSync("servers/" + id)) {
-              fs.mkdirSync("servers/" + id);
+  try {
+    email = req.headers.username;
+    token = req.headers.token;
+    id = req.params.id;
+    if (!enableAuth) email = "noemail";
+    account = readJSON("accounts/" + email + ".json");
+    console.log(
+      "creating server for " +
+        email +
+        "owns id? " +
+        JSON.stringify(account.servers).includes(id)
+    );
+    console.log("../accounts/" + email + ".json");
+    console.log("account", account);
+    if (token === account.token || !enableAuth) {
+      if (!fs.existsSync("servers/" + id + "/server.json")) {
+        console.log(id);
+        console.log(account.servers);
+        if (JSON.stringify(account.servers).includes(id)) {
+          console.log("debug: " + email + req.headers.username);
+          if (account.servers == undefined) account.servers = [];
+          let amount = 0;
+          for (i in account.servers) {
+            if (account.servers[i] != undefined) {
+              if (fs.existsSync("servers/" + account.servers[i])) amount++;
             }
-            writeJSON("servers/" + id + "/server.json", server);
-            console.log("debuglog2 " + id + server.id);
-            writeJSON("accounts/" + email + ".json", account);
           }
+          //add cors header
+          res.header("Access-Control-Allow-Origin", "*");
 
-          f.run(
-            id,
-            req.body.software,
-            req.body.version,
-            req.body.addons,
-            req.body.cmd,
-            undefined,
-            true,
-            req.body.modpackURL,
-            req.body.modpackID,
-            req.body.modpackVersionID
-          );
-          res
-            .status(202)
-            .json({ success: true, msg: `Success. Server created.` });
-        } else if (config.maxServers <= data.numServers) {
-          res
-            .status(400)
-            .json({ success: false, msg: "Maxiumum servers reached." });
-        } else {
+          const datajson = readJSON("assets/data.json");
+          let serverFolders = fs.readdirSync("servers");
+          datajson.numServers = serverFolders.length;
+          writeJSON("assets/data.json", datajson);
+          em = req.headers.username;
+
+          let cid = "";
           console.log("debug: " + email + req.headers.username + em);
-          stripe.customers.list(
-            {
-              limit: 100,
-              email: account.email,
-            },
-            function (err, customers) {
-              if (err) {
-                console.log("err");
-                return "no";
-              } else {
-                console.log("debug: " + email + req.headers.username + em);
+          if (
+            !enablePay &&
+            (config.maxServers > data.numServers ||
+              config.maxServers == undefined ||
+              data.numServers == undefined)
+          ) {
+            console.log("debug");
+            if (
+              req.body.software !== "undefined" &&
+              req.body.version !== "undefined" &&
+              req.body.name !== "undefined"
+            ) {
+              server = {};
+              server.name = req.body.name;
+              server.software = req.body.software;
+              server.version = req.body.version;
+              server.addons = req.body.addons;
+              server.accountId = account.accountId;
+              server.id = id;
+              if (!fs.existsSync("servers/" + id)) {
+                fs.mkdirSync("servers/" + id);
+              }
+              writeJSON("servers/" + id + "/server.json", server);
+              console.log("debuglog2 " + id + server.id);
+              writeJSON("accounts/" + email + ".json", account);
+            }
 
-                if (customers.data.length > 0) {
-                  cid = customers.data[0].id;
+            f.run(
+              id,
+              req.body.software,
+              req.body.version,
+              req.body.addons,
+              req.body.cmd,
+              undefined,
+              true,
+              req.body.modpackURL,
+              req.body.modpackID,
+              req.body.modpackVersionID
+            );
+            res
+              .status(202)
+              .json({ success: true, msg: `Success. Server created.` });
+          } else if (config.maxServers <= data.numServers) {
+            res
+              .status(400)
+              .json({ success: false, msg: "Maxiumum servers reached." });
+          } else {
+            console.log("debug: " + email + req.headers.username + em);
+            stripe.customers.list(
+              {
+                limit: 100,
+                email: account.email,
+              },
+              function (err, customers) {
+                if (err) {
+                  console.log("err");
+                  return "no";
+                } else {
+                  console.log("debug: " + email + req.headers.username + em);
 
-                  //check the customer's subscriptions and return it
-                  stripe.subscriptions.list(
-                    {
-                      customer: cid,
-                      limit: 100,
-                    },
-                    function (err, subscriptions) {
-                      let subs = 0;
-                      //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
-                      for (i in subscriptions.data) {
-                        console.log("plan object");
-                        console.log(subscriptions.data[i].plan);
-                        if (subscriptions.data[i] != undefined) {
-                          subs++;
-                        }
-                      }
-                      let freeServers = 0;
-                      if (account.freeServers != undefined) {
-                        freeServers = parseInt(account.freeServers);
-                      }
-                      let canCreateServer = subs + freeServers > amount;
-                      if (config.moddedPlanPriceId != "") {
-                        let basicServers = 0;
-                        let moddedServers = 0;
-                        for (i in account.servers) {
-                          let server = readJSON(
-                            "servers/" + account.servers[i] + "/server.json"
-                          );
-                          switch (req.body.software.toLowerCase()) {
-                            case "forge":
-                              moddedServers++;
-                              break;
-                            case "fabric":
-                              moddedServers++;
-                              break;
-                            case "quilt":
-                              moddedServers++;
-                              break;
-                            default:
-                              basicServers++;
+                  if (customers.data.length > 0) {
+                    cid = customers.data[0].id;
+
+                    //check the customer's subscriptions and return it
+                    stripe.subscriptions.list(
+                      {
+                        customer: cid,
+                        limit: 100,
+                      },
+                      function (err, subscriptions) {
+                        let subs = 0;
+                        //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
+                        for (i in subscriptions.data) {
+                          console.log("plan object");
+                          console.log(subscriptions.data[i].plan);
+                          if (subscriptions.data[i] != undefined) {
+                            subs++;
                           }
                         }
-                        if (
-                          req.body.software == "forge" ||
-                          req.body.software == "fabric" ||
-                          req.body.software == "quilt"
-                        ) {
-                          createServer = moddedServers + freeServers > amount;
-                        } else {
-                          createServer = basicServers + freeServers > amount;
+                        let freeServers = 0;
+                        if (account.freeServers != undefined) {
+                          freeServers = parseInt(account.freeServers);
                         }
-                      }
-                      if (canCreateServer) {
-                        if (
-                          em !== "noemail" &&
-                          req.body.software !== "undefined" &&
-                          req.body.version !== "undefined" &&
-                          req.body.name !== "undefined"
-                        ) {
+                        let canCreateServer = subs + freeServers > amount;
+                        if (config.moddedPlanPriceId != "") {
+                          let basicServers = 0;
+                          let moddedServers = 0;
+                          for (i in account.servers) {
+                            let server = readJSON(
+                              "servers/" + account.servers[i] + "/server.json"
+                            );
+                            switch (req.body.software.toLowerCase()) {
+                              case "forge":
+                                moddedServers++;
+                                break;
+                              case "fabric":
+                                moddedServers++;
+                                break;
+                              case "quilt":
+                                moddedServers++;
+                                break;
+                              default:
+                                basicServers++;
+                            }
+                          }
+                          if (
+                            req.body.software == "forge" ||
+                            req.body.software == "fabric" ||
+                            req.body.software == "quilt"
+                          ) {
+                            createServer = moddedServers + freeServers > amount;
+                          } else {
+                            createServer = basicServers + freeServers > amount;
+                          }
+                        }
+                        if (canCreateServer) {
+                          if (
+                            em !== "noemail" &&
+                            req.body.software !== "undefined" &&
+                            req.body.version !== "undefined" &&
+                            req.body.name !== "undefined"
+                          ) {
+                            console.log(
+                              "debug: " + email + req.headers.username + em
+                            );
+                            server = {};
+                            server.name = req.body.name;
+                            server.software = req.body.software;
+                            server.version = req.body.version;
+                            server.addons = req.body.addons;
+                            server.accountId = account.accountId;
+                            server.id = id;
+                            if (!fs.existsSync("servers/" + id)) {
+                              fs.mkdirSync("servers/" + id);
+                            }
+                            writeJSON("servers/" + id + "/server.json", server);
+                            writeJSON("accounts/" + email + ".json", account);
+                            console.log(req.body);
+                          }
                           console.log(
                             "debug: " + email + req.headers.username + em
                           );
-                          server = {};
-                          server.name = req.body.name;
-                          server.software = req.body.software;
-                          server.version = req.body.version;
-                          server.addons = req.body.addons;
-                          server.accountId = account.accountId;
-                          server.id = id;
-                          if (!fs.existsSync("servers/" + id)) {
-                            fs.mkdirSync("servers/" + id);
-                          }
-                          writeJSON("servers/" + id + "/server.json", server);
-                          writeJSON("accounts/" + email + ".json", account);
-                          console.log(req.body);
+                          f.run(
+                            id,
+                            req.body.software,
+                            req.body.version,
+                            req.body.addons,
+                            req.body.cmd,
+                            undefined,
+                            true,
+                            req.body.modpackURL,
+                            req.body.modpackID,
+                            req.body.modpackVersionID
+                          );
+                          res.status(202).json({
+                            success: true,
+                            msg: `Success: Starting Server`,
+                            subscriptions: subs,
+                            isCustomer: true,
+                            cmds: req.body.cmd,
+                          });
+                        } else {
+                          res.status(200).json({
+                            success: false,
+                            msg: `If you want another server, please make a new subscription.`,
+                            subscriptions: subs,
+                            isCustomer: true,
+                          });
                         }
-                        console.log(
-                          "debug: " + email + req.headers.username + em
-                        );
-                        f.run(
-                          id,
-                          req.body.software,
-                          req.body.version,
-                          req.body.addons,
-                          req.body.cmd,
-                          undefined,
-                          true,
-                          req.body.modpackURL,
-                          req.body.modpackID,
-                          req.body.modpackVersionID
-                        );
-                        res.status(202).json({
-                          success: true,
-                          msg: `Success: Starting Server`,
-                          subscriptions: subs,
-                          isCustomer: true,
-                          cmds: req.body.cmd,
-                        });
-                      } else {
-                        res.status(200).json({
-                          success: false,
-                          msg: `If you want another server, please make a new subscription.`,
-                          subscriptions: subs,
-                          isCustomer: true,
-                        });
                       }
-                    }
-                  );
-                } else {
-                  console.log("No customers found.");
+                    );
+                  } else {
+                    console.log("No customers found.");
 
-                  res.status(200).json({
-                    success: false,
-                    msg: `You need to subscribe first.`,
-                    subscriptions: 0,
-                    isCustomer: false,
-                  });
+                    res.status(200).json({
+                      success: false,
+                      msg: `You need to subscribe first.`,
+                      subscriptions: 0,
+                      isCustomer: false,
+                    });
+                  }
                 }
               }
-            }
-          );
+            );
+          }
+        } else {
+          res.status(401).json({
+            success: false,
+            msg: `You don't own (ID: ${req.params.id}).`,
+          });
         }
       } else {
         res.status(401).json({
           success: false,
-          msg: `You don't own (ID: ${req.params.id}).`,
+          msg: `There's already a server using (ID: ${req.params.id}). Contact support if you think this is a mistake.`,
         });
       }
     } else {
-      res.status(401).json({
-        success: false,
-        msg: `There's already a server using (ID: ${req.params.id}). Contact support if you think this is a mistake.`,
-      });
+      res.status(401).json({ success: false, msg: `Invalid credentials.` });
     }
-  } else {
-    res.status(401).json({ success: false, msg: `Invalid credentials.` });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ error: err });
   }
-} catch (err) {
-  console.log(err);
-  res.status(500).send({ error: err });
-}
 });
 router.post(`/:id/setInfo`, function (req, res) {
   email = req.headers.username;
@@ -862,70 +861,73 @@ router.get(`/:id/getInfo`, function (req, res) {
 });
 
 router.delete(`/:id`, function (req, res) {
-  try{
-  //log
+  try {
+    //log
 
-  if (!fs.existsSync("deleteLog.txt")) {
-    fs.writeFileSync(
-      "deleteLog.txt",
-      "Recieved A Delete Request for server " + req.params.id + "\n"
-    );
-  } else {
-    fs.appendFileSync(
-      "deleteLog.txt",
-      "Recieved A Delete Request for server " + req.params.id + "\n"
-    );
-  }
+    if (!fs.existsSync("deleteLog.txt")) {
+      fs.writeFileSync(
+        "deleteLog.txt",
+        "Recieved A Delete Request for server " + req.params.id + "\n"
+      );
+    } else {
+      fs.appendFileSync(
+        "deleteLog.txt",
+        "Recieved A Delete Request for server " + req.params.id + "\n"
+      );
+    }
 
-  console.log("deleting1 " + req.params.id);
-  email = req.headers.username;
-  token = req.headers.token;
-  account = readJSON("accounts/" + email + ".json");
-  server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account)) {
-    if (
-      files.hash(req.query.password, account.salt).split(":")[1] ==
-        account.password ||
-      !enableAuth ||
-      account.type != "email"
-    ) {
-      console.log("deleting2 " + req.params.id);
-      if (f.getState(req.params.id) == "true") {
-        console.log("deleting2.5 server is still on, killing it...")
-        f.killAsync(req.params.id, () => {
-          console.log("deleting2.6 server killed");
+    console.log("deleting1 " + req.params.id);
+    email = req.headers.username;
+    token = req.headers.token;
+    account = readJSON("accounts/" + email + ".json");
+    server = readJSON("servers/" + req.params.id + "/server.json");
+    if (hasAccess(token, account)) {
+      if (
+        files.hash(req.query.password, account.salt).split(":")[1] ==
+          account.password ||
+        !enableAuth ||
+        account.type != "email"
+      ) {
+        console.log("deleting2 " + req.params.id);
+        if (f.getState(req.params.id) == "true") {
+          console.log("deleting2.5 server is still on, killing it...");
+          f.killAsync(req.params.id, () => {
+            console.log("deleting2.6 server killed");
+            deleteServer();
+          });
+        } else {
           deleteServer();
-        });
+        }
+
+        function deleteServer() {
+          console.log("deleting3 " + req.params.id);
+          writeJSON(`accounts/${email}.json`, account);
+          console.log("deleting4 " + req.params.id);
+          files.removeDirectoryRecursiveAsync(
+            `servers/${req.params.id}`,
+            () => {
+              console.log("deleting5 " + req.params.id);
+              res.status(200).json({ msg: `Deleted server` });
+              console.log("checking if server still exists...");
+              setTimeout(() => {
+                //sometimes, it'll delete the files inside a folder but not the folder itself.
+
+                console.log("making sure server is deleted...");
+                files.removeDirectoryRecursive(`servers/${req.params.id}`);
+              }, 5000);
+            }
+          );
+        }
       } else {
-        deleteServer();
-      }
-
-      function deleteServer() {
-        console.log("deleting3 " + req.params.id);
-        writeJSON(`accounts/${email}.json`, account);
-        console.log("deleting4 " + req.params.id);
-        files.removeDirectoryRecursiveAsync(`servers/${req.params.id}`, () => {
-          console.log("deleting5 " + req.params.id);
-          res.status(200).json({ msg: `Deleted server` });
-          console.log("checking if server still exists...");
-          setTimeout(() => {
-            //sometimes, it'll delete the files inside a folder but not the folder itself.
-
-            console.log("making sure server is deleted...");
-            files.removeDirectoryRecursive(`servers/${req.params.id}`);
-          }, 5000);
-        });
+        res.status(401).json({ msg: `Invalid credentials.` });
       }
     } else {
       res.status(401).json({ msg: `Invalid credentials.` });
     }
-  } else {
-    res.status(401).json({ msg: `Invalid credentials.` });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ error: err });
   }
-} catch (err) {
-  console.log(err);
-  res.status(500).send({ error: err });
-}
 });
 
 router.get("/:id/world", function (req, res) {
