@@ -485,21 +485,22 @@ process.stdin.on("data", (data) => {
       fs.readdirSync("accounts").forEach((file) => {
         try {
           let account = readJSON(`accounts/${file}`);
-          console.log(file + " " + account.accountId);
+          console.log(account.accountId + " - " + file);
         } catch {
           console.log("error scanning account " + file);
         }
       });
+      break;
     case "scanAccountServers":
       fs.readdirSync("accounts").forEach((file) => {
         try {
           let account = readJSON(`accounts/${file}`);
-          console.log(file + " " + account.servers);
+          console.log(file + " - " + account.servers);
         } catch {
           console.log("error scanning account " + file);
         }
       });
-
+      break;
     default:
       if (!userInput) {
         console.log('Unknown command. Type "help" for a list of commands.');
