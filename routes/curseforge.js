@@ -67,7 +67,6 @@ Router.get("/:id", (req, res) => {
       `curl -X GET "https://api.curseforge.com/v1/mods/${id}"` +
         ` -H 'x-api-key: ${apiKey}'`,
       (error, stdout, stderr) => {
-        console.log(stdout);
         if (!error && stdout != undefined) {
           try {
             res.status(200).json(JSON.parse(stdout).data);
