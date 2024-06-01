@@ -600,18 +600,19 @@ router.post(`/new/:id`, function (req, res) {
                             req.body.software == "quilt"
                           ) {
                             canCreateServer =
-                              moddedServers + freeServers > amount;
+                              moddedServers + freeServers < amount;
                           } else {
                             console.log(
                               "canCreateServer? = " +
                                 basicServers +
                                 " + " +
                                 freeServers +
-                                " > " +
+                                " < " +
                                 amount
                             );
                             canCreateServer =
-                              basicServers + freeServers > amount;
+                              basicServers + moddedServers + freeServers <
+                              amount;
                           }
                         }
                         if (canCreateServer) {
