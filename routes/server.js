@@ -602,6 +602,14 @@ router.post(`/new/:id`, function (req, res) {
                             canCreateServer =
                               moddedServers + freeServers > amount;
                           } else {
+                            console.log(
+                              "canCreateServer? = " +
+                                basicServers +
+                                " + " +
+                                freeServers +
+                                " > " +
+                                amount
+                            );
                             canCreateServer =
                               basicServers + freeServers > amount;
                           }
