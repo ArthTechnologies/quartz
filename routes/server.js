@@ -571,21 +571,27 @@ router.post(`/new/:id`, function (req, res) {
                           let basicServers = 0;
                           let moddedServers = 0;
                           for (i in account.servers) {
-                            let server = readJSON(
-                              "servers/" + account.servers[i] + "/server.json"
-                            );
-                            switch (req.body.software.toLowerCase()) {
-                              case "forge":
-                                moddedServers++;
-                                break;
-                              case "fabric":
-                                moddedServers++;
-                                break;
-                              case "quilt":
-                                moddedServers++;
-                                break;
-                              default:
-                                basicServers++;
+                            if (
+                              fs.existsSync(
+                                "servers/" + account.servers[i] + "/server.json"
+                              )
+                            ) {
+                              let server = readJSON(
+                                "servers/" + account.servers[i] + "/server.json"
+                              );
+                              switch (server.software.toLowerCase()) {
+                                case "forge":
+                                  moddedServers++;
+                                  break;
+                                case "fabric":
+                                  moddedServers++;
+                                  break;
+                                case "quilt":
+                                  moddedServers++;
+                                  break;
+                                default:
+                                  basicServers++;
+                              }
                             }
                           }
                           if (
@@ -593,9 +599,11 @@ router.post(`/new/:id`, function (req, res) {
                             req.body.software == "fabric" ||
                             req.body.software == "quilt"
                           ) {
-                            createServer = moddedServers + freeServers > amount;
+                            canCreateServer =
+                              moddedServers + freeServers > amount;
                           } else {
-                            createServer = basicServers + freeServers > amount;
+                            canCreateServer =
+                              basicServers + freeServers > amount;
                           }
                         }
                         if (canCreateServer) {
