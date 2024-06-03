@@ -431,9 +431,12 @@ function run(
           let cwd = folder;
 
           if (software == "forge") {
-            let forgeVersion = fs.readdirSync(
-              folder + "/libraries/net/minecraftforge/forge/"
-            )[0];
+            let forgeVersion;
+            if (fs.existsSync(folder + "/libraries/net/minecraftforge/forge")) {
+              forgeVersion = fs.readdirSync(
+                folder + "/libraries/net/minecraftforge/forge/"
+              )[0];
+            }
 
             execLine =
               path +
