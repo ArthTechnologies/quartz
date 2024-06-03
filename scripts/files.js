@@ -116,8 +116,9 @@ function removeDirectoryRecursiveAsync(directoryPath, callback) {
   if (fs.existsSync(directoryPath)) {
     //check if directory path is inside the server folder
     if (directoryPath.startsWith("servers")) {
-      exec(`rm -rf ${directoryPath}/*`, (error, stdout, stderr) => {
+      exec(`rm -rf ${directoryPath}`, (error, stdout, stderr) => {
         if (callback != undefined) {
+          fs.mkdirSync(directoryPath);
           callback(stdout);
         }
       });
