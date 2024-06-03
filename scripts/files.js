@@ -116,7 +116,7 @@ function removeDirectoryRecursiveAsync(directoryPath, callback) {
   if (fs.existsSync(directoryPath)) {
     //check if directory path is inside the server folder
     if (directoryPath.startsWith("servers")) {
-      exec(`rm -rf ${directoryPath}`, (error, stdout, stderr) => {
+      exec(`rm -rf ${directoryPath}/*`, (error, stdout, stderr) => {
         if (callback != undefined) {
           callback(stdout);
         }
@@ -226,10 +226,10 @@ function simplifyTerminal(terminal, software) {
         break;
     }
   }
-  if (terminalLines[0] != ""  && software != "velocity") {
+  if (terminalLines[0] != "" && software != "velocity") {
     if (!terminalLines[0].includes("[")) {
-    return "[" + terminalLines.join("\n[");
-    }else {
+      return "[" + terminalLines.join("\n[");
+    } else {
       return terminalLines.join("\n[");
     }
   }
