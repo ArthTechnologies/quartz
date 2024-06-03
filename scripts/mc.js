@@ -451,6 +451,18 @@ function run(
               execLine = path + ` ${args} -jar forge-${forgeVersion}.jar`;
             }
 
+            if (parseInt(version.split(".")[1]) <= 8) {
+              let jarname = "";
+              fs.readdirSync(
+                folder + "/libraries/net/minecraftforge/forge/"
+              ).forEach((file) => {
+                if (file.includes("-universal.jar")) {
+                  jarname = file;
+                }
+              });
+              execLine = path + ` -jar ${jarname}`;
+            }
+
             console.log(execLine);
           } else {
             path = "../" + path;
