@@ -183,7 +183,21 @@ router.get(`/jarsIndex`, function (req, res) {
 });
 
 router.get(`/isAtCapacity`, function (req, res) {
-  let numServers = fs.readdirSync("servers").length;
+  let numServers = 0;
+  fs.readdirSync("servers").forEach((file) => {
+    if (fs.existsSync(`servers/${file}/server.json`)) {
+      try {
+        if (!readJSON(`servers/${file}/server.json`).adminServer) {
+          numServers++;
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      numServers++;
+    }
+  });
+  console.log("numServers:" + numServers);
   res.status(200).json(numServers >= config.maxServers);
 });
 
