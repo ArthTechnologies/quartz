@@ -137,7 +137,7 @@ if (!fs.existsSync("assets/jars")) {
 
   fs.writeFileSync(
     "assets/data.json",
-    `{"lastUpdate":${Date.now()},"numServers":0,"latestVersion":"1.20.2"}`
+    `{"lastUpdate":${Date.now()},"numServers":0}`
   );
   downloadJars();
 }
@@ -145,13 +145,11 @@ if (!fs.existsSync("assets/jars")) {
 const datajson = readJSON("./assets/data.json");
 if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
   downloadJars();
-  getLatestVersion();
   verifySubscriptions();
   backup();
 }
 setInterval(() => {
   downloadJars();
-  getLatestVersion();
   verifySubscriptions();
   backup();
 }, 1000 * 60 * 60 * 12);
@@ -387,19 +385,6 @@ function backup() {
   }
 }
 
-function getLatestVersion() {
-  files.GET(
-    "https://launchermeta.mojang.com/mc/game/version_manifest.json",
-    (vdata) => {
-      let version = JSON.parse(vdata).latest.release;
-      let datajson = readJSON("./assets/data.json");
-      data.latestVersion = version;
-      writeJSON("./assets/data.json", datajson);
-      return version;
-    }
-  );
-}
-
 function verifySubscriptions() {
   if (config.stripeKey != "" && config.enablePay) {
     const accounts = fs.readdirSync("accounts");
@@ -474,12 +459,9 @@ process.stdin.on("data", (data) => {
       process.stdout.write("\x1B[2J\x1B[0f");
       break;
     case "refresh":
-      getLatestVersion();
       downloadJars();
       verifySubscriptions();
-      console.log(
-        "downloading latest jars, verifying subscriptions and getting latest version"
-      );
+      console.log("downloading latest jars and verifying subscriptions...");
       break;
     case "scanAccountIds":
       fs.readdirSync("accounts").forEach((file) => {

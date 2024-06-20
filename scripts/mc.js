@@ -214,13 +214,8 @@ function run(
         break;
     }
 
-    const datajson = readJSON("assets/data.json");
-    let latestVersion = datajson.latestVersion;
     //this selects the correct version of java for the minecraft version
-    if (version == latestVersion) {
-      version = latestVersion;
-      path = "../../assets/java/jdk-21.0.3+9/bin/java";
-    } else if (version.includes("1.20"))
+    if (parseInt(version.split(".")[1]) >= 20)
       path = "../../assets/java/jdk-21.0.3+9/bin/java";
     else if (version.includes("1.19"))
       path = "../../assets/java/jdk-21.0.3+9/bin/java";
