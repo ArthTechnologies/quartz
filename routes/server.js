@@ -1023,8 +1023,12 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               const serverJson = readJSON(`servers/${id}/server.json`);
               serverJson.addons = worldgenMods;
               writeJSON(`servers/${id}/server.json`, serverJson);
-              fs.mkdirSync(`servers/${id}/world`);
-              fs.mkdirSync(`servers/${id}/world/datapacks`);
+              try {
+                fs.mkdirSync(`servers/${id}/world`);
+                fs.mkdirSync(`servers/${id}/world/datapacks`);
+              } catch (err) {
+                console.log(err);
+              }
               files.removeDirectoryRecursive(`servers/${id}/world_nether`);
               files.removeDirectoryRecursive(`servers/${id}/world_the_end`);
 
