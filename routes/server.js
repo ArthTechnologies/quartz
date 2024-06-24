@@ -1025,10 +1025,10 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
               writeJSON(`servers/${id}/server.json`, serverJson);
               try {
                 fs.mkdirSync(`servers/${id}/world`);
-                fs.mkdirSync(`servers/${id}/world/datapacks`);
               } catch (err) {
                 console.log(err);
               }
+              fs.mkdirSync(`servers/${id}/world/datapacks`);
               files.removeDirectoryRecursive(`servers/${id}/world_nether`);
               files.removeDirectoryRecursive(`servers/${id}/world_the_end`);
 
@@ -1087,7 +1087,11 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             fs.writeFileSync(`servers/${id}/server.properties`, newText);
             files.removeDirectoryRecursiveAsync(`servers/${id}/world`, () => {
               console.log("debug log");
-              fs.mkdirSync(`servers/${id}/world`);
+              try {
+                fs.mkdirSync(`servers/${id}/world`);
+              } catch (err) {
+                console.log(err);
+              }
               fs.mkdirSync(`servers/${id}/world/datapacks`);
               files.removeDirectoryRecursive(`servers/${id}/world_nether`);
               files.removeDirectoryRecursive(`servers/${id}/world_the_end`);
