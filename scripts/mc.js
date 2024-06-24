@@ -464,9 +464,8 @@ function run(
             path = "../" + path;
             execLine = path + " -jar quilt-server-launch.jar nogui";
           }
-
+          console.log("starting server " + id + " with:\n" + execLine);
           ls = exec(execLine, { cwd: cwd }, (error, stdout, stderr) => {
-            console.log(path + " " + cwd);
             terminalOutput[id] = stdout;
             states[id] = "false";
             console.log("setting status of " + id + " to false on line #3");
@@ -527,7 +526,7 @@ function run(
       }, interval);
     } else {
       let count = 0;
-
+      console.log("starting server " + id + " with:\n" + path + " " + args);
       ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
         terminalOutput[id] = stdout;
         states[id] = "false";
