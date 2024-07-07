@@ -21,7 +21,7 @@ Router.get("/verifyToken", (req, res) => {
 
 Router.get("/customers", async (req, res) => {
   const datajson = utils.readJSON("assets/data.json");
-  if (req.query.tempToken != datajson.tempToken) {
+  if (req.query.tempToken != datajson.tempToken.split(":")[1]) {
     res.status(401).send({ error: "Unauthorized" });
   } else {
     const customers = await stripe.customers.list();
