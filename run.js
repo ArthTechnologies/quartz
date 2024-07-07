@@ -152,7 +152,21 @@ setInterval(() => {
   downloadJars();
   verifySubscriptions();
   backup();
+  refreshTempToken();
 }, 1000 * 60 * 60 * 12);
+
+function refreshTempToken() {
+  if (datajson.tempToken != undefined) {
+    datajson.tempToken =
+      Date.now() + ":" + crypto.randomBytes(16).toString("hex");
+  } else {
+    //if its more than a week old, refreshes it
+    if (Date.now() - datajson.tempToken.split(":")[0] > 1000 * 60 * 60 * 24 * 7)
+      datajson.tempToken =
+        Date.now() + ":" + crypto.randomBytes(16).toString("hex");
+    writeJSON("assets/data.json", datajson);
+  }
+}
 
 function downloadJars() {
   const datajson = readJSON("./assets/data.json");
@@ -438,8 +452,11 @@ process.stdin.on("data", (data) => {
       process.exit(0);
     case "help":
       console.log(
-        "Commands:\nstop\nend\nexit\nscanAccountIds\nscanAccountServers\nbroadcast\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
+        "Commands:\nstop\nend\nexit\ngetDashboardToken\nscanAccountIds\nscanAccountServers\nbroadcast\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
       );
+      break;
+    case "getDashboardToken":
+      process.stdout.write(datajson.tempToken.split(":")[1]);
       break;
     case "broadcast":
       userInput = true;
