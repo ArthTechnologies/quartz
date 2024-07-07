@@ -139,6 +139,7 @@ if (!fs.existsSync("assets/jars")) {
     "assets/data.json",
     `{"lastUpdate":${Date.now()},"numServers":0}`
   );
+  refreshTempToken();
   downloadJars();
 }
 
@@ -147,6 +148,7 @@ if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
   downloadJars();
   verifySubscriptions();
   backup();
+  refreshTempToken();
 }
 setInterval(() => {
   downloadJars();
@@ -156,9 +158,10 @@ setInterval(() => {
 }, 1000 * 60 * 60 * 12);
 
 function refreshTempToken() {
-  if (datajson.tempToken != undefined) {
+  if (datajson.tempToken != "") {
     datajson.tempToken =
       Date.now() + ":" + crypto.randomBytes(16).toString("hex");
+    writeJSON("assets/data.json", datajson);
   } else {
     //if its more than a week old, refreshes it
     if (Date.now() - datajson.tempToken.split(":")[0] > 1000 * 60 * 60 * 24 * 7)
@@ -456,7 +459,7 @@ process.stdin.on("data", (data) => {
       );
       break;
     case "getDashboardToken":
-      process.stdout.write(datajson.tempToken.split(":")[1]);
+      console.log(datajson.tempToken.split(":")[1]);
       break;
     case "broadcast":
       userInput = true;
@@ -478,6 +481,7 @@ process.stdin.on("data", (data) => {
     case "refresh":
       downloadJars();
       verifySubscriptions();
+      refreshTempToken();
       console.log("downloading latest jars and verifying subscriptions...");
       break;
     case "scanAccountIds":
@@ -623,8 +627,9 @@ const security = (req, res, next) => {
 app.use(limiter, express.json(), cors());
 
 app.use("/server", require("./routes/server"));
+app.use("/dashboard", require("./routes/dashboard"));
 app.use("/checkout", require("./routes/checkout"));
-app.use("/info", require("./routes/info.js"));
+app.use("/info", require("./routes/info"));
 app.use("/terminal", require("./routes/terminal"));
 app.use("/accounts", require("./routes/accounts"));
 app.use("/curseforge", require("./routes/curseforge"));

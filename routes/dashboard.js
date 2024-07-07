@@ -8,9 +8,9 @@ const utils = require("../scripts/utils.js");
 Router.get("/verifyToken", (req, res) => {
   let tempToken = req.query.tempToken;
   try {
-    const datajson = utils.readJSON("data.json");
+    const datajson = utils.readJSON("assets/data.json");
     if (datajson.tempToken.split(":")[1] == tempToken) {
-      res.status(200).send({ successs: true });
+      res.status(200).send({ success: true });
     } else {
       res.status(200).send({ success: false });
     }
@@ -18,3 +18,5 @@ Router.get("/verifyToken", (req, res) => {
     res.status(500).send({ error: error });
   }
 });
+
+module.exports = Router;
