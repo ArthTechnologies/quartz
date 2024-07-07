@@ -455,8 +455,28 @@ process.stdin.on("data", (data) => {
       process.exit(0);
     case "help":
       console.log(
-        "Commands:\nstop\nend\nexit\ngetDashboardToken\nscanAccountIds\nscanAccountServers\nbroadcast\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
+        "Commands:\nstop\nend\nexit\ngetServerOwner\ngetDashboardToken\nscanAccountIds\nscanAccountServers\nbroadcast\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
       );
+      break;
+    case "getServerOwner":
+      userInput = true;
+      console.log("Enter server id:");
+      process.stdin.once("data", (data) => {
+        try {
+          const serverId = data.trim();
+          const accountId = readJSON(
+            `servers/${serverId}/server.json`
+          ).accountId;
+          fs.readdirSync("accounts").forEach((file) => {
+            const account = readJSON(`accounts/${file}`);
+            if (account.accountId == accountId) {
+              console.log(file);
+            }
+          });
+        } catch {
+          console.log("error getting server owner");
+        }
+      });
       break;
     case "getDashboardToken":
       console.log(datajson.tempToken.split(":")[1]);
@@ -474,6 +494,7 @@ process.stdin.on("data", (data) => {
           f.writeTerminal(serverId, "say [Broadcast] " + message);
         }
       });
+      userInput = false;
       break;
     case "clear":
       process.stdout.write("\x1B[2J\x1B[0f");
