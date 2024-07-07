@@ -265,6 +265,7 @@ Router.post("/discord/", (req, res) => {
           firstTime: true,
           avatar: `https://cdn.discordapp.com/avatars/${res2.id}/${res2.avatar}.webp`,
           bannerColor: res2.banner_color,
+          email: res2.email,
         });
       }
     }
