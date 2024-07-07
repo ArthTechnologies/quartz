@@ -568,10 +568,6 @@ function getServerStates() {
   writeJSON("./assets/data.json", data);
 }
 
-setInterval(() => {
-  getServerStates();
-}, 1000 * 60 * 2);
-
 const data = readJSON("./assets/data.json");
 for (i in data.serverStates) {
   if (data.serverStates[i].split(":")[1] == "true") {
@@ -592,6 +588,9 @@ for (i in data.serverStates) {
     }
   }
 }
+setInterval(() => {
+  getServerStates();
+}, 1000 * 60 * 2);
 
 app.get("/", (req, res) => {
   res.status(200).sendFile(path.join(__dirname, "assets/clientMessage.html"));
