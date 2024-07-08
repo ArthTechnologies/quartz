@@ -464,16 +464,30 @@ process.stdin.on("data", (data) => {
       process.stdin.once("data", (data) => {
         try {
           const serverId = data.trim();
-          const accountId = readJSON(
-            `servers/${serverId}/server.json`
-          ).accountId;
-          fs.readdirSync("accounts").forEach((file) => {
-            const account = readJSON(`accounts/${file}`);
-            if (account.accountId == accountId) {
-              console.log(file);
-              if (!file.includes("email:")) console.log(account.email);
-            }
-          });
+          if (fs.existsSync(`servers/${serverId}/server.json`)) {
+            const accountId = readJSON(
+              `servers/${serverId}/server.json`
+            ).accountId;
+            fs.readdirSync("accounts").forEach((file) => {
+              const account = readJSON(`accounts/${file}`);
+              if (account.accountId == accountId) {
+                console.log(file);
+                if (!file.includes("email:")) console.log(account.email);
+              }
+            });
+          } else {
+            fs.readdirSync("accounts").forEach((file) => {
+              try {
+                let account = readJSON(`accounts/${file}`);
+                if (account.servers.includes(serverId)) {
+                  console.log(file);
+                  if (!file.includes("email:")) console.log(account.email);
+                }
+              } catch {
+                console.log("error scanning account " + file);
+              }
+            });
+          }
         } catch {
           console.log("error getting server owner");
         }
