@@ -479,6 +479,7 @@ process.stdin.on("data", (data) => {
       });
       break;
     case "getDashboardToken":
+      refreshTempToken();
       console.log(datajson.tempToken.split(":")[1]);
       break;
     case "broadcast":
