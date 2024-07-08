@@ -477,12 +477,13 @@ router.post(`/new/:id`, function (req, res) {
 
           const datajson = readJSON("assets/data.json");
           let serverFolders = fs.readdirSync("servers");
+          let numServers = 0;
           for (let i = 0; i < serverFolders.length; i++) {
             if (fs.existsSync("servers/" + i + "/server.json")) {
-              datajson.numServers++;
+              numServers++;
             }
           }
-
+          datajson.numServers = numServers;
           writeJSON("assets/data.json", datajson);
           em = req.headers.username;
 
