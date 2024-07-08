@@ -479,7 +479,7 @@ router.post(`/new/:id`, function (req, res) {
           let serverFolders = fs.readdirSync("servers");
           for (let i = 0; i < serverFolders.length; i++) {
             if (fs.existsSync("servers/" + i + "/server.json")) {
-              data.numServers++;
+              datajson.numServers++;
             }
           }
 
@@ -490,9 +490,9 @@ router.post(`/new/:id`, function (req, res) {
           console.log("debug: " + email + req.headers.username + em);
           if (
             !enablePay &&
-            (config.maxServers > data.numServers ||
+            (config.maxServers > datajson.numServers ||
               config.maxServers == undefined ||
-              data.numServers == undefined)
+              datajson.numServers == undefined)
           ) {
             console.log("debug");
             if (
@@ -530,10 +530,16 @@ router.post(`/new/:id`, function (req, res) {
             res
               .status(202)
               .json({ success: true, msg: `Success. Server created.` });
-          } else if (config.maxServers <= data.numServers) {
+          } else if (config.maxServers <= datajson.numServers) {
+            console.log(
+              "max servers reached, " +
+                config.maxServers +
+                " " +
+                datajson.numServers
+            );
             res
               .status(400)
-              .json({ success: false, msg: "Maxiumum servers reached." });
+              .json({ success: false, msg: "Maximum servers reached." });
           } else {
             console.log("debug: " + email + req.headers.username + em);
             stripe.customers.list(
