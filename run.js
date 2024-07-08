@@ -471,6 +471,7 @@ process.stdin.on("data", (data) => {
             const account = readJSON(`accounts/${file}`);
             if (account.accountId == accountId) {
               console.log(file);
+              if (!file.includes("email:")) console.log(account.email);
             }
           });
         } catch {
