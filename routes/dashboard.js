@@ -24,7 +24,7 @@ Router.get("/customers", async (req, res) => {
   if (req.query.tempToken != datajson.tempToken.split(":")[1]) {
     res.status(401).send({ error: "Unauthorized" });
   } else {
-    const customers = await stripe.customers.list();
+    const customers = await stripe.customers.list({ limit: 100 });
     let data = [];
     for (let i = 0; i < customers.data.length; i++) {
       let str = customers.data[i];
@@ -34,7 +34,6 @@ Router.get("/customers", async (req, res) => {
       try {
         subs = await stripe.subscriptions.list({
           customer: str.id,
-          limit: 100,
           status: "all",
         });
 
@@ -51,7 +50,7 @@ Router.get("/customers", async (req, res) => {
         console.log(data);
 
         if (plan.id == config.basicPlanPriceId) {
-          if (plan.active) {
+          if (data.status == "active") {
             if (data.cancel_at != null) {
               subscriptions.push(
                 "basic:cancelled:" +
@@ -63,11 +62,11 @@ Router.get("/customers", async (req, res) => {
               subscriptions.push("basic:active");
             }
           } else {
-            subscriptions.push("basic:inactive");
+            subscriptions.push("basic:" + data.status);
           }
         }
         if (plan.id == config.moddedPlanPriceId) {
-          if (plan.active) {
+          if (data.status == "active") {
             if (plan.cancel_at != null) {
               subscriptions.push(
                 "modded:cancelled:" +
@@ -79,7 +78,7 @@ Router.get("/customers", async (req, res) => {
               subscriptions.push("modded:active");
             }
           } else {
-            subscriptions.push("modded:inactive");
+            subscriptions.push("modded:" + data.status);
           }
         }
       }
@@ -122,6 +121,56 @@ Router.get("/customers", async (req, res) => {
       data.push(customerData);
     }
 
+    res.status(200).send(data);
+  }
+});
+
+Router.get("/servers", async (req, res) => {
+  const datajson = utils.readJSON("assets/data.json");
+  if (req.query.tempToken != datajson.tempToken.split(":")[1]) {
+    res.status(401).send({ error: "Unauthorized" });
+  } else {
+    let servers = fs.readdirSync("servers");
+    let data = [];
+    for (let i in servers) {
+      let owner = null;
+      let email = null;
+      try {
+        const serverId = servers[i];
+        if (fs.existsSync(`servers/${serverId}/server.json`)) {
+          const accountId = readJSON(
+            `servers/${serverId}/server.json`
+          ).accountId;
+          fs.readdirSync("accounts").forEach((file) => {
+            const account = readJSON(`accounts/${file}`);
+            if (account.accountId == accountId) {
+              owner = file;
+              if (!file.includes("email:")) email = account.email;
+            }
+          });
+        } else {
+          fs.readdirSync("accounts").forEach((file) => {
+            try {
+              let account = readJSON(`accounts/${file}`);
+              if (account.servers.includes(serverId)) {
+                owner = file + "?";
+                if (!file.includes("email:")) email = account.email + "?";
+              }
+            } catch {
+              console.log("error scanning account " + file);
+            }
+          });
+        }
+      } catch {
+        console.log("error getting server owner");
+      }
+
+      data.push({
+        serverId: servers[i],
+        owner: owner,
+        email: email,
+      });
+    }
     res.status(200).send(data);
   }
 });
