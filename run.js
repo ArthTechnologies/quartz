@@ -158,7 +158,7 @@ setInterval(() => {
 }, 1000 * 60 * 60 * 12);
 
 function refreshTempToken() {
-  if (datajson.tempToken != "") {
+  if (datajson.tempToken.split("").length < 10) {
     datajson.tempToken =
       Date.now() + ":" + crypto.randomBytes(16).toString("hex");
     writeJSON("assets/data.json", datajson);
