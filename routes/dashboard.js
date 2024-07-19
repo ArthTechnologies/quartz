@@ -47,13 +47,12 @@ Router.get("/customers", async (req, res) => {
       for (let j = 0; j < subs.length; j++) {
         let data = subs[j];
         let plan = subs[j].items.data[0].plan;
-        console.log(data);
 
         if (plan.id == config.basicPlanPriceId) {
           if (data.status == "active") {
             if (data.cancel_at != null) {
               subscriptions.push(
-                "basic:cancelled:" +
+                "basic:canceled:" +
                   data.cancel_at +
                   ":" +
                   data.cancellation_details.comment
@@ -61,6 +60,13 @@ Router.get("/customers", async (req, res) => {
             } else {
               subscriptions.push("basic:active");
             }
+          } else if (data.status == "canceled") {
+            subscriptions.push(
+              "basic:canceled:" +
+                data.canceled_at +
+                ":" +
+                data.cancellation_details.comment
+            );
           } else {
             subscriptions.push("basic:" + data.status);
           }
@@ -69,14 +75,21 @@ Router.get("/customers", async (req, res) => {
           if (data.status == "active") {
             if (plan.cancel_at != null) {
               subscriptions.push(
-                "modded:cancelled:" +
+                "modded:canceled:" +
                   plan.cancel_at +
                   ":" +
-                  plan.cancellation_details.feedback
+                  plan.cancellation_details.comment
               );
             } else {
               subscriptions.push("modded:active");
             }
+          } else if (data.status == "canceled") {
+            subscriptions.push(
+              "modded:canceled:" +
+                data.canceled_at +
+                ":" +
+                data.cancellation_details.comment
+            );
           } else {
             subscriptions.push("modded:" + data.status);
           }
@@ -138,38 +151,44 @@ Router.get("/servers", async (req, res) => {
       try {
         const serverId = servers[i];
         if (fs.existsSync(`servers/${serverId}/server.json`)) {
-          const accountId = readJSON(
+          const accountId = utils.readJSON(
             `servers/${serverId}/server.json`
           ).accountId;
           fs.readdirSync("accounts").forEach((file) => {
-            const account = readJSON(`accounts/${file}`);
+            const account = utils.readJSON(`accounts/${file}`);
             if (account.accountId == accountId) {
               owner = file;
               if (!file.includes("email:")) email = account.email;
+              data.push({
+                serverId: servers[i],
+                owner: owner,
+                email: email,
+              });
             }
           });
         } else {
           fs.readdirSync("accounts").forEach((file) => {
             try {
-              let account = readJSON(`accounts/${file}`);
+              let account = utils.readJSON(`accounts/${file}`);
               if (account.servers.includes(serverId)) {
                 owner = file + "?";
                 if (!file.includes("email:")) email = account.email + "?";
+
+                data.push({
+                  serverId: servers[i],
+                  owner: owner,
+                  email: email,
+                });
               }
-            } catch {
+            } catch (error) {
               console.log("error scanning account " + file);
+              console.log(error);
             }
           });
         }
       } catch {
         console.log("error getting server owner");
       }
-
-      data.push({
-        serverId: servers[i],
-        owner: owner,
-        email: email,
-      });
     }
     res.status(200).send(data);
   }
