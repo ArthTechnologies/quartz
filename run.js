@@ -403,39 +403,44 @@ function backup() {
 }
 
 function verifySubscriptions() {
-  if (config.stripeKey != "" && config.enablePay) {
-    const accounts = fs.readdirSync("accounts");
-    for (i in accounts) {
-      if (accounts[i].split(".")[accounts[i].split(".").length - 1] == "json") {
-        const account = readJSON(`./accounts/${accounts[i]}`);
-        if (account.freeServers == undefined) {
-          try {
-            const amountOfServers = account.servers.length;
-            s.checkSubscription(account.email, (data) => {
-              if (data.data.length < amountOfServers) {
-                for (j in account.servers) {
-                  const ls = require("child_process").execSync;
-                  f.stopAsync(account.servers[j].id, () => {
-                    ls(
-                      `mv servers/${account.servers[j].id} backup/disabledServers${account.servers[j].id}`
-                    );
-                  });
-                }
+  //we wait 5 minutes to avoid the user of the terminal having a lag spike at startup
+  setTimeout(() => {
+    if (config.stripeKey != "" && config.enablePay) {
+      const accounts = fs.readdirSync("accounts");
+      for (i in accounts) {
+        if (
+          accounts[i].split(".")[accounts[i].split(".").length - 1] == "json"
+        ) {
+          const account = readJSON(`./accounts/${accounts[i]}`);
+          if (account.freeServers == undefined) {
+            try {
+              const amountOfServers = account.servers.length;
+              s.checkSubscription(account.email, (data) => {
+                if (data.data.length < amountOfServers) {
+                  for (j in account.servers) {
+                    const ls = require("child_process").execSync;
+                    f.stopAsync(account.servers[j].id, () => {
+                      ls(
+                        `mv servers/${account.servers[j].id} backup/disabledServers${account.servers[j].id}`
+                      );
+                    });
+                  }
 
-                if (account.disabledServers == undefined) {
-                  account.disabledServers = [];
+                  if (account.disabledServers == undefined) {
+                    account.disabledServers = [];
+                  }
+                  account.disabledServers.push(account.servers);
+                  account.servers = [];
                 }
-                account.disabledServers.push(account.servers);
-                account.servers = [];
-              }
-            });
-          } catch {
-            console.log("Error verifying subscription for " + account.email);
+              });
+            } catch {
+              console.log("Error verifying subscription for " + account.email);
+            }
           }
         }
       }
     }
-  }
+  }, 1000 * 60 * 5);
 }
 
 //This handles commands from the terminal
