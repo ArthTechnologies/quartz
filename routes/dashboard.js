@@ -39,10 +39,7 @@ Router.get("/customers", async (req, res) => {
         console.log(error);
       }
 
-      let activeModdedSubscriptions = 0;
-      let activeBasicSubscriptions = 0;
-      let inactiveModdedSubscriptions = 0;
-      let inactiveBasicSubscriptions = 0;
+      let subscriptions = [];
       console.log(subs);
       for (let j = 0; j < subs.length; j++) {
         let plan = subs[j].items.data[0].plan;
@@ -50,16 +47,34 @@ Router.get("/customers", async (req, res) => {
 
         if (plan.id == config.basicPlanPriceId) {
           if (plan.active) {
-            activeBasicSubscriptions++;
+            if (plan.cancel_at != null) {
+              subscriptions.push(
+                "basic:cancelled:" +
+                  plan.cancel_at +
+                  ":" +
+                  plan.cancellation_details.feedback
+              );
+            } else {
+              subscriptions.push("basic:active");
+            }
           } else {
-            inactiveBasicSubscriptions++;
+            subscriptions.push("basic:inactive");
           }
         }
         if (plan.id == config.moddedPlanPriceId) {
           if (plan.active) {
-            activeModdedSubscriptions++;
+            if (plan.cancel_at != null) {
+              subscriptions.push(
+                "modded:cancelled:" +
+                  plan.cancel_at +
+                  ":" +
+                  plan.cancellation_details.feedback
+              );
+            } else {
+              subscriptions.push("modded:active");
+            }
           } else {
-            inactiveModdedSubscriptions++;
+            subscriptions.push("modded:inactive");
           }
         }
       }
@@ -89,10 +104,7 @@ Router.get("/customers", async (req, res) => {
       let customerData = [
         {
           email: str.email,
-          activeBasicSubscriptions: activeBasicSubscriptions,
-          activeModdedSubscriptions: activeModdedSubscriptions,
-          inactiveBasicSubscriptions: inactiveBasicSubscriptions,
-          inactiveModdedSubscriptions: inactiveModdedSubscriptions,
+          subscriptions: subscriptions,
         },
       ];
       try {
