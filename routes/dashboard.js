@@ -32,7 +32,11 @@ Router.get("/customers", async (req, res) => {
       let subs;
       //get the scription object from stripe
       try {
-        subs = await stripe.subscriptions.list({ customer: str.id });
+        subs = await stripe.subscriptions.list({
+          customer: str.id,
+          limit: 100,
+          status: "all",
+        });
 
         subs = subs.data;
       } catch (error) {
@@ -40,19 +44,20 @@ Router.get("/customers", async (req, res) => {
       }
 
       let subscriptions = [];
-      console.log(subs);
+
       for (let j = 0; j < subs.length; j++) {
+        let data = subs[j];
         let plan = subs[j].items.data[0].plan;
-        console.log(plan);
+        console.log(data);
 
         if (plan.id == config.basicPlanPriceId) {
           if (plan.active) {
-            if (plan.cancel_at != null) {
+            if (data.cancel_at != null) {
               subscriptions.push(
                 "basic:cancelled:" +
-                  plan.cancel_at +
+                  data.cancel_at +
                   ":" +
-                  plan.cancellation_details.feedback
+                  data.cancellation_details.comment
               );
             } else {
               subscriptions.push("basic:active");
@@ -113,6 +118,7 @@ Router.get("/customers", async (req, res) => {
           id: quaName,
         });
       } catch {}
+      console.log(str.email + " " + subscriptions);
       data.push(customerData);
     }
 
