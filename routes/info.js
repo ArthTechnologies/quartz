@@ -66,6 +66,15 @@ router.get(`/subscriptions`, function (req, res) {
         if (err) {
           console.log("err", err);
         } else {
+          if (customers.data.length == 0) {
+            res.status(200).json({
+              moddedSubscriptions: 0,
+              basicSubscriptions: 0,
+              subscriptions: 0,
+              freeServers: account.freeServers,
+            });
+            return;
+          }
           cid = customers.data[0].id;
 
           //check the customer's subscriptions and return it
