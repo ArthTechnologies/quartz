@@ -490,7 +490,8 @@ router.post(`/new/:id`, function (req, res) {
           let cid = "";
           console.log("debug: " + email + req.headers.username + em);
           if (
-            !enablePay &&
+            (!enablePay ||
+              (account.servers.length == 0 && account.freeServers > 0)) &&
             (config.maxServers > datajson.numServers ||
               config.maxServers == undefined ||
               datajson.numServers == undefined)
@@ -555,7 +556,7 @@ router.post(`/new/:id`, function (req, res) {
                 } else {
                   console.log("debug: " + email + req.headers.username + em);
 
-                  if (customers.data.length > 0 || account.freeServers > 0) {
+                  if (customers.data.length > 0) {
                     cid = customers.data[0].id;
 
                     //check the customer's subscriptions and return it
