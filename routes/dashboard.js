@@ -47,51 +47,35 @@ Router.get("/customers", async (req, res) => {
       for (let j = 0; j < subs.length; j++) {
         let data = subs[j];
         let plan = subs[j].items.data[0].plan;
+        console.log(data);
 
-        if (plan.id == config.basicPlanPriceId) {
+        let planType = "other";
+        if (plan.id == config.basicPlanPriceId) planType = "basic";
+        else if (plan.id == config.moddedPlanPriceId) planType = "modded";
+
+        if (planType != "other") {
           if (data.status == "active") {
             if (data.cancel_at != null) {
+              let reason = data.cancellation_details.comment;
+              if (reason == null) reason = data.cancellation_details.feedback;
               subscriptions.push(
-                "basic:canceled:" +
-                  data.cancel_at +
-                  ":" +
-                  data.cancellation_details.comment
+                planType + ":canceled:" + data.cancel_at + ":" + reason
               );
             } else {
-              subscriptions.push("basic:active");
+              subscriptions.push(planType + ":active");
             }
           } else if (data.status == "canceled") {
             subscriptions.push(
-              "basic:canceled:" +
+              planType +
+                ":canceled:" +
                 data.canceled_at +
                 ":" +
                 data.cancellation_details.comment
             );
           } else {
-            subscriptions.push("basic:" + data.status);
-          }
-        }
-        if (plan.id == config.moddedPlanPriceId) {
-          if (data.status == "active") {
-            if (plan.cancel_at != null) {
-              subscriptions.push(
-                "modded:canceled:" +
-                  plan.cancel_at +
-                  ":" +
-                  plan.cancellation_details.comment
-              );
-            } else {
-              subscriptions.push("modded:active");
-            }
-          } else if (data.status == "canceled") {
             subscriptions.push(
-              "modded:canceled:" +
-                data.canceled_at +
-                ":" +
-                data.cancellation_details.comment
+              planType + ":" + data.status + ":" + data.ended_at
             );
-          } else {
-            subscriptions.push("modded:" + data.status);
           }
         }
       }
