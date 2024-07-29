@@ -109,6 +109,13 @@ router.get(`/claimId`, function (req, res) {
                   }
                 }
               );
+            } else {
+              res.status(200).json({
+                success: false,
+                msg: `You haven't paid for a server.`,
+                subscriptions: subs,
+                isCustomer: true,
+              });
             }
           }
         }
