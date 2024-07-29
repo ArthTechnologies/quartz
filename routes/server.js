@@ -113,7 +113,7 @@ router.get(`/claimId`, function (req, res) {
               res.status(200).json({
                 success: false,
                 msg: `You haven't paid for a server.`,
-                subscriptions: subs,
+                subscriptions: 0,
                 isCustomer: true,
               });
             }
