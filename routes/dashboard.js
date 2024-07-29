@@ -28,7 +28,7 @@ Router.get("/customers", async (req, res) => {
     let data = [];
     for (let i = 0; i < customers.data.length; i++) {
       let str = customers.data[i];
-
+      let valid = true;
       let subs;
       //get the scription object from stripe
       try {
@@ -51,6 +51,7 @@ Router.get("/customers", async (req, res) => {
         let planType = "other";
         if (plan.id == config.basicPlanPriceId) planType = "basic";
         else if (plan.id == config.moddedPlanPriceId) planType = "modded";
+        else valid = false;
 
         if (planType != "other") {
           if (data.status == "active") {
@@ -101,20 +102,22 @@ Router.get("/customers", async (req, res) => {
           servers: [],
         };
       }
-      let customerData = [
-        {
-          email: str.email,
-          subscriptions: subscriptions,
-        },
-      ];
-      try {
-        customerData.push({
-          servers: qua.servers,
-          id: quaName,
-        });
-      } catch {}
+      if (valid) {
+        let customerData = [
+          {
+            email: str.email,
+            subscriptions: subscriptions,
+          },
+        ];
+        try {
+          customerData.push({
+            servers: qua.servers,
+            id: quaName,
+          });
+        } catch {}
 
-      data.push(customerData);
+        data.push(customerData);
+      }
     }
 
     res.status(200).send(data);
