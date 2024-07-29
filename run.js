@@ -523,13 +523,13 @@ process.stdin.on("data", (data) => {
         `Enter broadcast message (ex: "Server shutting down in 5 minutes"):`
       );
       process.stdin.once("data", (data) => {
-        userInput = false;
         const message = data.trim();
         for (let i in fs.readdirSync("servers")) {
           const serverId = fs.readdirSync("servers")[i];
           f.writeTerminal(serverId, "say [Broadcast] " + message);
         }
         console.log("Broadcasted message to all servers.");
+        userInput = false;
       });
 
       break;
