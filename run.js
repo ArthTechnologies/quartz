@@ -449,9 +449,8 @@ process.stdin.setEncoding("utf8");
 process.stdout.write(
   'Welcome to the terminal!\nType "help" for a list of commands.\n'
 );
-
+let userInput = false;
 process.stdin.on("data", (data) => {
-  let userInput = false;
   const input = data.trim(); // Remove leading/trailing whitespace
   switch (input) {
     case "stop":
