@@ -47,7 +47,6 @@ Router.get("/customers", async (req, res) => {
       for (let j = 0; j < subs.length; j++) {
         let data = subs[j];
         let plan = subs[j].items.data[0].plan;
-        console.log(data);
 
         let planType = "other";
         if (plan.id == config.basicPlanPriceId) planType = "basic";
@@ -114,7 +113,7 @@ Router.get("/customers", async (req, res) => {
           id: quaName,
         });
       } catch {}
-      console.log(str.email + " " + subscriptions);
+
       data.push(customerData);
     }
 
