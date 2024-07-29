@@ -232,6 +232,7 @@ Router.post("/discord/", (req, res) => {
           account.ips.push(files.getIPID(req.ip));
         }
         response = {
+          email: account.email,
           token: account.token,
           accountId: account.accountId,
           username: username,
