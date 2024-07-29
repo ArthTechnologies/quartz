@@ -102,7 +102,7 @@ Router.get("/customers", async (req, res) => {
           servers: [],
         };
       }
-      if (valid) {
+      if (valid && subscriptions.length > 0) {
         let customerData = [
           {
             email: str.email,
