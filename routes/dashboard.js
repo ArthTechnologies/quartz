@@ -153,7 +153,11 @@ Router.get("/servers", async (req, res) => {
           fs.readdirSync("accounts").forEach((file) => {
             try {
               let account = utils.readJSON(`accounts/${file}`);
-              if (account.servers.includes(serverId)) {
+
+              if (
+                account.servers.includes(serverId) ||
+                account.servers.includes(parseInt(serverId))
+              ) {
                 owner = file + "?";
                 if (!file.includes("email:")) email = account.email + "?";
 
