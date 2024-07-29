@@ -529,8 +529,9 @@ process.stdin.on("data", (data) => {
           const serverId = fs.readdirSync("servers")[i];
           f.writeTerminal(serverId, "say [Broadcast] " + message);
         }
+        console.log("Broadcasted message to all servers.");
       });
-      userInput = false;
+
       break;
     case "clear":
       process.stdout.write("\x1B[2J\x1B[0f");
