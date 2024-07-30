@@ -26,7 +26,10 @@ router.get(`/claimId`, function (req, res) {
 
   if (token === account.token || !enableAuth) {
     if (enablePay) {
-      if (account.servers.length >= account.freeServers) {
+      if (
+        account.freeServers > 0 &&
+        account.servers.length >= account.freeServers
+      ) {
         res.status(400).json({
           msg: `You haven't paid for this server.`,
         });
