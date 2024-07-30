@@ -539,7 +539,7 @@ function run(
         if (count >= 9) {
           out.push(data);
         }
-        console.log(data);
+        console.log("line");
 
         terminalOutput[id] = out.join("\n");
         if (terminalOutput[id].includes("Done (") && states[id] != "stopping") {
