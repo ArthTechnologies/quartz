@@ -108,6 +108,19 @@ function run(
   modpackVersionID
 ) {
   try {
+    //this looks for duplicate instances of the same server and kills them
+    try {
+      exec("lsof -i :" + (10000 + parseInt(id)), (error, stdout, stderr) => {
+        let lines = stdout.split("\n");
+        lines.forEach((line) => {
+          let pid = line.match(/\d{4}/);
+          console.log("killing pid " + pid);
+          exec("kill " + pid);
+        });
+      });
+    } catch (e) {
+      console.log(e);
+    }
     let server = readJSON("servers/" + id + "/server.json");
     let out = [];
     states[id] = "starting";
