@@ -110,6 +110,7 @@ function run(
   try {
     //this looks for duplicate instances of the same server and kills them
     try {
+      console.log("lsof -i :" + (10000 + parseInt(id)));
       exec("lsof -i :" + (10000 + parseInt(id)), (error, stdout, stderr) => {
         let lines = stdout.split("\n");
         lines.forEach((line) => {
@@ -552,7 +553,6 @@ function run(
         if (count >= 3) {
           out.push(data);
         }
-        console.log("line" + data);
 
         terminalOutput[id] = out.join("\n");
         if (terminalOutput[id].includes("Done (") && states[id] != "stopping") {
