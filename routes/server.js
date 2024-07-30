@@ -25,7 +25,7 @@ router.get(`/claimId`, function (req, res) {
   account = readJSON("accounts/" + email + ".json");
 
   if (token === account.token || !enableAuth) {
-    if (enablePay && account.servers.length < account.freeServers) {
+    if (enablePay && account.servers.length >= account.freeServers) {
       //check if the user is subscribed
       let amount = account.servers.length;
       stripe.customers.list(
@@ -120,7 +120,7 @@ router.get(`/claimId`, function (req, res) {
           }
         }
       );
-    } else {
+    } else if (!enablePay || account.servers.length < account.freeServers) {
       console.log("debug2");
       //else if auth is disabled, just give them an id
       //find an id to assign to the account
@@ -159,6 +159,10 @@ router.get(`/claimId`, function (req, res) {
           msg: `We're at capacity. Contact support for a refund.`,
         });
       }
+    } else {
+      res.status(400).json({
+        msg: `You haven't paid for this server.`,
+      });
     }
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
