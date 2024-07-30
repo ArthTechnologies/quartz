@@ -536,10 +536,10 @@ function run(
       });
       ls.stdout.on("data", (data) => {
         count++;
-        if (count >= 9) {
+        if (count >= 0) {
           out.push(data);
         }
-        console.log("line");
+        console.log("line" + data);
 
         terminalOutput[id] = out.join("\n");
         if (terminalOutput[id].includes("Done (") && states[id] != "stopping") {
