@@ -41,7 +41,10 @@ router.get(`/claimId`, function (req, res) {
             console.log("debug: " + email + req.headers.username);
             console.log(customers);
 
-            if (customers.data.length > 0) {
+            if (
+              customers.data.length > 0 ||
+              parseInt(account.freeServers) > 0
+            ) {
               cid = customers.data[0].id;
 
               //check the customer's subscriptions and return it
