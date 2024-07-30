@@ -108,6 +108,7 @@ function run(
   modpackVersionID
 ) {
   try {
+    const { exec } = require("child_process");
     //this looks for duplicate instances of the same server and kills them
     try {
       console.log("lsof -i :" + (10000 + parseInt(id)));
@@ -365,7 +366,6 @@ function run(
 
     //copy /assets/template/Geyser-Spigot.jar to folder/plugins
 
-    const { exec } = require("child_process");
     let ls;
     let interval = 0;
 
