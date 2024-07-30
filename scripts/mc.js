@@ -536,7 +536,7 @@ function run(
       });
       ls.stdout.on("data", (data) => {
         count++;
-        if (count >= 9) {
+        if (count >= 0) {
           out.push(data);
         }
 
