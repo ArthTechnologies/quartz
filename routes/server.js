@@ -25,7 +25,7 @@ router.get(`/claimId`, function (req, res) {
   account = readJSON("accounts/" + email + ".json");
 
   if (token === account.token || !enableAuth) {
-    if (enablePay) {
+    if (enablePay && account.servers.length < account.freeServers) {
       //check if the user is subscribed
       let amount = account.servers.length;
       stripe.customers.list(
@@ -41,10 +41,7 @@ router.get(`/claimId`, function (req, res) {
             console.log("debug: " + email + req.headers.username);
             console.log(customers);
 
-            if (
-              customers.data.length > 0 ||
-              parseInt(account.freeServers) > 0
-            ) {
+            if (customers.data.length > 0) {
               cid = customers.data[0].id;
 
               //check the customer's subscriptions and return it
