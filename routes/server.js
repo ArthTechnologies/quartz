@@ -30,6 +30,7 @@ router.get(`/claimId`, function (req, res) {
         res.status(400).json({
           msg: `You haven't paid for this server.`,
         });
+        return;
       }
       //check if the user is subscribed
       let amount = account.servers.length;
