@@ -25,7 +25,12 @@ router.get(`/claimId`, function (req, res) {
   account = readJSON("accounts/" + email + ".json");
 
   if (token === account.token || !enableAuth) {
-    if (enablePay && account.servers.length >= account.freeServers) {
+    if (enablePay) {
+      if (account.servers.length >= account.freeServers) {
+        res.status(400).json({
+          msg: `You haven't paid for this server.`,
+        });
+      }
       //check if the user is subscribed
       let amount = account.servers.length;
       stripe.customers.list(
