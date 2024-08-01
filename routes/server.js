@@ -37,98 +37,102 @@ router.get(`/claimId`, function (req, res) {
       }
       //check if the user is subscribed
       let amount = account.servers.length;
-      stripe.customers.list(
-        {
-          limit: 100,
-          email: account.email,
-        },
-        function (err, customers) {
-          if (err) {
-            console.log("err");
-            return "no";
-          } else {
-            console.log("debug: " + email + req.headers.username);
-            console.log(customers);
+      if (account.email != undefined) {
+        stripe.customers.list(
+          {
+            limit: 100,
+            email: account.email,
+          },
+          function (err, customers) {
+            if (err) {
+              console.log("err");
+              return "no";
+            } else {
+              console.log("debug: " + email + req.headers.username);
+              console.log(customers);
 
-            if (customers.data.length > 0) {
-              cid = customers.data[0].id;
+              if (customers.data.length > 0) {
+                cid = customers.data[0].id;
 
-              //check the customer's subscriptions and return it
-              stripe.subscriptions.list(
-                {
-                  customer: cid,
-                  limit: 100,
-                },
-                function (err, subscriptions) {
-                  console.log(subscriptions);
-                  let subs = 0;
-                  //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
-                  for (i in subscriptions.data) {
-                    if (subscriptions.data[i] != undefined) {
-                      subs++;
-                    }
-                  }
-                  let freeServers = 0;
-                  if (account.freeServers != undefined) {
-                    freeServers = parseInt(account.freeServers);
-                  }
-                  console.log("subs: " + subs + " freeServers: " + freeServers);
-                  if (subs + freeServers > amount) {
-                    //find an id to assign to the account
-                    let serverFolders = fs.readdirSync("servers");
-                    let serverFolder = serverFolders.sort((a, b) => a - b);
-                    let id = -1;
-                    let lastNum = -1;
-                    for (let i = 0; i < serverFolder.length; i++) {
-                      let num = serverFolder[i].split(".")[0];
-                      console.log("claiming:" + num, i);
-                      if (parseInt(num) !== i) {
-                        id = i;
-                        break; // Break out of the loop when the first available ID is found.
+                //check the customer's subscriptions and return it
+                stripe.subscriptions.list(
+                  {
+                    customer: cid,
+                    limit: 100,
+                  },
+                  function (err, subscriptions) {
+                    console.log(subscriptions);
+                    let subs = 0;
+                    //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
+                    for (i in subscriptions.data) {
+                      if (subscriptions.data[i] != undefined) {
+                        subs++;
                       }
-                      lastNum = parseInt(num);
                     }
+                    let freeServers = 0;
+                    if (account.freeServers != undefined) {
+                      freeServers = parseInt(account.freeServers);
+                    }
+                    console.log(
+                      "subs: " + subs + " freeServers: " + freeServers
+                    );
+                    if (subs + freeServers > amount) {
+                      //find an id to assign to the account
+                      let serverFolders = fs.readdirSync("servers");
+                      let serverFolder = serverFolders.sort((a, b) => a - b);
+                      let id = -1;
+                      let lastNum = -1;
+                      for (let i = 0; i < serverFolder.length; i++) {
+                        let num = serverFolder[i].split(".")[0];
+                        console.log("claiming:" + num, i);
+                        if (parseInt(num) !== i) {
+                          id = i;
+                          break; // Break out of the loop when the first available ID is found.
+                        }
+                        lastNum = parseInt(num);
+                      }
 
-                    if (id === -1) {
-                      id = lastNum + 1;
-                    }
-                    if (fs.existsSync("accounts/" + email + ".json")) {
-                      emailExists = true;
-                    }
-                    fs.mkdirSync("servers/" + id);
-                    console.log("debug log claiming id");
-                    if (id != -1 && id < config.maxServers) {
-                      if (account.servers == undefined) account.servers = [];
-                      if (!account.servers.includes(id))
-                        account.servers.push(id);
-                      writeJSON("accounts/" + email + ".json", account);
-                      res.status(200).json({ id: id });
+                      if (id === -1) {
+                        id = lastNum + 1;
+                      }
+                      if (fs.existsSync("accounts/" + email + ".json")) {
+                        emailExists = true;
+                      }
+                      fs.mkdirSync("servers/" + id);
+                      console.log("debug log claiming id");
+                      if (id != -1 && id < config.maxServers) {
+                        if (account.servers == undefined) account.servers = [];
+                        if (!account.servers.includes(id))
+                          account.servers.push(id);
+                        writeJSON("accounts/" + email + ".json", account);
+                        res.status(200).json({ id: id });
+                      } else {
+                        res.status(400).json({
+                          msg: `We're at capacity. Contact support for a refund.`,
+                        });
+                      }
                     } else {
-                      res.status(400).json({
-                        msg: `We're at capacity. Contact support for a refund.`,
+                      res.status(200).json({
+                        success: false,
+                        msg: `You haven't paid for this server.`,
+                        subscriptions: subs,
+                        isCustomer: true,
                       });
                     }
-                  } else {
-                    res.status(200).json({
-                      success: false,
-                      msg: `You haven't paid for this server.`,
-                      subscriptions: subs,
-                      isCustomer: true,
-                    });
                   }
-                }
-              );
-            } else {
-              res.status(200).json({
-                success: false,
-                msg: `You haven't paid for a server.`,
-                subscriptions: 0,
-                isCustomer: true,
-              });
+                );
+              } else {
+                res.status(200).json({
+                  success: false,
+                  msg: `You haven't paid for a server.`,
+                  subscriptions: 0,
+                  isCustomer: true,
+                });
+              }
             }
           }
-        }
-      );
+        );
+      }
     } else if (!enablePay || account.servers.length < account.freeServers) {
       console.log("debug2");
       //else if auth is disabled, just give them an id
