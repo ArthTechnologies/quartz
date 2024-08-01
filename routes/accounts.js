@@ -259,6 +259,7 @@ Router.post("/discord/", (req, res) => {
         account.servers = [];
         account.freeServers = 0;
         writeJSON("accounts/discord:" + username + ".json", account);
+        console.log("discord:", res2);
         res.status(200).send({
           token: account.token,
           accountId: accountId,
