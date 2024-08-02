@@ -625,6 +625,7 @@ function getServerStates() {
   writeJSON("./assets/data.json", data);
 }
 
+//automatic server start-up systen
 const data = readJSON("./assets/data.json");
 for (i in data.serverStates) {
   if (data.serverStates[i].split(":")[1] == "true") {
@@ -633,15 +634,20 @@ for (i in data.serverStates) {
         "servers/" + data.serverStates[i].split(":")[0] + "/server.json"
       )
     ) {
-      f.run(
-        data.serverStates[i].split(":")[0],
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        false
-      );
+      //the multiplier determines the stagger delay by the amount of servers
+      let multiplier = data.serverStates.length / 16;
+
+      setTimeout(() => {
+        f.run(
+          data.serverStates[i].split(":")[0],
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          false
+        );
+      }, 2000 * i * multiplier);
     }
   }
 }
