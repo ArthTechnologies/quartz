@@ -65,6 +65,7 @@ Router.post("/email/signup/", (req, res) => {
           account.servers = [];
           account.email = email;
           account.freeServers = 0;
+          account.lastSignin = new Date().getTime();
           writeJSON("accounts/email:" + email + ".json", account);
           res.status(200).send({ token: account.token, accountId: accountId });
         } else {
@@ -122,6 +123,11 @@ Router.post("/email/signin/", (req, res) => {
         token: account.token,
         accountId: account.accountId,
       };
+      account.lastSignin = new Date().getTime();
+      fs.writeFileSync(
+        "accounts/email:" + email + ".json",
+        JSON.stringify(account)
+      );
     } else {
       response = { token: -1, reason: "Incorrect email or password" };
     }
@@ -218,6 +224,7 @@ Router.post("/discord/", (req, res) => {
       try {
         res2 = JSON.parse(res2);
       } catch {}
+      console.log(res2);
       let username = res2.username;
 
       if (fs.existsSync("accounts/discord:" + username + ".json")) {
@@ -240,7 +247,8 @@ Router.post("/discord/", (req, res) => {
           avatar: `https://cdn.discordapp.com/avatars/${res2.id}/${res2.avatar}.webp`,
           bannerColor: res2.banner_color,
         };
-
+        account.lastSignin = new Date().getTime();
+        writeJSON("accounts/discord:" + username + ".json", account);
         res.status(200).send(response);
       } else {
         let accountId = uuidv4();
@@ -258,6 +266,7 @@ Router.post("/discord/", (req, res) => {
         account.email = res2.email;
         account.servers = [];
         account.freeServers = 0;
+        account.lastSignin = new Date().getTime();
         writeJSON("accounts/discord:" + username + ".json", account);
         console.log("discord:", res2);
         res.status(200).send({
