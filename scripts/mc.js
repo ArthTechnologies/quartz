@@ -4,6 +4,7 @@ fs = require("fs");
 let states = [];
 const files = require("./files.js");
 const config = require("./utils.js").getConfig();
+const utils = require("./utils.js");
 const readJSON = require("./utils.js").readJSON;
 const { time, Console } = require("console");
 const { randomBytes } = require("crypto");
@@ -92,6 +93,7 @@ function checkServer(id) {
     version: server.version,
     software: server.software,
     addons: server.addons,
+    webmap: server.webmap,
     state: states[id],
   };
 }
@@ -378,6 +380,53 @@ function run(
       fs.writeFileSync(folder + "/server.properties", result, "utf8");
     }
 
+    //special plugin operations
+    //if a plugin has a jar but not a folder, we know that
+    //it hasnt been installed yet and the config needs to modified
+    let plugins = fs.readdirSync(folder + "/plugins");
+
+    server.webmap = false;
+    utils.writeJSON("servers/" + id + "/server.json", server);
+
+    for (i in plugins) {
+      let isJar = plugins[i].includes(".jar");
+      if (isJar) {
+        if (plugins[i].includes("Dynmap")) {
+          let interval1 = setInterval(() => {
+            if (fs.existsSync(folder + "/plugins/dynmap/configuration.txt")) {
+              let data = fs.readFileSync(
+                folder + "/plugins/dynmap/configuration.txt",
+                "utf8"
+              );
+
+              let lines = data.split("\n");
+
+              let a = lines.findIndex((line) => {
+                return line.includes("webserver-port");
+              });
+
+              lines[a] = "webserver-port: " + (port + 200);
+
+              fs.writeFileSync(
+                folder + "/plugins/dynmap/configuration.txt",
+                lines.join("\n"),
+
+                "utf8"
+              );
+              server.webmap = true;
+              utils.writeJSON("servers/" + id + "/server.json", server);
+              let interval2 = setInterval(() => {
+                if (getState(id) == "true") {
+                  writeTerminal(id, "dynmap fullrender world");
+                  clearInterval(interval2);
+                }
+              }, 3000);
+              clearInterval(interval1);
+            }
+          }, 50);
+        }
+      }
+    }
     //copy /assets/template/Geyser-Spigot.jar to folder/plugins
 
     let ls;

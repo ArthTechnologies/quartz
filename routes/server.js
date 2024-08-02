@@ -8,7 +8,7 @@ const readJSON = require("../scripts/utils.js").readJSON;
 const data = readJSON("assets/data.json");
 const JsDiff = require("diff");
 const config = require("../scripts/utils.js").getConfig();
-
+const exec = require("child_process").exec;
 const fs = require("fs");
 const writeJSON = require("../scripts/utils.js").writeJSON;
 
@@ -533,6 +533,7 @@ router.post(`/new/:id`, function (req, res) {
               server.addons = req.body.addons;
               server.accountId = account.accountId;
               server.id = id;
+              server.webmap = false;
               if (!fs.existsSync("servers/" + id)) {
                 fs.mkdirSync("servers/" + id);
               }
@@ -997,11 +998,11 @@ router.get("/:id/world", function (req, res) {
     if (server.software == "quilt") {
       path += "/server";
     }
-    const exec = require("child_process").exec;
+
     let cwd = path + "/world";
     //some modpacks make a world folder with a capital W, this checks for that
     if (fs.existsSync(path + "/World")) {
-      const { execSync, exec } = require("child_process");
+      const { execSync } = require("child_process");
       let sizeOfLowercase = parseInt(execSync(`du -s ${path}/world | cut -f1`));
       let sizeOfUppercase = parseInt(execSync(`du -s ${path}/World | cut -f1`));
 
@@ -1659,6 +1660,16 @@ router.get("/:id/storageInfo", function (req, res) {
   } else {
     res.status(401).json({ msg: "Invalid credentials." });
   }
+});
+
+router.get("/:id/webmap/", function (req, res) {
+  let id = req.params.id;
+  exec(
+    `curl 0.0.0.0:` + (10200 + parseInt(id)) + `/`,
+    (err, stdout, stderr) => {
+      res.status(200).send(stdout);
+    }
+  );
 });
 
 function hasAccess(token, account) {
