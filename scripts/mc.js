@@ -130,6 +130,12 @@ function run(
     if (fs.existsSync("servers/" + id + "/world/session.lock")) {
       fs.unlinkSync("servers/" + id + "/world/session.lock");
     }
+    if (fs.existsSync("servers/" + id + "/world_nether/session.lock")) {
+      fs.unlinkSync("servers/" + id + "/world_nether/session.lock");
+    }
+    if (fs.existsSync("servers/" + id + "/world_the_end/session.lock")) {
+      fs.unlinkSync("servers/" + id + "/world_the_end/session.lock");
+    }
 
     let server = readJSON("servers/" + id + "/server.json");
     let out = [];
