@@ -7,10 +7,9 @@ async function getCustomerID(email) {
     const customers = await stripe.customers.list({ limit: 100, email: email });
     if (customers.data.length > 0) {
       const customer_id = customers.data[0].id;
-      console.log(customer_id);
+
       return customer_id;
     } else {
-      console.log("No customers found.");
       return null;
     }
   } catch (err) {

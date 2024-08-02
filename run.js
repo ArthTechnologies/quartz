@@ -9,6 +9,7 @@ const fs = require("fs");
 const crypto = require("crypto");
 const files = require("./scripts/files.js");
 const config = require("./scripts/utils.js").getConfig();
+const stripe = require("stripe")(config.stripeKey);
 
 exec = require("child_process").exec;
 require("dotenv").config();
@@ -149,12 +150,14 @@ if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
   verifySubscriptions();
   backup();
   refreshTempToken();
+  removeUnusedAccounts();
 }
 setInterval(() => {
   downloadJars();
   verifySubscriptions();
   backup();
   refreshTempToken();
+  removeUnusedAccounts();
 }, 1000 * 60 * 60 * 12);
 
 function refreshTempToken() {
@@ -443,6 +446,47 @@ function verifySubscriptions() {
   }, 1000 * 60 * 5);
 }
 
+function removeUnusedAccounts() {
+  const accounts = fs.readdirSync("accounts");
+  for (let i = 0; i < accounts.length; i++) {
+    const account = readJSON(`accounts/${accounts[i]}`);
+
+    //there is no system to tell file creation date accurately yet
+    /*let openedRecently =
+      fs.statSync(`accounts/${accounts[i]}`).atime >
+      Date.now() - 1000 * 60 * 60 * 24 * 30;*/
+
+    let hasServers = account.servers.length > 0;
+
+    if (!hasServers) {
+      let email;
+      if (accounts[i].includes("email:"))
+        email = accounts[i].split("email:")[1];
+      else email = account.email;
+      console.log(email);
+      if (email != undefined) {
+        //checks stripe to see if the account has a subscription
+        stripe.customers.list(
+          {
+            limit: 100,
+            email: email,
+          },
+          function (err, customers) {
+            if (err) {
+              console.log("err", err);
+            } else {
+              if (customers.data.length == 0) {
+                console.log("Removing unused account" + accounts[i]);
+                fs.unlinkSync(`accounts/${accounts[i]}`);
+              }
+            }
+          }
+        );
+      }
+    }
+  }
+}
+
 //This handles commands from the terminal
 process.stdin.setEncoding("utf8");
 
@@ -539,6 +583,7 @@ process.stdin.on("data", (data) => {
       downloadJars();
       verifySubscriptions();
       refreshTempToken();
+      removeUnusedAccounts();
       console.log("downloading latest jars and verifying subscriptions...");
       break;
     case "scanAccountIds":
