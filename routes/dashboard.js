@@ -184,4 +184,29 @@ Router.get("/servers", async (req, res) => {
   }
 });
 
+Router.post("/freeExpiredServer", async (req, res) => {
+  const datajson = utils.readJSON("assets/data.json");
+  if (req.query.tempToken != datajson.tempToken.split(":")[1]) {
+    res.status(401).send({ error: "Unauthorized" });
+  } else {
+    try {
+      let serverId = req.query.serverId;
+      let owner = req.query.owner;
+      let account = utils.readJSON(`accounts/${owner}.json`);
+      let servers = account.servers;
+      let newServers = [];
+      for (let i in servers) {
+        if (servers[i] != serverId && servers[i] != parseInt(serverId)) {
+          newServers.push(servers[i]);
+        }
+      }
+      account.servers = newServers;
+      utils.writeJSON(`accounts/${owner}`, account);
+      utils.removeDirectoryRecursiveAsync(`servers/${serverId}`);
+      res.status(200).send({ success: true });
+    } catch (error) {
+      res.status(500).send({ error: error });
+    }
+  }
+});
 module.exports = Router;
