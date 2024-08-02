@@ -210,7 +210,7 @@ router.get(`/capacity`, function (req, res) {
   res.status(200).json({
     atCapacity: numServers >= config.maxServers,
     numServers: numServers,
-    maxServers: maxServers,
+    maxServers: config.maxServers,
   });
 });
 
