@@ -629,25 +629,16 @@ function getServerStates() {
 const data = readJSON("./assets/data.json");
 for (i in data.serverStates) {
   if (data.serverStates[i].split(":")[1] == "true") {
+    let id = parseInt(data.serverStates[i].split(":")[0]);
     if (
-      fs.existsSync(
-        "servers/" + data.serverStates[i].split(":")[0] + "/server.json"
-      ) &&
-      f.status(data.serverStates[i].split(":")[0]) == "false"
+      fs.existsSync("servers/" + id + "/server.json") &&
+      f.getState(id) == "false"
     ) {
       //the multiplier determines the stagger delay by the amount of servers
       let multiplier = data.serverStates.length / 16;
 
       setTimeout(() => {
-        f.run(
-          data.serverStates[i].split(":")[0],
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          false
-        );
+        f.run(id, undefined, undefined, undefined, undefined, undefined, false);
       }, 2000 * i * multiplier);
     }
   }
