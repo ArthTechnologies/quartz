@@ -109,17 +109,20 @@ function run(
 ) {
   try {
     const { exec } = require("child_process");
-    //this looks for duplicate instances of the same server and kills them
+    //this looks for servers running on the same port that may obstruct startup
     try {
-      console.log("lsof -i :" + (10000 + parseInt(id)));
-      exec("lsof -i :" + (10000 + parseInt(id)), (error, stdout, stderr) => {
-        let lines = stdout.split("\n");
-        lines.forEach((line) => {
-          let pid = line.match(/\d{4}/);
-          console.log("killing pid " + pid);
-          exec("kill " + pid);
-        });
-      });
+      exec(
+        "lsof -i :" + (10000 + parseInt(id)) + " -t",
+        (error, stdout, stderr) => {
+          let lines = stdout.split("\n");
+          lines.forEach((line) => {
+            //pid is line but only digits
+            let pid = line.match(/\d+/);
+            console.log("killing obstructing process " + pid);
+            exec("kill " + pid);
+          });
+        }
+      );
     } catch (e) {
       console.log(e);
     }
