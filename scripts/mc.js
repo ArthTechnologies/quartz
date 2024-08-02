@@ -126,6 +126,11 @@ function run(
     } catch (e) {
       console.log(e);
     }
+
+    if (fs.existsSync("servers/" + id + "/world/session.lock")) {
+      fs.unlinkSync("servers/" + id + "/world/session.lock");
+    }
+
     let server = readJSON("servers/" + id + "/server.json");
     let out = [];
     states[id] = "starting";
