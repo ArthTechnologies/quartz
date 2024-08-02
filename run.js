@@ -632,7 +632,8 @@ for (i in data.serverStates) {
     if (
       fs.existsSync(
         "servers/" + data.serverStates[i].split(":")[0] + "/server.json"
-      )
+      ) &&
+      f.status(data.serverStates[i].split(":")[0]) == "false"
     ) {
       //the multiplier determines the stagger delay by the amount of servers
       let multiplier = data.serverStates.length / 16;
