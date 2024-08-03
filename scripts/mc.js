@@ -423,7 +423,7 @@ function run(
               }, 3000);
               clearInterval(interval1);
             }
-          }, 50);
+          }, 10);
         }
       }
     }
