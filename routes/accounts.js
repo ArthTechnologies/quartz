@@ -301,4 +301,17 @@ Router.delete("/discord", (req, res) => {
   }
 });
 
+Router.post("/email", (req, res) => {
+  let email = req.query.email;
+  let username = req.headers.username;
+  let token = req.headers.token;
+  let account = readJSON("accounts/" + username + ".json");
+
+  if (token === account.token && server.accountId == account.accountId) {
+    account.email = email;
+    writeJSON("accounts/" + username + ".json", account);
+    res.status(200).send({ success: true });
+  }
+});
+
 module.exports = Router;

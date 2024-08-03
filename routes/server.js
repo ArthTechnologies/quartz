@@ -1662,16 +1662,6 @@ router.get("/:id/storageInfo", function (req, res) {
   }
 });
 
-router.get("/:id/webmap/", function (req, res) {
-  let id = req.params.id;
-  exec(
-    `curl 0.0.0.0:` + (10200 + parseInt(id)) + `/`,
-    (err, stdout, stderr) => {
-      res.status(200).send(stdout);
-    }
-  );
-});
-
 function hasAccess(token, account) {
   if (!enableAuth) return true;
   else return token === account.token && server.accountId == account.accountId;
