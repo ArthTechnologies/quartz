@@ -303,13 +303,13 @@ Router.delete("/discord", (req, res) => {
 
 Router.post("/email", (req, res) => {
   let email = req.query.email;
-  let username = req.headers.username;
+  let accountname = req.headers.accountname;
   let token = req.headers.token;
-  let account = readJSON("accounts/" + username + ".json");
+  let account = readJSON("accounts/" + accountname + ".json");
 
-  if (token === account.token && server.accountId == account.accountId) {
+  if (token === account.token) {
     account.email = email;
-    writeJSON("accounts/" + username + ".json", account);
+    writeJSON("accounts/" + accountname + ".json", account);
     res.status(200).send({ success: true });
   }
 });
