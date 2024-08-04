@@ -534,6 +534,7 @@ router.post(`/new/:id`, function (req, res) {
               server.accountId = account.accountId;
               server.id = id;
               server.webmap = false;
+              server.voicechat = false;
               if (!fs.existsSync("servers/" + id)) {
                 fs.mkdirSync("servers/" + id);
               }

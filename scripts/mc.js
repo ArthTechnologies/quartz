@@ -94,6 +94,7 @@ function checkServer(id) {
     software: server.software,
     addons: server.addons,
     webmap: server.webmap,
+    voicechat: server.voicechat,
     state: states[id],
   };
 }
@@ -386,6 +387,7 @@ function run(
     let plugins = fs.readdirSync(folder + "/plugins");
 
     server.webmap = false;
+    server.voicechat = false;
     utils.writeJSON("servers/" + id + "/server.json", server);
 
     for (i in plugins) {
@@ -421,6 +423,40 @@ function run(
                   clearInterval(interval2);
                 }
               }, 3000);
+              clearInterval(interval1);
+            }
+          }, 10);
+        }
+
+        if (plugins[i].includes("Simple-Voice-Chat")) {
+          let interval1 = setInterval(() => {
+            if (
+              fs.existsSync(
+                folder + "/plugins/voicechat/voicechat-server.properties"
+              )
+            ) {
+              let data = fs.readFileSync(
+                folder + "/plugins/voicechat/voicechat-server.properties",
+                "utf8"
+              );
+
+              let lines = data.split("\n");
+
+              let a = lines.findIndex((line) => {
+                return line.includes("port=");
+              });
+
+              lines[a] = "port=" + (port + 300);
+
+              fs.writeFileSync(
+                folder + "/plugins/voicechat/voicechat-server.properties",
+                lines.join("\n"),
+
+                "utf8"
+              );
+              server.voicechat = true;
+              utils.writeJSON("servers/" + id + "/server.json", server);
+
               clearInterval(interval1);
             }
           }, 10);
