@@ -1543,7 +1543,8 @@ router.post("/:id/file/:path", function (req, res) {
       (extension == "yml" ||
         extension == "yaml" ||
         extension == "json" ||
-        extension == "toml") &&
+        extension == "toml" ||
+        extension == "txt") &&
       filename != "server.json" &&
       filename != "velocity.toml" &&
       filename != "modrinth.index.json" &&
@@ -1662,6 +1663,47 @@ router.get("/:id/storageInfo", function (req, res) {
   }
 });
 
+const httpProxy = require("http-proxy");
+const proxy = httpProxy.createProxyServer();
+
+router.get("/:id/webmap", function (req, res) {
+  let url = `http://0.0.0.0:${parseInt(req.params.id) + 10200}`;
+  console.log(`Proxying request to: ${url}`);
+  req.url = "/"; // Set the URL to the root before proxying
+  proxy.web(req, res, { target: url });
+});
+
+router.get("/:id/webmap/:path", function (req, res) {
+  let url =
+    `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` + req.params.path;
+  console.log(`Proxying request to: ${url}`);
+  req.url = "/"; // Set the URL to the root before proxying
+  proxy.web(req, res, { target: url });
+});
+
+router.get("/:id/webmap/:path/:path2/", function (req, res) {
+  let url =
+    `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` +
+    req.params.path +
+    "/" +
+    req.params.path2;
+  console.log(`Proxying request to: ${url}`);
+  req.url = "/"; // Set the URL to the root before proxying
+  proxy.web(req, res, { target: url });
+});
+
+router.get("/:id/webmap/:path/:path2/:path3", function (req, res) {
+  let url =
+    `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` +
+    req.params.path +
+    "/" +
+    req.params.path2 +
+    "/" +
+    req.params.path3;
+  console.log(`Proxying request to: ${url}`);
+  req.url = "/"; // Set the URL to the root before proxying
+  proxy.web(req, res, { target: url });
+});
 function hasAccess(token, account) {
   if (!enableAuth) return true;
   else return token === account.token && server.accountId == account.accountId;
