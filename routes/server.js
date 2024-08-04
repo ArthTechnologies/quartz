@@ -1663,7 +1663,7 @@ router.get("/:id/storageInfo", function (req, res) {
   }
 });
 
-const httpProxy = require("http-proxy");
+/*const httpProxy = require("http-proxy");
 const proxy = httpProxy.createProxyServer();
 
 router.get("/:id/webmap", function (req, res) {
@@ -1682,13 +1682,19 @@ router.get("/:id/webmap/:path", function (req, res) {
 });
 
 router.get("/:id/webmap/:path/:path2/", function (req, res) {
+  let path2 = req.params.path2;
+  req.url = "/"; // Set the URL to the root before proxying
+  if (path2.includes("?")) {
+    req.url = path2.split("?")[0];
+  }
+
   let url =
     `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` +
     req.params.path +
     "/" +
-    req.params.path2;
+    path2;
   console.log(`Proxying request to: ${url}`);
-  req.url = "/"; // Set the URL to the root before proxying
+
   proxy.web(req, res, { target: url });
 });
 
@@ -1703,7 +1709,8 @@ router.get("/:id/webmap/:path/:path2/:path3", function (req, res) {
   console.log(`Proxying request to: ${url}`);
   req.url = "/"; // Set the URL to the root before proxying
   proxy.web(req, res, { target: url });
-});
+});*/
+
 function hasAccess(token, account) {
   if (!enableAuth) return true;
   else return token === account.token && server.accountId == account.accountId;
