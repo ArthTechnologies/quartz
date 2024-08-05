@@ -136,6 +136,28 @@ Router.get("/servers", async (req, res) => {
       let email = null;
       try {
         const serverId = servers[i];
+        let storage = utils.getDirectorySize("servers/" + serverId);
+        let memory = 0;
+        try {
+          exec(
+            "lsof -i :" + (10000 + parseInt(id)) + " -t",
+            (error, stdout, stderr) => {
+              let lines = stdout.split("\n");
+              lines.forEach((line) => {
+                //pid is line but only digits
+                let pid = line.match(/\d+/);
+                exec(
+                  `cat /proc/${pid}/status | grep -i vmrss | awk '{print $2}'`,
+                  (error, stdout, stderr) => {
+                    memory += parseInt(stdout);
+                  }
+                );
+              });
+            }
+          );
+        } catch (e) {
+          console.log(e);
+        }
         if (fs.existsSync(`servers/${serverId}/server.json`)) {
           const accountId = utils.readJSON(
             `servers/${serverId}/server.json`
@@ -149,6 +171,8 @@ Router.get("/servers", async (req, res) => {
                 serverId: servers[i],
                 owner: owner,
                 email: email,
+                storage: storage,
+                memory: memory,
               });
             }
           });
@@ -168,6 +192,8 @@ Router.get("/servers", async (req, res) => {
                   serverId: servers[i],
                   owner: owner,
                   email: email,
+                  storage: storage,
+                  memory: memory,
                 });
               }
             } catch (error) {
