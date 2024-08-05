@@ -407,7 +407,7 @@ function run(
                 return line.includes("webserver-port");
               });
 
-              lines[a] = "webserver-port: " + (port + 2000);
+              lines[a] = "webserver-port: " + (port + 200);
 
               let b = lines.findIndex((line) => {
                 return line.includes("deftemplatesuffix");
@@ -459,7 +459,7 @@ function run(
                 return line.includes("port=");
               });
 
-              lines[a] = "port=" + (port + 3000);
+              lines[a] = "port=" + (port + 300);
 
               fs.writeFileSync(
                 folder + "/plugins/voicechat/voicechat-server.properties",
