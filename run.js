@@ -477,6 +477,25 @@ function removeUnusedAccounts() {
               if (customers.data.length == 0) {
                 console.log("Removing unused account" + accounts[i]);
                 fs.unlinkSync(`accounts/${accounts[i]}`);
+                if (!fs.existsSync("assets/deletions-log.txt")) {
+                  fs.writeFileSync(
+                    "assets/deletions-log.txt",
+                    "[" +
+                      new Date().toLocaleString() +
+                      "] " +
+                      accounts[i] +
+                      " was deleted due to inactivity.\n"
+                  );
+                } else {
+                  fs.appendFileSync(
+                    "assets/deletions-log.txt",
+                    "[" +
+                      new Date().toLocaleString() +
+                      "] " +
+                      accounts[i] +
+                      " was deleted due to inactivity.\n"
+                  );
+                }
               }
             }
           }

@@ -918,26 +918,37 @@ router.get(`/:id/getInfo`, function (req, res) {
 
 router.delete(`/:id`, function (req, res) {
   try {
-    //log
-
-    if (!fs.existsSync("deleteLog.txt")) {
-      fs.writeFileSync(
-        "deleteLog.txt",
-        "Recieved A Delete Request for server " + req.params.id + "\n"
-      );
-    } else {
-      fs.appendFileSync(
-        "deleteLog.txt",
-        "Recieved A Delete Request for server " + req.params.id + "\n"
-      );
-    }
-
     console.log("deleting1 " + req.params.id);
     email = req.headers.username;
     token = req.headers.token;
     account = readJSON("accounts/" + email + ".json");
     server = readJSON("servers/" + req.params.id + "/server.json");
+
     if (hasAccess(token, account)) {
+      if (!fs.existsSync("assets/deletions-log.txt")) {
+        fs.writeFileSync(
+          "assets/deletions-log.txt",
+          "[" +
+            new Date().toLocaleString() +
+            "] " +
+            email +
+            " made a delete request for server " +
+            req.params.id +
+            "\n"
+        );
+      } else {
+        fs.appendFileSync(
+          "assets/deletions-log.txt",
+          "[" +
+            new Date().toLocaleString() +
+            "] " +
+            email +
+            " made a delete request for server " +
+            req.params.id +
+            "\n"
+        );
+      }
+
       if (
         files.hash(req.query.password, account.salt).split(":")[1] ==
           account.password ||
