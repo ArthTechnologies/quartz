@@ -161,6 +161,10 @@ setInterval(() => {
 }, 1000 * 60 * 60 * 12);
 
 function refreshTempToken() {
+  if (datajson.tempToken == undefined) {
+    datajson.tempToken =
+      Date.now() + ":" + crypto.randomBytes(16).toString("hex");
+  }
   if (datajson.tempToken.split("").length < 10) {
     datajson.tempToken =
       Date.now() + ":" + crypto.randomBytes(16).toString("hex");
