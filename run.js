@@ -447,18 +447,17 @@ function verifySubscriptions() {
 }
 
 function removeUnusedAccounts() {
-  /*const accounts = fs.readdirSync("accounts");
+  const accounts = fs.readdirSync("accounts");
   for (let i = 0; i < accounts.length; i++) {
     const account = readJSON(`accounts/${accounts[i]}`);
 
     //there is no system to tell file creation date accurately yet
-    /*let openedRecently =
-      fs.statSync(`accounts/${accounts[i]}`).atime >
-      Date.now() - 1000 * 60 * 60 * 24 * 30;
+    let openedRecently =
+      account.lastSignin > Date.now() - 1000 * 60 * 60 * 24 * 30;
 
     let hasServers = account.servers.length > 0;
 
-    if (!hasServers) {
+    if (!hasServers && !openedRecently) {
       let email;
       if (accounts[i].includes("email:"))
         email = accounts[i].split("email:")[1];
@@ -484,7 +483,7 @@ function removeUnusedAccounts() {
         );
       }
     }
-  }*/
+  }
 }
 
 //This handles commands from the terminal
