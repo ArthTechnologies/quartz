@@ -31,7 +31,6 @@ Router.get("/search", (req, res) => {
         ` -H 'x-api-key: ${apiKey}'`,
       (error, stdout, stderr) => {
         if (!error && stdout != undefined) {
-          console.log(error + stdout + stderr);
           try {
             res.status(200).json(JSON.parse(stdout));
           } catch {
