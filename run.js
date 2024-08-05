@@ -684,7 +684,7 @@ for (i in data.serverStates) {
 
       setTimeout(() => {
         f.run(id, undefined, undefined, undefined, undefined, undefined, false);
-      }, 2000 * i * multiplier);
+      }, 3000 * i * multiplier);
     }
   }
 }
