@@ -409,12 +409,25 @@ function run(
 
               lines[a] = "webserver-port: " + (port + 200);
 
+              let b = lines.findIndex((line) => {
+                return line.includes("deftemplatesuffix");
+              });
+
+              lines[b] = "deftemplatesuffix: vlowres";
+
+              let c = lines.findIndex((line) => {
+                return line.includes("image-format");
+              });
+
+              lines[c] = "image-format: jpg";
+
               fs.writeFileSync(
                 folder + "/plugins/dynmap/configuration.txt",
                 lines.join("\n"),
 
                 "utf8"
               );
+
               server.webmap = true;
               utils.writeJSON("servers/" + id + "/server.json", server);
               let interval2 = setInterval(() => {
