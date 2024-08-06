@@ -145,6 +145,7 @@ Router.get("/servers", async (req, res) => {
           let pid = execSync(
             "lsof -i :" + (10000 + parseInt(serverId)) + " -t"
           );
+          pid = pid.match(/\d+/g);
           let string = "ps -p " + pid + " -o rss=";
           console.log(string);
           memory = execSync(string);
