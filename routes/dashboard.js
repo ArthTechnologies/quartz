@@ -141,22 +141,11 @@ Router.get("/servers", async (req, res) => {
         let memory = 0;
         try {
           storage = files.folderSizeRecursive("servers/" + serverId);
-          exec(
-            "lsof -i :" + (10000 + parseInt(serverId)) + " -t",
-            (error, stdout, stderr) => {
-              let lines = stdout.split("\n");
-              lines.forEach((line) => {
-                //pid is line but only digits
-                let pid = line.match(/\d+/);
-                console.log("getting memory for pid " + pid);
-                exec(
-                  `cat /proc/${pid}/status | grep -i vmrss | awk '{print $2}'`,
-                  (error, stdout, stderr) => {
-                    memory += parseInt(stdout);
-                  }
-                );
-              });
-            }
+          let pid = execSync(
+            "lsof -i :" + (10000 + parseInt(serverId)) + " -t"
+          );
+          memory = execSync(
+            "cat /proc/" + pid + "/status | grep -i vmrss | awk '{print $2}'"
           );
         } catch (e) {
           console.log(e);
