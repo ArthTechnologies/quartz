@@ -481,10 +481,12 @@ function run(
 
         if (plugins[i].includes("DiscordSRV")) {
           server.discordsrv = true;
+          utils.writeJSON("servers/" + id + "/server.json", server);
         }
 
         if (plugins[i].includes("Chunky")) {
           server.chunky = true;
+          utils.writeJSON("servers/" + id + "/server.json", server);
         }
       }
     }
