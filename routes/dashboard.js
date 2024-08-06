@@ -138,7 +138,7 @@ Router.get("/servers", async (req, res) => {
         const serverId = servers[i];
         let storage = utils.getDirectorySize("servers/" + serverId);
         let memory = 0;
-        try {
+        /*try {
           exec(
             "lsof -i :" + (10000 + parseInt(id)) + " -t",
             (error, stdout, stderr) => {
@@ -158,7 +158,7 @@ Router.get("/servers", async (req, res) => {
           );
         } catch (e) {
           console.log(e);
-        }
+        }*/
         if (fs.existsSync(`servers/${serverId}/server.json`)) {
           const accountId = utils.readJSON(
             `servers/${serverId}/server.json`
