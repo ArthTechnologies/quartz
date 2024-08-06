@@ -148,7 +148,7 @@ Router.get("/servers", async (req, res) => {
           let pid;
           lines.forEach((line) => {
             //pid is line but only digits
-            pid = line.match(/\d+/);
+            pid = line.trim();
           });
           let string = "ps -p " + pid + " -o rss=";
 
