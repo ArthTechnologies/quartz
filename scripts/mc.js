@@ -95,6 +95,8 @@ function checkServer(id) {
     addons: server.addons,
     webmap: server.webmap,
     voicechat: server.voicechat,
+    discordsrv: server.discordsrv,
+    chunky: server.chunky,
     state: states[id],
   };
 }
@@ -388,6 +390,8 @@ function run(
 
     server.webmap = false;
     server.voicechat = false;
+    server.chunky = false;
+    server.discordsrv = false;
     utils.writeJSON("servers/" + id + "/server.json", server);
 
     for (i in plugins) {
@@ -473,6 +477,14 @@ function run(
               clearInterval(interval1);
             }
           }, 10);
+        }
+
+        if (plugins[i].includes("DiscordSRV")) {
+          server.discordsrv = true;
+        }
+
+        if (plugins[i].includes("Chunky")) {
+          server.chunky = true;
         }
       }
     }

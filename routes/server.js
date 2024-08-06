@@ -535,6 +535,8 @@ router.post(`/new/:id`, function (req, res) {
               server.id = id;
               server.webmap = false;
               server.voicechat = false;
+              server.discordsrv = false;
+              server.chunky = false;
               if (!fs.existsSync("servers/" + id)) {
                 fs.mkdirSync("servers/" + id);
               }
@@ -1672,15 +1674,13 @@ router.get("/:id/storageInfo", function (req, res) {
       limit = config.serverStorageLimit * 1024 * 1024 * 1024;
     }
 
-    res
-      .status(200)
-      .json({
-        used: used,
-        limit: limit,
-        plugins: plugins,
-        mods: mods,
-        worlds: worlds,
-      });
+    res.status(200).json({
+      used: used,
+      limit: limit,
+      plugins: plugins,
+      mods: mods,
+      worlds: worlds,
+    });
   } else {
     res.status(401).json({ msg: "Invalid credentials." });
   }
