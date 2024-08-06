@@ -145,7 +145,7 @@ Router.get("/servers", async (req, res) => {
           let pid = execSync(
             "lsof -i :" + (10000 + parseInt(serverId)) + " -t"
           );
-          let string = `cat /proc/${pid}/status | grep -i vmrss | awk '{print $2}'`;
+          let string = `ps -p ${pid} -o rss=`;
           console.log(string);
           memory = execSync(string);
         } catch (e) {
