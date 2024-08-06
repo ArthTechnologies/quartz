@@ -1664,12 +1664,23 @@ router.get("/:id/storageInfo", function (req, res) {
   if (hasAccess(token, account) && fs.existsSync(`servers/${req.params.id}/`)) {
     let limit = -1;
     let used = files.folderSizeRecursive(`servers/${req.params.id}/`);
+    let plugins = files.folderSizeRecursive(`servers/${req.params.id}/plugins`);
+    let mods = files.folderSizeRecursive(`servers/${req.params.id}/mods`);
+    let worlds = files.folderSizeRecursive(`servers/${req.params.id}/world`);
 
     if (config.serverStorageLimit !== undefined) {
       limit = config.serverStorageLimit * 1024 * 1024 * 1024;
     }
 
-    res.status(200).json({ used: used, limit: limit });
+    res
+      .status(200)
+      .json({
+        used: used,
+        limit: limit,
+        plugins: plugins,
+        mods: mods,
+        worlds: worlds,
+      });
   } else {
     res.status(401).json({ msg: "Invalid credentials." });
   }
