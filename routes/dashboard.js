@@ -142,11 +142,16 @@ Router.get("/servers", async (req, res) => {
         let memory = 0;
         try {
           storage = files.folderSizeRecursive("servers/" + serverId);
-          let pid = execSync(
+          let lines = execSync(
             "lsof -i :" + (10000 + parseInt(serverId)) + " -t"
           );
-          pid = pid.match(/\d+/g);
+          let pid;
+          lines.forEach((line) => {
+            //pid is line but only digits
+            pid = line.match(/\d+/);
+          });
           let string = "ps -p " + pid + " -o rss=";
+
           console.log(string);
           memory = execSync(string);
         } catch (e) {
