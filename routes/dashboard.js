@@ -142,7 +142,7 @@ Router.get("/servers", async (req, res) => {
         try {
           storage = files.folderSizeRecursive("servers/" + serverId);
           exec(
-            "lsof -i :" + (10000 + parseInt(id)) + " -t",
+            "lsof -i :" + (10000 + parseInt(serverId)) + " -t",
             (error, stdout, stderr) => {
               let lines = stdout.split("\n");
               lines.forEach((line) => {
