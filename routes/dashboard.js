@@ -146,6 +146,7 @@ Router.get("/servers", async (req, res) => {
               lines.forEach((line) => {
                 //pid is line but only digits
                 let pid = line.match(/\d+/);
+                console.log("getting memory for pid " + pid);
                 exec(
                   `cat /proc/${pid}/status | grep -i vmrss | awk '{print $2}'`,
                   (error, stdout, stderr) => {
