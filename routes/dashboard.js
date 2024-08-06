@@ -146,10 +146,10 @@ Router.get("/servers", async (req, res) => {
             "lsof -i :" + (10000 + parseInt(serverId)) + " -t"
           );
           console.log(
-            "cat /proc/" + pid + "/status | grep -i vmrss | awk '{print $2}'"
+            `cat /proc/${pid}/status | grep -i vmrss | awk '{print $2}'`
           );
           memory = execSync(
-            "cat /proc/" + pid + "/status | grep -i vmrss | awk '{print $2}'"
+            `cat /proc/${pid}/status | grep -i vmrss | awk '{print $2}'`
           );
         } catch (e) {
           console.log(e);
