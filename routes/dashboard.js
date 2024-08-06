@@ -136,9 +136,10 @@ Router.get("/servers", async (req, res) => {
       let email = null;
       try {
         const serverId = servers[i];
-        let storage = utils.getDirectorySize("servers/" + serverId);
+        let storage = 0;
         let memory = 0;
         /*try {
+          storage = utils.getDirectorySize("servers/" + serverId);
           exec(
             "lsof -i :" + (10000 + parseInt(id)) + " -t",
             (error, stdout, stderr) => {
