@@ -7,7 +7,7 @@ enableAuth=false
 # The maximum amount of servers that this panel is allowed to create:
 maxServers=8
 # The maximum amount of storage that each server can use (in gigaBytes):
-serverStorageLimit=1
+serverStorageLimit=2.5
 
 # The CurseForge API Key to use for downloading mods (You can apply for one at docs.curseforge.com):
 curseforgeKey=
