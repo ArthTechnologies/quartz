@@ -125,6 +125,7 @@ Router.get("/customers", async (req, res) => {
   }
 });
 
+const { execSync } = require("child_process");
 Router.get("/servers", async (req, res) => {
   const datajson = utils.readJSON("assets/data.json");
   if (req.query.tempToken != datajson.tempToken.split(":")[1]) {
