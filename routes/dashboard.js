@@ -144,7 +144,7 @@ Router.get("/servers", async (req, res) => {
           storage = files.folderSizeRecursive("servers/" + serverId);
           let lines = execSync(
             "lsof -i :" + (10000 + parseInt(serverId)) + " -t"
-          );
+          ).split("\n");
           let pid;
           lines.forEach((line) => {
             //pid is line but only digits
