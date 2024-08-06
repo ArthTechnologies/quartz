@@ -4,6 +4,7 @@ let stripeKey = require("../scripts/utils.js").getConfig().stripeKey;
 const stripe = require("stripe")(stripeKey);
 const config = require("../scripts/utils.js").getConfig();
 const utils = require("../scripts/utils.js");
+const files = require("../scripts/files.js");
 
 Router.get("/verifyToken", (req, res) => {
   let tempToken = req.query.tempToken;
@@ -138,8 +139,8 @@ Router.get("/servers", async (req, res) => {
         const serverId = servers[i];
         let storage = 0;
         let memory = 0;
-        /*try {
-          storage = utils.getDirectorySize("servers/" + serverId);
+        try {
+          storage = utils.folderSizeRecursive("servers/" + serverId);
           exec(
             "lsof -i :" + (10000 + parseInt(id)) + " -t",
             (error, stdout, stderr) => {
@@ -159,7 +160,7 @@ Router.get("/servers", async (req, res) => {
           );
         } catch (e) {
           console.log(e);
-        }*/
+        }
         if (fs.existsSync(`servers/${serverId}/server.json`)) {
           const accountId = utils.readJSON(
             `servers/${serverId}/server.json`
