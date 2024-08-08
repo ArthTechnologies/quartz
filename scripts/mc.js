@@ -494,14 +494,13 @@ function run(
 
     let ls;
     let interval = 0;
-    console.log("MODPACK URL: " + modpackURL);
+    if (c == "modded" && isNew) {
+      if (modpackURL != undefined) {
+        downloadModpack(id, modpackURL, modpackID, modpackVersionID);
+      }
+    }
     if (installer) {
       if (isNew) {
-        if (c == "modded") {
-          if (modpackURL != undefined) {
-            downloadModpack(id, modpackURL, modpackID, modpackVersionID);
-          }
-        }
         interval = 500;
         states[id] = "installing";
         //previous terminals should be cleared
