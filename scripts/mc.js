@@ -494,7 +494,7 @@ function run(
 
     let ls;
     let interval = 0;
-
+    console.log("MODPACK URL: " + modpackURL);
     if (installer) {
       if (isNew) {
         if (c == "modded") {
