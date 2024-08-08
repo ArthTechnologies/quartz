@@ -515,7 +515,8 @@ router.post(`/new/:id`, function (req, res) {
           console.log("debug: " + email + req.headers.username + em);
           if (
             (!enablePay ||
-              (account.servers.length == 1 && account.freeServers > 0)) &&
+              (account.servers.length == account.freeServers &&
+                account.freeServers > 0)) &&
             (config.maxServers > datajson.numServers ||
               config.maxServers == undefined ||
               datajson.numServers == undefined)
