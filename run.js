@@ -31,6 +31,9 @@ if (!fs.existsSync("config.txt")) {
     fs.unlinkSync("stores/secrets.json");
   }
   fs.copyFileSync("assets/template/config.txt", "config.txt");
+  console.log(
+    "Thanks for installing Quartz! See config.txt and arthmc.xyz/software to get started."
+  );
 } else {
   //this compares the current config.txt to the template, and adds any new settings to the config.txt
   let template = fs
