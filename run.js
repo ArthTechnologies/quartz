@@ -3,13 +3,10 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const cors = require("cors");
-const readJSON = require("./scripts/utils.js").readJSON;
-const writeJSON = require("./scripts/utils.js").writeJSON;
+
 const fs = require("fs");
 const crypto = require("crypto");
 const files = require("./scripts/files.js");
-const config = require("./scripts/utils.js").getConfig();
-const stripe = require("stripe")(config.stripeKey);
 
 exec = require("child_process").exec;
 require("dotenv").config();
@@ -89,6 +86,9 @@ if (!fs.existsSync("accounts")) {
   );
 }
 
+const readJSON = require("./scripts/utils.js").readJSON;
+const writeJSON = require("./scripts/utils.js").writeJSON;
+
 //Migration from old file-based servers & accounts format from 1.2 to the 1.3 folder-based one
 if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
   const oldAccounts = require("./accounts.json");
@@ -130,6 +130,9 @@ const s = require("./scripts/stripe.js");
 
 let modVersions = [{ c: "modded", s: "forge", v: "1.19.4" }];
 
+const config = require("./scripts/utils.js").getConfig();
+const stripe = require("stripe")(config.stripeKey);
+
 if (!fs.existsSync("assets/jars")) {
   fs.mkdirSync("assets/java");
   fs.mkdirSync("assets/jars");
@@ -161,6 +164,7 @@ setInterval(() => {
 }, 1000 * 60 * 60 * 12);
 
 function refreshTempToken() {
+  const datajson = readJSON("./assets/data.json");
   if (datajson.tempToken == undefined) {
     datajson.tempToken =
       Date.now() + ":" + crypto.randomBytes(16).toString("hex");

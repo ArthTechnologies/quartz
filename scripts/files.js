@@ -1,5 +1,5 @@
 const { createHash, scryptSync, randomBytes } = require("crypto");
-const config = require("./utils.js").getConfig();
+
 const fs = require("fs");
 
 function download(file, url) {
@@ -37,6 +37,7 @@ function hash(input, salt) {
 }
 
 function hashNoSalt(input) {
+  const config = require("./utils.js").getConfig();
   return scryptSync(input, config.pepper, 48).toString("hex");
 }
 
@@ -132,6 +133,7 @@ function removeDirectoryRecursiveAsync(directoryPath, callback) {
   }
 }
 function getIPID(ip) {
+  const config = require("./utils.js").getConfig();
   return hash(ip, config.pepper).split(":")[1];
 }
 
