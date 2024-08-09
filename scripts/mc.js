@@ -115,22 +115,7 @@ function run(
   try {
     const { exec } = require("child_process");
     //this looks for servers running on the same port that may obstruct startup
-    try {
-      exec(
-        "lsof -i :" + (10000 + parseInt(id)) + " -t",
-        (error, stdout, stderr) => {
-          let lines = stdout.split("\n");
-          lines.forEach((line) => {
-            //pid is line but only digits
-            let pid = line.match(/\d+/);
-            console.log("killing obstructing process " + pid);
-            exec("kill " + pid);
-          });
-        }
-      );
-    } catch (e) {
-      console.log(e);
-    }
+    killObstructingProcess(parseInt(id));
 
     if (fs.existsSync("servers/" + id + "/world/session.lock")) {
       fs.unlinkSync("servers/" + id + "/world/session.lock");
@@ -633,6 +618,7 @@ function run(
               states[id] = "false";
               console.log("setting status of " + id + " to false on line #4");
               ls.kill();
+              killObstructingProcess(parseInt(id));
             }
           });
           let count2 = 0;
@@ -642,15 +628,17 @@ function run(
                 ls.stdin.write("stop\n");
                 count2++;
               } else {
-                ls.kill();
                 states[id] = "false";
                 console.log("setting status of " + id + " to false on line #5");
+                ls.kill();
+                killObstructingProcess(parseInt(id));
                 clearInterval(intervalID);
               }
             } else if (states[id] == "deleting") {
-              ls.kill();
               states[id] = "false";
               console.log("setting status of " + id + " to false on line #6");
+              ls.kill();
+              killObstructingProcess(parseInt(id));
               clearInterval(intervalID);
             }
           }, 200);
@@ -689,6 +677,7 @@ function run(
           states[id] = "false";
           console.log("setting status of " + id + " to false on line #9");
           ls.kill();
+          killObstructingProcess(parseInt(id));
         }
       });
 
@@ -701,8 +690,9 @@ function run(
             count2++;
           }
         } else if (states[id] == "deleting") {
-          ls.kill();
           states[id] = "false";
+          ls.kill();
+          killObstructingProcess(parseInt(id));
           console.log("setting status of " + id + " to false on line #10");
           clearInterval(intervalID);
         }
@@ -997,6 +987,22 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
         );
       }
     );
+  }
+}
+
+function killObstructingProcess(port) {
+  try {
+    exec("lsof -i :" + (10000 + port) + " -t", (error, stdout, stderr) => {
+      let lines = stdout.split("\n");
+      lines.forEach((line) => {
+        //pid is line but only digits
+        let pid = line.match(/\d+/);
+        console.log("killing obstructing process " + pid);
+        exec("kill " + pid);
+      });
+    });
+  } catch (e) {
+    console.log(e);
   }
 }
 
