@@ -5,8 +5,9 @@ const s = require("../scripts/stripe.js");
 
 const { v4: uuidv4 } = require("uuid");
 const files = require("../scripts/files.js");
+const writeJSON = require("../scripts/utils.js").writeJSON;
 const config = require("../scripts/utils.js").getConfig();
-const getJSON = require("../scripts/utils.js").getJSON;
+const readJSON = require("../scripts/utils.js").readJSON;
 const enableCloudflareVerify = JSON.parse(config.enableCloudflareVerify);
 
 Router.post("/email/signup/", (req, res) => {
@@ -64,13 +65,8 @@ Router.post("/email/signup/", (req, res) => {
           account.servers = [];
           account.email = email;
           account.freeServers = 0;
-          fs.writeFileSync(
-            "accounts/email:" + email + ".json",
-            JSON.stringify(account, null, 4),
-            {
-              encoding: "utf8",
-            }
-          );
+          account.lastSignin = new Date().getTime();
+          writeJSON("accounts/email:" + email + ".json", account);
           res.status(200).send({ token: account.token, accountId: accountId });
         } else {
           res.status(400).send({ token: -1, reason: "Email already exists" });
@@ -90,7 +86,7 @@ Router.post("/email/signin/", (req, res) => {
   let password = req.query.password;
   let email = req.query.username;
   if (email.includes("email:")) email = email.replace("email:", "");
-  let account = getJSON("accounts/email:" + email + ".json");
+  let account = readJSON("accounts/email:" + email + ".json");
   let response = {};
 
   let salt = account.salt;
@@ -127,6 +123,11 @@ Router.post("/email/signin/", (req, res) => {
         token: account.token,
         accountId: account.accountId,
       };
+      account.lastSignin = new Date().getTime();
+      fs.writeFileSync(
+        "accounts/email:" + email + ".json",
+        JSON.stringify(account)
+      );
     } else {
       response = { token: -1, reason: "Incorrect email or password" };
     }
@@ -140,7 +141,7 @@ Router.delete("/email", (req, res) => {
   if (email.includes("email:")) email = email.replace("email:", "");
   password = req.query.password;
   token = req.headers.token;
-  let account = getJSON("accounts/email:" + email + ".json");
+  let account = readJSON("accounts/email:" + email + ".json");
 
   if (token == account.token) {
     if (account.password == files.hash(password, account.salt).split(":")[1]) {
@@ -166,7 +167,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
   if (email.includes("email:")) email = email.replace("email:", "");
   let confirmPassword = req.query.confirmPassword;
   let last4 = req.query.last4;
-  let account = getJSON("accounts/email:" + email + ".json");
+  let account = readJSON("accounts/email:" + email + ".json");
 
   try {
     const creditId = await s.getCreditId(email);
@@ -204,16 +205,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
     console.log(err);
     res.status(500).send({ success: false, reason: "An error occurred" });
   }
-
-  //write account file
-  fs.writeFileSync(
-    "accounts/email:" + email + ".json",
-    JSON.stringify(account, null, 4),
-
-    {
-      encoding: "utf8",
-    }
-  );
+  writeJSON("accounts/email:" + email + ".json", account);
 });
 
 //combined signin and signup for discord
@@ -232,6 +224,7 @@ Router.post("/discord/", (req, res) => {
       try {
         res2 = JSON.parse(res2);
       } catch {}
+      console.log(res2);
       let username = res2.username;
 
       if (fs.existsSync("accounts/discord:" + username + ".json")) {
@@ -239,13 +232,14 @@ Router.post("/discord/", (req, res) => {
       }
       //if account exists, so the user is signing in not up...
       if (nameTaken) {
-        let account = getJSON("accounts/discord:" + username + ".json");
+        let account = readJSON("accounts/discord:" + username + ".json");
         let response = {};
         account.ips = [];
         if (account.ips.indexOf(files.getIPID(req.ip)) == -1) {
           account.ips.push(files.getIPID(req.ip));
         }
         response = {
+          email: account.email,
           token: account.token,
           accountId: account.accountId,
           username: username,
@@ -253,7 +247,8 @@ Router.post("/discord/", (req, res) => {
           avatar: `https://cdn.discordapp.com/avatars/${res2.id}/${res2.avatar}.webp`,
           bannerColor: res2.banner_color,
         };
-
+        account.lastSignin = new Date().getTime();
+        writeJSON("accounts/discord:" + username + ".json", account);
         res.status(200).send(response);
       } else {
         let accountId = uuidv4();
@@ -271,13 +266,9 @@ Router.post("/discord/", (req, res) => {
         account.email = res2.email;
         account.servers = [];
         account.freeServers = 0;
-        fs.writeFileSync(
-          "accounts/discord:" + username + ".json",
-          JSON.stringify(account, null, 4),
-          {
-            encoding: "utf8",
-          }
-        );
+        account.lastSignin = new Date().getTime();
+        writeJSON("accounts/discord:" + username + ".json", account);
+        console.log("discord:", res2);
         res.status(200).send({
           token: account.token,
           accountId: accountId,
@@ -285,6 +276,7 @@ Router.post("/discord/", (req, res) => {
           firstTime: true,
           avatar: `https://cdn.discordapp.com/avatars/${res2.id}/${res2.avatar}.webp`,
           bannerColor: res2.banner_color,
+          email: res2.email,
         });
       }
     }
@@ -294,7 +286,7 @@ Router.post("/discord/", (req, res) => {
 Router.delete("/discord", (req, res) => {
   username = req.headers.username;
   token = req.headers.token;
-  let account = getJSON("accounts/discord:" + username + ".json");
+  let account = readJSON("accounts/discord:" + username + ".json");
 
   if (token == account.token) {
     for (i in account.servers) {
@@ -306,6 +298,19 @@ Router.delete("/discord", (req, res) => {
     res.status(200).send({ success: true });
   } else {
     res.status(400).send({ success: false, reason: "Invalid token" });
+  }
+});
+
+Router.post("/email", (req, res) => {
+  let email = req.query.email;
+  let accountname = req.headers.accountname;
+  let token = req.headers.token;
+  let account = readJSON("accounts/" + accountname + ".json");
+
+  if (token === account.token) {
+    account.email = email;
+    writeJSON("accounts/" + accountname + ".json", account);
+    res.status(200).send({ success: true });
   }
 });
 

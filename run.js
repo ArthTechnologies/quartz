@@ -3,9 +3,10 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const cors = require("cors");
-const getJSON = require("./scripts/utils.js").getJSON;
+
 const fs = require("fs");
 const crypto = require("crypto");
+const files = require("./scripts/files.js");
 
 exec = require("child_process").exec;
 require("dotenv").config();
@@ -49,9 +50,8 @@ if (!fs.existsSync("config.txt")) {
         if (templateLine == currentLine) {
           //pepper and forwardingSecret need to have random values generated
           if (
-            templateLine == "pepper" ||
-            (templateLine == "forwardingSecret" &&
-              current[j].split("=")[1] == "")
+            (templateLine == "pepper" || templateLine == "forwardingSecret") &&
+            current[j].split("=")[1] == ""
           ) {
             template[i] =
               template[i].split("=")[0] +
@@ -60,6 +60,14 @@ if (!fs.existsSync("config.txt")) {
                 .createHash("sha256")
                 .update(current[j].split("=")[1])
                 .digest("hex");
+          } else if (
+            templateLine == "forwardingSecret" &&
+            !current[j].includes("hash_")
+          ) {
+            template[i] =
+              template[i].split("=")[0] +
+              "=hash_" +
+              files.hashNoSalt(current[j].split("=")[1]);
           } else if (current[j].split("=")[1] == "undefined") {
             template[i] = template[i].split("=")[0] + "=";
           } else {
@@ -72,8 +80,6 @@ if (!fs.existsSync("config.txt")) {
   }
   fs.writeFileSync("config.txt", template.join("\n"));
 }
-const files = require("./scripts/files.js");
-const config = require("./scripts/utils.js").getConfig();
 
 if (!fs.existsSync("accounts")) {
   fs.mkdirSync("accounts");
@@ -82,6 +88,9 @@ if (!fs.existsSync("accounts")) {
     `{"accountId":"noemail", "servers":[]}`
   );
 }
+
+const readJSON = require("./scripts/utils.js").readJSON;
+const writeJSON = require("./scripts/utils.js").writeJSON;
 
 //Migration from old file-based servers & accounts format from 1.2 to the 1.3 folder-based one
 if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
@@ -96,13 +105,10 @@ if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
       if (oldServers[j].accountId == oldAccounts[i].accountId) {
         oldServers[j].id = j;
         newAccount.servers.push(oldServers[j]);
-        fs.writeFileSync(
-          `servers/${j}/server.json`,
-          JSON.stringify(oldServers[j])
-        );
+        writeJSON(`servers/${j}/server.json`, oldServers[j]);
       }
     }
-    fs.writeFileSync(`accounts/${i}.json`, JSON.stringify(newAccount));
+    writeJSON(`accounts/${i}.json`, newAccount);
   }
 
   fs.copyFileSync("accounts.json", "backup/accounts.json");
@@ -127,6 +133,9 @@ const s = require("./scripts/stripe.js");
 
 let modVersions = [{ c: "modded", s: "forge", v: "1.19.4" }];
 
+const config = require("./scripts/utils.js").getConfig();
+const stripe = require("stripe")(config.stripeKey);
+
 if (!fs.existsSync("assets/jars")) {
   fs.mkdirSync("assets/java");
   fs.mkdirSync("assets/jars");
@@ -135,33 +144,55 @@ if (!fs.existsSync("assets/jars")) {
 
   fs.writeFileSync(
     "assets/data.json",
-    `{"lastUpdate":${Date.now()},"numServers":0,"latestVersion":"1.20.2"}`
+    `{"lastUpdate":${Date.now()},"numServers":0}`
   );
+  refreshTempToken();
   downloadJars();
 }
 
-const datajson = getJSON("./assets/data.json");
+const datajson = readJSON("./assets/data.json");
 if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
   downloadJars();
-  getLatestVersion();
   verifySubscriptions();
   backup();
+  refreshTempToken();
+  removeUnusedAccounts();
 }
 setInterval(() => {
   downloadJars();
-  getLatestVersion();
   verifySubscriptions();
   backup();
+  refreshTempToken();
+  removeUnusedAccounts();
 }, 1000 * 60 * 60 * 12);
 
+function refreshTempToken() {
+  const datajson = readJSON("./assets/data.json");
+  if (datajson.tempToken == undefined) {
+    datajson.tempToken =
+      Date.now() + ":" + crypto.randomBytes(16).toString("hex");
+  }
+  if (datajson.tempToken.split("").length < 10) {
+    datajson.tempToken =
+      Date.now() + ":" + crypto.randomBytes(16).toString("hex");
+    writeJSON("assets/data.json", datajson);
+  } else {
+    //if its more than a week old, refreshes it
+    if (Date.now() - datajson.tempToken.split(":")[0] > 1000 * 60 * 60 * 24 * 7)
+      datajson.tempToken =
+        Date.now() + ":" + crypto.randomBytes(16).toString("hex");
+    writeJSON("assets/data.json", datajson);
+  }
+}
+
 function downloadJars() {
-  const datajson = getJSON("./assets/data.json");
+  const datajson = readJSON("./assets/data.json");
   datajson.lastUpdate = Date.now();
-  fs.writeFileSync("assets/data.json", JSON.stringify(datajson));
+  writeJSON("assets/data.json", datajson);
   //geyser
   files.downloadAsync(
     "assets/jars/downloads/cx_geyser-spigot_Geyser.jar",
-    "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar",
+    "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot",
     (data) => {
       if (fs.existsSync(`assets/jars/cx_geyser-spigot_Geyser.jar`)) {
         fs.unlinkSync(`assets/jars/cx_geyser-spigot_Geyser.jar`);
@@ -175,7 +206,7 @@ function downloadJars() {
   );
   files.downloadAsync(
     "assets/jars/downloads/cx_floodgate-spigot_Floodgate.jar",
-    "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar",
+    "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot",
     (data) => {
       if (fs.existsSync(`assets/jars/cx_floodgate-spigot_Floodgate.jar`)) {
         fs.unlinkSync(`assets/jars/cx_floodgate-spigot_Floodgate.jar`);
@@ -189,7 +220,7 @@ function downloadJars() {
   );
   files.downloadAsync(
     "assets/jars/downloads/cx_geyser-velocity_Geyser.jar",
-    "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/velocity/build/libs/Geyser-Velocity.jar",
+    "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity",
     (data) => {
       if (fs.existsSync(`assets/jars/cx_geyser-velocity_Geyser.jar`)) {
         fs.unlinkSync(`assets/jars/cx_geyser-velocity_Geyser.jar`);
@@ -203,7 +234,7 @@ function downloadJars() {
   );
   files.downloadAsync(
     "assets/jars/downloads/cx_floodgate-velocity_Floodgate.jar",
-    "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/velocity/build/libs/floodgate-velocity.jar",
+    "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity",
     (data) => {
       if (fs.existsSync(`assets/jars/cx_floodgate-velocity_Floodgate.jar`)) {
         fs.unlinkSync(`assets/jars/cx_floodgate-velocity_Floodgate.jar`);
@@ -282,7 +313,7 @@ function downloadJars() {
                 if (
                   fs.statSync(
                     `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
-                  ).size > 1000
+                  ).size > 4096
                 ) {
                   fs.copyFileSync(
                     `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`,
@@ -291,6 +322,7 @@ function downloadJars() {
                   fs.unlinkSync(
                     `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
                   );
+                } else {
                 }
               }
             );
@@ -306,7 +338,7 @@ function downloadJars() {
                 jar.version +
                 "." +
                 extension,
-              "https://serverjars.com/api/fetchJar/" +
+              "https://centrojars.com/api/fetchJar/" +
                 c +
                 "/" +
                 jar.software +
@@ -319,7 +351,10 @@ function downloadJars() {
                   ) ||
                   fs.readFileSync(
                     `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
-                  ).length == 26351
+                  ).length == 26351 ||
+                  fs.readFileSync(
+                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
+                  ).length <= 4096
                 ) {
                   downloadFromJarsMC();
                   return;
@@ -381,50 +416,101 @@ function backup() {
   }
 }
 
-function getLatestVersion() {
-  files.GET(
-    "https://launchermeta.mojang.com/mc/game/version_manifest.json",
-    (vdata) => {
-      let version = JSON.parse(vdata).latest.release;
-      let datajson = getJSON("./assets/data.json");
-      data.latestVersion = version;
-      fs.writeFileSync("./assets/data.json", JSON.stringify(datajson));
-      return version;
-    }
-  );
-}
-
 function verifySubscriptions() {
-  if (config.stripeKey != "" && config.enablePay) {
-    const accounts = fs.readdirSync("accounts");
-    for (i in accounts) {
-      if (accounts[i].split(".")[accounts[i].split(".").length - 1] == "json") {
-        const account = getJSON(`./accounts/${accounts[i]}`);
-        if (account.freeServers == undefined) {
-          try {
-            const amountOfServers = account.servers.length;
-            s.checkSubscription(account.email, (data) => {
-              if (data.data.length < amountOfServers) {
-                for (j in account.servers) {
-                  const ls = require("child_process").execSync;
-                  f.stopAsync(account.servers[j].id, () => {
-                    ls(
-                      `mv servers/${account.servers[j].id} backup/disabledServers${account.servers[j].id}`
-                    );
-                  });
-                }
+  //we wait 5 minutes to avoid the user of the terminal having a lag spike at startup
+  setTimeout(() => {
+    if (config.stripeKey != "" && config.enablePay) {
+      const accounts = fs.readdirSync("accounts");
+      for (i in accounts) {
+        if (
+          accounts[i].split(".")[accounts[i].split(".").length - 1] == "json"
+        ) {
+          const account = readJSON(`./accounts/${accounts[i]}`);
+          if (account.freeServers == undefined) {
+            try {
+              const amountOfServers = account.servers.length;
+              s.checkSubscription(account.email, (data) => {
+                if (data.data.length < amountOfServers) {
+                  for (j in account.servers) {
+                    const ls = require("child_process").execSync;
+                    f.stopAsync(account.servers[j].id, () => {
+                      ls(
+                        `mv servers/${account.servers[j].id} backup/disabledServers${account.servers[j].id}`
+                      );
+                    });
+                  }
 
-                if (account.disabledServers == undefined) {
-                  account.disabledServers = [];
+                  if (account.disabledServers == undefined) {
+                    account.disabledServers = [];
+                  }
+                  account.disabledServers.push(account.servers);
+                  account.servers = [];
                 }
-                account.disabledServers.push(account.servers);
-                account.servers = [];
-              }
-            });
-          } catch {
-            console.log("Error verifying subscription for " + account.email);
+              });
+            } catch {
+              console.log("Error verifying subscription for " + account.email);
+            }
           }
         }
+      }
+    }
+  }, 1000 * 60 * 5);
+}
+
+function removeUnusedAccounts() {
+  const accounts = fs.readdirSync("accounts");
+  for (let i = 0; i < accounts.length; i++) {
+    const account = readJSON(`accounts/${accounts[i]}`);
+
+    //there is no system to tell file creation date accurately yet
+    let openedRecently =
+      account.lastSignin > Date.now() - 1000 * 60 * 60 * 24 * 30;
+
+    let hasServers = account.servers.length > 0;
+
+    if (!hasServers && !openedRecently) {
+      let email;
+      if (accounts[i].includes("email:"))
+        email = accounts[i].split("email:")[1];
+      else email = account.email;
+      console.log(email);
+      if (email != undefined) {
+        //checks stripe to see if the account has a subscription
+        stripe.customers.list(
+          {
+            limit: 100,
+            email: email,
+          },
+          function (err, customers) {
+            if (err) {
+              console.log("err", err);
+            } else {
+              if (customers.data.length == 0) {
+                console.log("Removing unused account" + accounts[i]);
+                fs.unlinkSync(`accounts/${accounts[i]}`);
+                if (!fs.existsSync("assets/deletions-log.txt")) {
+                  fs.writeFileSync(
+                    "assets/deletions-log.txt",
+                    "[" +
+                      new Date().toLocaleString() +
+                      "] " +
+                      accounts[i] +
+                      " was deleted due to inactivity.\n"
+                  );
+                } else {
+                  fs.appendFileSync(
+                    "assets/deletions-log.txt",
+                    "[" +
+                      new Date().toLocaleString() +
+                      "] " +
+                      accounts[i] +
+                      " was deleted due to inactivity.\n"
+                  );
+                }
+              }
+            }
+          }
+        );
       }
     }
   }
@@ -436,7 +522,7 @@ process.stdin.setEncoding("utf8");
 process.stdout.write(
   'Welcome to the terminal!\nType "help" for a list of commands.\n'
 );
-
+let userInput = false;
 process.stdin.on("data", (data) => {
   const input = data.trim(); // Remove leading/trailing whitespace
   switch (input) {
@@ -446,22 +532,113 @@ process.stdin.on("data", (data) => {
       process.exit(0);
     case "help":
       console.log(
-        "Commands:\nstop\nend\nexit\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
+        "Commands:\nstop\nend\nexit\nnumServersOnline\ngetServerOwner\ngetDashboardToken\nscanAccountIds\nscanAccountServers\nbroadcast\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
       );
+      break;
+    case "numServersOnline":
+      let numServersOnline = 0;
+      fs.readdirSync("servers").forEach((file) => {
+        if (f.getState(file) == "true") {
+          numServersOnline++;
+        }
+      });
+      console.log(
+        numServersOnline +
+          " - " +
+          (numServersOnline / parseInt(fs.readdirSync("servers").length)) *
+            100 +
+          "%"
+      );
+      break;
+    case "getServerOwner":
+      userInput = true;
+      console.log("Enter server id:");
+      process.stdin.once("data", (data) => {
+        try {
+          const serverId = data.trim();
+          if (fs.existsSync(`servers/${serverId}/server.json`)) {
+            const accountId = readJSON(
+              `servers/${serverId}/server.json`
+            ).accountId;
+            fs.readdirSync("accounts").forEach((file) => {
+              const account = readJSON(`accounts/${file}`);
+              if (account.accountId == accountId) {
+                console.log(file);
+                if (!file.includes("email:")) console.log(account.email);
+              }
+            });
+          } else {
+            fs.readdirSync("accounts").forEach((file) => {
+              try {
+                let account = readJSON(`accounts/${file}`);
+                if (account.servers.includes(serverId)) {
+                  console.log(file);
+                  if (!file.includes("email:")) console.log(account.email);
+                }
+              } catch {
+                console.log("error scanning account " + file);
+              }
+            });
+          }
+        } catch {
+          console.log("error getting server owner");
+        }
+      });
+      break;
+    case "getDashboardToken":
+      refreshTempToken();
+      console.log(datajson.tempToken.split(":")[1]);
+      break;
+    case "broadcast":
+      userInput = true;
+      console.log(
+        `Enter broadcast message (ex: "Server shutting down in 5 minutes"):`
+      );
+      process.stdin.once("data", (data) => {
+        const message = data.trim();
+        for (let i in fs.readdirSync("servers")) {
+          const serverId = fs.readdirSync("servers")[i];
+          f.writeTerminal(serverId, "say [Broadcast] " + message);
+        }
+        console.log("Broadcasted message to all servers.");
+        userInput = false;
+      });
+
       break;
     case "clear":
       process.stdout.write("\x1B[2J\x1B[0f");
       break;
     case "refresh":
-      getLatestVersion();
       downloadJars();
       verifySubscriptions();
-      console.log(
-        "downloading latest jars, verifying subscriptions and getting latest version"
-      );
+      refreshTempToken();
+      removeUnusedAccounts();
+      console.log("downloading latest jars and verifying subscriptions...");
+      break;
+    case "scanAccountIds":
+      fs.readdirSync("accounts").forEach((file) => {
+        try {
+          let account = readJSON(`accounts/${file}`);
+          console.log(account.accountId + " - " + file);
+        } catch {
+          console.log("error scanning account " + file);
+        }
+      });
+      break;
+    case "scanAccountServers":
+      fs.readdirSync("accounts").forEach((file) => {
+        try {
+          let account = readJSON(`accounts/${file}`);
+          console.log(file + " - " + account.servers);
+        } catch {
+          console.log("error scanning account " + file);
+        }
+      });
       break;
     default:
-      console.log('Unknown command. Type "help" for a list of commands.');
+      if (!userInput) {
+        console.log('Unknown command. Type "help" for a list of commands.');
+      }
   }
 });
 
@@ -481,11 +658,11 @@ setInterval(() => {
 }, 1000 * 60 * 5);
 
 files.downloadAsync(
-  "assets/java/java19.tar.gz",
-  "https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.2%2B7/OpenJDK19U-jdk_x64_linux_hotspot_19.0.2_7.tar.gz",
+  "assets/java/java21.tar.gz",
+  "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.3%2B9/OpenJDK21U-jdk_x64_linux_hotspot_21.0.3_9.tar.gz",
   (data) => {
-    files.extractAsync("assets/java/java19.tar.gz", "assets/java", () => {
-      fs.unlinkSync("assets/java/java19.tar.gz");
+    files.extractAsync("assets/java/java21.tar.gz", "assets/java", () => {
+      fs.unlinkSync("assets/java/java21.tar.gz");
     });
   }
 );
@@ -510,7 +687,7 @@ files.downloadAsync(
 const f = require("./scripts/mc.js");
 //this gets the server states every 5 minutes so that if quartz restarts, servers that were up will startup again
 function getServerStates() {
-  const data = getJSON("./assets/data.json");
+  const data = readJSON("./assets/data.json");
 
   if (data.serverStates == undefined) {
     data.serverStates = [];
@@ -519,39 +696,37 @@ function getServerStates() {
     data.serverStates[file] = file + ":" + f.getState(file);
   });
 
-  fs.writeFileSync("./assets/data.json", JSON.stringify(data));
+  writeJSON("./assets/data.json", data);
 }
 
-setInterval(() => {
-  getServerStates();
-}, 1000 * 60 * 2);
-
-const data = getJSON("./assets/data.json");
+//automatic server start-up systen
+const data = readJSON("./assets/data.json");
 for (i in data.serverStates) {
   if (data.serverStates[i].split(":")[1] == "true") {
+    let id = parseInt(data.serverStates[i].split(":")[0]);
     if (
-      fs.existsSync(
-        "servers/" + data.serverStates[i].split(":")[0] + "/server.json"
-      )
+      fs.existsSync("servers/" + id + "/server.json") &&
+      f.getState(id) == "false"
     ) {
-      f.run(
-        data.serverStates[i].split(":")[0],
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        false
-      );
+      //the multiplier determines the stagger delay by the amount of servers
+      let multiplier = data.serverStates.length / 16;
+
+      setTimeout(() => {
+        f.run(id, undefined, undefined, undefined, undefined, undefined, false);
+      }, 3000 * i * multiplier);
     }
   }
 }
+setInterval(() => {
+  getServerStates();
+}, 1000 * 60 * 2);
 
 app.get("/", (req, res) => {
   res.status(200).sendFile(path.join(__dirname, "assets/clientMessage.html"));
 });
 const rateLimit = require("express-rate-limit");
 const { get } = require("http");
+
 const limiter = rateLimit({
   max: 300,
   windowMs: 1000,
@@ -580,8 +755,9 @@ const security = (req, res, next) => {
 app.use(limiter, express.json(), cors());
 
 app.use("/server", require("./routes/server"));
+app.use("/dashboard", require("./routes/dashboard"));
 app.use("/checkout", require("./routes/checkout"));
-app.use("/info", require("./routes/info.js"));
+app.use("/info", require("./routes/info"));
 app.use("/terminal", require("./routes/terminal"));
 app.use("/accounts", require("./routes/accounts"));
 app.use("/curseforge", require("./routes/curseforge"));

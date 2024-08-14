@@ -1,5 +1,5 @@
 const { createHash, scryptSync, randomBytes } = require("crypto");
-const config = require("./utils.js").getConfig();
+
 const fs = require("fs");
 
 function download(file, url) {
@@ -8,8 +8,13 @@ function download(file, url) {
 
 function downloadAsync(file, url, callback) {
   url = url.replace(/ /g, "%20");
+
   exec(`curl -o ${file} -LO "${url}"`, (error, stdout, stderr) => {
-    callback(stdout);
+    try {
+      callback(stdout);
+    } catch {
+      console.log("Error in callback whislst downloading " + file);
+    }
   });
 }
 
@@ -32,6 +37,7 @@ function hash(input, salt) {
 }
 
 function hashNoSalt(input) {
+  const config = require("./utils.js").getConfig();
   return scryptSync(input, config.pepper, 48).toString("hex");
 }
 
@@ -113,6 +119,7 @@ function removeDirectoryRecursiveAsync(directoryPath, callback) {
     if (directoryPath.startsWith("servers")) {
       exec(`rm -rf ${directoryPath}`, (error, stdout, stderr) => {
         if (callback != undefined) {
+          fs.mkdirSync(directoryPath);
           callback(stdout);
         }
       });
@@ -126,6 +133,7 @@ function removeDirectoryRecursiveAsync(directoryPath, callback) {
   }
 }
 function getIPID(ip) {
+  const config = require("./utils.js").getConfig();
   return hash(ip, config.pepper).split(":")[1];
 }
 
@@ -222,7 +230,11 @@ function simplifyTerminal(terminal, software) {
     }
   }
   if (terminalLines[0] != "" && software != "velocity") {
-    return "[" + terminalLines.join("\n[");
+    if (!terminalLines[0].includes("[")) {
+      return "[" + terminalLines.join("\n[");
+    } else {
+      return terminalLines.join("\n[");
+    }
   }
 
   return terminalLines.join("\n[");

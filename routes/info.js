@@ -6,7 +6,7 @@ let email = "";
 const f = require("../scripts/mc.js");
 const files = require("../scripts/files.js");
 const config = require("../scripts/utils.js").getConfig();
-const getJSON = require("../scripts/utils.js").getJSON;
+const readJSON = require("../scripts/utils.js").readJSON;
 const enableAuth = JSON.parse(config.enableAuth);
 const stripeKey = config.stripeKey;
 const stripe = require("stripe")(stripeKey);
@@ -18,7 +18,7 @@ router.get(`/servers`, function (req, res) {
   if (!enableAuth) email = "noemail";
   //prevents a crash that has occurred
   if (email != undefined) {
-    account = getJSON(`accounts/${email}.json`);
+    account = readJSON(`accounts/${email}.json`);
     console.log(account);
     console.log("../accounts/" + email + ".json");
   }
@@ -36,7 +36,7 @@ router.get(`/servers`, function (req, res) {
       if (typeof account.servers[i] == "object")
         account.servers[i] = account.servers[i].id;
       if (fs.existsSync(`servers/${account.servers[i]}/server.json`)) {
-        account.servers[i] = getJSON(
+        account.servers[i] = readJSON(
           "servers/" + account.servers[i] + "/server.json"
         );
         account.servers[i].state = f.getState(account.servers[i].id);
@@ -54,7 +54,7 @@ router.get(`/servers`, function (req, res) {
 router.get(`/subscriptions`, function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
-  account = getJSON(`accounts/${email}.json`);
+  account = readJSON(`accounts/${email}.json`);
   if (!enableAuth) email = "noemail";
   if (token === account.token || !enableAuth) {
     stripe.customers.list(
@@ -66,6 +66,15 @@ router.get(`/subscriptions`, function (req, res) {
         if (err) {
           console.log("err", err);
         } else {
+          if (customers.data.length == 0) {
+            res.status(200).json({
+              moddedSubscriptions: 0,
+              basicSubscriptions: 0,
+              subscriptions: 0,
+              freeServers: account.freeServers,
+            });
+            return;
+          }
           cid = customers.data[0].id;
 
           //check the customer's subscriptions and return it
@@ -131,8 +140,8 @@ router.get(`/`, function (req, res) {
   returnObject["cloudflareVerifySiteKey"] = config.cloudflareVerifySiteKey;
   returnObject["enableDeepL"] =
     config.deeplKey != "" && config.deeplKey != null;
-  for (var key in getJSON("assets/data.json")) {
-    returnObject[key] = getJSON("assets/data.json")[key];
+  for (var key in readJSON("assets/data.json")) {
+    returnObject[key] = readJSON("assets/data.json")[key];
   }
   res.json(returnObject);
 });
@@ -182,9 +191,28 @@ router.get(`/jarsIndex`, function (req, res) {
   });
 });
 
-router.get(`/isAtCapacity`, function (req, res) {
-  let numServers = fs.readdirSync("servers").length;
-  res.status(200).json(numServers >= config.maxServers);
+router.get(`/capacity`, function (req, res) {
+  let maxServers = parseInt(config.maxServers);
+  let numServers = 0;
+  fs.readdirSync("servers").forEach((file) => {
+    if (fs.existsSync(`servers/${file}/server.json`)) {
+      try {
+        if (!readJSON(`servers/${file}/server.json`).adminServer) {
+          numServers++;
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      numServers++;
+    }
+  });
+  console.log("numServers:" + numServers);
+  res.status(200).json({
+    atCapacity: numServers >= maxServers,
+    numServers: numServers,
+    maxServers: maxServers,
+  });
 });
 
 module.exports = router;

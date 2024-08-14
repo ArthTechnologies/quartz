@@ -19,7 +19,7 @@ config.json
 accounts.json
 servers.json
 /forgelibs
-deleteLog.txt
+assets/deletions-log.txt
 config.txt
 !/assets/template/config.txt
 bun.lockb

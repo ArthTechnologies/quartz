@@ -1,14 +1,15 @@
 const express = require("express");
 const Router = express.Router();
 const fs = require("fs");
-const getJSON = require("../scripts/utils.js").getJSON;
-const data = getJSON("assets/data.json");
+const readJSON = require("../scripts/utils.js").readJSON;
+const data = readJSON("assets/data.json");
 const files = require("../scripts/files.js");
+const writeJSON = require("../scripts/utils.js").writeJSON;
 const config = require("../scripts/utils.js").getConfig();
 
 Router.get("/", (req, res) => {
   data.numServers = fs.readdirSync("servers").length;
-  fs.writeFileSync("assets/data.json", JSON.stringify(data, null, 2));
+  writeJSON("assets/data.json", data);
   res.status(200).json({
     maxServers: config.maxServers,
     numServers: data.numServers,
@@ -17,23 +18,25 @@ Router.get("/", (req, res) => {
 
 Router.get("/secrets", (req, res) => {
   if (config.forwardingSecret != undefined) {
-    if (
-      files.hashNoSalt(req.query.forwardingSecret) == config.forwardingSecret
-    ) {
-      let serverstoObject = [];
-      let accountstoObject = [];
+    if (req.query.forwardingSecret == config.forwardingSecret) {
+      let serverstoObject = {};
+      let accountstoObject = {};
       fs.readdirSync("servers").forEach((server) => {
-        const text = fs.readFileSync(`servers/${server}/server.json`);
-        try {
-          serverstoObject.push(JSON.parse(text));
-        } catch {
-          console.log("error parsing " + server);
+        if (fs.existsSync(`servers/${server}/server.json`)) {
+          const text = fs.readFileSync(`servers/${server}/server.json`);
+          try {
+            serverstoObject[server] = JSON.parse(text);
+          } catch {
+            console.log("error parsing " + server);
+          }
+        } else {
+          serverstoObject[server] = "not created yet";
         }
       });
       fs.readdirSync("accounts").forEach((account) => {
         const text = fs.readFileSync(`accounts/${account}`);
         try {
-          accountstoObject.push(JSON.parse(text));
+          accountstoObject[account] = JSON.parse(text);
         } catch {
           console.log("error parsing " + account);
         }
@@ -75,7 +78,7 @@ Router.post("/account", (req, res) => {
         if (fs.existsSync(`accounts/${req.body.account}`)) {
           res.status(200).json({ msg: "Account already exists." });
         } else {
-          fs.writeFileSync(`accounts/${req.body.account}`, JSON.stringify({}));
+          writeJSON(`accounts/${req.body.account}`, {});
           res.status(200).json({ msg: "Account created." });
         }
       } else {

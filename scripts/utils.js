@@ -12,7 +12,7 @@ function getConfig() {
   return config;
 }
 
-function getJSON(file) {
+function readJSON(file) {
   let json = {};
   try {
     json = JSON.parse(fs.readFileSync(file, "utf8"));
@@ -22,4 +22,12 @@ function getJSON(file) {
   return json;
 }
 
-module.exports = { getConfig, getJSON };
+function writeJSON(file, json) {
+  try {
+    fs.writeFileSync(file, JSON.stringify(json, null, 2));
+  } catch (error) {
+    console.log("error writing json for " + file, error);
+  }
+}
+
+module.exports = { getConfig, readJSON, writeJSON };
