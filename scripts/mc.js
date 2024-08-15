@@ -164,18 +164,14 @@ function run(
       }
     }
     let allocatedRAM;
-    if (
-      software == "paper" ||
-      software == "velocity" ||
-      software == "snapshot"
-    ) {
-      allocatedRAM = parseInt(config.basicPlanRAM);
-    } else if (
-      software == "forge" ||
-      software == "fabric" ||
-      software == "quilt"
-    ) {
-      allocatedRAM = parseInt(config.moddedPlanRAM);
+    if (config.RAM3.includes(server.priceId)) {
+      allocatedRAM = 3;
+    } else if (config.RAM4.includes(server.priceId)) {
+      allocatedRAM = 4;
+    } else if (config.RAM8.includes(server.priceId)) {
+      allocatedRAM = 8;
+    } else {
+      allocatedRAM = 4;
     }
     let args = [
       "-Xmx" +

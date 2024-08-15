@@ -609,7 +609,7 @@ router.post(`/new/:id`, function (req, res) {
                           freeServers = parseInt(account.freeServers);
                         }
                         let canCreateServer = subs + freeServers < amount;
-                        if (config.moddedPlanPriceId != "") {
+                        if (config.MODDED != "") {
                           let basicServers = 0;
                           let moddedServers = 0;
                           for (i in account.servers) {
@@ -674,6 +674,7 @@ router.post(`/new/:id`, function (req, res) {
                             server.addons = req.body.addons;
                             server.accountId = account.accountId;
                             server.id = id;
+                            server.priceId = subscriptions.data[i].plan.id;
                             if (!fs.existsSync("servers/" + id)) {
                               fs.mkdirSync("servers/" + id);
                             }
