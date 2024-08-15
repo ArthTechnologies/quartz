@@ -596,10 +596,12 @@ router.post(`/new/:id`, function (req, res) {
                       },
                       function (err, subscriptions) {
                         let subs = 0;
+                        let planId = "";
                         //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
                         for (i in subscriptions.data) {
                           console.log("plan object");
                           console.log(subscriptions.data[i].plan);
+                          planId = subscriptions.data[i].plan.id;
                           if (subscriptions.data[i] != undefined) {
                             subs++;
                           }
@@ -674,7 +676,7 @@ router.post(`/new/:id`, function (req, res) {
                             server.addons = req.body.addons;
                             server.accountId = account.accountId;
                             server.id = id;
-                            server.priceId = subscriptions.data[i].plan.id;
+                            server.priceId = planId;
                             if (!fs.existsSync("servers/" + id)) {
                               fs.mkdirSync("servers/" + id);
                             }
