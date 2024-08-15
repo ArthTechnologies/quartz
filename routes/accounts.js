@@ -44,38 +44,45 @@ Router.post("/email/signup/", (req, res) => {
     signup();
   }
   function signup() {
-    if (fs.existsSync("accounts/email:" + email + ".json")) {
-      emailExists = true;
-    }
+    try {
+      if (fs.existsSync("accounts/email:" + email + ".json")) {
+        emailExists = true;
+      }
 
-    if (password == confirmPassword) {
-      if (password.length >= 7) {
-        if (!emailExists) {
-          let accountId = uuidv4();
-          [salt, password] = files.hash(password).split(":");
+      if (password == confirmPassword) {
+        if (password.length >= 7) {
+          if (!emailExists) {
+            let accountId = uuidv4();
+            [salt, password] = files.hash(password).split(":");
 
-          account.password = password;
-          account.accountId = accountId;
-          account.token = uuidv4();
-          account.salt = salt;
-          account.resetAttempts = 0;
-          account.ips = [];
-          account.ips.push(files.getIPID(req.ip));
-          account.type = "email";
-          account.servers = [];
-          account.email = email;
-          account.freeServers = 0;
-          account.lastSignin = new Date().getTime();
-          writeJSON("accounts/email:" + email + ".json", account);
-          res.status(200).send({ token: account.token, accountId: accountId });
+            account.password = password;
+            account.accountId = accountId;
+            account.token = uuidv4();
+            account.salt = salt;
+            account.resetAttempts = 0;
+            account.ips = [];
+            account.ips.push(files.getIPID(req.ip));
+            account.type = "email";
+            account.servers = [];
+            account.email = email;
+            account.freeServers = 0;
+            account.lastSignin = new Date().getTime();
+            writeJSON("accounts/email:" + email + ".json", account);
+            res
+              .status(200)
+              .send({ token: account.token, accountId: accountId });
+          } else {
+            res.status(400).send({ token: -1, reason: "Email already exists" });
+          }
         } else {
-          res.status(400).send({ token: -1, reason: "Email already exists" });
+          res.status(400).send({ token: -1, reason: "Password is too short" });
         }
       } else {
-        res.status(400).send({ token: -1, reason: "Password is too short" });
+        res.status(400).send({ token: -1, reason: "Passwords do not match" });
       }
-    } else {
-      res.status(400).send({ token: -1, reason: "Passwords do not match" });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send({ token: -1, reason: "An error occurred" });
     }
   }
 });
