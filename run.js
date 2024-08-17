@@ -513,6 +513,40 @@ function removeUnusedAccounts() {
   }
 }
 
+//crash handling
+// Process-wide error handling
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  setTimeout(() => {
+    let numServersOnline = 0;
+    fs.readdirSync("servers").forEach((file) => {
+      if (f.getState(file) == "true") {
+        numServersOnline++;
+      }
+    });
+    if (numServersOnline == 0) {
+      console.log("Crash was fatal. Exiting...");
+      process.exit(1);
+    }
+  }, 10000);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception thrown:", error);
+  setTimeout(() => {
+    let numServersOnline = 0;
+    fs.readdirSync("servers").forEach((file) => {
+      if (f.getState(file) == "true") {
+        numServersOnline++;
+      }
+    });
+    if (numServersOnline == 0) {
+      console.log("Crash was fatal. Exiting...");
+      process.exit(1);
+    }
+  }, 10000);
+});
+
 //This handles commands from the terminal
 process.stdin.setEncoding("utf8");
 

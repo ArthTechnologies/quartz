@@ -89,6 +89,7 @@ router.get(`/subscriptions`, function (req, res) {
               let subscriptions = 0;
 
               for (i in subscriptions2.data) {
+                let plan = subscriptions2.data[i].items.data[0].plan;
                 if (config.MODDED != "") {
                   if (config.MODDED.includes(plan.id)) {
                     moddedSubscriptions++;
