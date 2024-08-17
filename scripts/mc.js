@@ -613,8 +613,9 @@ function run(
             ) {
               states[id] = "false";
               console.log("setting status of " + id + " to false on line #4");
-              ls.kill();
+
               killObstructingProcess(parseInt(id));
+              ls.kill();
             }
           });
           let count2 = 0;
@@ -626,15 +627,17 @@ function run(
               } else {
                 states[id] = "false";
                 console.log("setting status of " + id + " to false on line #5");
-                ls.kill();
+
                 killObstructingProcess(parseInt(id));
+                ls.kill();
                 clearInterval(intervalID);
               }
             } else if (states[id] == "deleting") {
               states[id] = "false";
               console.log("setting status of " + id + " to false on line #6");
-              ls.kill();
+
               killObstructingProcess(parseInt(id));
+              ls.kill();
               clearInterval(intervalID);
             }
           }, 200);
@@ -672,8 +675,9 @@ function run(
         ) {
           states[id] = "false";
           console.log("setting status of " + id + " to false on line #9");
-          ls.kill();
+
           killObstructingProcess(parseInt(id));
+          ls.kill();
         }
       });
 
@@ -687,8 +691,9 @@ function run(
           }
         } else if (states[id] == "deleting") {
           states[id] = "false";
-          ls.kill();
+
           killObstructingProcess(parseInt(id));
+          ls.kill();
           console.log("setting status of " + id + " to false on line #10");
           clearInterval(intervalID);
         }
