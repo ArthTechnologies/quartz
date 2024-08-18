@@ -1000,6 +1000,10 @@ function killObstructingProcess(port) {
         let pid = line.match(/\d+/);
         console.log("killing obstructing process " + pid);
         exec("kill " + pid);
+
+        setTimeout(() => {
+          exec("kill -9 " + pid);
+        }, 2500);
       });
     });
   } catch (e) {
