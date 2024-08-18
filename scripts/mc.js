@@ -934,10 +934,16 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                   folder + "/temp/" + tempFiles[0]
                 );
                 for (i in subfolderFiles) {
-                  fs.renameSync(
-                    folder + "/temp/" + tempFiles[0] + "/" + subfolderFiles[i],
-                    folder + "/temp/" + subfolderFiles[i]
-                  );
+                  if (subfolderFiles[i] != "server.properties") {
+                    fs.renameSync(
+                      folder +
+                        "/temp/" +
+                        tempFiles[0] +
+                        "/" +
+                        subfolderFiles[i],
+                      folder + "/temp/" + subfolderFiles[i]
+                    );
+                  }
                 }
               }
 
