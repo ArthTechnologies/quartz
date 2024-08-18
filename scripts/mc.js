@@ -926,6 +926,12 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                 () => {}
               );
 
+              //this detects if theres only one folder in the temp folder
+              let tempFiles = fs.readdirSync(folder + "/temp");
+              if (tempFiles.length == 1 && tempFiles[0] != "mods") {
+                overridesFolder = "/temp/" + tempFiles[0];
+              }
+
               overridesFolder = "/temp";
               console.log(overridesFolder);
             }
