@@ -927,6 +927,10 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                 () => {}
               );
 
+              if (fs.existsSync(folder + "/temp/server.properties")) {
+                fs.unlinkSync(folder + "/temp/server.properties");
+              }
+
               //this detects if theres only one folder in the temp folder
               let tempFiles = fs.readdirSync(folder + "/temp");
               if (tempFiles.length == 1 && tempFiles[0] != "mods") {
