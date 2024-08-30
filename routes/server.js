@@ -1186,18 +1186,58 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                         console.log(err);
                       } else if (!lock) {
                         console.log("unzipped world");
-                        //start server back up
-                        f.run(
-                          id,
-                          undefined,
-                          undefined,
-                          undefined,
-                          undefined,
-                          email,
-                          false
-                        );
-                        1;
-                        lock = true;
+                        //this makes sure that the unzipped folder is valid
+                        if (!fs.existsSync(`servers/${id}/world/level.dat`)) {
+                          //checks which folder is the biggest. this should eb the proper world folder
+                          let worldFolders = fs.readdirSync(
+                            `servers/${id}/world`
+                          );
+                          let biggestFolder = "";
+                          let biggestSize = 0;
+                          for (i in worldFolders) {
+                            let folder = worldFolders[i];
+                            let size = files.size(
+                              `servers/${id}/world/${folder}`
+                            );
+                            if (size > biggestSize) {
+                              biggestSize = size;
+                              biggestFolder = folder;
+                            }
+                          }
+                          exec(
+                            `mv servers/${id}/world/${biggestFolder}/* servers/${id}/world/`,
+                            (err) => {
+                              if (err) {
+                                console.log(err);
+                                //start server back up
+                                f.run(
+                                  id,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  email,
+                                  false
+                                );
+                                1;
+                                lock = true;
+                              }
+                            }
+                          );
+                        } else {
+                          //start server back up
+                          f.run(
+                            id,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            email,
+                            false
+                          );
+                          1;
+                          lock = true;
+                        }
                       }
                     }
                   );

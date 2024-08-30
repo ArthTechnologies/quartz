@@ -1003,6 +1003,9 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                     modpack.currentVersionDateAdded = Date.now();
                     modpack.versionID = versionID;
                     writeJSON(folder + "/curseforge.index.json", modpack);
+
+                    //remove temp folder
+                    exec("rm -r " + folder + "/temp");
                     return;
                   });
                 }
