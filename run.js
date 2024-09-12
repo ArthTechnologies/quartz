@@ -89,7 +89,7 @@ if (!fs.existsSync("config.txt")) {
       enablePay = current[i].split("=")[1];
     }
   }
-  console.log(enablePay + " " + stripeKey);
+  console.log(enablePay + " " + stripeKey.split("").length);
   if (!(enablePay == "true" && stripeKey.split("").length > 10)) {
     fs.writeFileSync("config.txt", template.join("\n"));
   } else {
