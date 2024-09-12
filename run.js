@@ -75,7 +75,26 @@ if (!fs.existsSync("config.txt")) {
       }
     }
   }
+
+  //mechanism to make sure config isn't being messed up
+  let enablePay;
+  let stripeKey;
+  for (let i in template) {
+    if (template[i].includes("stripeKey")) {
+      stripeKey = template[i].split("=")[1];
+    }
+  }
+  for (let i in current) {
+    if (current[i].includes("enablePay")) {
+      enablePay = current[i].split("=")[1];
+    }
+  }
+  if (!(enablePay == "true" && stripeKey.split('').length > 10)) {
   fs.writeFileSync("config.txt", template.join("\n"));
+  } else {
+    console.log("Error with writing console. Exiting...");
+    process.exit(1);
+  }
 }
 
 if (!fs.existsSync("accounts")) {
