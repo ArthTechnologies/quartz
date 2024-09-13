@@ -1049,6 +1049,7 @@ router.get("/:id/world", function (req, res) {
 });
 
 router.post("/:id/world", upload.single("file"), function (req, res) {
+  console.log("upload world 0");
   //this disables timeouts if virus scanning takes too long
   req.setTimeout(0);
   id = req.params.id;

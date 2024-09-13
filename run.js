@@ -89,10 +89,11 @@ if (!fs.existsSync("config.txt")) {
       enablePay = current[i].split("=")[1];
     }
   }
-  if (!(enablePay == "true" && stripeKey.split('').length > 10)) {
-  fs.writeFileSync("config.txt", template.join("\n"));
+
+  if (!(enablePay == "true" && stripeKey.split("").length < 10)) {
+    fs.writeFileSync("config.txt", template.join("\n"));
   } else {
-    console.log("Error with writing console. Exiting...");
+    console.log("Error with writing config. Exiting...");
     process.exit(1);
   }
 }
