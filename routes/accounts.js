@@ -170,7 +170,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
   let password = req.query.password;
-  let email = req.query.username;
+  let email = req.query.email;
   if (email.includes("email:")) email = email.replace("email:", "");
   let confirmPassword = req.query.confirmPassword;
   let last4 = req.query.last4;
