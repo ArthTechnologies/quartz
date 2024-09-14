@@ -50,8 +50,9 @@ Router.get("/customers", async (req, res) => {
         let plan = subs[j].items.data[0].plan;
 
         let planType = "other";
-        if (config.BASIC.includes(plan.id)) planType = "basic";
-        else if (config.MODDED.includes(plan.id)) planType = "modded";
+        if (config.basic == plan.product) planType = "basic";
+        else if (config.modded == plan.product) planType = "modded";
+        else if (config.premium == plan.product) planType = "premium";
         else valid = false;
 
         if (planType != "other") {

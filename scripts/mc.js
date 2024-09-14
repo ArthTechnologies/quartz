@@ -164,11 +164,11 @@ function run(
       }
     }
     let allocatedRAM;
-    if (config.RAM3.includes(server.priceId)) {
+    if (config.basic == server.productID) {
       allocatedRAM = 3;
-    } else if (config.RAM4.includes(server.priceId)) {
+    } else if (config.modded == server.productID) {
       allocatedRAM = 4;
-    } else if (config.RAM8.includes(server.priceId)) {
+    } else if (config.premium == server.productID) {
       allocatedRAM = 8;
     } else {
       allocatedRAM = 4;

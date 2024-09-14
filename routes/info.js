@@ -86,15 +86,19 @@ router.get(`/subscriptions`, function (req, res) {
             function (err, subscriptions2) {
               let moddedSubscriptions = 0;
               let basicSubscriptions = 0;
+              let premiumSubscriptions = 0;
               let subscriptions = 0;
 
               for (i in subscriptions2.data) {
                 let plan = subscriptions2.data[i].items.data[0].plan;
-                if (config.MODDED != "") {
-                  if (config.MODDED.includes(plan.id)) {
+                if (config.premium != "") {
+                  if (config.premium == plan.product) {
+                    premiumSubscriptions++;
+                    subscriptions++;
+                  } else if (config.modded == plan.product) {
                     moddedSubscriptions++;
                     subscriptions++;
-                  } else if (config.BASIC.includes(plan.id)) {
+                  } else if (config.basic == plan.product) {
                     basicSubscriptions++;
                     subscriptions++;
                   }
@@ -105,6 +109,7 @@ router.get(`/subscriptions`, function (req, res) {
               res.status(200).json({
                 moddedSubscriptions: moddedSubscriptions,
                 basicSubscriptions: basicSubscriptions,
+                premiumSubscriptions: premiumSubscriptions,
                 subscriptions: subscriptions,
                 freeServers: account.freeServers,
               });
