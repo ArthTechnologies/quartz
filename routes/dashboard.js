@@ -147,22 +147,23 @@ Router.get("/servers", async (req, res) => {
           console.log(e);
         }
         if (fs.existsSync(`servers/${serverId}/server.json`)) {
-          const accountId = utils.readJSON(
-            `servers/${serverId}/server.json`
-          ).accountId;
-          fs.readdirSync("accounts").forEach((file) => {
-            const account = utils.readJSON(`accounts/${file}`);
-            if (account.accountId == accountId) {
-              owner = file;
-              if (!file.includes("email:")) email = account.email;
-              data.push({
-                serverId: servers[i],
-                owner: owner,
-                email: email,
-                storage: storage,
-              });
-            }
-          });
+          let json = utils.readJSON(`servers/${serverId}/server.json`);
+          if (json.adminServer == undefined || json.adminServer == false) {
+            const accountId = json.accountId;
+            fs.readdirSync("accounts").forEach((file) => {
+              const account = utils.readJSON(`accounts/${file}`);
+              if (account.accountId == accountId) {
+                owner = file;
+                if (!file.includes("email:")) email = account.email;
+                data.push({
+                  serverId: servers[i],
+                  owner: owner,
+                  email: email,
+                  storage: storage,
+                });
+              }
+            });
+          }
         } else {
           fs.readdirSync("accounts").forEach((file) => {
             try {
