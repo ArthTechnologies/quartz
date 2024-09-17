@@ -76,6 +76,7 @@ router.get(`/claimId`, function (req, res) {
                     console.log(
                       "subs: " + subs + " freeServers: " + freeServers
                     );
+                    console.log("amount: " + amount);
                     if (subs + freeServers > amount) {
                       //find an id to assign to the account
                       let serverFolders = fs.readdirSync("servers");
@@ -99,8 +100,11 @@ router.get(`/claimId`, function (req, res) {
                         emailExists = true;
                       }
                       fs.mkdirSync("servers/" + id);
-                      console.log("debug log claiming id");
-                      if (id != -1 && id < config.maxServers) {
+                      console.log("debug log claiming  " + id);
+                      if (
+                        id != -1 &&
+                        parseInt(id) < parseInt(config.maxServers)
+                      ) {
                         if (account.servers == undefined) account.servers = [];
                         if (!account.servers.includes(id))
                           account.servers.push(id);
