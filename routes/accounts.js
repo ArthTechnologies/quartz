@@ -64,7 +64,7 @@ Router.post("/email/signup/", (req, res) => {
             account.ips.push(files.getIPID(req.ip));
             account.type = "email";
             account.servers = [];
-            account.email = email;
+            account.email = email.toLowerCase();
             account.freeServers = 0;
             account.lastSignin = new Date().getTime();
             writeJSON("accounts/email:" + email + ".json", account);
@@ -270,16 +270,19 @@ Router.post("/discord/", (req, res) => {
         }
 
         account.type = "discord";
-        account.email = res2.email;
+        account.email = res2.email.toLowerCase();
         account.servers = [];
         account.freeServers = 0;
         account.lastSignin = new Date().getTime();
-        writeJSON("accounts/discord:" + username + ".json", account);
+        writeJSON(
+          "accounts/discord:" + username.toLowerCase() + ".json",
+          account
+        );
         console.log("discord:", res2);
         res.status(200).send({
           token: account.token,
           accountId: accountId,
-          username: username,
+          username: username.toLowerCase(),
           firstTime: true,
           avatar: `https://cdn.discordapp.com/avatars/${res2.id}/${res2.avatar}.webp`,
           bannerColor: res2.banner_color,
