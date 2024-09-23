@@ -91,7 +91,7 @@ Router.get("/customers", async (req, res) => {
         for (let j in accounts) {
           if (accounts[j].split(":")[0] != "email") {
             let json = utils.readJSON("accounts/" + accounts[j]);
-            if (json.email == str.email) {
+            if (json.email == str.email.toLowerCase()) {
               qua = json;
               quaName = accounts[j];
               break;
