@@ -186,6 +186,7 @@ Router.get("/servers", async (req, res) => {
             } catch (error) {
               console.log("error scanning account " + file);
               console.log(error);
+              data = [];
             }
           });
         }
