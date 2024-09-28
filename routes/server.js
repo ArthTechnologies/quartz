@@ -19,10 +19,10 @@ const enablePay = JSON.parse(config.enablePay);
 const enableVirusScan = JSON.parse(config.enableVirusScan);
 
 router.get(`/claimId`, function (req, res) {
-  console.log("debug1");
   email = req.headers.username;
   token = req.headers.token;
   account = readJSON("accounts/" + email + ".json");
+  console.log("debug1: " + email + req.headers.username);
 
   if (token === account.token || !enableAuth) {
     if (enablePay) {
