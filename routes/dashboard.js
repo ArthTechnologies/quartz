@@ -31,7 +31,7 @@ Router.get("/account/:accountId", async (req, res) => {
       if (account.accountId == req.params.accountId) {
         let accountSend = {};
         accountSend.accountId = account.accountId;
-        accountSend.name = accounts[i];
+        accountSend.name = accounts[i].split(".json")[0];
         accountSend.email = account.email;
         accountSend.resetAttempts = account.resetAttempts;
         accountSend.type = account.type;
