@@ -20,6 +20,22 @@ Router.get("/verifyToken", (req, res) => {
   }
 });
 
+Router.get("/account/:accountId", async (req, res) => {
+
+    let accountsFolder = fs.readdirSync("accounts");
+    for (let i in accountsFolder) {
+      try {
+      let account = utils.readJSON(`accounts/${accountsFolder[i]}`);
+      if (account.accountId == req.params.accountId) {
+        res.status(200).send(account);
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+});
+
 Router.get("/customers", async (req, res) => {
   const datajson = utils.readJSON("assets/data.json");
   if (req.query.tempToken != datajson.tempToken.split(":")[1]) {
