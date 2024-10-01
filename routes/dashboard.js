@@ -21,18 +21,31 @@ Router.get("/verifyToken", (req, res) => {
 });
 
 Router.get("/account/:accountId", async (req, res) => {
+    let tempToken = req.query.tempToken;
+    if (tempToken == utils.readJSON("assets/data.json").tempToken.split(":")[1]) {
 
     let accountsFolder = fs.readdirSync("accounts");
     for (let i in accountsFolder) {
       try {
       let account = utils.readJSON(`accounts/${accountsFolder[i]}`);
       if (account.accountId == req.params.accountId) {
-        res.status(200).send(account);
+        let accountSend = {};
+        accountSend.accountId = account.accountId;
+        accountSend.email = account.email;
+        accountSend.resetAttempts = account.resetAttempts;
+        accountSend.type = account.type;
+        accountSend.servers = account.servers;
+        accountSend.freeServers = account.freeServers;
+        accountSend.lastSignIn = account.lastSignIn;
+        res.status(200).send(accountSend);
         return;
       }
     } catch (error) {
       console.log(error);
     }
+  }
+  } else {
+    res.status(401).send({ error: "Unauthorized" });
   }
 });
 
