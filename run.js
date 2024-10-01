@@ -483,7 +483,7 @@ function removeUnusedAccounts() {
     let openedRecently =
       account.lastSignin > Date.now() - 1000 * 60 * 60 * 24 * 30;
 
-    let hasServers = account.servers.length > 0;
+    let hasServers = account.servers != null && account.servers.length > 0;
 
     if (!hasServers && !openedRecently) {
       let email;
