@@ -66,8 +66,9 @@ Router.get("/customers", async (req, res) => {
         let plan = subs[j].items.data[0].plan;
 
         let planType = "other";
-        if (config.BASIC.includes(plan.id)) planType = "basic";
-        else if (config.MODDED.includes(plan.id)) planType = "modded";
+        if (config.basic == plan.product) planType = "basic";
+        else if (config.modded == plan.product) planType = "modded";
+        else if (config.premium == plan.product) planType = "premium";
         else valid = false;
 
         if (planType != "other") {
@@ -106,7 +107,7 @@ Router.get("/customers", async (req, res) => {
         for (let j in accounts) {
           if (accounts[j].split(":")[0] != "email") {
             let json = utils.readJSON("accounts/" + accounts[j]);
-            if (json.email == str.email) {
+            if (json.email == str.email.toLowerCase()) {
               qua = json;
               quaName = accounts[j];
               break;
@@ -162,22 +163,23 @@ Router.get("/servers", async (req, res) => {
           console.log(e);
         }
         if (fs.existsSync(`servers/${serverId}/server.json`)) {
-          const accountId = utils.readJSON(
-            `servers/${serverId}/server.json`
-          ).accountId;
-          fs.readdirSync("accounts").forEach((file) => {
-            const account = utils.readJSON(`accounts/${file}`);
-            if (account.accountId == accountId) {
-              owner = file;
-              if (!file.includes("email:")) email = account.email;
-              data.push({
-                serverId: servers[i],
-                owner: owner,
-                email: email,
-                storage: storage,
-              });
-            }
-          });
+          let json = utils.readJSON(`servers/${serverId}/server.json`);
+          if (json.adminServer == undefined || json.adminServer == false) {
+            const accountId = json.accountId;
+            fs.readdirSync("accounts").forEach((file) => {
+              const account = utils.readJSON(`accounts/${file}`);
+              if (account.accountId == accountId) {
+                owner = file;
+                if (!file.includes("email:")) email = account.email;
+                data.push({
+                  serverId: servers[i],
+                  owner: owner,
+                  email: email,
+                  storage: storage,
+                });
+              }
+            });
+          }
         } else {
           fs.readdirSync("accounts").forEach((file) => {
             try {
@@ -200,6 +202,7 @@ Router.get("/servers", async (req, res) => {
             } catch (error) {
               console.log("error scanning account " + file);
               console.log(error);
+              data = [];
             }
           });
         }

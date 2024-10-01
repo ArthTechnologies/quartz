@@ -19,10 +19,10 @@ const enablePay = JSON.parse(config.enablePay);
 const enableVirusScan = JSON.parse(config.enableVirusScan);
 
 router.get(`/claimId`, function (req, res) {
-  console.log("debug1");
   email = req.headers.username;
   token = req.headers.token;
   account = readJSON("accounts/" + email + ".json");
+  console.log("debug1: " + email + req.headers.username);
 
   if (token === account.token || !enableAuth) {
     if (enablePay) {
@@ -76,6 +76,7 @@ router.get(`/claimId`, function (req, res) {
                     console.log(
                       "subs: " + subs + " freeServers: " + freeServers
                     );
+                    console.log("amount: " + amount);
                     if (subs + freeServers > amount) {
                       //find an id to assign to the account
                       let serverFolders = fs.readdirSync("servers");
@@ -99,8 +100,11 @@ router.get(`/claimId`, function (req, res) {
                         emailExists = true;
                       }
                       fs.mkdirSync("servers/" + id);
-                      console.log("debug log claiming id");
-                      if (id != -1 && id < config.maxServers) {
+                      console.log("debug log claiming  " + id);
+                      if (
+                        id != -1 &&
+                        parseInt(id) < parseInt(config.maxServers)
+                      ) {
                         if (account.servers == undefined) account.servers = [];
                         if (!account.servers.includes(id))
                           account.servers.push(id);
@@ -601,7 +605,7 @@ router.post(`/new/:id`, function (req, res) {
                         for (i in subscriptions.data) {
                           console.log("plan object");
                           console.log(subscriptions.data[i].plan);
-                          planId = subscriptions.data[i].plan.id;
+                          planId = subscriptions.data[i].plan.product;
                           if (subscriptions.data[i] != undefined) {
                             subs++;
                           }
@@ -676,7 +680,7 @@ router.post(`/new/:id`, function (req, res) {
                             server.addons = req.body.addons;
                             server.accountId = account.accountId;
                             server.id = id;
-                            server.priceId = planId;
+                            server.productID = planId;
                             if (!fs.existsSync("servers/" + id)) {
                               fs.mkdirSync("servers/" + id);
                             }

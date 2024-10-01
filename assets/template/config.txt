@@ -15,14 +15,10 @@ curseforgeKey=
 stripeKey=
 # The URL that users get sent to after checking out (should probably be yourobserverinstance/subscription-success):
 stripeReturnUrl=
-# The stripe priceIds [comma seperated] (found in the dashboard, create a product first) of the basic plan:
-BASIC=
-# The stripe priceIds (found in the dashboard, create a product first) of the modded plan:
-MODDED=
-# The stripe priceIds that offer a given amouont of ram.
-RAM3=
-RAM4=
-RAM8=
+# The stripe productId of each plan:
+basic=
+modded=
+premium=
 
 # Advanced Settings:
 
