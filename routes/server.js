@@ -19,10 +19,9 @@ const enablePay = JSON.parse(config.enablePay);
 const enableVirusScan = JSON.parse(config.enableVirusScan);
 
 router.get(`/claimId`, function (req, res) {
-  email = req.headers.username;
+  username = req.headers.username;
   token = req.headers.token;
-  account = readJSON("accounts/" + email + ".json");
-  console.log("debug1: " + email + req.headers.username);
+  account = readJSON("accounts/" + username + ".json");
 
   if (token === account.token || !enableAuth) {
     if (enablePay) {
@@ -48,7 +47,6 @@ router.get(`/claimId`, function (req, res) {
               console.log("err");
               return "no";
             } else {
-              console.log("debug: " + email + req.headers.username);
               console.log(customers);
 
               if (customers.data.length > 0) {
@@ -96,11 +94,12 @@ router.get(`/claimId`, function (req, res) {
                       if (id === -1) {
                         id = lastNum + 1;
                       }
-                      if (fs.existsSync("accounts/" + email + ".json")) {
+                      if (fs.existsSync("accounts/" + username + ".json")) {
                         emailExists = true;
                       }
                       fs.mkdirSync("servers/" + id);
                       console.log("debug log claiming  " + id);
+                      console.log(parseInt(id), parseInt(config.maxServers));
                       if (
                         id != -1 &&
                         parseInt(id) < parseInt(config.maxServers)
@@ -108,7 +107,7 @@ router.get(`/claimId`, function (req, res) {
                         if (account.servers == undefined) account.servers = [];
                         if (!account.servers.includes(id))
                           account.servers.push(id);
-                        writeJSON("accounts/" + email + ".json", account);
+                        writeJSON("accounts/" + username + ".json", account);
                         res.status(200).json({ id: id });
                       } else {
                         res.status(400).json({
@@ -158,7 +157,7 @@ router.get(`/claimId`, function (req, res) {
       if (id === -1) {
         id = lastNum + 1;
       }
-      if (fs.existsSync("accounts/" + email + ".json")) {
+      if (fs.existsSync("accounts/" + username + ".json")) {
         emailExists = true;
       }
       if (id != -1 && id < config.maxServers) {
@@ -167,7 +166,7 @@ router.get(`/claimId`, function (req, res) {
 
         if (!account.servers.includes(id)) account.servers.push(id);
 
-        writeJSON("accounts/" + email + ".json", account);
+        writeJSON("accounts/" + username + ".json", account);
         fs.mkdirSync("servers/" + id);
 
         res.status(200).json({ id: id });
