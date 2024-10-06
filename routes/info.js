@@ -199,16 +199,35 @@ router.get(`/capacity`, function (req, res) {
   let folders = [];
   fs.readdirSync("servers").forEach((file) => {
     if (fs.existsSync(`servers/${file}/server.json`)) {
-      folders.push(file + ":used");
       try {
         if (!readJSON(`servers/${file}/server.json`).adminServer) {
           numServers++;
+          folders.push(file + ":admin");
+        } else {
+          folders.push(file + ":normal");
         }
       } catch (e) {
         console.log(e);
+        folders.push(file + ":error");
       }
     } else {
-      folders.push(file + ":unused");
+      let foundOwner = false;
+      try {
+        for (i in fs.readdirSync(`accounts`)) {
+          if (
+            readJSON(
+              `accounts/${fs.readdirSync(`accounts`)[i]}`
+            ).servers.includes(file)
+          ) {
+            folders.push(file + ":normal");
+            foundOwner = true;
+            break;
+          }
+        }
+      } catch (e) {}
+      if (!foundOwner) {
+        folders.push(file + ":error");
+      }
       numServers++;
     }
   });
