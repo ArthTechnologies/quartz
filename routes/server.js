@@ -1606,7 +1606,8 @@ router.post("/:id/file/:path", function (req, res) {
         extension == "yaml" ||
         extension == "json" ||
         extension == "toml" ||
-        extension == "txt") &&
+        extension == "txt" ||
+        extension == "properties") &&
       filename != "server.json" &&
       filename != "velocity.toml" &&
       filename != "modrinth.index.json" &&
