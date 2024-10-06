@@ -202,9 +202,9 @@ router.get(`/capacity`, function (req, res) {
       try {
         if (!readJSON(`servers/${file}/server.json`).adminServer) {
           numServers++;
-          folders.push(file + ":admin");
-        } else {
           folders.push(file + ":normal");
+        } else {
+          folders.push(file + ":admin");
         }
       } catch (e) {
         console.log(e);
