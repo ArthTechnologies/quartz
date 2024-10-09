@@ -238,10 +238,8 @@ function run(
     if (software == "snapshot") {
       javaVer = "17";
     }
-    let absolutePath;
-    execSync("pwd", (error, stdout, stderr) => {
-      absolutePath = stdout;
-    });
+    let absolutePath = execSync("pwd");
+    console.log("absolutePath: " + absolutePath);
 
     let port = 10000 + parseInt(id);
     let prefix =
