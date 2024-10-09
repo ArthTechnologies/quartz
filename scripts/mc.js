@@ -242,18 +242,7 @@ function run(
     console.log("absolutePath: " + absolutePath);
 
     let port = 10000 + parseInt(id);
-    let prefix =
-      "docker run -it -v ~/" +
-      absolutePath +
-      "/servers/" +
-      id +
-      ":/server -w /server -p " +
-      port +
-      ":" +
-      port +
-      " openjdk:" +
-      javaVer +
-      " java";
+    let prefix = `docker run -it -v ~${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port} openjdk:${javaVer} java`;
     console.log("prefix: " + prefix);
 
     let doneInstallingServer = false;
