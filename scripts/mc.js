@@ -151,7 +151,6 @@ function run(
       }
     }
 
-    let path = "../../assets/java/jdk-17.0.5+8/bin/java";
     let folder = "servers/" + id;
     if (software == "quilt") {
       folder = "servers/" + id + "/server";
@@ -228,24 +227,36 @@ function run(
         c = "servers";
         break;
     }
-
+    let javaVer = "8";
     //this selects the correct version of java for the minecraft version
-    if (parseInt(version.split(".")[1]) >= 20)
-      path = "../../assets/java/jdk-21.0.3+9/bin/java";
-    else if (version.includes("1.19"))
-      path = "../../assets/java/jdk-21.0.3+9/bin/java";
-    else if (version.includes("1.18"))
-      path = "../../assets/java/jdk-17.0.5+8/bin/java";
-    else if (version.includes("1.17"))
-      path = "../../assets/java/jdk-17.0.5+8/bin/java";
-    else path = "../../assets/java/jdk8u382-b05/bin/java";
-
-    if (software == "velocity")
-      path = "../../assets/java/jdk-17.0.5+8/bin/java";
+    if (parseInt(version.split(".")[1]) >= 20) javaVer = "21";
+    else if (version.includes("1.19")) javaVer = "21";
+    else if (version.includes("1.18")) javaVer = "17";
+    else if (version.includes("1.17")) javaVer = "17";
+    if (software == "velocity") javaVer = "17";
 
     if (software == "snapshot") {
-      path = "../../assets/java/jdk-21.0.3+9/bin/java";
+      javaVer = "17";
     }
+    let absolutePath;
+    execSync("pwd", (error, stdout, stderr) => {
+      absolutePath = stdout;
+    });
+
+    let port = 10000 + parseInt(id);
+    let prefix =
+      "docker run -it -v ~/" +
+      absolutePath +
+      "/servers/" +
+      id +
+      ":/server -w /server -p " +
+      port +
+      ":" +
+      port +
+      " openjdk:" +
+      javaVer +
+      " java";
+    console.log("prefix: " + prefix);
 
     let doneInstallingServer = false;
 
@@ -304,8 +315,6 @@ function run(
         );
       }
     }
-
-    let port = 10000 + parseInt(id);
 
     let data;
     if (software == "velocity") {
@@ -494,7 +503,7 @@ function run(
 
         if (software == "forge") {
           exec(
-            path + " -jar server.jar --installServer",
+            prefix + " -jar server.jar --installServer",
             { cwd: folder },
             (err, out) => {
               if (err == null || !err.toString().includes("Command failed")) {
@@ -513,7 +522,7 @@ function run(
         } else {
           //quilt
           exec(
-            path + " " + args,
+            prefix + " " + args,
             { cwd: "servers/" + id },
             (error, stdout, stderr) => {
               console.log(error);
@@ -556,19 +565,19 @@ function run(
             }
 
             execLine =
-              path +
+              prefix +
               ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
 
             if (parseInt(version.split(".")[1]) >= 20) {
-              execLine = path + ` -jar forge-${forgeVersion}-shim.jar`;
+              execLine = prefix + ` -jar forge-${forgeVersion}-shim.jar`;
             }
 
             if (version.includes("1.16")) {
-              execLine = path + ` -jar forge-${forgeVersion}.jar`;
+              execLine = prefix + ` -jar forge-${forgeVersion}.jar`;
             }
 
             if (version.includes("1.12")) {
-              execLine = path + ` ${args} -jar forge-${forgeVersion}.jar`;
+              execLine = prefix + ` ${args} -jar forge-${forgeVersion}.jar`;
             }
 
             if (parseInt(version.split(".")[1]) <= 8) {
@@ -578,13 +587,13 @@ function run(
                   jarname = file;
                 }
               });
-              execLine = path + ` -jar ${jarname}`;
+              execLine = prefix + ` -jar ${jarname}`;
             }
 
             console.log(execLine);
           } else {
-            path = "../" + path;
-            execLine = path + " -jar quilt-server-launch.jar nogui";
+            prefix = "../" + path;
+            execLine = prefix + " -jar quilt-server-launch.jar nogui";
           }
           console.log("starting server " + id + " with:\n" + execLine);
           ls = exec(execLine, { cwd: cwd }, (error, stdout, stderr) => {
@@ -654,12 +663,16 @@ function run(
       }, interval);
     } else {
       let count = 0;
-      console.log("starting server " + id + " with:\n" + path + " " + args);
-      ls = exec(path + " " + args, { cwd: folder }, (error, stdout, stderr) => {
-        terminalOutput[id] = stdout;
-        states[id] = "false";
-        console.log("setting status of " + id + " to false on line #8");
-      });
+      console.log("starting server " + id + " with:\n" + prefix + " " + args);
+      ls = exec(
+        prefix + " " + args,
+        { cwd: folder },
+        (error, stdout, stderr) => {
+          terminalOutput[id] = stdout;
+          states[id] = "false";
+          console.log("setting status of " + id + " to false on line #8");
+        }
+      );
       ls.stdout.on("data", (data) => {
         count++;
         if (count >= 3) {
@@ -875,9 +888,9 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
 
                     //for each file in modpack.files, download it
                     for (i in modpack.files) {
-                      //if the path has a backslash, convert it to slash, as backslashes are ignored in linux
+                      //if the prefixhas a backslash, convert it to slash, as backslashes are ignored in linux
                       if (modpack.files[i].path.includes("\\")) {
-                        modpack.files[i].path = modpack.files[i].path.replace(
+                        modpack.files[i].prefix = modpack.files[i].path.replace(
                           /\\/g,
                           "/"
                         );
