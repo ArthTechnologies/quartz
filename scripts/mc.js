@@ -238,7 +238,7 @@ function run(
     if (software == "snapshot") {
       javaVer = "17";
     }
-    let absolutePath = execSync("pwd");
+    let absolutePath = execSync("pwd").toString().trim();
     console.log("absolutePath: " + absolutePath);
 
     let port = 10000 + parseInt(id);
