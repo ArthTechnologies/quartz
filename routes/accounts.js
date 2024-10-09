@@ -15,10 +15,10 @@ Router.post("/email/signup/", (req, res) => {
 
   let account = {};
   let emailExists = false;
-  let password = req.query.password;
+  let password = req.body.password;
   let email = req.query.username;
   if (email.includes("email:")) email = email.replace("email:", "");
-  let confirmPassword = req.query.confirmPassword;
+  let confirmPassword = req.body.confirmPassword;
   let cloudflareVerifyToken = req.query.cloudflareVerifyToken;
   if (enableCloudflareVerify) {
     const exec = require("child_process").exec;
@@ -90,7 +90,7 @@ Router.post("/email/signup/", (req, res) => {
 Router.post("/email/signin/", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
-  let password = req.query.password;
+  let password = req.body.password;
   let email = req.query.username;
   if (email.includes("email:")) email = email.replace("email:", "");
   let account = readJSON("accounts/email:" + email + ".json");
@@ -146,7 +146,7 @@ Router.post("/email/signin/", (req, res) => {
 Router.delete("/email", (req, res) => {
   email = req.headers.username;
   if (email.includes("email:")) email = email.replace("email:", "");
-  password = req.query.password;
+  password = req.body.password;
   token = req.headers.token;
   let account = readJSON("accounts/email:" + email + ".json");
 
@@ -169,10 +169,10 @@ Router.delete("/email", (req, res) => {
 Router.post("/email/resetPassword/", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
-  let password = req.query.password;
+  let password = req.body.password;
   let email = req.query.email;
   if (email.includes("email:")) email = email.replace("email:", "");
-  let confirmPassword = req.query.confirmPassword;
+  let confirmPassword = req.body.confirmPassword;
   let last4 = req.query.last4;
   let account = readJSON("accounts/email:" + email + ".json");
 

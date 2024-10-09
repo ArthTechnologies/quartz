@@ -959,7 +959,7 @@ router.delete(`/:id`, function (req, res) {
       }
 
       if (
-        files.hash(req.query.password, account.salt).split(":")[1] ==
+        files.hash(req.body.password, account.salt).split(":")[1] ==
           account.password ||
         !enableAuth ||
         account.type != "email"
