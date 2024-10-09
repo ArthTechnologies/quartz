@@ -216,7 +216,7 @@ router.get(`/capacity`, function (req, res) {
         for (i in fs.readdirSync(`accounts`)) {
           if (
             readJSON(
-              `accounts/${fs.readdirSync(`accounts`)[i]}`
+              `accounts/${fs.readdirSync(`accounts`)[i]}.json`
             ).servers.includes(file)
           ) {
             folders.push(file + ":normal");
