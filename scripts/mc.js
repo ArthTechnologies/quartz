@@ -113,7 +113,7 @@ function run(
   modpackVersionID
 ) {
   try {
-    const { exec, execSync } = require("child_process");
+    const { exec, execSync, spawn } = require("child_process");
     //this looks for servers running on the same port that may obstruct startup
     killObstructingProcess(parseInt(id));
 
@@ -242,7 +242,7 @@ function run(
     console.log("absolutePath: " + absolutePath);
 
     let port = 10000 + parseInt(id);
-    let prefix = `sudo docker run -it -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port} openjdk:${javaVer} java`;
+    let prefix = `sudo docker run -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port} openjdk:${javaVer} java`;
     console.log("prefix: " + prefix);
 
     let doneInstallingServer = false;
@@ -491,7 +491,7 @@ function run(
         if (software == "forge") {
           exec(
             prefix + " -jar server.jar --installServer",
-            { cwd: folder },
+            { cwd: folder, stdio: "inherit" },
             (err, out) => {
               if (err == null || !err.toString().includes("Command failed")) {
                 doneInstallingServer = true;
@@ -510,7 +510,7 @@ function run(
           //quilt
           exec(
             prefix + " " + args,
-            { cwd: "servers/" + id },
+            { cwd: "servers/" + id, stdio: "inherit" },
             (error, stdout, stderr) => {
               console.log(error);
               console.log(stdout);
@@ -583,7 +583,7 @@ function run(
             execLine = prefix + " -jar quilt-server-launch.jar nogui";
           }
           console.log("starting server " + id + " with:\n" + execLine);
-          ls = exec(execLine, { cwd: cwd }, (error, stdout, stderr) => {
+          ls = spawn(execLine, { cwd: cwd, stdio: "inherit", shell:true}, (error, stdout, stderr) => {
             terminalOutput[id] = stdout;
             states[id] = "false";
             console.log("setting status of " + id + " to false on line #3");
@@ -651,16 +651,18 @@ function run(
     } else {
       let count = 0;
       console.log("starting server " + id + " with:\n" + prefix + " " + args);
-      ls = exec(
+      ls = spawn(
         prefix + " " + args,
-        { cwd: folder },
+        { cwd: folder, stdio: ['pipe','pipe','pipe'], shell:true },
         (error, stdout, stderr) => {
+         
           terminalOutput[id] = stdout;
           states[id] = "false";
           console.log("setting status of " + id + " to false on line #8");
         }
       );
       ls.stdout.on("data", (data) => {
+     
         count++;
         if (count >= 3) {
           out.push(data);
