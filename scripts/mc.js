@@ -242,7 +242,7 @@ function run(
     console.log("absolutePath: " + absolutePath);
 
     let port = 10000 + parseInt(id);
-    let prefix = `sudo docker run -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port} openjdk:${javaVer} java`;
+    let prefix = `docker run -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp openjdk:${javaVer} java`;
     console.log("prefix: " + prefix);
 
     let doneInstallingServer = false;
@@ -583,11 +583,15 @@ function run(
             execLine = prefix + " -jar quilt-server-launch.jar nogui";
           }
           console.log("starting server " + id + " with:\n" + execLine);
-          ls = spawn(execLine, { cwd: cwd, stdio: "inherit", shell:true}, (error, stdout, stderr) => {
-            terminalOutput[id] = stdout;
-            states[id] = "false";
-            console.log("setting status of " + id + " to false on line #3");
-          });
+          ls = spawn(
+            execLine,
+            { cwd: cwd, stdio: "inherit", shell: true },
+            (error, stdout, stderr) => {
+              terminalOutput[id] = stdout;
+              states[id] = "false";
+              console.log("setting status of " + id + " to false on line #3");
+            }
+          );
 
           ls.stdout.on("data", (data) => {
             count++;
@@ -653,16 +657,14 @@ function run(
       console.log("starting server " + id + " with:\n" + prefix + " " + args);
       ls = spawn(
         prefix + " " + args,
-        { cwd: folder, stdio: ['pipe','pipe','pipe'], shell:true },
+        { cwd: folder, stdio: ["pipe", "pipe", "pipe"], shell: true },
         (error, stdout, stderr) => {
-         
           terminalOutput[id] = stdout;
           states[id] = "false";
           console.log("setting status of " + id + " to false on line #8");
         }
       );
       ls.stdout.on("data", (data) => {
-     
         count++;
         if (count >= 3) {
           out.push(data);
