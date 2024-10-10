@@ -1670,15 +1670,7 @@ router.delete("/:id/file/:path", function (req, res) {
     let filename = path.split("/")[path.split("/").length - 1];
     if (
       fs.existsSync(`servers/${req.params.id}/${path}`) &&
-      (extension == "yml" ||
-        extension == "yaml" ||
-        extension == "json" ||
-        extension == "toml" ||
-        extension == "jar") &&
-      filename != "server.json" &&
-      filename != "velocity.toml" &&
-      filename != "modrinth.index.json" &&
-      filename != "curseforge.index.json"
+      filename != "server.json"
     ) {
       fs.unlinkSync(`servers/${req.params.id}/${path}`);
       res.status(200).json({ msg: "Done" });
