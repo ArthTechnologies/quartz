@@ -81,15 +81,28 @@ router.get(`/claimId`, function (req, res) {
                       let serverFolder = serverFolders.sort((a, b) => a - b);
                       let id = -1;
                       let lastNum = -1;
+                      let adminServers = 0;
                       for (let i = 0; i < serverFolder.length; i++) {
+                        try {
+                          if (
+                            fs.existsSync("servers/" + i + "/server.json") &&
+                            readJSON("servers/" + i + "/server.json")
+                              .adminServer
+                          ) {
+                            adminServers++;
+                          }
+                        } catch (err) {
+                          console.log(err);
+                        }
                         let num = serverFolder[i].split(".")[0];
-                        console.log("claiming:" + num, i);
+
                         if (parseInt(num) !== i) {
                           id = i;
                           break; // Break out of the loop when the first available ID is found.
                         }
                         lastNum = parseInt(num);
                       }
+                      console.log("adminServers: " + adminServers);
 
                       if (id === -1) {
                         id = lastNum + 1;
@@ -102,7 +115,8 @@ router.get(`/claimId`, function (req, res) {
                       console.log(parseInt(id), parseInt(config.maxServers));
                       if (
                         id != -1 &&
-                        parseInt(id) <= parseInt(config.maxServers)
+                        parseInt(id) <=
+                          parseInt(config.maxServers) + adminServers
                       ) {
                         fs.mkdirSync("servers/" + id);
                         if (account.servers == undefined) account.servers = [];
