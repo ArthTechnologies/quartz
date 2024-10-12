@@ -1,9 +1,12 @@
 #!/bin/bash
 
-while [ true ]; do
-   screen -dmS qua sh scripts/autorestart.sh
+# Check if the script is run as root
+if [[ "$EUID" -ne 0 ]]; then
+  echo "This script must be run as root. Please use sudo."
+  exit 1
+fi
 
-   echo Restarting...
-   echo CTRL + C to stop.
+# Start the screen session
+screen -dmS qua sh scripts/autorestart.sh
 
-done
+echo "Quartz has started at port 4000."
