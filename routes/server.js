@@ -97,19 +97,23 @@ router.get(`/claimId`, function (req, res) {
                       if (fs.existsSync("accounts/" + username + ".json")) {
                         emailExists = true;
                       }
-                      fs.mkdirSync("servers/" + id);
+
                       console.log("debug log claiming  " + id);
                       console.log(parseInt(id), parseInt(config.maxServers));
                       if (
                         id != -1 &&
-                        parseInt(id) < parseInt(config.maxServers)
+                        parseInt(id) <= parseInt(config.maxServers)
                       ) {
+                        fs.mkdirSync("servers/" + id);
                         if (account.servers == undefined) account.servers = [];
                         if (!account.servers.includes(id))
                           account.servers.push(id);
                         writeJSON("accounts/" + username + ".json", account);
                         res.status(200).json({ id: id });
                       } else {
+                        console.log(
+                          "IMPORTANT: customer was unable to claim a server"
+                        );
                         res.status(400).json({
                           msg: `We're at capacity. Contact support for a refund.`,
                         });
