@@ -1022,21 +1022,20 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
   }
 }
 
-function killObstructingProcess(port) {
+function killObstructingProcess(id) {
   try {
-    exec("lsof -i :" + (10000 + port) + " -t", (error, stdout, stderr) => {
-      let lines = stdout.split("\n");
-      lines.forEach((line) => {
-        //pid is line but only digits
-        let pid = line.match(/\d+/);
-        console.log("killing obstructing process " + pid);
-        exec("kill " + pid);
+    exec(
+      `sudo docker ps --filter "publish=${10000 + id}" --format "{{.ID}}"`,
+      (error, stdout, stderr) => {
+        let pid = stdout.trim();
+        console.log("killing obstructing container " + pid);
+        exec("sudo docker stop " + pid);
 
         setTimeout(() => {
-          exec("kill -9 " + pid);
+          exec("sudo docker kill " + pid);
         }, 2500);
-      });
-    });
+      }
+    );
   } catch (e) {
     console.log(e);
   }
