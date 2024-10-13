@@ -242,7 +242,7 @@ function run(
     console.log("absolutePath: " + absolutePath);
 
     let port = 10000 + parseInt(id);
-    let prefix = `sudo docker run -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp openjdk:${javaVer} java`;
+    let prefix = `docker run -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp openjdk:${javaVer} java`;
     console.log("prefix: " + prefix);
 
     let doneInstallingServer = false;
@@ -1025,14 +1025,14 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
 function killObstructingProcess(id) {
   try {
     exec(
-      `sudo docker ps --filter "publish=${10000 + id}" --format "{{.ID}}"`,
+      `docker ps --filter "publish=${10000 + id}" --format "{{.ID}}"`,
       (error, stdout, stderr) => {
         let pid = stdout.trim();
         console.log("killing obstructing container " + pid);
-        exec("sudo docker stop " + pid);
+        exec("docker stop " + pid);
 
         setTimeout(() => {
-          exec("sudo docker kill " + pid);
+          exec("docker kill " + pid);
         }, 2500);
       }
     );
