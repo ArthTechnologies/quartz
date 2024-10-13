@@ -1700,6 +1700,39 @@ router.delete("/:id/file/:path", function (req, res) {
   }
 });
 
+router.delete("/:id/folder/:path", function (req, res) {
+  email = req.headers.username;
+  token = req.headers.token;
+  password = req.body.password;
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON(`servers/${req.params.id}/server.json`);
+  if (
+    hasAccess(token, account) &&
+    fs.existsSync(`servers/${req.params.id}/`) &&
+    files.hash(password, account.salt).split(":")[1] == account.password
+  ) {
+    let path = req.params.path;
+    if (req.params.path.includes("*")) {
+      path = req.params.path.split("*").join("/");
+    }
+    if (
+      fs.existsSync(`servers/${req.params.id}/${path}`) &&
+      path.split("").length >= 3
+    ) {
+      exec(`rm -rf servers/${req.params.id}/${path}`, (err) => {
+        if (err) {
+          console.log(err);
+        }
+      });
+      res.status(200).json({ msg: "Done" });
+    } else {
+      res.status(400).json({ msg: "Invalid request." });
+    }
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
 router.post("/:id/rename/", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
