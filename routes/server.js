@@ -582,7 +582,7 @@ router.post(`/new/:id`, function (req, res) {
             res
               .status(202)
               .json({ success: true, msg: `Success. Server created.` });
-          } else if (config.maxServers <= datajson.numServers) {
+          } else if (config.maxServers < datajson.numServers) {
             console.log(
               "max servers reached, " +
                 config.maxServers +
