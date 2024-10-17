@@ -172,7 +172,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
   let password = req.body.password;
   let email = req.query.email;
   if (email.includes("email:")) email = email.replace("email:", "");
-  let confirmPassword = req.body.confirmPassword;
+  let confirmPassword = req.body.confPassword;
   let last4 = req.query.last4;
   let account = readJSON("accounts/email:" + email + ".json");
 
@@ -180,7 +180,6 @@ Router.post("/email/resetPassword/", async (req, res) => {
     const creditId = await s.getCreditId(email);
     if (account.resetAttempts < 5) {
       if (creditId === last4 || config.enablePay === false) {
-        console.log(password + " " + confirmPassword);
         if (password == confirmPassword) {
           if (password.length >= 7) {
             [salt, password] = files.hash(password).split(":");
