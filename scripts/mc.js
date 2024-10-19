@@ -236,7 +236,7 @@ function run(
     if (software == "velocity") javaVer = "17";
 
     if (software == "snapshot") {
-      javaVer = "17";
+      javaVer = "21";
     }
     let absolutePath = execSync("pwd").toString().trim();
     console.log("absolutePath: " + absolutePath);
