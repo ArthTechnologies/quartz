@@ -183,7 +183,7 @@ router.get(`/claimId`, function (req, res) {
         if (account.servers == undefined) account.servers = [];
 
         if (!account.servers.includes(id)) account.servers.push(id);
-
+        console.log("Writing to account... " + username + req.headers.username);
         writeJSON("accounts/" + username + ".json", account);
         fs.mkdirSync("servers/" + id);
 
