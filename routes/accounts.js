@@ -166,13 +166,32 @@ Router.delete("/email", (req, res) => {
   }
 });
 
+Router.post("/changeToEmail", (req, res) => {
+  let email = req.query.email;
+  let username = req.headers.username;
+  let token = req.headers.token;
+  let password = req.body.password;
+  let account = readJSON("accounts/" + username + ".json");
+
+  if (token === account.token) {
+    account.email = email;
+    account.password = files.hash(password).split(":")[1];
+    account.salt = files.hash(password).split(":")[0];
+    writeJSON("accounts/email:" + username.split(":")[1] + ".json", account);
+
+    res.status(200).send({ success: true });
+  } else {
+    res.status(400).send({ success: false, reason: "Invalid token" });
+  }
+});
+
 Router.post("/email/resetPassword/", async (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
   let password = req.body.password;
   let email = req.query.email;
   if (email.includes("email:")) email = email.replace("email:", "");
-  let confirmPassword = req.body.confirmPassword;
+  let confirmPassword = req.body.confPassword;
   let last4 = req.query.last4;
   let account = readJSON("accounts/email:" + email + ".json");
 

@@ -236,13 +236,13 @@ function run(
     if (software == "velocity") javaVer = "17";
 
     if (software == "snapshot") {
-      javaVer = "17";
+      javaVer = "21";
     }
     let absolutePath = execSync("pwd").toString().trim();
     console.log("absolutePath: " + absolutePath);
 
     let port = 10000 + parseInt(id);
-    let prefix = `sudo docker run -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port} openjdk:${javaVer} java`;
+    let prefix = `docker run -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp --user 1000:1000 openjdk:${javaVer} java`;
     console.log("prefix: " + prefix);
 
     let doneInstallingServer = false;
@@ -583,11 +583,15 @@ function run(
             execLine = prefix + " -jar quilt-server-launch.jar nogui";
           }
           console.log("starting server " + id + " with:\n" + execLine);
-          ls = spawn(execLine, { cwd: cwd, stdio: "inherit", shell:true}, (error, stdout, stderr) => {
-            terminalOutput[id] = stdout;
-            states[id] = "false";
-            console.log("setting status of " + id + " to false on line #3");
-          });
+          ls = spawn(
+            execLine,
+            { cwd: cwd, stdio: "inherit", shell: true },
+            (error, stdout, stderr) => {
+              terminalOutput[id] = stdout;
+              states[id] = "false";
+              console.log("setting status of " + id + " to false on line #3");
+            }
+          );
 
           ls.stdout.on("data", (data) => {
             count++;
@@ -653,16 +657,14 @@ function run(
       console.log("starting server " + id + " with:\n" + prefix + " " + args);
       ls = spawn(
         prefix + " " + args,
-        { cwd: folder, stdio: ['pipe','pipe','pipe'], shell:true },
+        { cwd: folder, stdio: ["pipe", "pipe", "pipe"], shell: true },
         (error, stdout, stderr) => {
-         
           terminalOutput[id] = stdout;
           states[id] = "false";
           console.log("setting status of " + id + " to false on line #8");
         }
       );
       ls.stdout.on("data", (data) => {
-     
         count++;
         if (count >= 3) {
           out.push(data);
@@ -1020,21 +1022,20 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
   }
 }
 
-function killObstructingProcess(port) {
+function killObstructingProcess(id) {
   try {
-    exec("lsof -i :" + (10000 + port) + " -t", (error, stdout, stderr) => {
-      let lines = stdout.split("\n");
-      lines.forEach((line) => {
-        //pid is line but only digits
-        let pid = line.match(/\d+/);
-        console.log("killing obstructing process " + pid);
-        exec("kill " + pid);
+    exec(
+      `docker ps --filter "publish=${10000 + id}" --format "{{.ID}}"`,
+      (error, stdout, stderr) => {
+        let pid = stdout.trim();
+        console.log("killing obstructing container " + pid);
+        exec("docker stop " + pid);
 
         setTimeout(() => {
-          exec("kill -9 " + pid);
+          exec("docker kill " + pid);
         }, 2500);
-      });
-    });
+      }
+    );
   } catch (e) {
     console.log(e);
   }

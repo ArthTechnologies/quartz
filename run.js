@@ -416,7 +416,7 @@ function backup() {
           }
 
           exec(
-            `rsync -a --delete . ${backupsList[i]}/${nodeName}`,
+            `rsync -a --delete . /${backupsList[i]}/${nodeName}`,
             (err, stdout, stderr) => {
               if (err) {
                 console.log(err);

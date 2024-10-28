@@ -81,15 +81,28 @@ router.get(`/claimId`, function (req, res) {
                       let serverFolder = serverFolders.sort((a, b) => a - b);
                       let id = -1;
                       let lastNum = -1;
+                      let adminServers = 0;
                       for (let i = 0; i < serverFolder.length; i++) {
+                        try {
+                          if (
+                            fs.existsSync("servers/" + i + "/server.json") &&
+                            readJSON("servers/" + i + "/server.json")
+                              .adminServer
+                          ) {
+                            adminServers++;
+                          }
+                        } catch (err) {
+                          console.log(err);
+                        }
                         let num = serverFolder[i].split(".")[0];
-                        console.log("claiming:" + num, i);
+
                         if (parseInt(num) !== i) {
                           id = i;
                           break; // Break out of the loop when the first available ID is found.
                         }
                         lastNum = parseInt(num);
                       }
+                      console.log("adminServers: " + adminServers);
 
                       if (id === -1) {
                         id = lastNum + 1;
@@ -97,19 +110,24 @@ router.get(`/claimId`, function (req, res) {
                       if (fs.existsSync("accounts/" + username + ".json")) {
                         emailExists = true;
                       }
-                      fs.mkdirSync("servers/" + id);
+
                       console.log("debug log claiming  " + id);
                       console.log(parseInt(id), parseInt(config.maxServers));
                       if (
                         id != -1 &&
-                        parseInt(id) < parseInt(config.maxServers)
+                        parseInt(id) <=
+                          parseInt(config.maxServers) + adminServers
                       ) {
+                        fs.mkdirSync("servers/" + id);
                         if (account.servers == undefined) account.servers = [];
                         if (!account.servers.includes(id))
                           account.servers.push(id);
                         writeJSON("accounts/" + username + ".json", account);
                         res.status(200).json({ id: id });
                       } else {
+                        console.log(
+                          "IMPORTANT: customer was unable to claim a server"
+                        );
                         res.status(400).json({
                           msg: `We're at capacity. Contact support for a refund.`,
                         });
@@ -165,7 +183,7 @@ router.get(`/claimId`, function (req, res) {
         if (account.servers == undefined) account.servers = [];
 
         if (!account.servers.includes(id)) account.servers.push(id);
-
+        console.log("Writing to account... " + username + req.headers.username);
         writeJSON("accounts/" + username + ".json", account);
         fs.mkdirSync("servers/" + id);
 
@@ -564,7 +582,7 @@ router.post(`/new/:id`, function (req, res) {
             res
               .status(202)
               .json({ success: true, msg: `Success. Server created.` });
-          } else if (config.maxServers <= datajson.numServers) {
+          } else if (config.maxServers < datajson.numServers) {
             console.log(
               "max servers reached, " +
                 config.maxServers +
@@ -1717,17 +1735,42 @@ router.delete("/:id/file/:path", function (req, res) {
     let filename = path.split("/")[path.split("/").length - 1];
     if (
       fs.existsSync(`servers/${req.params.id}/${path}`) &&
-      (extension == "yml" ||
-        extension == "yaml" ||
-        extension == "json" ||
-        extension == "toml" ||
-        extension == "jar") &&
-      filename != "server.json" &&
-      filename != "velocity.toml" &&
-      filename != "modrinth.index.json" &&
-      filename != "curseforge.index.json"
+      filename != "server.json"
     ) {
       fs.unlinkSync(`servers/${req.params.id}/${path}`);
+      res.status(200).json({ msg: "Done" });
+    } else {
+      res.status(400).json({ msg: "Invalid request." });
+    }
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
+router.delete("/:id/folder/:path", function (req, res) {
+  email = req.headers.username;
+  token = req.headers.token;
+  password = req.body.password;
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON(`servers/${req.params.id}/server.json`);
+  if (
+    hasAccess(token, account) &&
+    fs.existsSync(`servers/${req.params.id}/`) &&
+    files.hash(password, account.salt).split(":")[1] == account.password
+  ) {
+    let path = req.params.path;
+    if (req.params.path.includes("*")) {
+      path = req.params.path.split("*").join("/");
+    }
+    if (
+      fs.existsSync(`servers/${req.params.id}/${path}`) &&
+      path.split("").length >= 3
+    ) {
+      exec(`rm -rf servers/${req.params.id}/${path}`, (err) => {
+        if (err) {
+          console.log(err);
+        }
+      });
       res.status(200).json({ msg: "Done" });
     } else {
       res.status(400).json({ msg: "Invalid request." });
