@@ -1656,6 +1656,53 @@ router.post("/:id/file/:path", function (req, res) {
   }
 });
 
+router.post("/:id/file/upload/:path", upload.single("file"), function (req, res) {
+  email = req.headers.username;
+  token = req.headers.token;
+  account = readJSON("accounts/" + email + ".json");
+  server = readJSON("servers/" + req.params.id + "/server.json");
+  if (hasAccess(token, account) && fs.existsSync(`servers/${req.params.id}/`)) {
+    let path = req.params.path;
+    let filename = req.query.filename;
+    if (req.params.path.includes("*")) {
+      path = req.params.path.split("*").join("/");
+    }
+    
+    if (enableVirusScan) {
+      console.log(req.file.path);
+      exec(
+        `clamdscan --multiscan --fdpass ${req.file.path}`,
+        {},
+        (err, stdout, stderr) => {
+          if (stdout.indexOf("Infected files: 0") != -1) {
+            res.send("Upload Complete. No Viruses Detected.");
+            loadFile();
+          } else {
+            res.send("Virus Detected.");
+            fs.rmSync(req.file.path);
+          }
+        }
+      );
+    } else {
+      res.send("Upload Complete.");
+
+      loadFile();
+    }
+   
+
+
+              function loadFile() {
+                  fs.copyFileSync("assets/uploads/"+req.file.path, "servers/"+id+"/"+path+"/"+filename);
+                  fs.rmSync("assets/uploads/"+req.file.path)
+                  res.status(200).json({ msg: "Success." });
+              }
+    
+    
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
 router.delete("/:id/file/:path", function (req, res) {
   email = req.headers.username;
   token = req.headers.token;
