@@ -93,7 +93,7 @@ Router.get("/:id/versions", (req, res) => {
     let id = req.params.id;
     let indexString = "";
     if (req.query.index != undefined) {
-      indexString = req.query.index;
+      indexString = "?index=" + req.query.index;
     }
     const exec = require("child_process").exec;
     exec(
