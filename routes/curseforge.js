@@ -91,9 +91,13 @@ Router.get("/:id/description", (req, res) => {
 Router.get("/:id/versions", (req, res) => {
   if (apiKey != "") {
     let id = req.params.id;
+    let indexString = "";
+    if (req.query.index != undefined) {
+      indexString = req.query.index;
+    }
     const exec = require("child_process").exec;
     exec(
-      `curl -X GET "https://api.curseforge.com/v1/mods/${id}/files"` +
+      `curl -X GET "https://api.curseforge.com/v1/mods/${id}/files${indexString}"` +
         ` -H 'x-api-key: ${apiKey}'`,
       (error, stdout, stderr) => {
         if (!error && stdout != undefined) {
