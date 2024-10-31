@@ -585,7 +585,7 @@ function run(
           console.log("starting server " + id + " with:\n" + execLine);
           ls = spawn(
             execLine,
-            { cwd: cwd, stdio: "inherit", shell: true },
+            { cwd: cwd, stdio: ["pipe", "pipe", "pipe"], shell: true },
             (error, stdout, stderr) => {
               terminalOutput[id] = stdout;
               states[id] = "false";
