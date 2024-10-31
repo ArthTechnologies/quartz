@@ -23,6 +23,10 @@ function readJSON(file) {
 }
 
 function writeJSON(file, json) {
+  if (file.includes("accounts/")) {
+    console.log("WRITING TO " + file);
+    console.log(json);
+  }
   try {
     fs.writeFileSync(file, JSON.stringify(json, null, 2));
   } catch (error) {
