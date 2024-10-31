@@ -22,7 +22,7 @@ router.get(`/claimId`, function (req, res) {
   username = req.headers.username;
   token = req.headers.token;
   account = readJSON("accounts/" + username + ".json");
-
+  console.log("ACCOUNTEMAIL-1=" + account.email, username);
   if (token === account.token || !enableAuth) {
     if (enablePay) {
       if (
@@ -34,6 +34,7 @@ router.get(`/claimId`, function (req, res) {
         });
         return;
       }
+      console.log("ACCOUNTEMAIL0=" + account.email, username);
       //check if the user is subscribed
       let amount = account.servers.length;
       if (account.email != undefined) {
@@ -68,6 +69,7 @@ router.get(`/claimId`, function (req, res) {
                       }
                     }
                     let freeServers = 0;
+                    console.log("ACCOUNTEMAIL=" + account.email, username);
                     if (account.freeServers != undefined) {
                       freeServers = parseInt(account.freeServers);
                     }
@@ -119,9 +121,11 @@ router.get(`/claimId`, function (req, res) {
                           parseInt(config.maxServers) + adminServers
                       ) {
                         fs.mkdirSync("servers/" + id);
+                        console.log("ACCOUNTEMAI2L=" + account.email, username);
                         if (account.servers == undefined) account.servers = [];
                         if (!account.servers.includes(id))
                           account.servers.push(id);
+                        console.log("ACCOUNTEMAIL3=" + account.email, username);
                         writeJSON("accounts/" + username + ".json", account);
                         res.status(200).json({ id: id });
                       } else {
