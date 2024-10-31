@@ -621,6 +621,7 @@ function run(
           let count2 = 0;
           let intervalID = setInterval(() => {
             if (states[id] == "stopping") {
+              console.log("stopping " + count2);
               if (count2 < 5 * 24) {
                 ls.stdin.write("stop\n");
                 count2++;
