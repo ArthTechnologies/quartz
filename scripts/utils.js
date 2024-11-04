@@ -15,7 +15,11 @@ function getConfig() {
 function readJSON(file) {
   let json = {};
   try {
-    json = JSON.parse(fs.readFileSync(file, "utf8"));
+    if (fs.existsSync(file)) {
+      json = JSON.parse(fs.readFileSync(file, "utf8"));
+    } else {
+      console.log(file + " does not exist.");
+    }
   } catch (error) {
     console.log("error parsing json for " + file, error);
   }
