@@ -428,8 +428,8 @@ function backup() {
         }
       }
     }
-  } catch {
-    console.log("Backup setting can't be found in config.");
+  } catch (e) {
+    console.log("Backup error: " + e);
   }
 }
 
@@ -583,8 +583,11 @@ process.stdin.on("data", (data) => {
       process.exit(0);
     case "help":
       console.log(
-        "Commands:\nstop\nend\nexit\nnumServersOnline\ngetServerOwner\ngetDashboardToken\nscanAccountIds\nscanAccountServers\nbroadcast\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
+        "Commands:\nstop\nend\nexit\nbackup\nnumServersOnline\ngetServerOwner\ngetDashboardToken\nscanAccountIds\nscanAccountServers\nbroadcast\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version and verifies subscriptions. This automatically runs every 12 hours.\n"
       );
+      break;
+    case "backup":
+      backup();
       break;
     case "numServersOnline":
       let numServersOnline = 0;
