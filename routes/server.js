@@ -1738,6 +1738,7 @@ router.delete("/:id/file/:path", function (req, res) {
   let server = readJSON(`servers/${req.params.id}/server.json`);
   if (hasAccess(token, account) && fs.existsSync(`servers/${req.params.id}/`)) {
     let path = req.params.path;
+    console.log("DELETING " + req.params.path + " " + email);
     if (req.params.path.includes("*")) {
       path = req.params.path.split("*").join("/");
     }
@@ -1768,6 +1769,7 @@ router.delete("/:id/folder/:path", function (req, res) {
     fs.existsSync(`servers/${req.params.id}/`) &&
     files.hash(password, account.salt).split(":")[1] == account.password
   ) {
+    console.log("DELETING " + req.params.path + " " + email);
     let path = req.params.path;
     if (req.params.path.includes("*")) {
       path = req.params.path.split("*").join("/");
