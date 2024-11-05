@@ -52,7 +52,9 @@ enableCloudflareVerify=false
 cloudflareVerifySiteKey=
 # The secret key for cloudflare turnstile, found in the cloudflare dashboard:
 cloudflareVerifySecretKey=
+
 # The list of places (can also be on other computers via ssh) to backup to [Seperate with commas]:
 backupsList=
+enableBackups=
 # The name of this quartz instance (will appear in the backup locations):
 nodeName=somerandomquartzinstance
