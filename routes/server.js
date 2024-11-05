@@ -1904,7 +1904,7 @@ router.get("/:id/claimSubdomain", function (req, res) {
           } else {
             let res = JSON.parse(stdout);
             console.log(res);
-            if (success == false) {
+            if (res.success == false) {
               if (res.errors[0].code == 81058) {
                 res.status(400).json({ msg: "Subdomain already taken." });
               } else {
