@@ -1837,6 +1837,61 @@ router.get("/:id/storageInfo", function (req, res) {
   }
 });
 
+router.get("/:id/claimSubdomain", function (req, res) {
+  let subdomain = req.query.subdomain;
+  let email = req.headers.username;
+  let token = req.headers.token;
+  let account = readJSON("accounts/" + email + ".json");
+  let server = readJSON(`servers/${req.params.id}/server.json`);
+  if (hasAccess(token, account) && fs.existsSync(`servers${req.params.id}`)) {
+    if (server.subdomain !== undefined) {
+      res.status(400).json({ msg: "Server already has a subdomain." });
+    } else {
+      exec(
+        `curl https://api.cloudflare.com/client/v4/zones/${
+          config.cloudflareZone
+        }/dns_records \
+    -H 'Content-Type: application/json' \
+    -H "X-Auth-Email: ${config.cloudflareEmail}" \
+    -H "X-Auth-Key: ${config.cloudflareKey}" \
+    -d '{
+    "name": "_minecraft._tcp.${subdomain}}",
+          "type": "SRV",
+      "data": {
+         "port": ${10000 + parseInt(req.params.id)},
+         "priority": ${10000 + parseInt(req.params.id)},
+         "target": "join.arthmc.xyz",
+         "weight": 5
+      }
+
+    }'`,
+        (err, stdout, stderr) => {
+          if (err) {
+            console.log(err);
+            res.status(500).json({ msg: "Error claiming subdomain. (1)" });
+          } else {
+            let res = JSON.parse(stdout);
+            console.log(res);
+            if (success == false) {
+              if (res.errors[0].code == 81058) {
+                res.status(400).json({ msg: "Subdomain already taken." });
+              } else {
+                res.status(500).json({ msg: "Error claiming subdomain. (2)" });
+              }
+            } else {
+              server.subdomain = subdomain;
+              writeJSON(`servers/${req.params.id}/server.json`, server);
+              res.status(200).json({ msg: "Done" });
+            }
+          }
+        }
+      );
+    }
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
 /*const httpProxy = require("http-proxy");
 const proxy = httpProxy.createProxyServer();
 

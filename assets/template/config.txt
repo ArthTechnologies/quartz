@@ -36,6 +36,10 @@ jarsMcUrl=https://api.jarsmc.xyz/
 labrinthUrl=https://api.modrinth.com/v2
 # The 'pepper', used to obfuscate things such as IP addresses:
 pepper=
+# The info for cloudflare that enables the claiming of subdomains
+cloudflareKey=
+cloudflareEmail=
+cloudflareZone=
 
 # Security Settings:
 
