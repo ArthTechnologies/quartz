@@ -1847,6 +1847,23 @@ router.get("/:id/claimSubdomain", function (req, res) {
     if (server.subdomain !== undefined) {
       res.status(400).json({ msg: "Server already has a subdomain." });
     } else {
+      console.log(`curl https://api.cloudflare.com/client/v4/zones/${
+        config.cloudflareZone
+      }/dns_records \
+    -H 'Content-Type: application/json' \
+    -H "X-Auth-Email: ${config.cloudflareEmail}" \
+    -H "X-Auth-Key: ${config.cloudflareKey}" \
+    -d '{
+    "name": "_minecraft._tcp.${subdomain}}",
+          "type": "SRV",
+      "data": {
+         "port": ${10000 + parseInt(req.params.id)},
+         "priority": ${10000 + parseInt(req.params.id)},
+         "target": "join.arthmc.xyz",
+         "weight": 5
+      }
+
+    }'`);
       exec(
         `curl https://api.cloudflare.com/client/v4/zones/${
           config.cloudflareZone
