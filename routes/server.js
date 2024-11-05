@@ -1887,7 +1887,7 @@ router.get("/:id/claimSubdomain", function (req, res) {
     -H "X-Auth-Email: ${config.cloudflareEmail}" \
     -H "X-Auth-Key: ${config.cloudflareKey}" \
     -d '{
-    "name": "_minecraft._tcp.${subdomain}}",
+    "name": "_minecraft._tcp.${subdomain}",
           "type": "SRV",
       "data": {
          "port": ${10000 + parseInt(req.params.id)},
