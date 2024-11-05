@@ -1902,10 +1902,10 @@ router.get("/:id/claimSubdomain", function (req, res) {
             console.log(err);
             res.status(500).json({ msg: "Error claiming subdomain. (1)" });
           } else {
-            let res = JSON.parse(stdout);
-            console.log(res);
-            if (res.success == false) {
-              if (res.errors[0].code == 81058) {
+            let res2 = JSON.parse(stdout);
+            console.log(res2);
+            if (res2.success == false) {
+              if (res2.errors[0].code == 81058) {
                 res.status(400).json({ msg: "Subdomain already taken." });
               } else {
                 res.status(500).json({ msg: "Error claiming subdomain. (2)" });
