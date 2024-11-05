@@ -1924,6 +1924,54 @@ router.post("/:id/claimSubdomain", function (req, res) {
   }
 });
 
+router.post("/:id/deleteSubdomain", function (req, res) {
+  let email = req.headers.username;
+  let token = req.headers.token;
+  let subdomain = req.query.subdomain;
+  let account = readJSON("accounts/" + email + ".json");
+  let server = readJSON(`servers/${req.params.id}/server.json`);
+  if (
+    hasAccess(token, account, req.params.id) &&
+    fs.existsSync(`servers/${req.params.id}`) &&
+    subdomain == server.subdomain
+  ) {
+    if (server.subdomain === undefined) {
+      res.status(400).json({ msg: "Server doesn't have a subdomain." });
+    } else {
+      console.log(`curl https://api.cloudflare.com/client/v4/zones/${config.cloudflareZone}/dns_records?name=_minecraft._tcp.${subdomain} \
+    -X DELETE \
+    -H 'Content-Type: application/json' \
+    -H "X-Auth-Email: ${config.cloudflareEmail}" \
+    -H "X-Auth-Key: ${config.cloudflareKey}"`);
+      exec(
+        `curl https://api.cloudflare.com/client/v4/zones/${config.cloudflareZone}/dns_records?name=_minecraft._tcp.${subdomain} \
+    -X DELETE \
+    -H 'Content-Type: application/json' \
+    -H "X-Auth-Email: ${config.cloudflareEmail}" \
+    -H "X-Auth-Key: ${config.cloudflareKey}"`,
+        (err, stdout, stderr) => {
+          if (err) {
+            console.log(err);
+            res.status(500).json({ msg: "Error deleting subdomain. (1)" });
+          } else {
+            let res2 = JSON.parse(stdout);
+            console.log(res2);
+            if (res2.success == false) {
+              res.status(500).json({ msg: "Error deleting subdomain. (2)" });
+            } else {
+              server.subdomain = undefined;
+              writeJSON(`servers/${req.params.id}/server.json`, server);
+              res.status(200).json({ msg: "Done" });
+            }
+          }
+        }
+      );
+    }
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
 /*const httpProxy = require("http-proxy");
 const proxy = httpProxy.createProxyServer();
 
