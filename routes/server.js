@@ -1849,7 +1849,7 @@ router.get("/:id/storageInfo", function (req, res) {
   }
 });
 
-router.get("/:id/claimSubdomain", function (req, res) {
+router.post("/:id/claimSubdomain", function (req, res) {
   let subdomain = req.query.subdomain;
   let email = req.headers.username;
   let token = req.headers.token;
