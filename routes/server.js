@@ -1857,17 +1857,28 @@ router.get("/:id/memoryInfo", function (req, res) {
     hasAccess(token, account, req.params.id) &&
     fs.existsSync(`servers/${req.params.id}/`)
   ) {
-    exec(
-      `docker stats quartz-${id}} --no-stream --format "{{.MemUsage}}"
+    try {
+      exec(
+        `docker ps --filter "publish=${10000 + id}" --format "{{.ID}}"`,
+        (error, stdout, stderr) => {
+          let pid = stdout.trim();
+
+          exec(
+            `docker stats ${pid} --no-stream --format "{{.MemUsage}}"
     `,
-      (err, stdout, stderr) => {
-        if (err) {
-          res.status(500).json({ success: false, data: err });
+            (err, stdout, stderr) => {
+              if (err) {
+                res.status(500).json({ success: false, data: err });
+              }
+              let memory = stdout.split("/")[0];
+              res.status(200).json({ success: true, data: memory });
+            }
+          );
         }
-        let memory = stdout.split("/")[0];
-        res.status(200).json({ success: true, data: memory });
-      }
-    );
+      );
+    } catch (e) {
+      res.status(500).json({ success: false, data: e });
+    }
   } else {
     res.status(401).json({ msg: "Invalid credentials." });
   }
