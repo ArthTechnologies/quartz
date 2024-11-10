@@ -1094,7 +1094,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
     let lock = false;
     let lock2 = false;
     console.log("before stopping");
-    f.stopAsync(req.params.id, () => {
+    f.killAsync(req.params.id, () => {
       console.log("after stopping");
       setTimeout(() => {
         if (!lock2) {
@@ -1280,7 +1280,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
             });
           }
         }
-      }, 2000);
+      }, 1000);
     });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
