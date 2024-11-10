@@ -242,7 +242,7 @@ function run(
     console.log("absolutePath: " + absolutePath);
 
     let port = 10000 + parseInt(id);
-    let prefix = `docker run -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp --user 1000:1000 openjdk:${javaVer} java`;
+    let prefix = `docker run -m ${allocatedRAM}g -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp --user 1000:1000 openjdk:${javaVer} java`;
     console.log("prefix: " + prefix);
 
     let doneInstallingServer = false;
