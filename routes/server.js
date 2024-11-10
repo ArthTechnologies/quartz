@@ -236,13 +236,21 @@ router.post(`/:id/state/:state`, function (req, res) {
     id = req.params.id;
     let token = req.headers.token;
 
-    if ((state == "start") | (state == "stop") | (state == "restart")) {
+    if (
+      (state == "start") |
+      (state == "stop") |
+      (state == "restart") |
+      (state == "kill")
+    ) {
       switch (state) {
         case "start":
           f.run(id, undefined, undefined, undefined, undefined, email, false);
           break;
         case "stop":
           f.stop(id);
+          break;
+        case "kill":
+          f.kill(id);
           break;
         case "restart":
           f.stopAsync(id, () => {

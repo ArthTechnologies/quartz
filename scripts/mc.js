@@ -633,13 +633,6 @@ function run(
                 ls.kill();
                 clearInterval(intervalID);
               }
-            } else if (states[id] == "deleting") {
-              states[id] = "false";
-              console.log("setting status of " + id + " to false on line #6");
-
-              killObstructingProcess(parseInt(id));
-              ls.kill();
-              clearInterval(intervalID);
             }
           }, 200);
           eventEmitter.on("writeCmd:" + id, function () {
@@ -694,13 +687,6 @@ function run(
             ls.stdin.write("stop\n");
             count2++;
           }
-        } else if (states[id] == "deleting") {
-          states[id] = "false";
-
-          killObstructingProcess(parseInt(id));
-          ls.kill();
-          console.log("setting status of " + id + " to false on line #10");
-          clearInterval(intervalID);
         }
       }, 200);
       eventEmitter.on("writeCmd:" + id, function () {
@@ -829,18 +815,16 @@ function killAsync(id, callback) {
   if (states[id] == "false") {
     callback();
   } else {
-    states[id] = "deleting";
-    const intervalId = setInterval(() => {
-      if (states[id] === "false") {
-        clearInterval(intervalId); // Clear the interval once the condition is met
-        setTimeout(() => {
-          callback();
-        }, 500);
-      }
-    }, 200);
+    killObstructingProcess(parseInt(id));
+    states[id] = "false";
+    callback();
   }
 }
 
+function kill(id) {
+  killObstructingProcess(parseInt(id));
+  states[id] = "false";
+}
 function readTerminal(id) {
   let server = readJSON("servers/" + id + "/server.json");
   let ret = terminalOutput[id];
@@ -1045,6 +1029,7 @@ function killObstructingProcess(id) {
 module.exports = {
   run,
   stop,
+  kill,
   checkServer,
   readTerminal,
   writeTerminal,
