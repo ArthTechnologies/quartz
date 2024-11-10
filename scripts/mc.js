@@ -555,7 +555,7 @@ function run(
               prefix +
               ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
 
-            if (parseInt(version.split(".")[1]) >= 20) {
+            if (parseInt(version.split(".")[1]) >= 21) {
               execLine = prefix + ` -jar forge-${forgeVersion}-shim.jar`;
             }
 
