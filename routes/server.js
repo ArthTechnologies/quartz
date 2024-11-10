@@ -1849,6 +1849,30 @@ router.get("/:id/storageInfo", function (req, res) {
   }
 });
 
+router.get("/:id/memoryInfo", function (req, res) {
+  let email = req.headers.username;
+  let token = req.headers.token;
+  let account = readJSON("accounts/" + email + ".json");
+  if (
+    hasAccess(token, account, req.params.id) &&
+    fs.existsSync(`servers/${req.params.id}/`)
+  ) {
+    exec(
+      `docker stats quartz-${id}} --no-stream --format "{{.MemUsage}}"
+    `,
+      (err, stdout, stderr) => {
+        if (err) {
+          res.status(500).json({ success: false, data: err });
+        }
+        let memory = stdout.split("/")[0];
+        res.status(200).json({ success: true, data: memory });
+      }
+    );
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
 router.post("/:id/claimSubdomain", function (req, res) {
   let subdomain = req.query.subdomain;
   let email = req.headers.username;
