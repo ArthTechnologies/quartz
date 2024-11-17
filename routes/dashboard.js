@@ -21,30 +21,30 @@ Router.get("/verifyToken", (req, res) => {
 });
 
 Router.get("/account/:accountId", async (req, res) => {
-    let tempToken = req.query.tempToken;
-    if (tempToken == utils.readJSON("assets/data.json").tempToken.split(":")[1]) {
-
+  let tempToken = req.query.tempToken;
+  if (tempToken == utils.readJSON("assets/data.json").tempToken.split(":")[1]) {
     let accountsFolder = fs.readdirSync("accounts");
+    console.log("finding account for " + req.params.accountId);
     for (let i in accountsFolder) {
       try {
-      let account = utils.readJSON(`accounts/${accountsFolder[i]}`);
-      if (account.accountId == req.params.accountId) {
-        let accountSend = {};
-        accountSend.accountId = account.accountId;
-        accountSend.name = accountsFolder[i].split(".json")[0];
-        accountSend.email = account.email;
-        accountSend.resetAttempts = account.resetAttempts;
-        accountSend.type = account.type;
-        accountSend.servers = account.servers;
-        accountSend.freeServers = account.freeServers;
-        accountSend.lastSignIn = account.lastSignIn;
-        res.status(200).send(accountSend);
-        return;
+        let account = utils.readJSON(`accounts/${accountsFolder[i]}`);
+        if (account.accountId == req.params.accountId) {
+          let accountSend = {};
+          accountSend.accountId = account.accountId;
+          accountSend.name = accountsFolder[i].split(".json")[0];
+          accountSend.email = account.email;
+          accountSend.resetAttempts = account.resetAttempts;
+          accountSend.type = account.type;
+          accountSend.servers = account.servers;
+          accountSend.freeServers = account.freeServers;
+          accountSend.lastSignIn = account.lastSignIn;
+          res.status(200).send(accountSend);
+          return;
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
-  }
   } else {
     res.status(401).send({ error: "Unauthorized" });
   }
