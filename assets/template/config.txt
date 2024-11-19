@@ -17,7 +17,7 @@ stripeKey=
 stripeReturnUrl=
 # The stripe productId of each plan:
 basic=
-modded=
+plus=
 premium=
 
 # Advanced Settings:

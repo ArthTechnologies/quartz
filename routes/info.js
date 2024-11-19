@@ -95,7 +95,7 @@ router.get(`/subscriptions`, function (req, res) {
                   if (config.premium == plan.product) {
                     premiumSubscriptions++;
                     subscriptions++;
-                  } else if (config.modded == plan.product) {
+                  } else if (config.plus == plan.product) {
                     moddedSubscriptions++;
                     subscriptions++;
                   } else if (config.basic == plan.product) {

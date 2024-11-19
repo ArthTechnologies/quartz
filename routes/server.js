@@ -644,7 +644,7 @@ router.post(`/new/:id`, function (req, res) {
                           freeServers = parseInt(account.freeServers);
                         }
                         let canCreateServer = subs + freeServers < amount;
-                        if (config.MODDED != "") {
+                        if (config.plus != "") {
                           let basicServers = 0;
                           let moddedServers = 0;
                           for (i in account.servers) {
