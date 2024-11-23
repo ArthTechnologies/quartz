@@ -36,7 +36,12 @@ router.get(`/claimId`, function (req, res) {
       }
       console.log("ACCOUNTEMAIL0=" + account.email, username);
       //check if the user is subscribed
-      let amount = account.servers.length;
+      let fullServers = 0;
+      for (i in account.servers) {
+        if (account.servers[i] != undefined) {
+          if (fs.existsSync("servers/" + account.servers[i] + "/server.json")) fullServers++;
+        }
+      }
       if (account.email != undefined) {
         stripe.customers.list(
           {
@@ -76,8 +81,8 @@ router.get(`/claimId`, function (req, res) {
                     console.log(
                       "subs: " + subs + " freeServers: " + freeServers
                     );
-                    console.log("amount: " + amount);
-                    if (subs + freeServers > amount) {
+                    console.log("fullServers: " + fullServers);
+                    if (subs + freeServers > fullServers) {
                       //find an id to assign to the account
                       let serverFolders = fs.readdirSync("servers");
                       let serverFolder = serverFolders.sort((a, b) => a - b);
@@ -523,10 +528,10 @@ router.post(`/new/:id`, function (req, res) {
         if (JSON.stringify(account.servers).includes(id)) {
           console.log("debug: " + email + req.headers.username);
           if (account.servers == undefined) account.servers = [];
-          let amount = 0;
+          let fullServers = 0;
           for (i in account.servers) {
             if (account.servers[i] != undefined) {
-              if (fs.existsSync("servers/" + account.servers[i])) amount++;
+              if (fs.existsSync("servers/" + account.servers[i]+"/server.json")) fullServers++;
             }
           }
           //add cors header
@@ -643,55 +648,8 @@ router.post(`/new/:id`, function (req, res) {
                         if (account.freeServers != undefined) {
                           freeServers = parseInt(account.freeServers);
                         }
-                        let canCreateServer = subs + freeServers < amount;
-                        if (config.plus != "") {
-                          let basicServers = 0;
-                          let moddedServers = 0;
-                          for (i in account.servers) {
-                            if (
-                              fs.existsSync(
-                                "servers/" + account.servers[i] + "/server.json"
-                              )
-                            ) {
-                              let server = readJSON(
-                                "servers/" + account.servers[i] + "/server.json"
-                              );
-                              switch (server.software.toLowerCase()) {
-                                case "forge":
-                                  moddedServers++;
-                                  break;
-                                case "fabric":
-                                  moddedServers++;
-                                  break;
-                                case "quilt":
-                                  moddedServers++;
-                                  break;
-                                default:
-                                  basicServers++;
-                              }
-                            }
-                          }
-                          if (
-                            req.body.software == "forge" ||
-                            req.body.software == "fabric" ||
-                            req.body.software == "quilt"
-                          ) {
-                            canCreateServer =
-                              moddedServers + freeServers < amount;
-                          } else {
-                            console.log(
-                              "canCreateServer? = " +
-                                basicServers +
-                                " + " +
-                                freeServers +
-                                " < " +
-                                amount
-                            );
-                            canCreateServer =
-                              basicServers + moddedServers + freeServers <
-                              amount;
-                          }
-                        }
+                        let canCreateServer = subs + freeServers < fullServers;
+                        console.log("canCreateServer: " + subs + " "+freeServers + "<" + fullServers);
                         if (canCreateServer) {
                           if (
                             em !== "noemail" &&
