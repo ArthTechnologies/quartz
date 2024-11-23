@@ -648,8 +648,8 @@ router.post(`/new/:id`, function (req, res) {
                         if (account.freeServers != undefined) {
                           freeServers = parseInt(account.freeServers);
                         }
-                        let canCreateServer = subs + freeServers < fullServers;
-                        console.log("canCreateServer: " + subs + " "+freeServers + "<" + fullServers);
+                        let canCreateServer = subs + freeServers > fullServers;
+                        console.log("canCreateServer: " + subs + " "+freeServers + ">" + fullServers);
                         if (canCreateServer) {
                           if (
                             em !== "noemail" &&
