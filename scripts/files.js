@@ -123,7 +123,6 @@ function removeDirectoryRecursiveAsync(directoryPath, callback) {
     if (directoryPath.startsWith("servers")) {
       exec(`rm -rf ${directoryPath}`, (error, stdout, stderr) => {
         if (callback != undefined) {
-          fs.mkdirSync(directoryPath);
           callback(stdout);
         }
       });
