@@ -1184,6 +1184,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                           let worldFolders = fs.readdirSync(
                             `servers/${id}/world`
                           );
+                          console.log("worldFolders: " + worldFolders);
                           let biggestFolder = "";
                           let biggestSize = 0;
                           for (i in worldFolders) {
