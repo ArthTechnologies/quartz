@@ -22,6 +22,11 @@ if (!fs.existsSync("./servers")) {
   fs.rmSync("./servers/template", { recursive: true });
 }
 
+//clears uploads directory
+fs.readdirSync("assets/uploads").forEach((file) => {
+  fs.unlinkSync(`assets/uploads/${file}`);
+});
+
 if (!fs.existsSync("config.txt")) {
   //migration from old way of storing settings to config.txt
   if (
