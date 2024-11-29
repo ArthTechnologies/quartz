@@ -406,7 +406,7 @@ function backup() {
     console.log("Backing up");
     if (JSON.parse(config.enableBackups)) {
       let backupsList = config.backupsList.split(",");
-      let nodeName = config.nodeName;
+      let spaceLimit = 512;
 
       for (i in backupsList) {
         if (backupsList[i] != "") {
@@ -415,13 +415,26 @@ function backup() {
             backupsList[i] = backupsList[i].slice(0, -1);
           }
 
-          //if nodeName's first character is a /, remove it
-          if (nodeName.charAt(0) == "/") {
-            nodeName = nodeName.slice(1);
+          //date in dd-mm-yyyy format
+          let date = new Date();
+          let day = date.getDate();
+          let month = date.getMonth() + 1;
+          let year = date.getFullYear();
+          let date2 = day + "-" + month + "-" + year;
+          if(!fs.existsSync(`/${backupsList[i]}/quartz-backups`)){
+            fs.mkdirSync(`/${backupsList[i]}/quartz-backups`);
           }
-
+          let currentSpace = 0;
+          currentSpace = files.getFolderSize(`/${backupsList[i]}/quartz-backups`);
+          //convert it to GB
+          currentSpace = parseInt(currentSpace) / 1000000000;
+          if (fs.existsSync(`/${backupsList[i]}/quartz-backups/${date2}`)) {
+            console.log("Backup already exists for " + backupsList[i]);
+          } else if (currentSpace + 64 >= spaceLimit) {
+            console.log("Backup space limit reached for " + backupsList[i]);
+          } else {
           exec(
-            `rsync -a --delete . /${backupsList[i]}/${nodeName}`,
+            `rsync -a --delete . /${backupsList[i]}/quartz-backups/${date2}`,
             (err, stdout, stderr) => {
               if (err) {
                 console.log(err);
@@ -430,6 +443,7 @@ function backup() {
               }
             }
           );
+        }
         }
       }
     }
