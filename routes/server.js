@@ -221,7 +221,7 @@ router.get(`/:id`, function (req, res) {
     if (hasAccess(token, account, req.params.id)) {
       //add cors header
       res.header("Access-Control-Allow-Origin", "*");
-      id = req.params.id;
+    let id = req.params.id;
       res.status(200).json(f.checkServer(id));
     } else {
       res.status(401).json({ msg: `Invalid credentials.` });
@@ -238,7 +238,7 @@ router.post(`/:id/state/:state`, function (req, res) {
   let server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account, req.params.id)) {
     state = req.params.state;
-    id = req.params.id;
+  let id = req.params.id;
     let token = req.headers.token;
 
     if (
@@ -282,7 +282,7 @@ router.delete(`/:id/:modtype(plugin|mod)`, function (req, res) {
   let account = readJSON("accounts/" + email + ".json");
   let server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account, req.params.id)) {
-    id = req.params.id;
+  let id = req.params.id;
     pluginId = req.query.pluginId;
     pluginPlatform = req.query.pluginPlatform;
     pluginName = req.query.pluginName;
@@ -395,7 +395,7 @@ router.post(`/:id/version/`, function (req, res) {
   let account = readJSON("accounts/" + email + ".json");
   let server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account, req.params.id)) {
-    id = req.params.id;
+  let id = req.params.id;
     version = req.query.version;
 
     server.version = version;
@@ -419,7 +419,7 @@ router.post(`/:id/add/:modtype(plugin|mod)`, function (req, res) {
   if (hasAccess(token, account, req.params.id)) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
-    id = req.params.id;
+  let id = req.params.id;
     pluginUrl = req.query.pluginUrl;
     pluginId = req.query.id;
     pluginName = req.query.name;
@@ -475,7 +475,7 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
   let account = readJSON("accounts/" + email + ".json");
   let server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account, req.params.id)) {
-    id = req.params.id;
+  let id = req.params.id;
     filename = req.query.filename;
     modtype = req.params.modtype;
     let text = "disabled";
@@ -510,7 +510,7 @@ router.post(`/new/:id`, function (req, res) {
   try {
     let email = req.headers.username;
     let token = req.headers.token;
-    id = req.params.id;
+  let id = req.params.id;
     if (!enableAuth) email = "noemail";
     let account = readJSON("accounts/" + email + ".json");
     console.log(
@@ -747,7 +747,7 @@ router.post(`/:id/setInfo`, function (req, res) {
   let account = readJSON("accounts/" + email + ".json");
   let server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account, req.params.id)) {
-    id = req.params.id;
+  let id = req.params.id;
     iconUrl = req.body.icon;
     desc = req.body.desc;
 
@@ -844,7 +844,7 @@ router.get(`/:id/getInfo`, function (req, res) {
     let desc = "";
     let secret;
     let proxiesEnabled;
-    id = req.params.id;
+  let id = req.params.id;
 
     if (f.checkServer(id).software == "velocity") {
       var text = fs.readFileSync(`servers/${id}/velocity.toml`).toString();
@@ -1002,7 +1002,7 @@ router.get("/:id/world", function (req, res) {
   let server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account, req.params.id)) {
     //zip /servers/id/world and send it to the client
-    id = req.params.id;
+  let id = req.params.id;
     let path = "servers/" + id;
     if (server.software == "quilt") {
       path += "/server";
@@ -1043,7 +1043,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   console.log("upload world 0");
   //this disables timeouts if virus scanning takes too long
   req.setTimeout(0);
-  id = req.params.id;
+let id = req.params.id;
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
