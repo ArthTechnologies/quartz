@@ -1188,7 +1188,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                           let biggestSize = 0;
                           for (i in worldFolders) {
                             let folder = worldFolders[i];
-                            let size = files.size(
+                            let size = files.folderSizeRecursive(
                               `servers/${id}/world/${folder}`
                             );
                             if (size > biggestSize) {
