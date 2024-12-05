@@ -7,6 +7,9 @@ const cors = require("cors");
 const fs = require("fs");
 const crypto = require("crypto");
 const files = require("./scripts/files.js");
+const sql = require("./scripts/sql.js");
+
+sql.start();
 
 exec = require("child_process").exec;
 require("dotenv").config();
@@ -452,6 +455,8 @@ function backup() {
   }
 }
 
+
+
 function verifySubscriptions() {
   //we wait 5 minutes to avoid the user of the terminal having a lag spike at startup
   setTimeout(() => {
@@ -800,6 +805,7 @@ app.get("/", (req, res) => {
 });
 const rateLimit = require("express-rate-limit");
 const { get } = require("http");
+const { start } = require("./scripts/sql.js");
 
 const limiter = rateLimit({
   max: 300,

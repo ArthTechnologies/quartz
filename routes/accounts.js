@@ -5,6 +5,7 @@ const s = require("../scripts/stripe.js");
 
 const { v4: uuidv4 } = require("uuid");
 const files = require("../scripts/files.js");
+const { addAccount } = require("../scripts/sql.js");
 const writeJSON = require("../scripts/utils.js").writeJSON;
 const config = require("../scripts/utils.js").getConfig();
 const readJSON = require("../scripts/utils.js").readJSON;
@@ -67,6 +68,7 @@ Router.post("/email/signup/", (req, res) => {
             account.email = email.toLowerCase();
             account.freeServers = 0;
             account.lastSignin = new Date().getTime();
+            addAccount(account);
             writeJSON("accounts/email:" + email + ".json", account);
             res
               .status(200)
