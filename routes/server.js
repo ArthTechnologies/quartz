@@ -1904,6 +1904,29 @@ router.post("/:id/claimSubdomain", function (req, res) {
             console.log(err);
             res.status(500).json({ msg: "Error claiming subdomain. (1)" });
           } else {
+          exec(
+            `curl https://api.cloudflare.com/client/v4/zones/${
+              config.cloudflareZone
+            }/dns_records \
+        -H 'Content-Type: application/json' \
+        -H "X-Auth-Email: ${config.cloudflareEmail}" \
+        -H "X-Auth-Key: ${config.cloudflareKey}" \
+        -d '{
+        "name": "_minecraft.udp.${subdomain}",
+              "type": "SRV",
+          "data": {
+             "port": ${10000 + parseInt(req.params.id)},
+             "priority": ${10000 + parseInt(req.params.id)},
+             "target": "join.arthmc.xyz",
+             "weight": 5
+          }
+    
+        }'`,
+            (err, stdout, stderr) => {
+          if (err) {
+            console.log(err);
+            res.status(500).json({ msg: "Error claiming subdomain. (1)" });
+          } else {
             let res2 = JSON.parse(stdout);
             console.log(res2);
             if (res2.success == false) {
@@ -1920,6 +1943,8 @@ router.post("/:id/claimSubdomain", function (req, res) {
           }
         }
       );
+    }
+    });
     }
   } else {
     res.status(401).json({ msg: "Invalid credentials." });
