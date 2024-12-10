@@ -289,7 +289,7 @@ router.delete(`/:id/:modtype(plugin|datapack|mod)`, function (req, res) {
     let token = req.headers.token;
     modtype = req.params.modtype;
     if (modtype == "datapack") {
-      modtype = "world/datapacks";
+      modtype = "world/datapack";
     }
 
     const fs = require("fs");
@@ -488,7 +488,7 @@ router.post(`/:id/toggleDisable/:modtype(plugin|datapack|mod)`, function (req, r
     filename = req.query.filename;
     modtype = req.params.modtype;
     if (modtype == "datapack") {
-      modtype = "world/datapacks";
+      modtype = "world/datapack";
     }
     let text = "disabled";
 
