@@ -276,7 +276,7 @@ router.post(`/:id/state/:state`, function (req, res) {
   }
 });
 
-router.delete(`/:id/:modtype(plugin|mod)`, function (req, res) {
+router.delete(`/:id/:modtype(plugin|datapack|mod)`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
@@ -288,6 +288,9 @@ router.delete(`/:id/:modtype(plugin|mod)`, function (req, res) {
     pluginName = req.query.pluginName;
     let token = req.headers.token;
     modtype = req.params.modtype;
+    if (modtype == "datapack") {
+      modtype = "world/datapacks";
+    }
 
     const fs = require("fs");
 
@@ -305,13 +308,16 @@ router.delete(`/:id/:modtype(plugin|mod)`, function (req, res) {
   }
 });
 
-router.get(`/:id/:modtype(plugins|mods)`, function (req, res) {
+router.get(`/:id/:modtype(plugins|datapacks|mods)`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
   let server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account, req.params.id)) {
     let modtype = req.params.modtype;
+    if (modtype == "datapacks") {
+      modtype = "world/datapacks";
+    }
     let mods = [];
     let unknownMods = [];
     let id = req.params.id;
@@ -411,7 +417,7 @@ router.post(`/:id/version/`, function (req, res) {
 });
 
 let lastPlugin = "";
-router.post(`/:id/add/:modtype(plugin|mod)`, function (req, res) {
+router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
@@ -425,6 +431,9 @@ router.post(`/:id/add/:modtype(plugin|mod)`, function (req, res) {
     pluginName = req.query.name;
     pluginName = pluginName.replace(/\//g, "-");
     modtype = req.params.modtype;
+    if (modtype == "datapack") {
+      modtype = "world/datapacks";
+    }
     console.log("downloading plugin" + pluginUrl);
     if (
       pluginUrl.startsWith("https://cdn.modrinth.com/data/") |
@@ -469,7 +478,7 @@ router.post(`/:id/modpack`, function (req, res) {
   }
 });
 
-router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
+router.post(`/:id/toggleDisable/:modtype(plugin|datapack|mod)`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
@@ -478,6 +487,9 @@ router.post(`/:id/toggleDisable/:modtype(plugin|mod)`, function (req, res) {
   let id = req.params.id;
     filename = req.query.filename;
     modtype = req.params.modtype;
+    if (modtype == "datapack") {
+      modtype = "world/datapacks";
+    }
     let text = "disabled";
 
     if (
