@@ -432,7 +432,7 @@ router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
     pluginName = pluginName.replace(/\//g, "-");
     modtype = req.params.modtype;
     if (modtype == "datapack") {
-      modtype = "world/datapacks";
+      modtype = "world/datapack";
     }
     console.log("downloading plugin" + pluginUrl);
     if (
