@@ -11,6 +11,22 @@ const config = require("../scripts/utils.js").getConfig();
 const readJSON = require("../scripts/utils.js").readJSON;
 const enableCloudflareVerify = JSON.parse(config.enableCloudflareVerify);
 
+function writeAccount(id, username, billingEmail, servers, stripeServers, freeServers, lastSignin, token, salt, password, resetAttempts) {
+  let tsv = fs.readFileSync("accounts.tsv", "utf8");
+  let row = [id, username, billingEmail, servers, stripeServers, freeServers, lastSignin, token, salt, password, resetAttempts].join("\t") + "\n";
+  let alreadyExists = false;
+  for (let i in tsv) {
+    if (tsv[i].includes(id)) {
+      alreadyExists = true;
+      tsv[i] = row;
+    }
+  }
+  if (!alreadyExists) {
+    tsv += row;
+  }
+  fs.writeFileSync("accounts.tsv", tsv);
+
+}
 Router.post("/email/signup/", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
 
@@ -70,6 +86,7 @@ Router.post("/email/signup/", (req, res) => {
             account.lastSignin = new Date().getTime();
             addAccount(account);
             writeJSON("accounts/email:" + email + ".json", account);
+            writeAccount(account.accountId, "email:"+email, email, account.servers, 0, account.freeServers, account.lastSignin, account.token, account.salt, account.password, account.resetAttempts);
             res
               .status(200)
               .send({ token: account.token, accountId: accountId });
@@ -180,6 +197,7 @@ Router.post("/changeToEmail", (req, res) => {
     account.password = files.hash(password).split(":")[1];
     account.salt = files.hash(password).split(":")[0];
     writeJSON("accounts/email:" + username.split(":")[1] + ".json", account);
+    writeAccount(account.accountId, username.split(":")[1], email, account.servers, 0, account.freeServers, account.lastSignin, account.token, account.salt, account.password, account.resetAttempts);
 
     res.status(200).send({ success: true });
   } else {
@@ -234,6 +252,7 @@ Router.post("/email/resetPassword/", async (req, res) => {
     res.status(500).send({ success: false, reason: "An error occurred" });
   }
   writeJSON("accounts/email:" + email + ".json", account);
+  writeAccount(account.accountId,  "email:"+email, email, account.servers, 0, account.freeServers, account.lastSignin, account.token, account.salt, account.password, account.resetAttempts);
 });
 
 //combined signin and signup for discord
@@ -277,6 +296,7 @@ Router.post("/discord/", (req, res) => {
         };
         account.lastSignin = new Date().getTime();
         writeJSON("accounts/discord:" + username + ".json", account);
+        writeAccount(account.accountId, username, account.email, account.servers, 0, account.freeServers, account.lastSignin, account.token, account.salt, account.password, account.resetAttempts);
         res.status(200).send(response);
       } else {
         let accountId = uuidv4();
@@ -299,6 +319,7 @@ Router.post("/discord/", (req, res) => {
           "accounts/discord:" + username.toLowerCase() + ".json",
           account
         );
+        writeAccount(account.accountId, username.toLowerCase(), account.email, account.servers, 0, account.freeServers, account.lastSignin, account.token, account.salt, account.password, account.resetAttempts);
         console.log("discord:", res2);
         res.status(200).send({
           token: account.token,
@@ -341,6 +362,7 @@ Router.post("/email", (req, res) => {
   if (token === account.token) {
     account.email = email;
     writeJSON("accounts/" + accountname + ".json", account);
+    writeAccount(account.accountId, accountname, email, account.servers, 0, account.freeServers, account.lastSignin, account.token, account.salt, account.password, account.resetAttempts);
     res.status(200).send({ success: true });
   }
 });
