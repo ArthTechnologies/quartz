@@ -18,4 +18,4 @@ function accountsToTSV() {
     fs.writeFileSync("accounts.tsv", tsv);
 }
 
-module.exports = accountsToTSV;
+module.exports = {accountsToTSV};
