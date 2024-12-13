@@ -1,5 +1,5 @@
 const fs = require("fs");
-
+const { readJSON } = require("./utils.js");
 function accountsToTSV() {
     let accounts = fs.readdirSync("accounts");
     let columns = ["id","username","billingEmail","servers","stripeServers","freeServers","password","salt","token","resetAttempts"];
