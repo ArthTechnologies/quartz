@@ -7,10 +7,11 @@ const cors = require("cors");
 const fs = require("fs");
 const crypto = require("crypto");
 const files = require("./scripts/files.js");
-const sql = require("./scripts/sql.js");
+const migrations = require("./scripts/migrations.js");
 
-sql.start();
-
+if (!fs.existsSync("accounts.tsv")) {
+  migrations.accountsToTSV();
+}
 exec = require("child_process").exec;
 require("dotenv").config();
 if (!fs.existsSync("./backup")) {
@@ -804,8 +805,7 @@ app.get("/", (req, res) => {
   res.status(200).sendFile(path.join(__dirname, "assets/clientMessage.html"));
 });
 const rateLimit = require("express-rate-limit");
-const { get } = require("http");
-const { start } = require("./scripts/sql.js");
+
 
 const limiter = rateLimit({
   max: 300,
