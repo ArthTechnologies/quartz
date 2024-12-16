@@ -1694,7 +1694,6 @@ router.post(
           }
         );
       } else {
-        res.send("Upload Complete.");
 
         loadFile();
       }
