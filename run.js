@@ -278,7 +278,7 @@ function downloadJars() {
   jarsMcUrl = config.jarsMcUrl;
 
   //plugins
-  files.GET(jarsMcUrl + "jars/arthHosting", (data) => {
+  files.GET(jarsMcUrl + "jars", (data) => {
     if (!data.includes("html")) {
       data = JSON.parse(data);
       let downloadProgress = [];
