@@ -1704,7 +1704,7 @@ router.post(
           "servers/" + id + "/" + path + "/" + filename
         );
         fs.rmSync(req.file.path);
-        res.send("Upload Complete. No Viruses Detected.");
+        res.status(200).send("Upload Complete.");
 
       }
     } else {
