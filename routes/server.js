@@ -1685,7 +1685,7 @@ router.post(
           {},
           (err, stdout, stderr) => {
             if (stdout.indexOf("Infected files: 0") != -1) {
-              res.send("Upload Complete. No Viruses Detected.");
+
               loadFile();
             } else {
               res.send("Virus Detected.");
@@ -1705,6 +1705,7 @@ router.post(
           "servers/" + id + "/" + path + "/" + filename
         );
         fs.rmSync(req.file.path);
+        res.send("Upload Complete. No Viruses Detected.");
 
       }
     } else {
