@@ -1705,7 +1705,7 @@ router.post(
           "servers/" + id + "/" + path + "/" + filename
         );
         fs.rmSync(req.file.path);
-        res.status(200).json({ msg: "Success." });
+
       }
     } else {
       res.status(401).json({ msg: "Invalid credentials." });
