@@ -1672,6 +1672,7 @@ router.post(
       hasAccess(token, account, req.params.id) &&
       fs.existsSync(`servers/${req.params.id}/`)
     ) {
+      let id = req.params.id;	
       let path = req.params.path;
       let filename = req.query.filename;
       if (req.params.path.includes("*")) {
