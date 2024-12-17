@@ -1599,7 +1599,7 @@ router.get("/:id/file/download/:path", function (req, res) {
       path = req.params.path.split("*").join("/");
     }
     if (fs.existsSync(`servers/${req.params.id}/${path}`)) {
-      if (fs.isDirectory(`servers/${req.params.id}/${path}`)) {
+      if (fs.statSync(`servers/${req.params.id}/${path}`).isDirectory()) {
         //zip the folder and send it to the client
         exec(
           `zip -r -q -X ../${req.params.path}.zip .`,
