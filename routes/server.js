@@ -1588,6 +1588,56 @@ router.get("/:id/file/:path", function (req, res) {
   }
 });
 
+router.get("/:id/file/download/:path", function (req, res) {
+  let email = req.headers.username;
+  let token = req.headers.token;
+  let account = readJSON("accounts/" + email + ".json");
+  let server = readJSON("servers/" + req.params.id + "/server.json");
+  if (hasAccess(token, account, req.params.id)) {
+    let path = req.params.path;
+    if (req.params.path.includes("*")) {
+      path = req.params.path.split("*").join("/");
+    }
+    if (fs.existsSync(`servers/${req.params.id}/${path}`)) {
+      if (fs.isDirectorySync(`servers/${req.params.id}/${path}`)) {
+        //zip the folder and send it to the client
+        exec(
+          `zip -r -q -X ../${req.params.path}.zip .`,
+          { cwd: `servers/${req.params.id}/${path}` },
+          (err) => {
+            res.setHeader("Content-Type", "application/zip");
+
+            res.setHeader(
+              "Content-Disposition",
+              `attachment; filename=${req.params.path}.zip`
+            );
+
+            res.status(200).download(
+              `servers/${req.params.id}/${path}.zip`,
+              `${req.params.path}.zip`,
+              () => {
+                //delete the zip file
+                fs.unlinkSync(`servers/${req.params.id}/${path}.zip`);
+              }
+            );
+          }
+        );
+      } else {
+        res.setHeader("Content-Type", "application/octet-stream");
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename=${req.params.path}`
+        );
+        res.status(200).download(`servers/${req.params.id}/${path}`);
+      }
+    } else {
+      res.status(400).json({ msg: "Invalid request." });
+    }
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
 router.post("/:id/file/:path", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
