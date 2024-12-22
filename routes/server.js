@@ -286,20 +286,21 @@ router.delete(`/:id/:modtype(plugin|datapack|mod)`, function (req, res) {
     pluginId = req.query.pluginId;
     pluginPlatform = req.query.pluginPlatform;
     pluginName = req.query.pluginName;
-    let token = req.headers.token;
+    let extension = "jar";
     modtype = req.params.modtype;
     if (modtype == "datapack") {
       modtype = "world/datapack";
+      extension = "zip";
     }
 
     const fs = require("fs");
 
     //delete platform_id_name.jar
     console.log(
-      id + modtype + pluginPlatform + "_" + pluginId + "_" + pluginName + ".jar"
+      id + modtype + pluginPlatform + "_" + pluginId + "_" + pluginName + "." + extension
     );
     fs.unlinkSync(
-      `servers/${id}/${modtype}/${pluginPlatform}_${pluginId}_${pluginName}.jar`
+      `servers/${id}/${modtype}/${pluginPlatform}_${pluginId}_${pluginName}.${extension}`
     );
 
     res.status(200).json({ msg: `Success. Mod deleted.` });
@@ -315,8 +316,10 @@ router.get(`/:id/:modtype(plugins|datapacks|mods)`, function (req, res) {
   let server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account, req.params.id)) {
     let modtype = req.params.modtype;
+    let extension = "jar";
     if (modtype == "datapacks") {
       modtype = "world/datapacks";
+      extension = "zip";
     }
     let mods = [];
     let unknownMods = [];
@@ -338,7 +341,7 @@ router.get(`/:id/:modtype(plugins|datapacks|mods)`, function (req, res) {
         mods.push({
           platform: file.split("_")[0],
           id: file.split("_")[1] + "/" + file.split("_")[2],
-          name: file.split("_")[3].replace(".jar", ""),
+          name: file.split("_")[3].replace("."+extension, ""),
           filename: file,
           date: fs.statSync(`${path}/${modtype}/${file}`).mtimeMs,
         });
@@ -350,7 +353,7 @@ router.get(`/:id/:modtype(plugins|datapacks|mods)`, function (req, res) {
         mods.push({
           platform: file.split("_")[0],
           id: file.split("_")[1],
-          name: file.split("_")[2].replace(".jar", ""),
+          name: file.split("_")[2].replace("."+extension, ""),
           filename: file,
           date: fs.statSync(`${path}/${modtype}/${file}`).mtimeMs,
         });
@@ -426,6 +429,7 @@ router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
   let id = req.params.id;
+    let extension = "jar";
     pluginUrl = req.query.pluginUrl;
     pluginId = req.query.id;
     pluginName = req.query.name;
@@ -433,6 +437,7 @@ router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
     modtype = req.params.modtype;
     if (modtype == "datapack") {
       modtype = "world/datapack";
+      extension = "zip";
     }
     console.log("downloading plugin" + pluginUrl);
     if (
@@ -445,7 +450,7 @@ router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
       if (pluginUrl.startsWith("https://edge.forgecdn.net/")) platform = "cf";
       if (pluginUrl != lastPlugin) {
         files.download(
-          `servers/${id}/${modtype}s/${platform}_${pluginId}_${pluginName}.jar`,
+          `servers/${id}/${modtype}s/${platform}_${pluginId}_${pluginName}.${extension}`,
           pluginUrl
         );
         lastPlugin = pluginUrl;
@@ -485,6 +490,7 @@ router.post(`/:id/toggleDisable/:modtype(plugin|datapack|mod)`, function (req, r
   let server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account, req.params.id)) {
   let id = req.params.id;
+  
     filename = req.query.filename;
     modtype = req.params.modtype;
     if (modtype == "datapack") {
