@@ -297,22 +297,22 @@ function run(
     for (i in addons) {
       if (addons[i] == "terralith") {
         fs.copyFileSync(
-          "assets/jars/terralith-" + version + ".zip",
+          "assets/jars/terralith-" + version.split("*")[0] + ".zip",
           folder + "/world/datapacks/lr_8oi3bsk5_Terralith.zip"
         );
       } else if (addons[i] == "incendium") {
         fs.copyFileSync(
-          "assets/jars/incendium-" + version + ".zip",
+          "assets/jars/incendium-" + version.split("*")[0] + ".zip",
           folder + "/world/datapacks/lr_ZVzW5oNS_Incendium.zip"
         );
       } else if (addons[i] == "nullscape") {
         fs.copyFileSync(
-          "assets/jars/nullscape-" + version + ".zip",
+          "assets/jars/nullscape-" + version.split("*")[0] + ".zip",
           folder + "/world/datapacks/lr_LPjGiSO4_Nullscape.zip"
         );
       } else if (addons[i] == "structory") {
         fs.copyFileSync(
-          "assets/jars/structory-" + version + ".zip",
+          "assets/jars/structory-" + version.split("*")[0] + ".zip",
           folder + "/world/datapacks/lr_aKCwCJlY_Structory.zip"
         );
       }
