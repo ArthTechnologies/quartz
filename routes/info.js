@@ -180,24 +180,22 @@ function sortFiles(files) {
       const matchA = a.match(regex);
       const matchB = b.match(regex);
       
-      if (!matchA) return 1;
-      if (!matchB) return -1;
+      const nameA = matchA ? matchA[1] : a;
+      const versionA = matchA ? [parseInt(matchA[2]), matchA[3] ? parseInt(matchA[3]) : 0, matchA[4] ? parseInt(matchA[4]) : 0] : [0, 0, 0];
+      const preA = matchA ? matchA[5] || '' : '';
 
-      const nameA = matchA[1];
-      const versionA = [parseInt(matchA[2]), matchA[3] ? parseInt(matchA[3]) : 0, matchA[4] ? parseInt(matchA[4]) : 0];
-      const preA = matchA[5] || '';
-      
-      const nameB = matchB[1];
-      const versionB = [parseInt(matchB[2]), matchB[3] ? parseInt(matchB[3]) : 0, matchB[4] ? parseInt(matchB[4]) : 0];
-      const preB = matchB[5] || '';
-      
+      const nameB = matchB ? matchB[1] : b;
+      const versionB = matchB ? [parseInt(matchB[2]), matchB[3] ? parseInt(matchB[3]) : 0, matchB[4] ? parseInt(matchB[4]) : 0] : [0, 0, 0];
+      const preB = matchB ? matchB[5] || '' : '';
+
       if (nameA !== nameB) return nameA.localeCompare(nameB);
-      if (versionA[0] !== versionB[0]) return versionA[0] - versionB[0];
-      if (versionA[1] !== versionB[1]) return versionA[1] - versionB[1];
-      if (versionA[2] !== versionB[2]) return versionA[2] - versionB[2];
+      for (let i = 0; i < 3; i++) {
+          if (versionA[i] !== versionB[i]) return versionA[i] - versionB[i];
+      }
       return preA.localeCompare(preB);
   });
 }
+
 
 
 router.get(`/jarsIndex`, function (req, res) {
