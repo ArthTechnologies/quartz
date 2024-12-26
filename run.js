@@ -254,7 +254,7 @@ function downloadJars() {
         });
 
       } catch (e) {
-        console.log("Error downloading " + filename + ": " + e);
+        console.log("Error downloading file: " + e);
       }
     }
     }
