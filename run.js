@@ -223,9 +223,9 @@ function downloadJars() {
   files.GET(jarsMcUrl + "jars", (data) => {
     if (!data.includes("html")) {
       data = JSON.parse(data);
-      console.log(Object.keys(data));
+
       for (i in data) {
-        let filename = Object.keys(data)[i];
+        let filename = i;
         console.log("downloading "+Object.keys(data)[i]);
         let url = data[i][0];
         let software = filename.split("-")[0];
