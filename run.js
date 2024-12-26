@@ -238,7 +238,7 @@ function downloadJars() {
         } else {
           channel = "*" + channel;
         }
-        let newFilename = `assets/jars/${software}-${version}${channel}.${extension}`;
+        let newFilename = `assets/jars/downloads/${software}-${version}${channel}.${extension}`;
 
         console.log("Downloading " + filename);
 
