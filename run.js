@@ -247,7 +247,7 @@ function downloadJars() {
           channel = "*" + channel;
         }
       } else {
-        version = version.split("."+extension);
+        version = version.split("."+extension)[0];
       } 
         let newFilename = `${software}-${version}${channel}.${extension}`;
 
