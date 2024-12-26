@@ -180,6 +180,9 @@ function sortFiles(files) {
       const matchA = a.match(regex);
       const matchB = b.match(regex);
       
+      if (!matchA) return 1;
+      if (!matchB) return -1;
+
       const nameA = matchA[1];
       const versionA = [parseInt(matchA[2]), matchA[3] ? parseInt(matchA[3]) : 0, matchA[4] ? parseInt(matchA[4]) : 0];
       const preA = matchA[5] || '';
