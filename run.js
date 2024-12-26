@@ -252,7 +252,7 @@ function downloadJars() {
           }
           fs.copyFileSync(
             `assets/jars/downloads/${newFilename}`,
-            newFilename
+            `assets/jars/${newFilename}`
           );
           fs.unlinkSync(`assets/jars/downloads/${newFilename}`);
         });
