@@ -225,8 +225,9 @@ function downloadJars() {
       data = JSON.parse(data);
 
       for (i in data) {
+        try {
         let filename = i;
-        console.log("Downloading " + filename);
+
         let url = data[i][0];
         let software = filename.split("-")[0];
         let version = filename.split("-")[1];
@@ -239,6 +240,8 @@ function downloadJars() {
         }
         let newFilename = `assets/jars/${software}-${version}${channel}.${extension}`;
 
+        console.log("Downloading " + filename);
+
         files.downloadAsync(newFilename, url, (data) => {
           if (fs.existsSync(newFilename)) {
             fs.unlinkSync(newFilename);
@@ -250,7 +253,10 @@ function downloadJars() {
           fs.unlinkSync(`assets/jars/downloads/${filename}`);
         });
 
+      } catch (e) {
+        console.log("Error downloading " + filename + ": " + e);
       }
+    }
     }
   });
 }
