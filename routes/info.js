@@ -169,8 +169,22 @@ router.get(`/jars`, function (req, res) {
       returnArray.push(file);
     }
   });
-  //sort array
-  returnArray.sort();
+  //sort array by version numbers
+  returnArray.sort((a, b) => {
+    let a1 = a.split("-")[1].split(".")[0];
+    let a2 = a.split("-")[1].split(".")[1];
+    let a3 = a.split("-")[1].split(".")[2];
+    let b1 = b.split("-")[1].split(".")[0];
+    let b2 = b.split("-")[1].split(".")[1];
+    let b3 = b.split("-")[1].split(".")[2];
+    if (a1 != b1) {
+      return a1 - b1;
+    } else if (a2 != b2) {
+      return a2 - b2;
+    } else {
+      return a3 - b3;
+    }
+  });
   res.status(200).json(returnArray);
 });
 
