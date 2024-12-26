@@ -84,7 +84,7 @@ Router.post("/email/signup/", (req, res) => {
             account.email = email.toLowerCase();
             account.freeServers = 0;
             account.lastSignin = new Date().getTime();
-            addAccount(account);
+;
             writeJSON("accounts/email:" + email + ".json", account);
             writeAccount(account.accountId, "email:"+email, email, account.servers, 0, account.freeServers, account.lastSignin, account.token, account.salt, account.password, account.resetAttempts);
             res
