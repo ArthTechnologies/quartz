@@ -171,23 +171,13 @@ router.get(`/jars`, function (req, res) {
   });
   //sort array by version numbers. highest first
   returnArray.sort((a, b) => {
-    let a1 = a.split("-")[1].split(".")[1];
-    let a2 = a.split("-")[1].split(".")[2];
-    let b1 = b.split("-")[1].split(".")[1];
-    let b2 = b.split("-")[1].split(".")[2];
-    if (a1 > b1) {
-      return -1;
-    } else if (a1 < b1) {
-      return 1;
-    } else {
-      if (a2 > b2) {
-        return -1;
-      } else if (a2 < b2) {
-        return 1;
-      } else {
-        return 0;
-      }
-    }
+    let a1 = a.split("-")[1];
+    let b1 = b.split("-")[1];
+    if (a1 == undefined) a1 = "0";
+    if (b1 == undefined) b1 = "0";
+    return parseFloat(b1) - parseFloat(a1);
+
+    
     
   });
   res.status(200).json(returnArray);
