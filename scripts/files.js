@@ -18,6 +18,9 @@ function downloadAsync(file, url, callback) {
       callback(stdout);
     } catch {
       console.log("Error in callback whislst downloading " + file);
+      console.log("stdout: " + stdout);
+      console.log("stderr: " + stderr);
+      console.log("error: " + error);
     }
   });
 }
