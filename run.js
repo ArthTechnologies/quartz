@@ -246,7 +246,7 @@ function downloadJars() {
 
         console.log("Downloading " + newFilename);
 
-        files.downloadAsync("assets/jars/downloads"+newFilename, url, (data) => {
+        files.downloadAsync("assets/jars/downloads/"+newFilename, url, (data) => {
           if (fs.existsSync(`assets/jars/${newFilename}`)) {
             fs.unlinkSync(`assets/jars/${newFilename}`);
           }
