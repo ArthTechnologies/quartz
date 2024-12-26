@@ -171,6 +171,8 @@ router.get(`/jars`, function (req, res) {
   });
   //sort
   returnArray = sortFiles(returnArray);
+  //reverse
+  returnArray.reverse();
   res.status(200).json(returnArray);
 });
 
