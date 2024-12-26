@@ -15,7 +15,11 @@ function downloadAsync(file, url, callback) {
 
   exec(`curl -s -o ${file} -L "${url}"`, (error, stdout, stderr) => {
     try {
-      callback(stdout);
+      let out = "";
+      if (stdout != undefined) {
+        out = stdout;
+      }
+      callback(out);
     } catch {
       console.log("Error in callback whislst downloading " + file);
       console.log("Error: " + error);
