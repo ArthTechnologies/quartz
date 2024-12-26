@@ -13,7 +13,7 @@ function downloadAsync(file, url, callback) {
   url = url.replace(/\]/g, "%5D");
   console.log(`curl -s -o ${file} -L "${url}"`);
 
-  exec(`curl -s -o ${file} -L "${url}"`, (error, stdout, stderr) => {
+  exec(`curl -sS -o ${file} -L "${url}"`, (error, stdout, stderr) => {
     try {
       let out = "";
       if (stdout != undefined) {
@@ -23,6 +23,8 @@ function downloadAsync(file, url, callback) {
     } catch (e) {
       console.log("Error in callback whislst downloading " + file);
       console.log("Error: " + e);
+      console.log("stdout: " + stdout);
+      console.log("stderr: " + stderr);
     }
   });
 }
