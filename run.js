@@ -226,7 +226,7 @@ function downloadJars() {
       console.log(Object.keys(data));
       for (i in data) {
         let filename = Object.keys(data)[i];
-        console.log(Object.keys(data)[i]);
+        console.log("downloading "+Object.keys(data)[i]);
         let url = data[i][0];
         let software = filename.split("-")[0];
         let version = filename.split("-")[1];
