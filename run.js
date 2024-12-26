@@ -226,6 +226,10 @@ function downloadJars() {
 
       for (i in data) {
         try {
+          //create downloads folder if it doesn't exist
+          if (!fs.existsSync("assets/jars/downloads")) {
+            fs.mkdirSync("assets/jars/downloads");
+          }
         let filename = i;
 
         let url = data[i][0];
