@@ -234,8 +234,10 @@ function downloadJars() {
         let extension = filename.split(".")[filename.split(".").length - 1];
         if (channel == "release") {
           channel = "";
+        } else {
+          channel = "*" + channel;
         }
-        let newFilename = `assets/jars/${software}-${version}*${channel}.${extension}`;
+        let newFilename = `assets/jars/${software}-${version}${channel}.${extension}`;
         files.downloadAsync(newFilename, url, (data) => {
           if (fs.existsSync(newFilename)) {
             fs.unlinkSync(newFilename);
