@@ -226,7 +226,7 @@ function downloadJars() {
 
       for (i in data) {
         let filename = i;
-
+        console.log("Downloading " + filename);
         let url = data[i][0];
         let software = filename.split("-")[0];
         let version = filename.split("-")[1];
@@ -238,7 +238,7 @@ function downloadJars() {
           channel = "*" + channel;
         }
         let newFilename = `assets/jars/${software}-${version}${channel}.${extension}`;
-        console.log("Downloading " + newFilename);
+
         files.downloadAsync(newFilename, url, (data) => {
           if (fs.existsSync(newFilename)) {
             fs.unlinkSync(newFilename);
