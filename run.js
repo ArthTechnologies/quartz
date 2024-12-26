@@ -223,10 +223,9 @@ function downloadJars() {
   files.GET(jarsMcUrl + "jars", (data) => {
     if (!data.includes("html")) {
       data = JSON.parse(data);
-
+      console.log(data)
       for (i in data) {
         let filename = Object.keys(data)[i];
-        console.log(filename);
         let url = data[i][0];
         let software = filename.split("-")[0];
         let version = filename.split("-")[1];
