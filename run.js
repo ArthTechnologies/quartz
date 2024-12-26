@@ -242,19 +242,19 @@ function downloadJars() {
         } else {
           channel = "*" + channel;
         }
-        let newFilename = `assets/jars/downloads/${software}-${version}${channel}.${extension}`;
+        let newFilename = `${software}-${version}${channel}.${extension}`;
 
-        console.log("Downloading " + filename);
+        console.log("Downloading " + newFilename);
 
-        files.downloadAsync(newFilename, url, (data) => {
-          if (fs.existsSync(newFilename)) {
-            fs.unlinkSync(newFilename);
+        files.downloadAsync("assets/jars/downloads"+newFilename, url, (data) => {
+          if (fs.existsSync(`assets/jars/${newFilename}`)) {
+            fs.unlinkSync(`assets/jars/${newFilename}`);
           }
           fs.copyFileSync(
-            `assets/jars/downloads/${filename}`,
+            `assets/jars/downloads/${newFilename}`,
             newFilename
           );
-          fs.unlinkSync(`assets/jars/downloads/${filename}`);
+          fs.unlinkSync(`assets/jars/downloads/${newFilename}`);
         });
 
       } catch (e) {
