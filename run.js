@@ -226,11 +226,11 @@ function downloadJars() {
 
       for (i in data) {
         let filename = i;
-        console.log("downloading "+Object.keys(data)[i]);
+        console.log("downloading "+i);
         let url = data[i][0];
         let software = filename.split("-")[0];
         let version = filename.split("-")[1];
-        let channel = filename.split("-")[2];
+        let channel = filename.split("-")[2].split(".")[0];
         let extension = filename.split(".")[filename.split(".").length - 1];
         if (channel == "release") {
           channel = "";
