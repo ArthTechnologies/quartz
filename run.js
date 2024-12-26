@@ -177,7 +177,7 @@ if (!fs.existsSync("assets/jars")) {
 }
 
 const datajson = readJSON("./assets/data.json");
-if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 12) {
+if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 6) {
   downloadJars();
   verifySubscriptions();
   backup();
@@ -281,124 +281,29 @@ function downloadJars() {
   files.GET(jarsMcUrl + "jars", (data) => {
     if (!data.includes("html")) {
       data = JSON.parse(data);
-      let downloadProgress = [];
+
       for (i in data) {
-        for (j in data[i]) {
-          let jar = data[i][j];
-          let extension = "jar";
-          switch (jar.software) {
-            case "terralith":
-            case "structory":
-            case "incendium":
-            case "nullscape":
-              extension = "zip";
-              break;
-          }
-          let c = "";
-          switch (jar.software) {
-            case "paper":
-              c = "servers";
-              break;
-            case "velocity":
-              c = "proxies";
-              break;
-            case "quilt":
-              c = "modded";
-              break;
-            case "vanilla":
-              c = "vanilla";
-              break;
-            case "waterfall":
-              c = "proxies";
-              break;
-            case "forge":
-              c = "modded";
-              break;
-            case "fabric":
-              c = "modded";
-              break;
-            case "snapshot":
-              c = "vanilla";
-              break;
-            case "spigot":
-              c = "servers";
-              break;
-          }
-
-          downloadProgress.push(false);
-          function downloadFromJarsMC() {
-            files.downloadAsync(
-              "assets/jars/downloads/" +
-                jar.software +
-                "-" +
-                jar.version +
-                "." +
-                extension,
-              jarsMcUrl + "jars/" + jar.software + "/" + jar.version,
-              (data3) => {
-                if (
-                  fs.statSync(
-                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
-                  ).size > 4096
-                ) {
-                  fs.copyFileSync(
-                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`,
-                    `assets/jars/${jar.software}-${jar.version}.${extension}`
-                  );
-                  fs.unlinkSync(
-                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
-                  );
-                } else {
-                }
-              }
-            );
-          }
-
-          //forge needs to download from JarsMC because serverjars always has the
-          //latest version, which is not always the recommended version.
-          if (jar.software != "forge") {
-            files.downloadAsync(
-              "assets/jars/downloads/" +
-                jar.software +
-                "-" +
-                jar.version +
-                "." +
-                extension,
-              "https://centrojars.com/api/fetchJar/" +
-                c +
-                "/" +
-                jar.software +
-                "/" +
-                jar.version,
-              (data2) => {
-                if (
-                  !fs.existsSync(
-                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
-                  ) ||
-                  fs.readFileSync(
-                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
-                  ).length == 26351 ||
-                  fs.readFileSync(
-                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
-                  ).length <= 4096
-                ) {
-                  downloadFromJarsMC();
-                  return;
-                } else {
-                  fs.copyFileSync(
-                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`,
-                    `assets/jars/${jar.software}-${jar.version}.${extension}`
-                  );
-                  fs.unlinkSync(
-                    `assets/jars/downloads/${jar.software}-${jar.version}.${extension}`
-                  );
-                }
-              }
-            );
-          } else {
-            downloadFromJarsMC();
-          }
+        let filename = Object.keys(data)[i];
+        let url = data[i][0];
+        let software = filename.split("-")[0];
+        let version = filename.split("-")[1];
+        let channel = filename.split("-")[2];
+        let extension = filename.split(".")[filename.split(".").length - 1];
+        if (channel == "release") {
+          channel = "";
         }
+        let newFilename = `assets/jars/${software}-${version}*${channel}.${extension}`;
+        files.downloadAsync(newFilename, url, (data) => {
+          if (fs.existsSync(newFilename)) {
+            fs.unlinkSync(newFilename);
+          }
+          fs.copyFileSync(
+            `assets/jars/downloads/${filename}`,
+            newFilename
+          );
+          fs.unlinkSync(`assets/jars/downloads/${filename}`);
+        });
+
       }
     }
   });
