@@ -169,6 +169,8 @@ router.get(`/jars`, function (req, res) {
       returnArray.push(file);
     }
   });
+  //sort array
+  returnArray.sort();
   res.status(200).json(returnArray);
 });
 
