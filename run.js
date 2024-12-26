@@ -223,8 +223,9 @@ function downloadJars() {
   files.GET(jarsMcUrl + "jars", (data) => {
     if (!data.includes("html")) {
       data = JSON.parse(data);
-
+      let counter = 0;
       for (i in data) {
+        counter++;
         try {
           //create downloads folder if it doesn't exist
           if (!fs.existsSync("assets/jars/downloads")) {
@@ -249,7 +250,7 @@ function downloadJars() {
         let newFilename = `${software}-${version}${channel}.${extension}`;
 
         console.log("Downloading " + newFilename);
-
+        setTimeout(() => {
         files.downloadAsync("assets/jars/downloads/"+newFilename, url, (data) => {
           if (fs.existsSync(`assets/jars/${newFilename}`)) {
             fs.unlinkSync(`assets/jars/${newFilename}`);
@@ -260,6 +261,7 @@ function downloadJars() {
           );
           fs.unlinkSync(`assets/jars/downloads/${newFilename}`);
         });
+      }, 200 * counter);
 
       } catch (e) {
         console.log("Error downloading file: " + e);
