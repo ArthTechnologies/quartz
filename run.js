@@ -215,65 +215,7 @@ function downloadJars() {
   const datajson = readJSON("./assets/data.json");
   datajson.lastUpdate = Date.now();
   writeJSON("assets/data.json", datajson);
-  //geyser
-  files.downloadAsync(
-    "assets/jars/downloads/cx_geyser-spigot_Geyser.jar",
-    "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot",
-    (data) => {
-      if (fs.existsSync(`assets/jars/cx_geyser-spigot_Geyser.jar`)) {
-        fs.unlinkSync(`assets/jars/cx_geyser-spigot_Geyser.jar`);
-      }
-      fs.copyFileSync(
-        `assets/jars/downloads/cx_geyser-spigot_Geyser.jar`,
-        `assets/jars/cx_geyser-spigot_Geyser.jar`
-      );
-      fs.unlinkSync(`assets/jars/downloads/cx_geyser-spigot_Geyser.jar`);
-    }
-  );
-  files.downloadAsync(
-    "assets/jars/downloads/cx_floodgate-spigot_Floodgate.jar",
-    "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot",
-    (data) => {
-      if (fs.existsSync(`assets/jars/cx_floodgate-spigot_Floodgate.jar`)) {
-        fs.unlinkSync(`assets/jars/cx_floodgate-spigot_Floodgate.jar`);
-      }
-      fs.copyFileSync(
-        `assets/jars/downloads/cx_floodgate-spigot_Floodgate.jar`,
-        `assets/jars/cx_floodgate-spigot_Floodgate.jar`
-      );
-      fs.unlinkSync(`assets/jars/downloads/cx_floodgate-spigot_Floodgate.jar`);
-    }
-  );
-  files.downloadAsync(
-    "assets/jars/downloads/cx_geyser-velocity_Geyser.jar",
-    "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity",
-    (data) => {
-      if (fs.existsSync(`assets/jars/cx_geyser-velocity_Geyser.jar`)) {
-        fs.unlinkSync(`assets/jars/cx_geyser-velocity_Geyser.jar`);
-      }
-      fs.copyFileSync(
-        `assets/jars/downloads/cx_geyser-velocity_Geyser.jar`,
-        `assets/jars/cx_geyser-velocity_Geyser.jar`
-      );
-      fs.unlinkSync(`assets/jars/downloads/cx_geyser-velocity_Geyser.jar`);
-    }
-  );
-  files.downloadAsync(
-    "assets/jars/downloads/cx_floodgate-velocity_Floodgate.jar",
-    "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity",
-    (data) => {
-      if (fs.existsSync(`assets/jars/cx_floodgate-velocity_Floodgate.jar`)) {
-        fs.unlinkSync(`assets/jars/cx_floodgate-velocity_Floodgate.jar`);
-      }
-      fs.copyFileSync(
-        `assets/jars/downloads/cx_floodgate-velocity_Floodgate.jar`,
-        `assets/jars/cx_floodgate-velocity_Floodgate.jar`
-      );
-      fs.unlinkSync(
-        `assets/jars/downloads/cx_floodgate-velocity_Floodgate.jar`
-      );
-    }
-  );
+
   let jarsMcUrl = "https://api.jarsmc.xyz/";
   jarsMcUrl = config.jarsMcUrl;
 
