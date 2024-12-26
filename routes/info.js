@@ -169,19 +169,33 @@ router.get(`/jars`, function (req, res) {
       returnArray.push(file);
     }
   });
-  //sort array by version numbers. highest first
-  returnArray.sort((a, b) => {
-    let a1 = a.split("-")[1];
-    let b1 = b.split("-")[1];
-    if (a1 == undefined) a1 = "0";
-    if (b1 == undefined) b1 = "0";
-    return parseFloat(b1) - parseFloat(a1);
-
-    
-    
-  });
+  //sort
+  returnArray = sortFiles(returnArray);
   res.status(200).json(returnArray);
 });
+
+function sortFiles(files) {
+  return files.sort((a, b) => {
+      const regex = /([a-zA-Z]+)-(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\*(\w+))?\.jar|\.zip/;
+      const matchA = a.match(regex);
+      const matchB = b.match(regex);
+      
+      const nameA = matchA[1];
+      const versionA = [parseInt(matchA[2]), matchA[3] ? parseInt(matchA[3]) : 0, matchA[4] ? parseInt(matchA[4]) : 0];
+      const preA = matchA[5] || '';
+      
+      const nameB = matchB[1];
+      const versionB = [parseInt(matchB[2]), matchB[3] ? parseInt(matchB[3]) : 0, matchB[4] ? parseInt(matchB[4]) : 0];
+      const preB = matchB[5] || '';
+      
+      if (nameA !== nameB) return nameA.localeCompare(nameB);
+      if (versionA[0] !== versionB[0]) return versionA[0] - versionB[0];
+      if (versionA[1] !== versionB[1]) return versionA[1] - versionB[1];
+      if (versionA[2] !== versionB[2]) return versionA[2] - versionB[2];
+      return preA.localeCompare(preB);
+  });
+}
+
 
 router.get(`/jarsIndex`, function (req, res) {
   files.getIndex((index) => {
