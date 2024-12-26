@@ -11,7 +11,6 @@ function downloadAsync(file, url, callback) {
   url = url.replace(/ /g, "%20");
   url = url.replace(/\[/g, "%5B");
   url = url.replace(/\]/g, "%5D");
-  console.log(`curl -s -o ${file} -L "${url}"`);
 
   exec(`curl -sS -o ${file} -L "${url}"`, (error, stdout, stderr) => {
     try {
