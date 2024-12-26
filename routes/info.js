@@ -188,7 +188,7 @@ function sortFiles(files) {
       const versionB = matchB ? [parseInt(matchB[2]), matchB[3] ? parseInt(matchB[3]) : 0, matchB[4] ? parseInt(matchB[4]) : 0] : [0, 0, 0];
       const preB = matchB ? matchB[5] || '' : '';
 
-      if (nameA !== nameB) return nameA.localeCompare(nameB);
+      if (nameA !== nameB && nameA != undefined && nameB != undefined) return nameA.localeCompare(nameB);
       for (let i = 0; i < 3; i++) {
           if (versionA[i] !== versionB[i]) return versionA[i] - versionB[i];
       }
