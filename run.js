@@ -236,12 +236,16 @@ function downloadJars() {
         let software = filename.split("-")[0];
         let version = filename.split("-")[1];
         let extension = filename.split(".")[filename.split(".").length - 1];
-        let channel = filename.split("-")[2].split("."+extension)[0];
+        let channel = "";
+        if (filename.split("-").length > 2) {
+
+         channel = filename.split("-")[2].split("."+extension)[0];
         if (channel == "release") {
           channel = "";
         } else {
           channel = "*" + channel;
         }
+      } 
         let newFilename = `${software}-${version}${channel}.${extension}`;
 
         console.log("Downloading " + newFilename);
