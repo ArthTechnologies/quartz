@@ -222,6 +222,7 @@ function downloadJars() {
   //plugins
   files.GET(jarsMcUrl + "jars", (data) => {
     if (!data.includes("html")) {
+      try {
       data = JSON.parse(data);
       let counter = 0;
       for (i in data) {
@@ -269,6 +270,9 @@ function downloadJars() {
         console.log("Error downloading file: " + e);
       }
     }
+  } catch (e) {
+    console.log("Error reaching JarsMC");
+  }
     }
   });
 }
