@@ -197,7 +197,7 @@ Router.post("/changeToEmail", (req, res) => {
     account.password = files.hash(password).split(":")[1];
     account.salt = files.hash(password).split(":")[0];
     writeJSON("accounts/email:" + username.split(":")[1] + ".json", account);
-    writeAccount(account.accountId, username.split(":")[1], email, account.servers, 0, account.freeServers, account.lastSignin, account.token, account.salt, account.password, account.resetAttempts);
+    writeAccount(account.accountId, "email:"+username.split(":")[1], email, account.servers, 0, account.freeServers, account.lastSignin, account.token, account.salt, account.password, account.resetAttempts);
 
     res.status(200).send({ success: true });
   } else {
@@ -296,7 +296,7 @@ Router.post("/discord/", (req, res) => {
         };
         account.lastSignin = new Date().getTime();
         writeJSON("accounts/discord:" + username + ".json", account);
-        writeAccount(account.accountId, username, account.email, account.servers, 0, account.freeServers, account.lastSignin, account.token, account.salt, account.password, account.resetAttempts);
+        writeAccount(account.accountId, "discord:"+username, account.email, account.servers, 0, account.freeServers, account.lastSignin, account.token, account.salt, account.password, account.resetAttempts);
         res.status(200).send(response);
       } else {
         let accountId = uuidv4();
@@ -319,7 +319,7 @@ Router.post("/discord/", (req, res) => {
           "accounts/discord:" + username.toLowerCase() + ".json",
           account
         );
-        writeAccount(account.accountId, username.toLowerCase(), account.email, account.servers, 0, account.freeServers, account.lastSignin, account.token, account.salt, account.password, account.resetAttempts);
+        writeAccount(account.accountId, "discord:"+username.toLowerCase(), account.email, account.servers, 0, account.freeServers, account.lastSignin, account.token, account.salt, account.password, account.resetAttempts);
         console.log("discord:", res2);
         res.status(200).send({
           token: account.token,
