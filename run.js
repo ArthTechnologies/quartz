@@ -12,6 +12,9 @@ const migrations = require("./scripts/migrations.js");
 if (!fs.existsSync("accounts.tsv")) {
   migrations.accountsToTSV();
 }
+if (!fs.existsSync("servers.tsv")) {
+  migrations.serversToTSV();
+}
 exec = require("child_process").exec;
 require("dotenv").config();
 if (!fs.existsSync("./backup")) {

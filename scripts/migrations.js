@@ -18,4 +18,29 @@ function accountsToTSV() {
     fs.writeFileSync("accounts.tsv", tsv);
 }
 
-module.exports = {accountsToTSV};
+function serversToTSV() {
+    let servers = fs.readdirSync("servers");
+    let columns = ["id","owner","name","software","version","productID","allowedAccounts","specialDatapacks","specialPlugins"];
+    let tsv = columns.join("\t") + "\n";
+    for (let i in servers) {
+        if (fs.existsSync(`servers/${servers[i]}/server.json`)) {
+        let server = readJSON(`servers/${servers[i]}/server.json`);
+        try {
+            let specialDatapacks = server.addons;
+            let specialPlugins = [];
+            if (server.webmap) specialPlugins.push("webmap");
+            if (server.voicechat) specialPlugins.push("voicechat");
+            if (server.chunky) specialPlugins.push("chunky");
+            if (server.discordsrv) specialPlugins.push("discordsrv");
+
+        let row = [server.id, server.accountId, server.name, server.software, server.version, server.productID, "", specialDatapacks.join(","), specialPlugins.join(",")];	
+        tsv += row.join("\t") + "\n";
+        } catch (e) {
+        console.log("error", e);
+        }
+        }
+    }
+    fs.writeFileSync("servers.tsv", tsv);
+}
+
+module.exports = {accountsToTSV, serversToTSV};
