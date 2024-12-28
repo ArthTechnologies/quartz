@@ -38,7 +38,7 @@ router.get(`/reserve`, function (req, res) {
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
   if (token === account.token || !enableAuth) {
-    let res = {atCapacity: true, id: -1};
+    let resObj = {atCapacity: true, id: -1};
     //see if there is an available id
     let id = -1;
     let serversFolder = fs.readdirSync("servers");
@@ -61,10 +61,10 @@ router.get(`/reserve`, function (req, res) {
     if (id > parseInt(config.maxServers)) {
       id = -1;
     } else {
-      res.atCapacity = false;
+      resObj.atCapacity = false;
     }
-    res.id = id;
-    res.status(200).json(res);
+    resObj.id = id;
+    res.status(200).json(resObj);
     //note: once tsv system is fully implemented, the server should be written to the tsv file so the session can be cleared even if quartz restarts
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
