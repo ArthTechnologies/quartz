@@ -12,19 +12,19 @@ const readJSON = require("../scripts/utils.js").readJSON;
 const enableCloudflareVerify = JSON.parse(config.enableCloudflareVerify);
 
 function writeAccount(id, username, billingEmail, servers, stripeServers, freeServers, lastSignin, token, salt, password, resetAttempts) {
-  let tsv = fs.readFileSync("accounts.tsv", "utf8");
+  let tsv = fs.readFileSync("accounts.tsv", "utf8").split("\n");
   let row = [id, username, billingEmail, servers, stripeServers, freeServers, lastSignin, token, salt, password, resetAttempts].join("\t") + "\n";
   let alreadyExists = false;
   for (let i in tsv) {
-    if (tsv[i].includes(id)) {
+    if (tsv[i].split("\t")[0] == id) {
       alreadyExists = true;
       tsv[i] = row;
     }
   }
   if (!alreadyExists) {
-    tsv += row;
+    tsv.push(row);
   }
-  fs.writeFileSync("accounts.tsv", tsv);
+  fs.writeFileSync("accounts.tsv", tsv.join("\n"));
 
 }
 Router.post("/email/signup/", (req, res) => {

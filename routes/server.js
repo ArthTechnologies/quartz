@@ -18,199 +18,60 @@ const enableAuth = JSON.parse(config.enableAuth);
 const enablePay = JSON.parse(config.enablePay);
 const enableVirusScan = JSON.parse(config.enableVirusScan);
 
-router.get(`/claimId`, function (req, res) {
-  let username = req.headers.username;
-  let token = req.headers.token;
-  let account = readJSON("accounts/" + username + ".json");
-  console.log("ACCOUNTEMAIL-1=" + account.email, username);
-  if (token === account.token || !enableAuth) {
-    if (enablePay) {
-      if (
-        account.freeServers > 0 &&
-        account.servers.length >= account.freeServers
-      ) {
-        res.status(400).json({
-          msg: `You haven't paid for this server.`,
-        });
-        return;
-      }
-      console.log("ACCOUNTEMAIL0=" + account.email, username);
-      //check if the user is subscribed
-      let fullServers = 0;
-      for (i in account.servers) {
-        if (account.servers[i] != undefined) {
-          if (fs.existsSync("servers/" + account.servers[i] + "/server.json")) fullServers++;
-        }
-      }
-      if (account.email != undefined) {
-        stripe.customers.list(
-          {
-            limit: 100,
-            email: account.email,
-          },
-          function (err, customers) {
-            if (err) {
-              console.log("err");
-              return "no";
-            } else {
-              console.log(customers);
-
-              if (customers.data.length > 0) {
-                cid = customers.data[0].id;
-
-                //check the customer's subscriptions and return it
-                stripe.subscriptions.list(
-                  {
-                    customer: cid,
-                    limit: 100,
-                  },
-                  function (err, subscriptions) {
-                    console.log(subscriptions);
-                    let subs = 0;
-                    //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
-                    for (i in subscriptions.data) {
-                      if (subscriptions.data[i] != undefined) {
-                        subs++;
-                      }
-                    }
-                    let freeServers = 0;
-                    console.log("ACCOUNTEMAIL=" + account.email, username);
-                    if (account.freeServers != undefined) {
-                      freeServers = parseInt(account.freeServers);
-                    }
-                    console.log(
-                      "subs: " + subs + " freeServers: " + freeServers
-                    );
-                    console.log("fullServers: " + fullServers);
-                    if (subs + freeServers > fullServers) {
-                      //find an id to assign to the account
-                      let serverFolders = fs.readdirSync("servers");
-                      let serverFolder = serverFolders.sort((a, b) => a - b);
-                      let id = -1;
-                      let lastNum = -1;
-                      let adminServers = 0;
-                      for (let i = 0; i < serverFolder.length; i++) {
-                        try {
-                          if (
-                            fs.existsSync("servers/" + i + "/server.json") &&
-                            readJSON("servers/" + i + "/server.json")
-                              .adminServer
-                          ) {
-                            adminServers++;
-                          }
-                        } catch (err) {
-                          console.log(err);
-                        }
-                        let num = serverFolder[i].split(".")[0];
-
-                        if (parseInt(num) !== i) {
-                          id = i;
-                          break; // Break out of the loop when the first available ID is found.
-                        }
-                        lastNum = parseInt(num);
-                      }
-                      console.log("adminServers: " + adminServers);
-
-                      if (id === -1) {
-                        id = lastNum + 1;
-                      }
-                      if (fs.existsSync("accounts/" + username + ".json")) {
-                        emailExists = true;
-                      }
-
-                      console.log("debug log claiming  " + id);
-                      console.log(parseInt(id), parseInt(config.maxServers));
-                      if (
-                        id != -1 &&
-                        parseInt(id) <=
-                          parseInt(config.maxServers) + adminServers
-                      ) {
-                        fs.mkdirSync("servers/" + id);
-                        console.log("ACCOUNTEMAI2L=" + account.email, username);
-                        if (account.servers == undefined) account.servers = [];
-                        if (!account.servers.includes(id))
-                          account.servers.push(id);
-                        console.log("ACCOUNTEMAIL3=" + account.email, username);
-                        writeJSON("accounts/" + username + ".json", account);
-                        res.status(200).json({ id: id });
-                      } else {
-                        console.log(
-                          "IMPORTANT: customer was unable to claim a server"
-                        );
-                        res.status(400).json({
-                          msg: `We're at capacity. Contact support for a refund.`,
-                        });
-                      }
-                    } else {
-                      res.status(200).json({
-                        success: false,
-                        msg: `You haven't paid for this server.`,
-                        subscriptions: subs,
-                        isCustomer: true,
-                      });
-                    }
-                  }
-                );
-              } else {
-                res.status(200).json({
-                  success: false,
-                  msg: `You haven't paid for a server.`,
-                  subscriptions: 0,
-                  isCustomer: true,
-                });
-              }
-            }
-          }
-        );
-      }
-    } else if (!enablePay || account.servers.length < account.freeServers) {
-      console.log("debug2");
-      //else if auth is disabled, just give them an id
-      //find an id to assign to the account
-      let serverFolders = fs.readdirSync("servers");
-      let serverFolder = serverFolders.sort((a, b) => a - b);
-      let id = -1;
-      let lastNum = -1;
-      for (i in serverFolder) {
-        let num = serverFolder[i].split(".")[0];
-        console.log(num, i);
-        if (num !== i) {
-          id = i;
-          break; // Break out of the loop when the first available ID is found.
-        }
-        lastNum = parseInt(num);
-      }
-
-      if (id === -1) {
-        id = lastNum + 1;
-      }
-      if (fs.existsSync("accounts/" + username + ".json")) {
-        emailExists = true;
-      }
-      if (id != -1 && id < config.maxServers) {
-        console.log("debug3");
-        if (account.servers == undefined) account.servers = [];
-
-        if (!account.servers.includes(id)) account.servers.push(id);
-        console.log("Writing to account... " + username + req.headers.username);
-        writeJSON("accounts/" + username + ".json", account);
-        fs.mkdirSync("servers/" + id);
-
-        res.status(200).json({ id: id });
-      } else {
-        res.status(400).json({
-          msg: `We're at capacity. Contact support for a refund.`,
-        });
-      }
-    } else {
-      res.status(400).json({
-        msg: `You haven't paid for this server.`,
-      });
+function writeServer(id, owner, state, name, software, version, productID, allowedAccounts, specialDatapacks, specialPlugins) {
+  let tsv = fs.readFileSync("servers.tsv", "utf8").split("\n");
+  let row = [id, owner, state, name, software, version, productID, allowedAccounts, specialDatapacks, specialPlugins].join("\t") + "\n";
+  let alreadyExists = false;
+  for (let i in tsv) {
+    if (tsv[i].split("\t")[0] == id) {
+      alreadyExists = true;
+      tsv[i] = row;
     }
+  }
+  if (!alreadyExists) {
+    tsv.push(row);
+  }
+  fs.writeFileSync("servers.tsv", tsv.join("\n"));
+}
+router.get(`/reserve`, function (req, res) {
+  let email = req.headers.username;
+  let token = req.headers.token;
+  let account = readJSON("accounts/" + email + ".json");
+  if (token === account.token || !enableAuth) {
+    let res = {atCapacity: true, id: -1};
+    //see if there is an available id
+    let id = -1;
+    let serversFolder = fs.readdirSync("servers");
+    //remove any non-numerical folders
+    serversFolder = serversFolder.filter((item) => {
+      return !isNaN(parseInt(item));
+    });
+    //sort numerically
+    serversFolder.sort((a, b) => {
+      return a - b;
+    }
+    );
+    for (let i = 0; i < serversFolder.length; i++) {
+      if (!fs.existsSync("servers/" + i)) {
+        id = i;
+        break;
+      }
+    }
+    //make sure the id is not above the max
+    if (id > parseInt(config.maxServers)) {
+      id = -1;
+    } else {
+      res.atCapacity = false;
+    }
+    res.id = id;
+    res.status(200).json(res);
+    //note: once tsv system is fully implemented, the server should be written to the tsv file so the session can be cleared even if quartz restarts
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
   }
-});
+}
+);
+
 router.get(`/:id`, function (req, res) {
   try {
     let email = req.headers.username;
