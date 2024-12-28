@@ -72,6 +72,30 @@ router.get(`/reserve`, function (req, res) {
 }
 );
 
+router.get(`/claim/:id`, function (req, res) {
+  let email = req.headers.username;
+  let token = req.headers.token;
+  let account = readJSON("accounts/" + email + ".json");
+  let id = req.params.id;
+  if (token === account.token || !enableAuth) {
+    if (id < parseInt(config.maxServers)) {
+      if (!account.servers.includes(id)) {
+        account.servers.push(id);
+        writeJSON("accounts/" + email + ".json", account);
+        //to-do: make a way to write the account tsv file
+        fs.mkdirSync("servers/" + id);
+        res.status(200).json({ msg: `Success. Server claimed.` });
+      } else {
+        res.status(400).json({ msg: `Server already claimed.` });
+      }
+    } else {
+      res.status(400).json({ msg: `Invalid server ID.` });
+    }
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
+});
+
 router.get(`/:id`, function (req, res) {
   try {
     let email = req.headers.username;
