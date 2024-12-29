@@ -174,7 +174,7 @@ if (!fs.existsSync("assets/jars")) {
     `{"lastUpdate":${Date.now()},"numServers":0}`
   );
   refreshTempToken();
-  downloadJars();
+  downloadJars("full");
 }
 //clears uploads directory
 fs.readdirSync("assets/uploads").forEach((file) => {
@@ -183,19 +183,26 @@ fs.readdirSync("assets/uploads").forEach((file) => {
 
 const datajson = readJSON("./assets/data.json");
 if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 6) {
-  downloadJars();
+  downloadJars("partial");
   verifySubscriptions();
   backup();
   refreshTempToken();
   removeUnusedAccounts();
 }
 setInterval(() => {
-  downloadJars();
+  downloadJars("partial");
+}, 1000 * 60 * 60 * 2);
+setInterval(() => {
+
   verifySubscriptions();
   backup();
   refreshTempToken();
   removeUnusedAccounts();
 }, 1000 * 60 * 60 * 12);
+
+setInterval(() => {
+  downloadJars("full");
+}, 1000 * 60 * 60 * 24);
 
 function refreshTempToken() {
   const datajson = readJSON("./assets/data.json");
@@ -216,12 +223,15 @@ function refreshTempToken() {
   }
 }
 
-function downloadJars() {
+function downloadJars(type) {
   const datajson = readJSON("./assets/data.json");
   datajson.lastUpdate = Date.now();
   writeJSON("assets/data.json", datajson);
-
+  if (type == "full") {	
   scraper.fullDownload();
+  } else if (type == "partial") {
+    scraper.partialDownload();
+  }
   setTimeout(() => {
     const scraperjson = readJSON("./assets/scraper.json");
       try {
@@ -565,7 +575,7 @@ process.stdin.on("data", (data) => {
       process.stdout.write("\x1B[2J\x1B[0f");
       break;
     case "refresh":
-      downloadJars();
+      downloadJars("full");
       verifySubscriptions();
       refreshTempToken();
       removeUnusedAccounts();
