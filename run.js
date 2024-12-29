@@ -29,10 +29,7 @@ if (!fs.existsSync("./servers")) {
   fs.rmSync("./servers/template", { recursive: true });
 }
 
-//clears uploads directory
-fs.readdirSync("assets/uploads").forEach((file) => {
-  fs.unlinkSync(`assets/uploads/${file}`);
-});
+
 
 if (!fs.existsSync("config.txt")) {
   //migration from old way of storing settings to config.txt
@@ -178,6 +175,13 @@ if (!fs.existsSync("assets/jars")) {
   refreshTempToken();
   downloadJars();
 }
+
+//clears uploads directory
+fs.readdirSync("assets/uploads").forEach((file) => {
+  fs.unlinkSync(`assets/uploads/${file}`);
+});
+
+
 
 const datajson = readJSON("./assets/data.json");
 if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 6) {
@@ -613,7 +617,7 @@ setInterval(() => {
   }
 }, 1000 * 60 * 5);
 
-files.downloadAsync(
+/*files.downloadAsync(
   "assets/java/java21.tar.gz",
   "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.3%2B9/OpenJDK21U-jdk_x64_linux_hotspot_21.0.3_9.tar.gz",
   (data) => {
@@ -639,7 +643,7 @@ files.downloadAsync(
       fs.unlinkSync("assets/java/java8.tar.gz");
     });
   }
-);
+);*/
 const f = require("./scripts/mc.js");
 //this gets the server states every 5 minutes so that if quartz restarts, servers that were up will startup again
 function getServerStates() {
