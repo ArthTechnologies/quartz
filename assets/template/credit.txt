@@ -1,2 +1,0 @@
-Credit to https://jarsmc.xyz/ for their API providing minecraft serverjars, geyser/floodgate plugins, and worldgen mods.
-Credit to https://serverjars.com/ for their API providing minecraft serverjars.

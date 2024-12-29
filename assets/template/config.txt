@@ -29,8 +29,6 @@ enableOcelot=false
 # The forwarding secret used for connecting to an ocelot instance
 # (Will be scrambled upon running the program, make sure you remember it):
 forwardingSecret=
-# The JarsMC instance to get server files and more from (Leave this unless you know what this means):
-jarsMcUrl=https://api.jarsmc.xyz/
 # Labrinth is the software behind modrinth, so if you want to use a different 
 # labrinth-based site for some reason, enter the domain name here:
 labrinthUrl=https://api.modrinth.com/v2

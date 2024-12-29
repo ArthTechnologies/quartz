@@ -283,7 +283,7 @@ function downloadJars(type) {
       }
     }
   } catch (e) {
-    console.log("Error reaching JarsMC");
+    console.log("Error reading jar links: " + e);
   }
   }, 1000 * 15);
     
