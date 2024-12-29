@@ -16,8 +16,8 @@ private.pem
 /assets/data.json
 /assets/uploads
 config.json
-accounts.json
-servers.json
+accounts.tsv
+servers.tsv
 /forgelibs
 assets/deletions-log.txt
 config.txt
