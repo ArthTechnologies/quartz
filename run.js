@@ -7,6 +7,7 @@ const cors = require("cors");
 const fs = require("fs");
 const crypto = require("crypto");
 const files = require("./scripts/files.js");
+const scraper = require("./scripts/scraper.js");
 const migrations = require("./scripts/migrations.js");
 
 if (!fs.existsSync("accounts.tsv")) {
@@ -175,13 +176,10 @@ if (!fs.existsSync("assets/jars")) {
   refreshTempToken();
   downloadJars();
 }
-
 //clears uploads directory
 fs.readdirSync("assets/uploads").forEach((file) => {
   fs.unlinkSync(`assets/uploads/${file}`);
 });
-
-
 
 const datajson = readJSON("./assets/data.json");
 if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 6) {
@@ -223,16 +221,13 @@ function downloadJars() {
   datajson.lastUpdate = Date.now();
   writeJSON("assets/data.json", datajson);
 
-  let jarsMcUrl = "https://api.jarsmc.xyz/";
-  jarsMcUrl = config.jarsMcUrl;
-
-  //plugins
-  files.GET(jarsMcUrl + "jars", (data) => {
-    if (!data.includes("html")) {
+  scraper.fullDownload();
+  setTimeout(() => {
+    const scraperjson = readJSON("./assets/scraper.json");
       try {
-      data = JSON.parse(data);
+  
       let counter = 0;
-      for (i in data) {
+      for (i in scraperjson) {
         counter++;
         try {
           //create downloads folder if it doesn't exist
@@ -241,7 +236,7 @@ function downloadJars() {
           }
         let filename = i;
 
-        let url = data[i][0];
+        let url = scraperjson[i][0];
         let software = filename.split("-")[0];
         let version = filename.split("-")[1];
         let extension = filename.split(".")[filename.split(".").length - 1];
@@ -280,8 +275,9 @@ function downloadJars() {
   } catch (e) {
     console.log("Error reaching JarsMC");
   }
-    }
-  });
+  }, 1000 * 15);
+    
+ 
 }
 
 function backup() {
