@@ -246,7 +246,7 @@ function downloadJars(type) {
           }
         let filename = i;
 
-        let url = scraperjson[i][0];
+        let url = scraperjson[i];
         let software = filename.split("-")[0];
         let version = filename.split("-")[1];
         let extension = filename.split(".")[filename.split(".").length - 1];
