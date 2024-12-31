@@ -265,6 +265,7 @@ function downloadJars(type) {
         let newFilename = `${software}-${version}${channel}.${extension}`;
 
         console.log("Downloading " + newFilename);
+        console.log("URL " + url);
         setTimeout(() => {
         files.downloadAsync("assets/jars/downloads/"+newFilename, url, (data) => {
           if (fs.existsSync(`assets/jars/${newFilename}`)) {
