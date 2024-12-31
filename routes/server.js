@@ -42,6 +42,9 @@ router.get(`/reserve`, function (req, res) {
     //see if there is an available id
     let id = -1;
     let serversFolder = fs.readdirSync("servers");
+    if (serversFolder.length  == 0) {
+      id = 0;
+    }
     //remove any non-numerical folders
     serversFolder = serversFolder.filter((item) => {
       return !isNaN(parseInt(item));
