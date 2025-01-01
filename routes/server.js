@@ -18,6 +18,7 @@ const enableAuth = JSON.parse(config.enableAuth);
 const enablePay = JSON.parse(config.enablePay);
 const enableVirusScan = JSON.parse(config.enableVirusScan);
 const portOffset = parseInt(config.portOffset);
+const idOffset = parseInt(config.idOffset);
 
 function writeServer(id, owner, state, name, software, version, productID, allowedAccounts, specialDatapacks, specialPlugins) {
   let tsv = fs.readFileSync("servers.tsv", "utf8").split("\n");
@@ -80,7 +81,7 @@ router.get(`/claim/:id`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let id = req.params.id;
+  let id = (req.params.id + idOffset);
   if (token === account.token || !enableAuth) {
     if (id < parseInt(config.maxServers)) {
       console.log(account.servers + " servers");
@@ -106,12 +107,12 @@ router.get(`/:id`, function (req, res) {
     let email = req.headers.username;
     let token = req.headers.token;
     let account = readJSON("accounts/" + email + ".json");
-    let server = readJSON("servers/" + req.params.id + "/server.json");
+    let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
 
-    if (hasAccess(token, account, req.params.id)) {
+    if (hasAccess(token, account, (req.params.id + idOffset))) {
       //add cors header
       res.header("Access-Control-Allow-Origin", "*");
-    let id = req.params.id;
+    let id = (req.params.id + idOffset);
       res.status(200).json(f.checkServer(id));
     } else {
       res.status(401).json({ msg: `Invalid credentials.` });
@@ -125,10 +126,10 @@ router.post(`/:id/state/:state`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
     state = req.params.state;
-  let id = req.params.id;
+  let id = (req.params.id + idOffset);
     let token = req.headers.token;
 
     if (
@@ -170,9 +171,9 @@ router.delete(`/:id/:modtype(plugin|datapack|mod)`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
-  let id = req.params.id;
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
+  let id = (req.params.id + idOffset);
     pluginId = req.query.pluginId;
     pluginPlatform = req.query.pluginPlatform;
     pluginName = req.query.pluginName;
@@ -203,8 +204,8 @@ router.get(`/:id/:modtype(plugins|datapacks|mods)`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
     let modtype = req.params.modtype;
     let extension = "jar";
     if (modtype == "datapacks") {
@@ -213,7 +214,7 @@ router.get(`/:id/:modtype(plugins|datapacks|mods)`, function (req, res) {
     }
     let mods = [];
     let unknownMods = [];
-    let id = req.params.id;
+    let id = (req.params.id + idOffset);
     let modpack;
 
     let path = "servers/" + id;
@@ -292,9 +293,9 @@ router.post(`/:id/version/`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
-  let id = req.params.id;
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
+  let id = (req.params.id + idOffset);
     version = req.query.version;
 
     server.version = version;
@@ -314,11 +315,11 @@ router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
-  let id = req.params.id;
+  let id = (req.params.id + idOffset);
     let extension = "jar";
     pluginUrl = req.query.pluginUrl;
     pluginId = req.query.id;
@@ -357,11 +358,11 @@ router.post(`/:id/modpack`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
-    f.stopAsync(req.params.id, () => {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
+    f.stopAsync((req.params.id + idOffset), () => {
       f.downloadModpack(
-        req.params.id,
+        (req.params.id + idOffset),
         req.query.modpackURL,
         req.query.modpackID,
         req.query.versionID
@@ -377,9 +378,9 @@ router.post(`/:id/toggleDisable/:modtype(plugin|datapack|mod)`, function (req, r
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
-  let id = req.params.id;
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
+  let id = (req.params.id + idOffset);
   
     filename = req.query.filename;
     modtype = req.params.modtype;
@@ -418,7 +419,7 @@ router.post(`/new/:id`, function (req, res) {
   try {
     let email = req.headers.username;
     let token = req.headers.token;
-  let id = req.params.id;
+  let id = (req.params.id + idOffset);
     if (!enableAuth) email = "noemail";
     let account = readJSON("accounts/" + email + ".json");
     console.log(
@@ -632,13 +633,13 @@ router.post(`/new/:id`, function (req, res) {
         } else {
           res.status(401).json({
             success: false,
-            msg: `You don't own (ID: ${req.params.id}).`,
+            msg: `You don't own (ID: ${(req.params.id + idOffset)}).`,
           });
         }
       } else {
         res.status(401).json({
           success: false,
-          msg: `There's already a server using (ID: ${req.params.id}). Contact support if you think this is a mistake.`,
+          msg: `There's already a server using (ID: ${(req.params.id + idOffset)}). Contact support if you think this is a mistake.`,
         });
       }
     } else {
@@ -653,9 +654,9 @@ router.post(`/:id/setInfo`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
-  let id = req.params.id;
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
+  let id = (req.params.id + idOffset);
     iconUrl = req.body.icon;
     desc = req.body.desc;
 
@@ -673,7 +674,7 @@ router.post(`/:id/setInfo`, function (req, res) {
     } else {
       if (f.checkServer(id).software == "paper") {
         f.proxiesToggle(
-          req.params.id,
+          (req.params.id + idOffset),
           req.body.proxiesEnabled,
           req.body.fSecret
         );
@@ -745,14 +746,14 @@ router.get(`/:id/getInfo`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
     //send the motd and iconUrl
     let iconUrl = "/images/placeholder.webp";
     let desc = "";
     let secret;
     let proxiesEnabled;
-  let id = req.params.id;
+  let id = (req.params.id + idOffset);
 
     if (f.checkServer(id).software == "velocity") {
       var text = fs.readFileSync(`servers/${id}/velocity.toml`).toString();
@@ -823,13 +824,13 @@ router.get(`/:id/getInfo`, function (req, res) {
 
 router.delete(`/:id`, function (req, res) {
   try {
-    console.log("deleting1 " + req.params.id);
+    console.log("deleting1 " + (req.params.id + idOffset));
     let email = req.headers.username;
     let token = req.headers.token;
     let account = readJSON("accounts/" + email + ".json");
-    let server = readJSON("servers/" + req.params.id + "/server.json");
+    let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
 
-    if (hasAccess(token, account, req.params.id)) {
+    if (hasAccess(token, account, (req.params.id + idOffset))) {
       if (!fs.existsSync("assets/deletions-log.txt")) {
         fs.writeFileSync(
           "assets/deletions-log.txt",
@@ -838,7 +839,7 @@ router.delete(`/:id`, function (req, res) {
             "] " +
             email +
             " made a delete request for server " +
-            req.params.id +
+            (req.params.id + idOffset) +
             "\n"
         );
       } else {
@@ -849,7 +850,7 @@ router.delete(`/:id`, function (req, res) {
             "] " +
             email +
             " made a delete request for server " +
-            req.params.id +
+            (req.params.id + idOffset) +
             "\n"
         );
       }
@@ -860,10 +861,10 @@ router.delete(`/:id`, function (req, res) {
         !enableAuth ||
         account.type != "email"
       ) {
-        console.log("deleting2 " + req.params.id);
-        if (f.getState(req.params.id) == "true") {
+        console.log("deleting2 " + (req.params.id + idOffset));
+        if (f.getState((req.params.id + idOffset)) == "true") {
           console.log("deleting2.5 server is still on, killing it...");
-          f.killAsync(req.params.id, () => {
+          f.killAsync((req.params.id + idOffset), () => {
             console.log("deleting2.6 server killed");
             deleteServer();
           });
@@ -872,20 +873,20 @@ router.delete(`/:id`, function (req, res) {
         }
 
         function deleteServer() {
-          console.log("deleting3 " + req.params.id);
+          console.log("deleting3 " + (req.params.id + idOffset));
           writeJSON(`accounts/${email}.json`, account);
-          console.log("deleting4 " + req.params.id);
+          console.log("deleting4 " + (req.params.id + idOffset));
           files.removeDirectoryRecursiveAsync(
-            `servers/${req.params.id}`,
+            `servers/${(req.params.id + idOffset)}`,
             () => {
-              console.log("deleting5 " + req.params.id);
+              console.log("deleting5 " + (req.params.id + idOffset));
               res.status(200).json({ msg: `Deleted server` });
               console.log("checking if server still exists...");
               setTimeout(() => {
                 //sometimes, it'll delete the files inside a folder but not the folder itself.
 
                 console.log("making sure server is deleted...");
-                files.removeDirectoryRecursive(`servers/${req.params.id}`);
+                files.removeDirectoryRecursive(`servers/${(req.params.id + idOffset)}`);
               }, 5000);
             }
           );
@@ -907,10 +908,10 @@ router.get("/:id/world", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
     //zip /servers/id/world and send it to the client
-  let id = req.params.id;
+  let id = (req.params.id + idOffset);
     let path = "servers/" + id;
     if (server.software == "quilt") {
       path += "/server";
@@ -951,16 +952,16 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   console.log("upload world 0");
   //this disables timeouts if virus scanning takes too long
   req.setTimeout(0);
-let id = req.params.id;
+let id = (req.params.id + idOffset);
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
     let lock = false;
     let lock2 = false;
     console.log("before stopping");
-    f.killAsync(req.params.id, () => {
+    f.killAsync((req.params.id + idOffset), () => {
       console.log("after stopping");
       setTimeout(() => {
         if (!lock2) {
@@ -1158,13 +1159,13 @@ router.get("/:id/proxy/info", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
-    if (f.checkServer(req.params.id)["software"] == "velocity") {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
+    if (f.checkServer((req.params.id + idOffset))["software"] == "velocity") {
       let lobbyName;
 
       let config = fs.readFileSync(
-        `servers/${req.params.id}/velocity.toml`,
+        `servers/${(req.params.id + idOffset)}/velocity.toml`,
         "utf8"
       );
       let lines = config.split("\n");
@@ -1174,7 +1175,7 @@ router.get("/:id/proxy/info", function (req, res) {
       lobbyName = lines[index + 1].split('"')[1];
       res.status(200).json({
         secret: fs.readFileSync(
-          `servers/${req.params.id}/forwarding.secret`,
+          `servers/${(req.params.id + idOffset)}/forwarding.secret`,
           "utf8"
         ),
         lobbyName: lobbyName,
@@ -1191,11 +1192,11 @@ router.post("/:id/proxy/info", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
-    if (f.checkServer(req.params.id)["software"] === "velocity") {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
+    if (f.checkServer((req.params.id + idOffset))["software"] === "velocity") {
       let config = fs.readFileSync(
-        `servers/${req.params.id}/velocity.toml`,
+        `servers/${(req.params.id + idOffset)}/velocity.toml`,
         "utf8"
       );
       let lines = config.split("\n");
@@ -1204,7 +1205,7 @@ router.post("/:id/proxy/info", function (req, res) {
       });
       lines[index + 1] = `  "${req.query.lobbyName}"`;
       let newConfig = lines.join("\n");
-      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig);
+      fs.writeFileSync(`servers/${(req.params.id + idOffset)}/velocity.toml`, newConfig);
       res.status(200).json({ msg: "Done" });
     } else {
       res.status(400).json({ msg: "Not a proxy." });
@@ -1218,11 +1219,11 @@ router.get("/:id/proxy/servers", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
-    if (f.checkServer(req.params.id)["software"] === "velocity") {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
+    if (f.checkServer((req.params.id + idOffset))["software"] === "velocity") {
       let config = fs.readFileSync(
-        `servers/${req.params.id}/velocity.toml`,
+        `servers/${(req.params.id + idOffset)}/velocity.toml`,
         "utf8"
       );
 
@@ -1261,11 +1262,11 @@ router.post("/:id/proxy/servers", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
-    if (f.checkServer(req.params.id)["software"] === "velocity") {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
+    if (f.checkServer((req.params.id + idOffset))["software"] === "velocity") {
       let config = fs.readFileSync(
-        `servers/${req.params.id}/velocity.toml`,
+        `servers/${(req.params.id + idOffset)}/velocity.toml`,
         "utf8"
       );
 
@@ -1306,7 +1307,7 @@ router.post("/:id/proxy/servers", function (req, res) {
       ) {
         servers.push({ name: req.query.name, ip: req.query.ip });
       }
-      fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig);
+      fs.writeFileSync(`servers/${(req.params.id + idOffset)}/velocity.toml`, newConfig);
 
       if (req.query.ip.split(":")[0] == config.address) {
         let subserverId = parseInt(req.query.ip.split(":")[1]) - portOffset;
@@ -1326,9 +1327,9 @@ router.post("/:id/proxy/servers", function (req, res) {
               false
             );
           });
-          f.stopAsync(req.params.id, () => {
+          f.stopAsync((req.params.id + idOffset), () => {
             f.run(
-              req.params.id,
+              (req.params.id + idOffset),
               undefined,
               undefined,
               undefined,
@@ -1357,11 +1358,11 @@ router.delete("/:id/proxy/servers", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
-    if (f.checkServer(req.params.id)["software"] === "velocity") {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
+    if (f.checkServer((req.params.id + idOffset))["software"] === "velocity") {
       let config = fs.readFileSync(
-        `servers/${req.params.id}/velocity.toml`,
+        `servers/${(req.params.id + idOffset)}/velocity.toml`,
         "utf8"
       );
 
@@ -1393,10 +1394,10 @@ router.delete("/:id/proxy/servers", function (req, res) {
 
       console.log(servers);
       console.log(
-        fs.readFileSync(`servers/${req.params.id}/velocity.toml`, "utf8")
+        fs.readFileSync(`servers/${(req.params.id + idOffset)}/velocity.toml`, "utf8")
       );
       fs.writeFileSync(
-        `servers/${req.params.id}/velocity.toml`,
+        `servers/${(req.params.id + idOffset)}/velocity.toml`,
         lines.join("\n")
       );
       res.status(200).json(servers);
@@ -1412,12 +1413,12 @@ router.get("/:id/files", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
-    if (fs.existsSync(`servers/${req.params.id}/`)) {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
+    if (fs.existsSync(`servers/${(req.params.id + idOffset)}/`)) {
       res
         .status(200)
-        .json(files.readFilesRecursive(`servers/${req.params.id}/`));
+        .json(files.readFilesRecursive(`servers/${(req.params.id + idOffset)}/`));
     } else {
       res.status(200).json([]);
     }
@@ -1428,15 +1429,15 @@ router.get("/:id/file/:path", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
     let path = req.params.path.split("*").join("/");
-    if (fs.existsSync(`servers/${req.params.id}/${path}`)) {
-      if (fs.lstatSync(`servers/${req.params.id}/${path}`).isDirectory()) {
+    if (fs.existsSync(`servers/${(req.params.id + idOffset)}/${path}`)) {
+      if (fs.lstatSync(`servers/${(req.params.id + idOffset)}/${path}`).isDirectory()) {
         res.status(200).json({
           content:
             "This is a directory, not a file. Listing files: " +
-            fs.readdirSync(`servers/${req.params.id}/${path}`),
+            fs.readdirSync(`servers/${(req.params.id + idOffset)}/${path}`),
         });
       } else {
         let extension = path.split(".")[path.split(".").length - 1];
@@ -1454,7 +1455,7 @@ router.get("/:id/file/:path", function (req, res) {
             .status(200)
             .json({ content: "Binary files can't be edited or viewed." });
         } else if (
-          fs.statSync(`servers/${req.params.id}/${path}`).size > 500000
+          fs.statSync(`servers/${(req.params.id + idOffset)}/${path}`).size > 500000
         ) {
           res.status(200).json({ content: "File too large." });
         } else {
@@ -1462,16 +1463,16 @@ router.get("/:id/file/:path", function (req, res) {
           //get the file's previous versions
           if (
             fs.existsSync(
-              `servers/${req.params.id}/.fileVersions/${req.params.path}`
+              `servers/${(req.params.id + idOffset)}/.fileVersions/${req.params.path}`
             )
           ) {
             versionsArray = fs.readdirSync(
-              `servers/${req.params.id}/.fileVersions/${req.params.path}`
+              `servers/${(req.params.id + idOffset)}/.fileVersions/${req.params.path}`
             );
           }
           res.status(200).json({
             content: fs.readFileSync(
-              `servers/${req.params.id}/${path}`,
+              `servers/${(req.params.id + idOffset)}/${path}`,
               "utf8"
             ),
             versions: versionsArray,
@@ -1488,18 +1489,18 @@ router.get("/:id/file/download/:path", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account, req.params.id)) {
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
+  if (hasAccess(token, account, (req.params.id + idOffset))) {
     let path = req.params.path;
     if (req.params.path.includes("*")) {
       path = req.params.path.split("*").join("/");
     }
-    if (fs.existsSync(`servers/${req.params.id}/${path}`)) {
-      if (fs.statSync(`servers/${req.params.id}/${path}`).isDirectory()) {
+    if (fs.existsSync(`servers/${(req.params.id + idOffset)}/${path}`)) {
+      if (fs.statSync(`servers/${(req.params.id + idOffset)}/${path}`).isDirectory()) {
         //zip the folder and send it to the client
         exec(
           `zip -r -q -X ../${req.params.path}.zip .`,
-          { cwd: `servers/${req.params.id}/${path}` },
+          { cwd: `servers/${(req.params.id + idOffset)}/${path}` },
           (err) => {
             res.setHeader("Content-Type", "application/zip");
 
@@ -1509,11 +1510,11 @@ router.get("/:id/file/download/:path", function (req, res) {
             );
 
             res.status(200).download(
-              `servers/${req.params.id}/${path}.zip`,
+              `servers/${(req.params.id + idOffset)}/${path}.zip`,
               `${req.params.path}.zip`,
               () => {
                 //delete the zip file
-                fs.unlinkSync(`servers/${req.params.id}/${path}.zip`);
+                fs.unlinkSync(`servers/${(req.params.id + idOffset)}/${path}.zip`);
               }
             );
           }
@@ -1524,7 +1525,7 @@ router.get("/:id/file/download/:path", function (req, res) {
           "Content-Disposition",
           `attachment; filename=${req.params.path}`
         );
-        res.status(200).download(`servers/${req.params.id}/${path}`);
+        res.status(200).download(`servers/${(req.params.id + idOffset)}/${path}`);
       }
     } else {
       res.status(400).json({ msg: "Invalid request." });
@@ -1538,10 +1539,10 @@ router.post("/:id/file/:path", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + req.params.id + "/server.json");
+  let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
   if (
-    hasAccess(token, account, req.params.id) &&
-    fs.existsSync(`servers/${req.params.id}/`)
+    hasAccess(token, account, (req.params.id + idOffset)) &&
+    fs.existsSync(`servers/${(req.params.id + idOffset)}/`)
   ) {
     let path = req.params.path;
     if (req.params.path.includes("*")) {
@@ -1551,7 +1552,7 @@ router.post("/:id/file/:path", function (req, res) {
     let filename = path.split("/")[path.split("/").length - 1];
     if (
       req.body.content !== undefined &&
-      fs.existsSync(`servers/${req.params.id}/${path}`) &&
+      fs.existsSync(`servers/${(req.params.id + idOffset)}/${path}`) &&
       (extension == "yml" ||
         extension == "yaml" ||
         extension == "json" ||
@@ -1563,19 +1564,19 @@ router.post("/:id/file/:path", function (req, res) {
       filename != "modrinth.index.json" &&
       filename != "curseforge.index.json" &&
       !path.includes("Geyser-") &&
-      fs.statSync(`servers/${req.params.id}/${path}`).size <= 500000
+      fs.statSync(`servers/${(req.params.id + idOffset)}/${path}`).size <= 500000
     ) {
       if (
         !fs.existsSync(
-          `servers/${req.params.id}/.fileVersions/${req.params.path}`
+          `servers/${(req.params.id + idOffset)}/.fileVersions/${req.params.path}`
         )
       ) {
         fs.mkdirSync(
-          `servers/${req.params.id}/.fileVersions/${req.params.path}`
+          `servers/${(req.params.id + idOffset)}/.fileVersions/${req.params.path}`
         );
       }
       //write only the difference between the old file and the new file
-      let oldFile = fs.readFileSync(`servers/${req.params.id}/${path}`, "utf8");
+      let oldFile = fs.readFileSync(`servers/${(req.params.id + idOffset)}/${path}`, "utf8");
       let newFile = req.body.content;
       let diff = JsDiff.diffLines(oldFile, newFile);
       let diffString = "";
@@ -1589,14 +1590,14 @@ router.post("/:id/file/:path", function (req, res) {
         }
       });
       console.log(diffString);
-      let filename = fs.statSync(`servers/${req.params.id}/${path}`).mtimeMs;
+      let filename = fs.statSync(`servers/${(req.params.id + idOffset)}/${path}`).mtimeMs;
       console.log(filename);
       fs.writeFileSync(
-        `servers/${req.params.id}/.fileVersions/${req.params.path}/${filename}`,
+        `servers/${(req.params.id + idOffset)}/.fileVersions/${req.params.path}/${filename}`,
         diffString
       );
 
-      fs.writeFileSync(`servers/${req.params.id}/${path}`, req.body.content);
+      fs.writeFileSync(`servers/${(req.params.id + idOffset)}/${path}`, req.body.content);
       res.status(200).json({ msg: "Done" });
     } else {
       res.status(400).json({ msg: "Invalid request." });
@@ -1613,12 +1614,12 @@ router.post(
     let email = req.headers.username;
     let token = req.headers.token;
     let account = readJSON("accounts/" + email + ".json");
-    let server = readJSON("servers/" + req.params.id + "/server.json");
+    let server = readJSON("servers/" + (req.params.id + idOffset) + "/server.json");
     if (
-      hasAccess(token, account, req.params.id) &&
-      fs.existsSync(`servers/${req.params.id}/`)
+      hasAccess(token, account, (req.params.id + idOffset)) &&
+      fs.existsSync(`servers/${(req.params.id + idOffset)}/`)
     ) {
-      let id = req.params.id;	
+      let id = (req.params.id + idOffset);	
       let path = req.params.path;
       let filename = req.query.filename;
       if (req.params.path.includes("*")) {
@@ -1664,10 +1665,10 @@ router.delete("/:id/file/:path", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON(`servers/${req.params.id}/server.json`);
+  let server = readJSON(`servers/${(req.params.id + idOffset)}/server.json`);
   if (
-    hasAccess(token, account, req.params.id) &&
-    fs.existsSync(`servers/${req.params.id}/`)
+    hasAccess(token, account, (req.params.id + idOffset)) &&
+    fs.existsSync(`servers/${(req.params.id + idOffset)}/`)
   ) {
     let path = req.params.path;
     console.log("DELETING " + req.params.path + " " + email);
@@ -1677,10 +1678,10 @@ router.delete("/:id/file/:path", function (req, res) {
     let extension = path.split(".")[path.split(".").length - 1];
     let filename = path.split("/")[path.split("/").length - 1];
     if (
-      fs.existsSync(`servers/${req.params.id}/${path}`) &&
+      fs.existsSync(`servers/${(req.params.id + idOffset)}/${path}`) &&
       filename != "server.json"
     ) {
-      fs.unlinkSync(`servers/${req.params.id}/${path}`);
+      fs.unlinkSync(`servers/${(req.params.id + idOffset)}/${path}`);
       res.status(200).json({ msg: "Done" });
     } else {
       res.status(400).json({ msg: "Invalid request." });
@@ -1695,10 +1696,10 @@ router.delete("/:id/folder/:path", function (req, res) {
   let token = req.headers.token;
   password = req.body.password;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON(`servers/${req.params.id}/server.json`);
+  let server = readJSON(`servers/${(req.params.id + idOffset)}/server.json`);
   if (
-    hasAccess(token, account, req.params.id) &&
-    fs.existsSync(`servers/${req.params.id}/`) &&
+    hasAccess(token, account, (req.params.id + idOffset)) &&
+    fs.existsSync(`servers/${(req.params.id + idOffset)}/`) &&
     files.hash(password, account.salt).split(":")[1] == account.password
   ) {
     console.log("DELETING " + req.params.path + " " + email);
@@ -1707,10 +1708,10 @@ router.delete("/:id/folder/:path", function (req, res) {
       path = req.params.path.split("*").join("/");
     }
     if (
-      fs.existsSync(`servers/${req.params.id}/${path}`) &&
+      fs.existsSync(`servers/${(req.params.id + idOffset)}/${path}`) &&
       path.split("").length >= 3
     ) {
-      exec(`rm -rf servers/${req.params.id}/${path}`, (err) => {
+      exec(`rm -rf servers/${(req.params.id + idOffset)}/${path}`, (err) => {
         if (err) {
           console.log(err);
         }
@@ -1729,12 +1730,12 @@ router.post("/:id/rename/", function (req, res) {
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
   if (
-    hasAccess(token, account, req.params.id) &&
-    fs.existsSync(`servers/${req.params.id}/`)
+    hasAccess(token, account, (req.params.id + idOffset)) &&
+    fs.existsSync(`servers/${(req.params.id + idOffset)}/`)
   ) {
-    let server = readJSON(`servers/${req.params.id}/server.json`);
+    let server = readJSON(`servers/${(req.params.id + idOffset)}/server.json`);
     server.name = req.query.newName;
-    writeJSON(`servers/${req.params.id}/server.json`, server);
+    writeJSON(`servers/${(req.params.id + idOffset)}/server.json`, server);
 
     let account = readJSON("accounts/" + email + ".json");
 
@@ -1750,14 +1751,14 @@ router.get("/:id/storageInfo", function (req, res) {
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
   if (
-    hasAccess(token, account, req.params.id) &&
-    fs.existsSync(`servers/${req.params.id}/`)
+    hasAccess(token, account, (req.params.id + idOffset)) &&
+    fs.existsSync(`servers/${(req.params.id + idOffset)}/`)
   ) {
     let limit = -1;
-    let used = files.folderSizeRecursive(`servers/${req.params.id}/`);
-    let plugins = files.folderSizeRecursive(`servers/${req.params.id}/plugins`);
-    let mods = files.folderSizeRecursive(`servers/${req.params.id}/mods`);
-    let worlds = files.folderSizeRecursive(`servers/${req.params.id}/world`);
+    let used = files.folderSizeRecursive(`servers/${(req.params.id + idOffset)}/`);
+    let plugins = files.folderSizeRecursive(`servers/${(req.params.id + idOffset)}/plugins`);
+    let mods = files.folderSizeRecursive(`servers/${(req.params.id + idOffset)}/mods`);
+    let worlds = files.folderSizeRecursive(`servers/${(req.params.id + idOffset)}/world`);
 
     if (config.serverStorageLimit !== undefined) {
       limit = config.serverStorageLimit * 1024 * 1024 * 1024;
@@ -1780,8 +1781,8 @@ router.get("/:id/memoryInfo", function (req, res) {
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
   if (
-    hasAccess(token, account, req.params.id) &&
-    fs.existsSync(`servers/${req.params.id}/`)
+    hasAccess(token, account, (req.params.id + idOffset)) &&
+    fs.existsSync(`servers/${(req.params.id + idOffset)}/`)
   ) {
     try {
       exec(
@@ -1815,10 +1816,10 @@ router.post("/:id/claimSubdomain", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON(`servers/${req.params.id}/server.json`);
+  let server = readJSON(`servers/${(req.params.id + idOffset)}/server.json`);
   if (
-    hasAccess(token, account, req.params.id) &&
-    fs.existsSync(`servers/${req.params.id}`)
+    hasAccess(token, account, (req.params.id + idOffset)) &&
+    fs.existsSync(`servers/${(req.params.id + idOffset)}`)
   ) {
     if (server.subdomain !== undefined) {
       res.status(400).json({ msg: "Server already has a subdomain." });
@@ -1833,8 +1834,8 @@ router.post("/:id/claimSubdomain", function (req, res) {
     "name": "_minecraft._tcp.${subdomain}}",
           "type": "SRV",
       "data": {
-         "port": ${portOffset + parseInt(req.params.id)},
-         "priority": ${portOffset + parseInt(req.params.id)},
+         "port": ${portOffset + parseInt((req.params.id + idOffset))},
+         "priority": ${portOffset + parseInt((req.params.id + idOffset))},
          "target": "join.arthmc.xyz",
          "weight": 5
       }
@@ -1851,8 +1852,8 @@ router.post("/:id/claimSubdomain", function (req, res) {
     "name": "_minecraft._tcp.${subdomain}",
           "type": "SRV",
       "data": {
-         "port": ${portOffset + parseInt(req.params.id)},
-         "priority": ${portOffset + parseInt(req.params.id)},
+         "port": ${portOffset + parseInt((req.params.id + idOffset))},
+         "priority": ${portOffset + parseInt((req.params.id + idOffset))},
          "target": "join.arthmc.xyz",
          "weight": 5
       }
@@ -1874,8 +1875,8 @@ router.post("/:id/claimSubdomain", function (req, res) {
         "name": "_minecraft.udp.${subdomain}",
               "type": "SRV",
           "data": {
-             "port": ${portOffset + parseInt(req.params.id)},
-             "priority": ${portOffset + parseInt(req.params.id)},
+             "port": ${portOffset + parseInt((req.params.id + idOffset))},
+             "priority": ${portOffset + parseInt((req.params.id + idOffset))},
              "target": "join.arthmc.xyz",
              "weight": 5
           }
@@ -1896,7 +1897,7 @@ router.post("/:id/claimSubdomain", function (req, res) {
               }
             } else {
               server.subdomain = subdomain;
-              writeJSON(`servers/${req.params.id}/server.json`, server);
+              writeJSON(`servers/${(req.params.id + idOffset)}/server.json`, server);
               res.status(200).json({ msg: "Done" });
             }
           }
@@ -1915,10 +1916,10 @@ router.post("/:id/deleteSubdomain", function (req, res) {
   let token = req.headers.token;
   let subdomain = req.query.subdomain;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON(`servers/${req.params.id}/server.json`);
+  let server = readJSON(`servers/${(req.params.id + idOffset)}/server.json`);
   if (
-    hasAccess(token, account, req.params.id) &&
-    fs.existsSync(`servers/${req.params.id}`) &&
+    hasAccess(token, account, (req.params.id + idOffset)) &&
+    fs.existsSync(`servers/${(req.params.id + idOffset)}`) &&
     subdomain == server.subdomain
   ) {
     if (server.subdomain === undefined) {
@@ -1946,7 +1947,7 @@ router.post("/:id/deleteSubdomain", function (req, res) {
               res.status(500).json({ msg: "Error deleting subdomain. (2)" });
             } else {
               server.subdomain = undefined;
-              writeJSON(`servers/${req.params.id}/server.json`, server);
+              writeJSON(`servers/${(req.params.id + idOffset)}/server.json`, server);
               res.status(200).json({ msg: "Done" });
             }
           }
@@ -1962,7 +1963,7 @@ router.post("/:id/deleteSubdomain", function (req, res) {
 const proxy = httpProxy.createProxyServer();
 
 router.get("/:id/webmap", function (req, res) {
-  let url = `http://0.0.0.0:${parseInt(req.params.id) + 10200}`;
+  let url = `http://0.0.0.0:${parseInt((req.params.id + idOffset)) + 10200}`;
   console.log(`Proxying request to: ${url}`);
   req.url = "/"; // Set the URL to the root before proxying
   proxy.web(req, res, { target: url });
@@ -1970,7 +1971,7 @@ router.get("/:id/webmap", function (req, res) {
 
 router.get("/:id/webmap/:path", function (req, res) {
   let url =
-    `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` + req.params.path;
+    `http://0.0.0.0:${parseInt((req.params.id + idOffset)) + 10200}/` + req.params.path;
   console.log(`Proxying request to: ${url}`);
   req.url = "/"; // Set the URL to the root before proxying
   proxy.web(req, res, { target: url });
@@ -1984,7 +1985,7 @@ router.get("/:id/webmap/:path/:path2/", function (req, res) {
   }
 
   let url =
-    `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` +
+    `http://0.0.0.0:${parseInt((req.params.id + idOffset)) + 10200}/` +
     req.params.path +
     "/" +
     path2;
@@ -1995,7 +1996,7 @@ router.get("/:id/webmap/:path/:path2/", function (req, res) {
 
 router.get("/:id/webmap/:path/:path2/:path3", function (req, res) {
   let url =
-    `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` +
+    `http://0.0.0.0:${parseInt((req.params.id + idOffset)) + 10200}/` +
     req.params.path +
     "/" +
     req.params.path2 +
