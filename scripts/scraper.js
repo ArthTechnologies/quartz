@@ -11,11 +11,11 @@ let index = {};
 
 //paper
 async function downloadPaperJars() {
-    const response = await fetch("https://api.papermc.io/api/v2/projects/paper");
+    const response = await fetch("https://api.papermc.io/v2/projects/paper");
     const paperVersions = await response.json();
     for (let i in paperVersions.versions) {
         let version = paperVersions.versions[i];
-        const response = await fetch(`https://api.papermc.io/api/v2/projects/paper/versions/${version}/builds`);
+        const response = await fetch(`https://api.papermc.io/v2/projects/paper/versions/${version}/builds`);
         const builds = await response.json();
         const build = builds.builds[builds.builds.length - 1].build;
         let channel = builds.builds[builds.builds.length - 1].channel;
@@ -24,7 +24,7 @@ async function downloadPaperJars() {
         } else if (channel == "default") {
             channel = "release";
         }
-        const link = `https://api.papermc.io/api/v2/projects/paper/versions/${version}/builds/${build}/downloads/paper-${version}-${build}.jar`;
+        const link = `https://api.papermc.io/v2/projects/paper/versions/${version}/builds/${build}/downloads/paper-${version}-${build}.jar`;
         const filename = `paper-${version}-${channel}.jar`;
 
         if (!skipOldVersions || getMajorVersion(version, 1) >= 21) {
@@ -41,11 +41,11 @@ async function downloadPaperJars() {
 //velocity
 async function downloadVelocityJars() {
     //use papermc api
-    const response = await fetch("https://api.papermc.io/api/v2/projects/velocity");
+    const response = await fetch("https://api.papermc.io/v2/projects/velocity");
     const velocityVersions = await response.json();
     for (let i in velocityVersions.versions) {
         let version = velocityVersions.versions[i];
-        const response = await fetch(`https://api.papermc.io/api/v2/projects/velocity/versions/${version}/builds`);
+        const response = await fetch(`https://api.papermc.io/v2/projects/velocity/versions/${version}/builds`);
         const builds = await response.json();
         const build = builds.builds[builds.builds.length - 1].build;
         let channel = "release";
@@ -53,7 +53,7 @@ async function downloadVelocityJars() {
             channel = "beta";
         }
 
-        const link = `https://api.papermc.io/api/v2/projects/velocity/versions/${version}/builds/${build}/downloads/velocity-${version}-${build}.jar`;
+        const link = `https://api.papermc.io/v2/projects/velocity/versions/${version}/builds/${build}/downloads/velocity-${version}-${build}.jar`;
         version = version.split("-")[0];
         const filename = `velocity-${version}-${channel}.jar`;
 
