@@ -108,7 +108,7 @@ router.get(`/:id`, function (req, res) {
     let token = req.headers.token;
     let account = readJSON("accounts/" + email + ".json");
 
-
+    console.log(req.params.id + " " + idOffset);
     if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
       //add cors header
       res.header("Access-Control-Allow-Origin", "*");
