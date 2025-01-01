@@ -272,8 +272,14 @@ router.get(`/accounts`, function (req, res) {
   let forwardingPinReq = req.query.forwardingPin;
   let forwardingPinConfig = config.forwardingPin;
   if (forwardingPinReq == forwardingPinConfig) {
+    let accounts =[];
     let accountsTsv = fs.readFileSync("accounts.tsv", "utf8");
-    res.status(200).send(accountsTsv);
+    for (let line of accountsTsv.split("\n")) {
+      let username = line.split("\t")[1];
+      let servers = line.split("\t")[3];
+      accounts.push(username + ":" + servers);
+    }
+    res.status(200).send(accounts);
   } else {
     res.status(401).send(undefined);
   }
