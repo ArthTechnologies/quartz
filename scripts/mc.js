@@ -13,7 +13,7 @@ const writeJSON = require("./utils.js").writeJSON;
 let terminalOutput = [];
 let terminalInput = "";
 
-const portOffset = parseInt(config.portOffset); 
+const portOffset = 10000; 
 function proxiesToggle(id, toggle, secret) {
   if (toggle == true) {
     let paperGlobal = fs.readFileSync(
