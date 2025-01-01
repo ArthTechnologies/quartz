@@ -81,7 +81,7 @@ router.get(`/claim/:id`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let id = parseInt(req.params.id + idOffset);
+  let id = (parseInt(req.params.id) + parseInt(idOffset));
   if (token === account.token || !enableAuth) {
     if (id < parseInt(config.maxServers)) {
       console.log(account.servers + " servers");
@@ -108,11 +108,11 @@ router.get(`/:id`, function (req, res) {
     let token = req.headers.token;
     let account = readJSON("accounts/" + email + ".json");
 
-    console.log(req.params.id + " " + idOffset);
-    if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
+ 
+    if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
       //add cors header
       res.header("Access-Control-Allow-Origin", "*");
-    let id = parseInt(req.params.id + idOffset);
+    let id = (parseInt(req.params.id) + parseInt(idOffset));
       res.status(200).json(f.checkServer(id));
     } else {
       res.status(401).json({ msg: `Invalid credentials.` });
@@ -126,10 +126,10 @@ router.post(`/:id/state/:state`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
     state = req.params.state;
-  let id = parseInt(req.params.id + idOffset);
+  let id = (parseInt(req.params.id) + parseInt(idOffset));
     let token = req.headers.token;
 
     if (
@@ -171,9 +171,9 @@ router.delete(`/:id/:modtype(plugin|datapack|mod)`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
-  let id = parseInt(req.params.id + idOffset);
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
+  let id = (parseInt(req.params.id) + parseInt(idOffset));
     pluginId = req.query.pluginId;
     pluginPlatform = req.query.pluginPlatform;
     pluginName = req.query.pluginName;
@@ -204,8 +204,8 @@ router.get(`/:id/:modtype(plugins|datapacks|mods)`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
     let modtype = req.params.modtype;
     let extension = "jar";
     if (modtype == "datapacks") {
@@ -214,7 +214,7 @@ router.get(`/:id/:modtype(plugins|datapacks|mods)`, function (req, res) {
     }
     let mods = [];
     let unknownMods = [];
-    let id = parseInt(req.params.id + idOffset);
+    let id = (parseInt(req.params.id) + parseInt(idOffset));
     let modpack;
 
     let path = "servers/" + id;
@@ -293,9 +293,9 @@ router.post(`/:id/version/`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
-  let id = parseInt(req.params.id + idOffset);
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
+  let id = (parseInt(req.params.id) + parseInt(idOffset));
     version = req.query.version;
 
     server.version = version;
@@ -315,11 +315,11 @@ router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
-  let id = parseInt(req.params.id + idOffset);
+  let id = (parseInt(req.params.id) + parseInt(idOffset));
     let extension = "jar";
     pluginUrl = req.query.pluginUrl;
     pluginId = req.query.id;
@@ -358,11 +358,11 @@ router.post(`/:id/modpack`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
-    f.stopAsync(parseInt(req.params.id + idOffset), () => {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
+    f.stopAsync((parseInt(req.params.id) + parseInt(idOffset)), () => {
       f.downloadModpack(
-        parseInt(req.params.id + idOffset),
+        (parseInt(req.params.id) + parseInt(idOffset)),
         req.query.modpackURL,
         req.query.modpackID,
         req.query.versionID
@@ -378,9 +378,9 @@ router.post(`/:id/toggleDisable/:modtype(plugin|datapack|mod)`, function (req, r
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
-  let id = parseInt(req.params.id + idOffset);
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
+  let id = (parseInt(req.params.id) + parseInt(idOffset));
   
     filename = req.query.filename;
     modtype = req.params.modtype;
@@ -419,7 +419,7 @@ router.post(`/new/:id`, function (req, res) {
   try {
     let email = req.headers.username;
     let token = req.headers.token;
-  let id = parseInt(req.params.id + idOffset);
+  let id = (parseInt(req.params.id) + parseInt(idOffset));
     if (!enableAuth) email = "noemail";
     let account = readJSON("accounts/" + email + ".json");
     console.log(
@@ -633,13 +633,13 @@ router.post(`/new/:id`, function (req, res) {
         } else {
           res.status(401).json({
             success: false,
-            msg: `You don't own (ID: ${parseInt(req.params.id + idOffset)}).`,
+            msg: `You don't own (ID: ${(parseInt(req.params.id) + parseInt(idOffset))}).`,
           });
         }
       } else {
         res.status(401).json({
           success: false,
-          msg: `There's already a server using (ID: ${parseInt(req.params.id + idOffset)}). Contact support if you think this is a mistake.`,
+          msg: `There's already a server using (ID: ${(parseInt(req.params.id) + parseInt(idOffset))}). Contact support if you think this is a mistake.`,
         });
       }
     } else {
@@ -654,9 +654,9 @@ router.post(`/:id/setInfo`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
-  let id = parseInt(req.params.id + idOffset);
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
+  let id = (parseInt(req.params.id) + parseInt(idOffset));
     iconUrl = req.body.icon;
     desc = req.body.desc;
 
@@ -674,7 +674,7 @@ router.post(`/:id/setInfo`, function (req, res) {
     } else {
       if (f.checkServer(id).software == "paper") {
         f.proxiesToggle(
-          parseInt(req.params.id + idOffset),
+          (parseInt(req.params.id) + parseInt(idOffset)),
           req.body.proxiesEnabled,
           req.body.fSecret
         );
@@ -746,14 +746,14 @@ router.get(`/:id/getInfo`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
     //send the motd and iconUrl
     let iconUrl = "/images/placeholder.webp";
     let desc = "";
     let secret;
     let proxiesEnabled;
-  let id = parseInt(req.params.id + idOffset);
+  let id = (parseInt(req.params.id) + parseInt(idOffset));
 
     if (f.checkServer(id).software == "velocity") {
       var text = fs.readFileSync(`servers/${id}/velocity.toml`).toString();
@@ -824,13 +824,13 @@ router.get(`/:id/getInfo`, function (req, res) {
 
 router.delete(`/:id`, function (req, res) {
   try {
-    console.log("deleting1 " + parseInt(req.params.id + idOffset));
+    console.log("deleting1 " + (parseInt(req.params.id) + parseInt(idOffset)));
     let email = req.headers.username;
     let token = req.headers.token;
     let account = readJSON("accounts/" + email + ".json");
-    let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
+    let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
 
-    if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
+    if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
       if (!fs.existsSync("assets/deletions-log.txt")) {
         fs.writeFileSync(
           "assets/deletions-log.txt",
@@ -839,7 +839,7 @@ router.delete(`/:id`, function (req, res) {
             "] " +
             email +
             " made a delete request for server " +
-            parseInt(req.params.id + idOffset) +
+            (parseInt(req.params.id) + parseInt(idOffset)) +
             "\n"
         );
       } else {
@@ -850,7 +850,7 @@ router.delete(`/:id`, function (req, res) {
             "] " +
             email +
             " made a delete request for server " +
-            parseInt(req.params.id + idOffset) +
+            (parseInt(req.params.id) + parseInt(idOffset)) +
             "\n"
         );
       }
@@ -861,10 +861,10 @@ router.delete(`/:id`, function (req, res) {
         !enableAuth ||
         account.type != "email"
       ) {
-        console.log("deleting2 " + parseInt(req.params.id + idOffset));
-        if (f.getState(parseInt(req.params.id + idOffset)) == "true") {
+        console.log("deleting2 " + (parseInt(req.params.id) + parseInt(idOffset)));
+        if (f.getState((parseInt(req.params.id) + parseInt(idOffset))) == "true") {
           console.log("deleting2.5 server is still on, killing it...");
-          f.killAsync(parseInt(req.params.id + idOffset), () => {
+          f.killAsync((parseInt(req.params.id) + parseInt(idOffset)), () => {
             console.log("deleting2.6 server killed");
             deleteServer();
           });
@@ -873,20 +873,20 @@ router.delete(`/:id`, function (req, res) {
         }
 
         function deleteServer() {
-          console.log("deleting3 " + parseInt(req.params.id + idOffset));
+          console.log("deleting3 " + (parseInt(req.params.id) + parseInt(idOffset)));
           writeJSON(`accounts/${email}.json`, account);
-          console.log("deleting4 " + parseInt(req.params.id + idOffset));
+          console.log("deleting4 " + (parseInt(req.params.id) + parseInt(idOffset)));
           files.removeDirectoryRecursiveAsync(
-            `servers/${parseInt(req.params.id + idOffset)}`,
+            `servers/${(parseInt(req.params.id) + parseInt(idOffset))}`,
             () => {
-              console.log("deleting5 " + parseInt(req.params.id + idOffset));
+              console.log("deleting5 " + (parseInt(req.params.id) + parseInt(idOffset)));
               res.status(200).json({ msg: `Deleted server` });
               console.log("checking if server still exists...");
               setTimeout(() => {
                 //sometimes, it'll delete the files inside a folder but not the folder itself.
 
                 console.log("making sure server is deleted...");
-                files.removeDirectoryRecursive(`servers/${parseInt(req.params.id + idOffset)}`);
+                files.removeDirectoryRecursive(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}`);
               }, 5000);
             }
           );
@@ -908,10 +908,10 @@ router.get("/:id/world", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
     //zip /servers/id/world and send it to the client
-  let id = parseInt(req.params.id + idOffset);
+  let id = (parseInt(req.params.id) + parseInt(idOffset));
     let path = "servers/" + id;
     if (server.software == "quilt") {
       path += "/server";
@@ -952,16 +952,16 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
   console.log("upload world 0");
   //this disables timeouts if virus scanning takes too long
   req.setTimeout(0);
-let id = parseInt(req.params.id + idOffset);
+let id = (parseInt(req.params.id) + parseInt(idOffset));
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
     let lock = false;
     let lock2 = false;
     console.log("before stopping");
-    f.killAsync(parseInt(req.params.id + idOffset), () => {
+    f.killAsync((parseInt(req.params.id) + parseInt(idOffset)), () => {
       console.log("after stopping");
       setTimeout(() => {
         if (!lock2) {
@@ -1159,13 +1159,13 @@ router.get("/:id/proxy/info", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
-    if (f.checkServer(parseInt(req.params.id + idOffset))["software"] == "velocity") {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
+    if (f.checkServer((parseInt(req.params.id) + parseInt(idOffset)))["software"] == "velocity") {
       let lobbyName;
 
       let config = fs.readFileSync(
-        `servers/${parseInt(req.params.id + idOffset)}/velocity.toml`,
+        `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/velocity.toml`,
         "utf8"
       );
       let lines = config.split("\n");
@@ -1175,7 +1175,7 @@ router.get("/:id/proxy/info", function (req, res) {
       lobbyName = lines[index + 1].split('"')[1];
       res.status(200).json({
         secret: fs.readFileSync(
-          `servers/${parseInt(req.params.id + idOffset)}/forwarding.secret`,
+          `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/forwarding.secret`,
           "utf8"
         ),
         lobbyName: lobbyName,
@@ -1192,11 +1192,11 @@ router.post("/:id/proxy/info", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
-    if (f.checkServer(parseInt(req.params.id + idOffset))["software"] === "velocity") {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
+    if (f.checkServer((parseInt(req.params.id) + parseInt(idOffset)))["software"] === "velocity") {
       let config = fs.readFileSync(
-        `servers/${parseInt(req.params.id + idOffset)}/velocity.toml`,
+        `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/velocity.toml`,
         "utf8"
       );
       let lines = config.split("\n");
@@ -1205,7 +1205,7 @@ router.post("/:id/proxy/info", function (req, res) {
       });
       lines[index + 1] = `  "${req.query.lobbyName}"`;
       let newConfig = lines.join("\n");
-      fs.writeFileSync(`servers/${parseInt(req.params.id + idOffset)}/velocity.toml`, newConfig);
+      fs.writeFileSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/velocity.toml`, newConfig);
       res.status(200).json({ msg: "Done" });
     } else {
       res.status(400).json({ msg: "Not a proxy." });
@@ -1219,11 +1219,11 @@ router.get("/:id/proxy/servers", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
-    if (f.checkServer(parseInt(req.params.id + idOffset))["software"] === "velocity") {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
+    if (f.checkServer((parseInt(req.params.id) + parseInt(idOffset)))["software"] === "velocity") {
       let config = fs.readFileSync(
-        `servers/${parseInt(req.params.id + idOffset)}/velocity.toml`,
+        `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/velocity.toml`,
         "utf8"
       );
 
@@ -1262,11 +1262,11 @@ router.post("/:id/proxy/servers", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
-    if (f.checkServer(parseInt(req.params.id + idOffset))["software"] === "velocity") {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
+    if (f.checkServer((parseInt(req.params.id) + parseInt(idOffset)))["software"] === "velocity") {
       let config = fs.readFileSync(
-        `servers/${parseInt(req.params.id + idOffset)}/velocity.toml`,
+        `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/velocity.toml`,
         "utf8"
       );
 
@@ -1307,7 +1307,7 @@ router.post("/:id/proxy/servers", function (req, res) {
       ) {
         servers.push({ name: req.query.name, ip: req.query.ip });
       }
-      fs.writeFileSync(`servers/${parseInt(req.params.id + idOffset)}/velocity.toml`, newConfig);
+      fs.writeFileSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/velocity.toml`, newConfig);
 
       if (req.query.ip.split(":")[0] == config.address) {
         let subserverId = parseInt(req.query.ip.split(":")[1]) - portOffset;
@@ -1327,9 +1327,9 @@ router.post("/:id/proxy/servers", function (req, res) {
               false
             );
           });
-          f.stopAsync(parseInt(req.params.id + idOffset), () => {
+          f.stopAsync((parseInt(req.params.id) + parseInt(idOffset)), () => {
             f.run(
-              parseInt(req.params.id + idOffset),
+              (parseInt(req.params.id) + parseInt(idOffset)),
               undefined,
               undefined,
               undefined,
@@ -1358,11 +1358,11 @@ router.delete("/:id/proxy/servers", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
-    if (f.checkServer(parseInt(req.params.id + idOffset))["software"] === "velocity") {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
+    if (f.checkServer((parseInt(req.params.id) + parseInt(idOffset)))["software"] === "velocity") {
       let config = fs.readFileSync(
-        `servers/${parseInt(req.params.id + idOffset)}/velocity.toml`,
+        `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/velocity.toml`,
         "utf8"
       );
 
@@ -1394,10 +1394,10 @@ router.delete("/:id/proxy/servers", function (req, res) {
 
       console.log(servers);
       console.log(
-        fs.readFileSync(`servers/${parseInt(req.params.id + idOffset)}/velocity.toml`, "utf8")
+        fs.readFileSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/velocity.toml`, "utf8")
       );
       fs.writeFileSync(
-        `servers/${parseInt(req.params.id + idOffset)}/velocity.toml`,
+        `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/velocity.toml`,
         lines.join("\n")
       );
       res.status(200).json(servers);
@@ -1413,12 +1413,12 @@ router.get("/:id/files", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
-    if (fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}/`)) {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
+    if (fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/`)) {
       res
         .status(200)
-        .json(files.readFilesRecursive(`servers/${parseInt(req.params.id + idOffset)}/`));
+        .json(files.readFilesRecursive(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/`));
     } else {
       res.status(200).json([]);
     }
@@ -1429,15 +1429,15 @@ router.get("/:id/file/:path", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
     let path = req.params.path.split("*").join("/");
-    if (fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`)) {
-      if (fs.lstatSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`).isDirectory()) {
+    if (fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`)) {
+      if (fs.lstatSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`).isDirectory()) {
         res.status(200).json({
           content:
             "This is a directory, not a file. Listing files: " +
-            fs.readdirSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`),
+            fs.readdirSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`),
         });
       } else {
         let extension = path.split(".")[path.split(".").length - 1];
@@ -1455,7 +1455,7 @@ router.get("/:id/file/:path", function (req, res) {
             .status(200)
             .json({ content: "Binary files can't be edited or viewed." });
         } else if (
-          fs.statSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`).size > 500000
+          fs.statSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`).size > 500000
         ) {
           res.status(200).json({ content: "File too large." });
         } else {
@@ -1463,16 +1463,16 @@ router.get("/:id/file/:path", function (req, res) {
           //get the file's previous versions
           if (
             fs.existsSync(
-              `servers/${parseInt(req.params.id + idOffset)}/.fileVersions/${req.params.path}`
+              `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/.fileVersions/${req.params.path}`
             )
           ) {
             versionsArray = fs.readdirSync(
-              `servers/${parseInt(req.params.id + idOffset)}/.fileVersions/${req.params.path}`
+              `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/.fileVersions/${req.params.path}`
             );
           }
           res.status(200).json({
             content: fs.readFileSync(
-              `servers/${parseInt(req.params.id + idOffset)}/${path}`,
+              `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`,
               "utf8"
             ),
             versions: versionsArray,
@@ -1489,18 +1489,18 @@ router.get("/:id/file/download/:path", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
-  if (hasAccess(token, account, parseInt(req.params.id + idOffset))) {
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
+  if (hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset)))) {
     let path = req.params.path;
     if (req.params.path.includes("*")) {
       path = req.params.path.split("*").join("/");
     }
-    if (fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`)) {
-      if (fs.statSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`).isDirectory()) {
+    if (fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`)) {
+      if (fs.statSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`).isDirectory()) {
         //zip the folder and send it to the client
         exec(
           `zip -r -q -X ../${req.params.path}.zip .`,
-          { cwd: `servers/${parseInt(req.params.id + idOffset)}/${path}` },
+          { cwd: `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}` },
           (err) => {
             res.setHeader("Content-Type", "application/zip");
 
@@ -1510,11 +1510,11 @@ router.get("/:id/file/download/:path", function (req, res) {
             );
 
             res.status(200).download(
-              `servers/${parseInt(req.params.id + idOffset)}/${path}.zip`,
+              `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}.zip`,
               `${req.params.path}.zip`,
               () => {
                 //delete the zip file
-                fs.unlinkSync(`servers/${parseInt(req.params.id + idOffset)}/${path}.zip`);
+                fs.unlinkSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}.zip`);
               }
             );
           }
@@ -1525,7 +1525,7 @@ router.get("/:id/file/download/:path", function (req, res) {
           "Content-Disposition",
           `attachment; filename=${req.params.path}`
         );
-        res.status(200).download(`servers/${parseInt(req.params.id + idOffset)}/${path}`);
+        res.status(200).download(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`);
       }
     } else {
       res.status(400).json({ msg: "Invalid request." });
@@ -1539,10 +1539,10 @@ router.post("/:id/file/:path", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
+  let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
   if (
-    hasAccess(token, account, parseInt(req.params.id + idOffset)) &&
-    fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}/`)
+    hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset))) &&
+    fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/`)
   ) {
     let path = req.params.path;
     if (req.params.path.includes("*")) {
@@ -1552,7 +1552,7 @@ router.post("/:id/file/:path", function (req, res) {
     let filename = path.split("/")[path.split("/").length - 1];
     if (
       req.body.content !== undefined &&
-      fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`) &&
+      fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`) &&
       (extension == "yml" ||
         extension == "yaml" ||
         extension == "json" ||
@@ -1564,19 +1564,19 @@ router.post("/:id/file/:path", function (req, res) {
       filename != "modrinth.index.json" &&
       filename != "curseforge.index.json" &&
       !path.includes("Geyser-") &&
-      fs.statSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`).size <= 500000
+      fs.statSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`).size <= 500000
     ) {
       if (
         !fs.existsSync(
-          `servers/${parseInt(req.params.id + idOffset)}/.fileVersions/${req.params.path}`
+          `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/.fileVersions/${req.params.path}`
         )
       ) {
         fs.mkdirSync(
-          `servers/${parseInt(req.params.id + idOffset)}/.fileVersions/${req.params.path}`
+          `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/.fileVersions/${req.params.path}`
         );
       }
       //write only the difference between the old file and the new file
-      let oldFile = fs.readFileSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`, "utf8");
+      let oldFile = fs.readFileSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`, "utf8");
       let newFile = req.body.content;
       let diff = JsDiff.diffLines(oldFile, newFile);
       let diffString = "";
@@ -1590,14 +1590,14 @@ router.post("/:id/file/:path", function (req, res) {
         }
       });
       console.log(diffString);
-      let filename = fs.statSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`).mtimeMs;
+      let filename = fs.statSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`).mtimeMs;
       console.log(filename);
       fs.writeFileSync(
-        `servers/${parseInt(req.params.id + idOffset)}/.fileVersions/${req.params.path}/${filename}`,
+        `servers/${(parseInt(req.params.id) + parseInt(idOffset))}/.fileVersions/${req.params.path}/${filename}`,
         diffString
       );
 
-      fs.writeFileSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`, req.body.content);
+      fs.writeFileSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`, req.body.content);
       res.status(200).json({ msg: "Done" });
     } else {
       res.status(400).json({ msg: "Invalid request." });
@@ -1614,12 +1614,12 @@ router.post(
     let email = req.headers.username;
     let token = req.headers.token;
     let account = readJSON("accounts/" + email + ".json");
-    let server = readJSON("servers/" + parseInt(req.params.id + idOffset) + "/server.json");
+    let server = readJSON("servers/" + (parseInt(req.params.id) + parseInt(idOffset)) + "/server.json");
     if (
-      hasAccess(token, account, parseInt(req.params.id + idOffset)) &&
-      fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}/`)
+      hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset))) &&
+      fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/`)
     ) {
-      let id = parseInt(req.params.id + idOffset);	
+      let id = (parseInt(req.params.id) + parseInt(idOffset));	
       let path = req.params.path;
       let filename = req.query.filename;
       if (req.params.path.includes("*")) {
@@ -1665,10 +1665,10 @@ router.delete("/:id/file/:path", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON(`servers/${parseInt(req.params.id + idOffset)}/server.json`);
+  let server = readJSON(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/server.json`);
   if (
-    hasAccess(token, account, parseInt(req.params.id + idOffset)) &&
-    fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}/`)
+    hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset))) &&
+    fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/`)
   ) {
     let path = req.params.path;
     console.log("DELETING " + req.params.path + " " + email);
@@ -1678,10 +1678,10 @@ router.delete("/:id/file/:path", function (req, res) {
     let extension = path.split(".")[path.split(".").length - 1];
     let filename = path.split("/")[path.split("/").length - 1];
     if (
-      fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`) &&
+      fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`) &&
       filename != "server.json"
     ) {
-      fs.unlinkSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`);
+      fs.unlinkSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`);
       res.status(200).json({ msg: "Done" });
     } else {
       res.status(400).json({ msg: "Invalid request." });
@@ -1696,10 +1696,10 @@ router.delete("/:id/folder/:path", function (req, res) {
   let token = req.headers.token;
   password = req.body.password;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON(`servers/${parseInt(req.params.id + idOffset)}/server.json`);
+  let server = readJSON(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/server.json`);
   if (
-    hasAccess(token, account, parseInt(req.params.id + idOffset)) &&
-    fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}/`) &&
+    hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset))) &&
+    fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/`) &&
     files.hash(password, account.salt).split(":")[1] == account.password
   ) {
     console.log("DELETING " + req.params.path + " " + email);
@@ -1708,10 +1708,10 @@ router.delete("/:id/folder/:path", function (req, res) {
       path = req.params.path.split("*").join("/");
     }
     if (
-      fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}/${path}`) &&
+      fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`) &&
       path.split("").length >= 3
     ) {
-      exec(`rm -rf servers/${parseInt(req.params.id + idOffset)}/${path}`, (err) => {
+      exec(`rm -rf servers/${(parseInt(req.params.id) + parseInt(idOffset))}/${path}`, (err) => {
         if (err) {
           console.log(err);
         }
@@ -1730,12 +1730,12 @@ router.post("/:id/rename/", function (req, res) {
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
   if (
-    hasAccess(token, account, parseInt(req.params.id + idOffset)) &&
-    fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}/`)
+    hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset))) &&
+    fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/`)
   ) {
-    let server = readJSON(`servers/${parseInt(req.params.id + idOffset)}/server.json`);
+    let server = readJSON(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/server.json`);
     server.name = req.query.newName;
-    writeJSON(`servers/${parseInt(req.params.id + idOffset)}/server.json`, server);
+    writeJSON(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/server.json`, server);
 
     let account = readJSON("accounts/" + email + ".json");
 
@@ -1751,14 +1751,14 @@ router.get("/:id/storageInfo", function (req, res) {
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
   if (
-    hasAccess(token, account, parseInt(req.params.id + idOffset)) &&
-    fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}/`)
+    hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset))) &&
+    fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/`)
   ) {
     let limit = -1;
-    let used = files.folderSizeRecursive(`servers/${parseInt(req.params.id + idOffset)}/`);
-    let plugins = files.folderSizeRecursive(`servers/${parseInt(req.params.id + idOffset)}/plugins`);
-    let mods = files.folderSizeRecursive(`servers/${parseInt(req.params.id + idOffset)}/mods`);
-    let worlds = files.folderSizeRecursive(`servers/${parseInt(req.params.id + idOffset)}/world`);
+    let used = files.folderSizeRecursive(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/`);
+    let plugins = files.folderSizeRecursive(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/plugins`);
+    let mods = files.folderSizeRecursive(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/mods`);
+    let worlds = files.folderSizeRecursive(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/world`);
 
     if (config.serverStorageLimit !== undefined) {
       limit = config.serverStorageLimit * 1024 * 1024 * 1024;
@@ -1781,8 +1781,8 @@ router.get("/:id/memoryInfo", function (req, res) {
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
   if (
-    hasAccess(token, account, parseInt(req.params.id + idOffset)) &&
-    fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}/`)
+    hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset))) &&
+    fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/`)
   ) {
     try {
       exec(
@@ -1816,10 +1816,10 @@ router.post("/:id/claimSubdomain", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON(`servers/${parseInt(req.params.id + idOffset)}/server.json`);
+  let server = readJSON(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/server.json`);
   if (
-    hasAccess(token, account, parseInt(req.params.id + idOffset)) &&
-    fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}`)
+    hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset))) &&
+    fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}`)
   ) {
     if (server.subdomain !== undefined) {
       res.status(400).json({ msg: "Server already has a subdomain." });
@@ -1834,8 +1834,8 @@ router.post("/:id/claimSubdomain", function (req, res) {
     "name": "_minecraft._tcp.${subdomain}}",
           "type": "SRV",
       "data": {
-         "port": ${portOffset + parseInt(parseInt(req.params.id + idOffset))},
-         "priority": ${portOffset + parseInt(parseInt(req.params.id + idOffset))},
+         "port": ${portOffset + parseInt((parseInt(req.params.id) + parseInt(idOffset)))},
+         "priority": ${portOffset + parseInt((parseInt(req.params.id) + parseInt(idOffset)))},
          "target": "join.arthmc.xyz",
          "weight": 5
       }
@@ -1852,8 +1852,8 @@ router.post("/:id/claimSubdomain", function (req, res) {
     "name": "_minecraft._tcp.${subdomain}",
           "type": "SRV",
       "data": {
-         "port": ${portOffset + parseInt(parseInt(req.params.id + idOffset))},
-         "priority": ${portOffset + parseInt(parseInt(req.params.id + idOffset))},
+         "port": ${portOffset + parseInt((parseInt(req.params.id) + parseInt(idOffset)))},
+         "priority": ${portOffset + parseInt((parseInt(req.params.id) + parseInt(idOffset)))},
          "target": "join.arthmc.xyz",
          "weight": 5
       }
@@ -1875,8 +1875,8 @@ router.post("/:id/claimSubdomain", function (req, res) {
         "name": "_minecraft.udp.${subdomain}",
               "type": "SRV",
           "data": {
-             "port": ${portOffset + parseInt(parseInt(req.params.id + idOffset))},
-             "priority": ${portOffset + parseInt(parseInt(req.params.id + idOffset))},
+             "port": ${portOffset + parseInt((parseInt(req.params.id) + parseInt(idOffset)))},
+             "priority": ${portOffset + parseInt((parseInt(req.params.id) + parseInt(idOffset)))},
              "target": "join.arthmc.xyz",
              "weight": 5
           }
@@ -1897,7 +1897,7 @@ router.post("/:id/claimSubdomain", function (req, res) {
               }
             } else {
               server.subdomain = subdomain;
-              writeJSON(`servers/${parseInt(req.params.id + idOffset)}/server.json`, server);
+              writeJSON(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/server.json`, server);
               res.status(200).json({ msg: "Done" });
             }
           }
@@ -1916,10 +1916,10 @@ router.post("/:id/deleteSubdomain", function (req, res) {
   let token = req.headers.token;
   let subdomain = req.query.subdomain;
   let account = readJSON("accounts/" + email + ".json");
-  let server = readJSON(`servers/${parseInt(req.params.id + idOffset)}/server.json`);
+  let server = readJSON(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/server.json`);
   if (
-    hasAccess(token, account, parseInt(req.params.id + idOffset)) &&
-    fs.existsSync(`servers/${parseInt(req.params.id + idOffset)}`) &&
+    hasAccess(token, account, (parseInt(req.params.id) + parseInt(idOffset))) &&
+    fs.existsSync(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}`) &&
     subdomain == server.subdomain
   ) {
     if (server.subdomain === undefined) {
@@ -1947,7 +1947,7 @@ router.post("/:id/deleteSubdomain", function (req, res) {
               res.status(500).json({ msg: "Error deleting subdomain. (2)" });
             } else {
               server.subdomain = undefined;
-              writeJSON(`servers/${parseInt(req.params.id + idOffset)}/server.json`, server);
+              writeJSON(`servers/${(parseInt(req.params.id) + parseInt(idOffset))}/server.json`, server);
               res.status(200).json({ msg: "Done" });
             }
           }
@@ -1963,7 +1963,7 @@ router.post("/:id/deleteSubdomain", function (req, res) {
 const proxy = httpProxy.createProxyServer();
 
 router.get("/:id/webmap", function (req, res) {
-  let url = `http://0.0.0.0:${parseInt(parseInt(req.params.id + idOffset)) + 10200}`;
+  let url = `http://0.0.0.0:${parseInt((parseInt(req.params.id) + parseInt(idOffset))) + 10200}`;
   console.log(`Proxying request to: ${url}`);
   req.url = "/"; // Set the URL to the root before proxying
   proxy.web(req, res, { target: url });
@@ -1971,7 +1971,7 @@ router.get("/:id/webmap", function (req, res) {
 
 router.get("/:id/webmap/:path", function (req, res) {
   let url =
-    `http://0.0.0.0:${parseInt(parseInt(req.params.id + idOffset)) + 10200}/` + req.params.path;
+    `http://0.0.0.0:${parseInt((parseInt(req.params.id) + parseInt(idOffset))) + 10200}/` + req.params.path;
   console.log(`Proxying request to: ${url}`);
   req.url = "/"; // Set the URL to the root before proxying
   proxy.web(req, res, { target: url });
@@ -1985,7 +1985,7 @@ router.get("/:id/webmap/:path/:path2/", function (req, res) {
   }
 
   let url =
-    `http://0.0.0.0:${parseInt(parseInt(req.params.id + idOffset)) + 10200}/` +
+    `http://0.0.0.0:${parseInt((parseInt(req.params.id) + parseInt(idOffset))) + 10200}/` +
     req.params.path +
     "/" +
     path2;
@@ -1996,7 +1996,7 @@ router.get("/:id/webmap/:path/:path2/", function (req, res) {
 
 router.get("/:id/webmap/:path/:path2/:path3", function (req, res) {
   let url =
-    `http://0.0.0.0:${parseInt(parseInt(req.params.id + idOffset)) + 10200}/` +
+    `http://0.0.0.0:${parseInt((parseInt(req.params.id) + parseInt(idOffset))) + 10200}/` +
     req.params.path +
     "/" +
     req.params.path2 +
