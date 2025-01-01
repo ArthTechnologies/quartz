@@ -32,9 +32,10 @@ router.get(`/servers`, function (req, res) {
     console.log("debug1");
     for (i in account.servers) {
       console.log("server " + account.servers[i]);
-      console.log("debug2");
+
   
         account.servers[i] = parseInt(account.servers[i]);
+        console.log("debug2" + `servers/${account.servers[i]}/server.json`);
       if (fs.existsSync(`servers/${account.servers[i]}/server.json`)) {
         account.servers[i] = readJSON(
           `servers/${account.servers[i]}/server.json`
