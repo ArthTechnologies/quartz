@@ -14,6 +14,7 @@ private.pem
 /assets/jars
 /assets/java
 /assets/data.json
+/assets/scraper.json
 /assets/uploads
 config.json
 accounts.tsv
