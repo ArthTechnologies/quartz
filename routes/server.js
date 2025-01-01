@@ -2008,7 +2008,7 @@ router.get("/:id/webmap/:path/:path2/:path3", function (req, res) {
 });*/
 
 function hasAccess(token, account, id) {
-  let server = readJSON(`servers/${id}/server.json`);
+  let server = readJSON(`servers/${parseInt(id) - idOffset}/server.json`);
   if (!enableAuth) return true;
   else return token === account.token && server.accountId == account.accountId;
 }
