@@ -17,6 +17,7 @@ const stripe = require("stripe")(stripeKey);
 const enableAuth = JSON.parse(config.enableAuth);
 const enablePay = JSON.parse(config.enablePay);
 const enableVirusScan = JSON.parse(config.enableVirusScan);
+const portOffset = parseInt(config.portOffset);
 
 function writeServer(id, owner, state, name, software, version, productID, allowedAccounts, specialDatapacks, specialPlugins) {
   let tsv = fs.readFileSync("servers.tsv", "utf8").split("\n");
@@ -1308,7 +1309,7 @@ router.post("/:id/proxy/servers", function (req, res) {
       fs.writeFileSync(`servers/${req.params.id}/velocity.toml`, newConfig);
 
       if (req.query.ip.split(":")[0] == config.address) {
-        let subserverId = parseInt(req.query.ip.split(":")[1]) - 10000;
+        let subserverId = parseInt(req.query.ip.split(":")[1]) - portOffset;
         if (
           readJSON("servers/" + subserverId + "/server.json").accountId ==
           account.accountId
@@ -1784,7 +1785,7 @@ router.get("/:id/memoryInfo", function (req, res) {
   ) {
     try {
       exec(
-        `docker ps --filter "publish=${10000 + id}" --format "{{.ID}}"`,
+        `docker ps --filter "publish=${portOffset + id}" --format "{{.ID}}"`,
         (error, stdout, stderr) => {
           let pid = stdout.trim();
 
@@ -1832,8 +1833,8 @@ router.post("/:id/claimSubdomain", function (req, res) {
     "name": "_minecraft._tcp.${subdomain}}",
           "type": "SRV",
       "data": {
-         "port": ${10000 + parseInt(req.params.id)},
-         "priority": ${10000 + parseInt(req.params.id)},
+         "port": ${portOffset + parseInt(req.params.id)},
+         "priority": ${portOffset + parseInt(req.params.id)},
          "target": "join.arthmc.xyz",
          "weight": 5
       }
@@ -1850,8 +1851,8 @@ router.post("/:id/claimSubdomain", function (req, res) {
     "name": "_minecraft._tcp.${subdomain}",
           "type": "SRV",
       "data": {
-         "port": ${10000 + parseInt(req.params.id)},
-         "priority": ${10000 + parseInt(req.params.id)},
+         "port": ${portOffset + parseInt(req.params.id)},
+         "priority": ${portOffset + parseInt(req.params.id)},
          "target": "join.arthmc.xyz",
          "weight": 5
       }
@@ -1873,8 +1874,8 @@ router.post("/:id/claimSubdomain", function (req, res) {
         "name": "_minecraft.udp.${subdomain}",
               "type": "SRV",
           "data": {
-             "port": ${10000 + parseInt(req.params.id)},
-             "priority": ${10000 + parseInt(req.params.id)},
+             "port": ${portOffset + parseInt(req.params.id)},
+             "priority": ${portOffset + parseInt(req.params.id)},
              "target": "join.arthmc.xyz",
              "weight": 5
           }

@@ -12,7 +12,8 @@ const { stat } = require("fs");
 const writeJSON = require("./utils.js").writeJSON;
 let terminalOutput = [];
 let terminalInput = "";
-
+const config = require("./utils.js").getConfig();
+const portOffset = parseInt(config.portOffset); 
 function proxiesToggle(id, toggle, secret) {
   if (toggle == true) {
     let paperGlobal = fs.readFileSync(
@@ -241,7 +242,7 @@ function run(
     let absolutePath = execSync("pwd").toString().trim();
     console.log("absolutePath: " + absolutePath);
 
-    let port = 10000 + parseInt(id);
+    let port = portOffset + parseInt(id);
     let prefix = `docker run -m ${allocatedRAM}g -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp -p ${port + 200}:${port + 200}/tcp -p ${port + 300}:${port + 300}/tcp --user 1000:1000 openjdk:${javaVer} java`;
     console.log("prefix: " + prefix);
 
@@ -1026,7 +1027,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
 function killObstructingProcess(id) {
   try {
     exec(
-      `docker ps --filter "publish=${10000 + id}" --format "{{.ID}}"`,
+      `docker ps --filter "publish=${portOffset + id}" --format "{{.ID}}"`,
       (error, stdout, stderr) => {
         let pid = stdout.trim();
         console.log("killing obstructing container " + pid);
