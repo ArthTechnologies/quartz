@@ -268,4 +268,15 @@ router.get(`/capacity`, function (req, res) {
   });
 });
 
+router.get(`/accounts`, function (req, res) {
+  let forwardingPinReq = req.query.forwardingPin;
+  let forwardingPinConfig = config.forwardingPin;
+  if (forwardingPinReq == forwardingPinConfig) {
+    let accountsTsv = fs.readFileSync("accounts.tsv", "utf8");
+    res.status(200).send(accountsTsv);
+  } else {
+    res.status(401).send(undefined);
+  }
+});
+
 module.exports = router;
