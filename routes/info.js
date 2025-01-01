@@ -39,7 +39,7 @@ router.get(`/servers`, function (req, res) {
         account.servers[i] = readJSON(
           "servers/" + account.servers[i] + "/server.json"
         );
-        account.servers[i].state = f.getState(account.servers[i].id);
+        account.servers[i].state = f.getState(account.servers[i]);
       } else {
         console.log("sever is not created yet");
         account.servers[i] = account.servers[i] + ":not created yet";
