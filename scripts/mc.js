@@ -12,7 +12,7 @@ const { stat } = require("fs");
 const writeJSON = require("./utils.js").writeJSON;
 let terminalOutput = [];
 let terminalInput = "";
-const config = require("./utils.js").getConfig();
+
 const portOffset = parseInt(config.portOffset); 
 function proxiesToggle(id, toggle, secret) {
   if (toggle == true) {
