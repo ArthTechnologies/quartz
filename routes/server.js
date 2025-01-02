@@ -1802,9 +1802,9 @@ router.get("/:id/liveStats", function (req, res) {
                 res.status(500).json({ success: false, data: err });
               }
               let memory = stdout2.split("/")[0];
-              console.log(`printf '\xFE\x01' | nc -w 1 localhost ${portOffset + id}`);
+              console.log(`printf '\\xFE\\x01' | nc -w 1 localhost ${portOffset + id}`);
               //get player count
-              exec(`printf '\xFE\x01' | nc -w 1 localhost ${portOffset + id}`, 
+              exec(`printf '\\xFE\\x01' | nc -w 1 localhost ${portOffset + id}`, 
               (err, stdout3, stderr) => {
               
                 let minecraftVersion = readJSON(`servers/${id}/server.json`).version;
