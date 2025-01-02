@@ -1807,13 +1807,13 @@ router.get("/:id/liveStats", function (req, res) {
               const packet = Buffer.from([0xFE, 0x01])
               
 
-              try {client.connect(portOffset + id, 'localhost', () => {
+             
+              
+              client.connect(portOffset + id, 'localhost', () => {
                 client.write(packet);
-              }); }
-              catch (e) {
-                console.log(e);
-              }
-              /*client.on('data', (data) => {
+              }); 
+
+              client.on('data', (data) => {
                 console.log(data.toString());
                 let stdout3 = data.toString();
                 let minecraftVersion = readJSON(`servers/${id}/server.json`).version;
@@ -1843,10 +1843,13 @@ router.get("/:id/liveStats", function (req, res) {
                 }
                 res.status(200).json({ memory: memory, players: players });
                 client.destroy();
-              });*/
-             
-          
-              
+              });
+           
+              client.on('error', (err) => {
+                console.error('Socket error:', err);
+                res.status(500).json({ success: false, error: 'Failed to connect to Minecraft server' });
+                client.destroy();
+              });
                
              
           
