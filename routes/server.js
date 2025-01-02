@@ -1802,14 +1802,14 @@ router.get("/:id/liveStats", function (req, res) {
                 res.status(500).json({ success: false, data: err });
               }
               let memory = stdout2.split("/")[0];
-
+              try {
               const net = require('net');
               const client = new net.Socket();
               const packet = Buffer.from([0xFE, 0x01])
               client.connect(portOffset + id, 'localhost', () => {
                 client.write(packet);
               });
-              /*client.on('data', (data) => {
+              client.on('data', (data) => {
                 console.log(data.toString());
                 let stdout3 = data.toString();
                 let minecraftVersion = readJSON(`servers/${id}/server.json`).version;
@@ -1839,7 +1839,10 @@ router.get("/:id/liveStats", function (req, res) {
                 }
                 res.status(200).json({ memory: memory, players: players });
                 client.destroy();
-              });*/
+              });
+            } catch (e) {
+              res.status(500).json({ success: false, data: e });
+            }
               
                
              
