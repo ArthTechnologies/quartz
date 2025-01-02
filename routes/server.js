@@ -1841,6 +1841,9 @@ router.get("/:id/liveStats", function (req, res) {
                 res.status(200).json({ memory: memory, players: players });
                 client.destroy();
               });
+              client.on('close', () => {
+                console.log('Connection closed');
+            });
             } catch (e) {
               res.status(500).json({ success: false, data: e });
             }
