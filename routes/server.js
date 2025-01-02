@@ -1802,6 +1802,17 @@ router.get("/:id/liveStats", function (req, res) {
                 res.status(500).json({ success: false, data: err });
               }
               let memory = stdout2.split("/")[0];
+
+              const net = require('net');
+              const client = new net.Socket();
+              const packet = Buffer.from([0xFE, 0x01])
+              client.connect(portOffset + id, 'localhost', () => {
+                client.write(packet);
+              });
+              client.on('data', (data) => {
+                console.log(data.toString());
+                client.destroy();
+              });
               console.log(`printf '\\xFE\\x01' | nc -w 1 localhost ${portOffset + id}`);
               //get player count
               exec(`printf '\\xFE\\x01' | nc -w 1 localhost ${portOffset + id}`, 
