@@ -1805,18 +1805,32 @@ router.get("/:id/liveStats", function (req, res) {
               //get player count
               exec(`printf '\xFE\x01' | nc -w 1 localhost ${portOffset + id}`, 
               (err, stdout, stderr) => {
+              
                 let minecraftVersion = readJSON(`servers/${id}/server.json`).version;
                 let description;
+                let maxPlayers;
                 let serverProperties = fs.readFileSync(`servers/${id}/server.properties`, "utf8");
                 let lines = serverProperties.split("\n");
                 let index = lines.findIndex((line) => {
                   return line.startsWith("motd");
                 }
                 );
+                let index2 = lines.findIndex((line) => {
+                  return line.startsWith("max-players");
+                }
+                );
+                maxPlayers = lines[index2].split("=")[1];
                 description = lines[index].split("=")[1];
-                console.log(stdout);
+                let players = "0/0";
+                if (stdout != undefined) {  
+                  try {
+                    console.log(stdout);
                 console.log(stdout.split(minecraftVersion)[1].split(description)[1]);
-                let players = stdout.split(minecraftVersion)[1].split(description)[1];
+                players = stdout.split(minecraftVersion)[1].split(description)[1];
+                  } catch (e) {
+                    players = "0/0";
+                  }
+                }
                 res.status(200).json({ memory: memory, players: players });
               });
           
