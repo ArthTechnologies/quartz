@@ -1785,9 +1785,9 @@ router.get("/:id/liveStats", function (req, res) {
     fs.existsSync(`servers/${req.params.id}/`)
   ) {
     try {
-      console.log(`docker ps --filter "publish=${portOffset + id}" --format "{{.ID}}"`);  
+      console.log(`docker ps --filter "publish=${portOffset + req.params.id}" --format "{{.ID}}"`);  
       exec(
-        `docker ps --filter "publish=${portOffset + id}" --format "{{.ID}}"`,
+        `docker ps --filter "publish=${portOffset + req.params.id}" --format "{{.ID}}"`,
         (error, stdout, stderr) => {
           console.log("debug1")
           let pid = stdout.trim();
