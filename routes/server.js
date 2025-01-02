@@ -1796,15 +1796,16 @@ router.get("/:id/liveStats", function (req, res) {
           exec(
             `docker stats ${pid} --no-stream --format "{{.MemUsage}}"
     `,
-            (err, stdout, stderr) => {
-              console.log(stdout);
+            (err, stdout2, stderr) => {
+              console.log(stdout2);
               if (err) {
                 res.status(500).json({ success: false, data: err });
               }
-              let memory = stdout.split("/")[0];
+              let memory = stdout2.split("/")[0];
+              console.log(`printf '\xFE\x01' | nc -w 1 localhost ${portOffset + id}`);
               //get player count
               exec(`printf '\xFE\x01' | nc -w 1 localhost ${portOffset + id}`, 
-              (err, stdout, stderr) => {
+              (err, stdout3, stderr) => {
               
                 let minecraftVersion = readJSON(`servers/${id}/server.json`).version;
                 let description;
@@ -1822,11 +1823,11 @@ router.get("/:id/liveStats", function (req, res) {
                 maxPlayers = lines[index2].split("=")[1];
                 description = lines[index].split("=")[1];
                 let players = "0/0";
-                if (stdout != undefined) {  
+                if (stdout3 != undefined) {  
                   try {
-                    console.log(stdout);
-                console.log(stdout.split(minecraftVersion)[1].split(description)[1]);
-                players = stdout.split(minecraftVersion)[1].split(description)[1];
+                    console.log(stdout3);
+                console.log(stdout3.split(minecraftVersion)[1].split(description)[1]);
+                players = stdout3.split(minecraftVersion)[1].split(description)[1];
                   } catch (e) {
                     players = "0/0";
                   }
