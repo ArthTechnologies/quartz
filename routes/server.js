@@ -1791,7 +1791,7 @@ router.get("/:id/liveStats", function (req, res) {
         (error, stdout, stderr) => {
           console.log("debug1")
           let pid = stdout.trim();
-          let id = req.params.id;
+          let id = parseInt(req.params.id);
           console.log(stdout);
           exec(
             `docker stats ${pid} --no-stream --format "{{.MemUsage}}"
