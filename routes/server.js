@@ -1809,7 +1809,7 @@ router.get("/:id/liveStats", function (req, res) {
               client.connect(portOffset + id, 'localhost', () => {
                 client.write(packet);
               });
-              client.on('data', (data) => {
+              /*client.on('data', (data) => {
                 console.log(data.toString());
                 let stdout3 = data.toString();
                 let minecraftVersion = readJSON(`servers/${id}/server.json`).version;
@@ -1839,7 +1839,7 @@ router.get("/:id/liveStats", function (req, res) {
                 }
                 res.status(200).json({ memory: memory, players: players });
                 client.destroy();
-              });
+              });*/
               
                
              
