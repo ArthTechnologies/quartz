@@ -1845,11 +1845,10 @@ router.get("/:id/liveStats", function (req, res) {
                 client.destroy();
               });
            
-              client.on('error', (err) => {
-                console.error('Socket error:', err);
-                res.status(500).json({ success: false, error: 'Failed to connect to Minecraft server' });
-                client.destroy();
-              });
+              client.on('error', (err) => console.error('Socket error:', err));
+              client.on('close', () => console.log('Socket closed'));
+              client.on('timeout', () => console.log('Socket timeout'));
+              client.on('end', () => console.log('Socket ended'));
                
              
           
