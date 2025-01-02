@@ -457,7 +457,7 @@ function run(
                 return line.includes("port=");
               });
 
-              lines[a] = "port=" + (port + 300);
+              lines[a] = "port=" + (port + 25);
 
               fs.writeFileSync(
                 folder + "/plugins/voicechat/voicechat-server.properties",
