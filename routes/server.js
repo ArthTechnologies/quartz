@@ -1806,7 +1806,7 @@ router.get("/:id/liveStats", function (req, res) {
               //get player count
               exec(`printf '\\xFE\\x01' | nc -w 1 localhost ${portOffset + id}`, 
               (err, stdout3, stderr) => {
-              
+                console.log(stdout3);
                 let minecraftVersion = readJSON(`servers/${id}/server.json`).version;
                 let description;
                 let maxPlayers;
