@@ -1815,7 +1815,7 @@ router.get("/:id/liveStats", function (req, res) {
                 );
                 description = lines[index].split("=")[1];
                 console.log(stdout);
-                console.log(stdout.split(version)[1].split(description)[1]);
+                console.log(stdout.split(minecraftVersion)[1].split(description)[1]);
                 let players = stdout.split(minecraftVersion)[1].split(description)[1];
                 res.status(200).json({ memory: memory, players: players });
               });
