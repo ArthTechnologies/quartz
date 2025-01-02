@@ -1789,11 +1789,12 @@ router.get("/:id/liveStats", function (req, res) {
         `docker ps --filter "publish=${portOffset + id}" --format "{{.ID}}"`,
         (error, stdout, stderr) => {
           let pid = stdout.trim();
-
+          console.log(stdout);
           exec(
             `docker stats ${pid} --no-stream --format "{{.MemUsage}}"
     `,
             (err, stdout, stderr) => {
+              console.log(stdout);
               if (err) {
                 res.status(500).json({ success: false, data: err });
               }
