@@ -1805,7 +1805,7 @@ router.get("/:id/liveStats", function (req, res) {
               const net = require('net');
               const client = new net.Socket();
               const packet = Buffer.from([0xFE, 0x01])
-              try {
+              
 
               client.connect(portOffset + id, 'localhost', () => {
                 client.write(packet);
@@ -1843,10 +1843,9 @@ router.get("/:id/liveStats", function (req, res) {
               });
               client.on('close', () => {
                 console.log('Connection closed');
+                res.status(200).json({ memory: memory, players: "0/0" });
             });
-            } catch (e) {
-              res.status(500).json({ success: false, data: e });
-            }
+          
               
                
              
