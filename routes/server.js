@@ -1812,7 +1812,7 @@ router.get("/:id/liveStats", function (req, res) {
               client.connect(portOffset + id, 'localhost', () => {
                 client.write(packet);
               }); 
-
+              let success = false;
               client.on('data', (data) => {
                 console.log(data.toString());
                 let stdout3 = data.toString();
@@ -1842,13 +1842,17 @@ router.get("/:id/liveStats", function (req, res) {
                   }
                 }
                 res.status(200).json({ memory: memory, players: players });
+                success = true;
                 client.destroy();
               });
            
-              client.on('error', (err) => console.error('Socket error:', err));
-              client.on('close', () => console.log('Socket closed'));
-              client.on('timeout', () => console.log('Socket timeout'));
-              client.on('end', () => console.log('Socket ended'));
+
+              client.on('close', () => {
+                if (!success) {
+                  res.status(500).json({ success: false, data: "Error getting live stats." });
+                }
+              });
+
                
              
           
