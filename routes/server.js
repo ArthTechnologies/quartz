@@ -1776,7 +1776,7 @@ router.get("/:id/storageInfo", function (req, res) {
   }
 });
 
-router.get("/:id/memoryInfo", function (req, res) {
+router.get("/:id/liveStats", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
@@ -1798,7 +1798,24 @@ router.get("/:id/memoryInfo", function (req, res) {
                 res.status(500).json({ success: false, data: err });
               }
               let memory = stdout.split("/")[0];
-              res.status(200).json({ success: true, data: memory });
+              //get player count
+              exec(`printf '\xFE\x01' | nc -w 1 localhost ${portOffset + id}`, 
+              (err, stdout, stderr) => {
+                let minecraftVersion = readJSON(`servers/${id}/server.json`).version;
+                let description;
+                let serverProperties = fs.readFileSync(`servers/${id}/server.properties`, "utf8");
+                let lines = serverProperties.split("\n");
+                let index = lines.findIndex((line) => {
+                  return line.startsWith("motd");
+                }
+                );
+                description = lines[index].split("=")[1];
+                console.log(stdout);
+                console.log(stdout.split(version)[1].split(description)[1]);
+                let players = stdout.split(minecraftVersion)[1].split(description)[1];
+                res.status(200).json({ memory: memory, players: players });
+              });
+          
             }
           );
         }
