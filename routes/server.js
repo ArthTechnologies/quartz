@@ -1807,9 +1807,12 @@ router.get("/:id/liveStats", function (req, res) {
               const packet = Buffer.from([0xFE, 0x01])
               
 
-              /*client.connect(portOffset + id, 'localhost', () => {
-                //client.write(packet);
-              });/*
+              try {client.connect(portOffset + id, 'localhost', () => {
+                client.write(packet);
+              }); }
+              catch (e) {
+                console.log(e);
+              }
               /*client.on('data', (data) => {
                 console.log(data.toString());
                 let stdout3 = data.toString();
