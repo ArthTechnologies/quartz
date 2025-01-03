@@ -118,6 +118,9 @@ Router.post("/email/signin/", (req, res) => {
   let salt = account.salt;
   let cloudflareVerifyToken = req.query.cloudflareVerifyToken;
   if (enableCloudflareVerify) {
+    if (account.password != files.hash(password, salt).split(":")[1]) {
+      res.status(400).send({ token: -1, reason: "Incorrect email or password" });
+    } else {
     const exec = require("child_process").exec;
     exec(
       `curl 'https://challenges.cloudflare.com/turnstile/v0/siteverify' --data 'secret=${config.cloudflareVerifySecretKey}&response=${cloudflareVerifyToken}'`,
@@ -137,6 +140,7 @@ Router.post("/email/signin/", (req, res) => {
         }
       }
     );
+    }
   } else {
     signin();
   }
