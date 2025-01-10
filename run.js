@@ -669,7 +669,7 @@ function getServerStates() {
 //automatic server start-up systen
 const data = readJSON("./assets/data.json");
 for (i in data.serverStates) {
-  if (data.serverStates[i].split(":")[1] == "true") {
+  if (data.serverStates[i].split(":") != undefined && data.serverStates[i].split(":")[1] == "true") {
     let id = parseInt(data.serverStates[i].split(":")[0]);
     if (
       fs.existsSync("servers/" + id + "/server.json") &&
