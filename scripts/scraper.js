@@ -227,7 +227,7 @@ function downloadSnapshotJars() {
               try {
                 const version = JSON.parse(data);
                 if (version.downloads.server != undefined) {
-
+    
   index["snapshot-" + json.versions[0].id + ".jar"] = version.downloads.server.url;
 
                 }
@@ -243,6 +243,38 @@ function downloadSnapshotJars() {
     );
   }
 
+  function downloadVanillaJars() {
+    files.GET(
+        "https://launchermeta.mojang.com/mc/game/version_manifest.json",
+        (vdata) => {
+            try {
+                const json = JSON.parse(vdata);
+                for (let i in json.versions) {
+                    let version = json.versions[i];
+                    if (version.type == "release") {
+                        files.GET(version.url, (data) => {
+                            try {
+                                const version = JSON.parse(data);
+                                if (version.downloads.server != undefined) {
+                                    if (!skipOldVersions || getMajorVersion(version.id, 1) >= 21) { 
+                                    index["vanilla-" + version.id + ".jar"] = version.downloads.server.url;
+                                    }
+                                }
+                            } catch (e) {
+                                console.log(e);
+                            }
+                        });
+                    }
+                }
+            } catch (e) {
+                console.log(e);
+            }
+
+        }   
+    );
+}   
+
+
 function fullDownload() {
     skipOldVersions = false;;
     downloadPaperJars();
@@ -253,6 +285,7 @@ function fullDownload() {
     setTimeout(() => downloadGeyserJars(), 2500);
     setTimeout(() => downloadWorldgenMods(), 3000);
     setTimeout(() => downloadSnapshotJars(), 3500);
+    setTimeout(() => downloadVanillaJars(), 4000);  
     setTimeout(() => done(), 10000);
 
 }
@@ -274,6 +307,7 @@ function partialDownload() {
     setTimeout(() => downloadGeyserJars(), 500);
     setTimeout(() => downloadWorldgenMods(), 600);
     setTimeout(() => downloadSnapshotJars(), 700);
+    setTimeout(() => downloadVanillaJars(), 800);
     setTimeout(() => done(), 10000);
 
 }
