@@ -9,7 +9,7 @@ router.get("/:id", (req, res) => {
   token = req.headers.token;
   account = readJSON("accounts/" + email + ".json");
   server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account)) {
+  if (hasAccess(token, account, req.params.id)) {
     res.send(f.readTerminal(req.params.id));
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
@@ -21,7 +21,7 @@ router.post("/:id", (req, res) => {
   token = req.headers.token;
   account = readJSON("accounts/" + email + ".json");
   server = readJSON("servers/" + req.params.id + "/server.json");
-  if (hasAccess(token, account)) {
+  if (hasAccess(token, account, req.params.id)) {
     console.log("revieved request: " + req.query.cmd);
     f.writeTerminal(req.params.id, req.query.cmd);
     res.send("Success");
@@ -30,9 +30,18 @@ router.post("/:id", (req, res) => {
   }
 });
 
-function hasAccess(token, account) {
+function hasAccess(token, account, id) {
+  let server = readJSON(`servers/${id}/server.json`);
   if (!enableAuth) return true;
-  else return token === account.token && server.accountId == account.accountId;
+  let accountOwner = token === account.token;
+  let serverOwner = server.accountId == account.accountId;
+  let allowedAccount  = false;
+  if (server.allowedAccounts !== undefined) {
+    allowedAccount = server.allowedAccounts.includes(account.accountId);
+  }
+
+  return accountOwner && (serverOwner || allowedAccount);
 }
+
 
 module.exports = router;
