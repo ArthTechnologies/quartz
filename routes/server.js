@@ -2067,7 +2067,14 @@ router.get("/:id/webmap/:path/:path2/:path3", function (req, res) {
 function hasAccess(token, account, id) {
   let server = readJSON(`servers/${id}/server.json`);
   if (!enableAuth) return true;
-  else return token === account.token && server.accountId == account.accountId;
+  let accountOwner = token === account.token;
+  let serverOwner = server.accountId == account.accountId;
+  let allowedAccount  = false;
+  if (server.allowedAccounts !== undefined) {
+    allowedAccount = server.allowedAccounts.includes(account.accountId);
+  }
+
+  return accountOwner && (serverOwner || allowedAccount);
 }
 
 module.exports = router;
