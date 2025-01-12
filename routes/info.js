@@ -22,7 +22,7 @@ router.get(`/servers`, function (req, res) {
     console.log(account);
     console.log("../accounts/" + email + ".json");
   }
-
+  console.log(token + " " + account.token);
   if (token === account.token || !enableAuth) {
     //if req.body.email is "noemail" return 404
     if (req.query.username == ("noemail" | "undefined")) {
