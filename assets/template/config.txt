@@ -1,8 +1,8 @@
 # The address that servers will be ran under:
 address=arthmc.xyz
-# Port Offset
+# Port Offset (Recommended to be in increments of 100)
 portOffset=10000
-# ID Offfset
+# ID Offset (Recommended to be in increments of 100)
 idOffset=0
 # Do you want to make users pay for servers? (If so, you'll need a Stripe API Key):
 enablePay=false
