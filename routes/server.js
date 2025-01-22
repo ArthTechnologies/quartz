@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const router = express.Router();
 const files = require("../scripts/files.js");
 const f = require("../scripts/mc.js");
