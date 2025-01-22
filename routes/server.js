@@ -1057,9 +1057,9 @@ let id = req.params.id;
               const exec = require("child_process").exec;
 
               if (enableVirusScan) {
-                console.log(req.file.path);
+                console.log(sanitizePath(req.file.path));
                 exec(
-                  `clamdscan --multiscan --fdpass ${req.file.path}`,
+                  `clamdscan --multiscan --fdpass ${sanitizePath(req.file.path)}`,
                   {},
                   (err, stdout, stderr) => {
                     if (stdout.indexOf("Infected files: 0") != -1) {
@@ -1067,7 +1067,7 @@ let id = req.params.id;
                       unzipFile();
                     } else {
                       res.send("Virus Detected.");
-                      fs.rmSync(req.file.path);
+                      fs.rmSync(sanitizePath(req.file.path));
                     }
                   }
                 );
@@ -1080,9 +1080,9 @@ let id = req.params.id;
                 //wait 5s
                 setTimeout(() => {
                   exec(
-                    `unzip -o ${req.file.path} -d servers/` + id + `/world`,
+                    `unzip -o ${sanitizePath(req.file.path)} -d servers/` + id + `/world`,
                     (err, stdout, stderr) => {
-                      fs.rmSync(req.file.path);
+                      fs.rmSync(sanitizePath(req.file.path));
                       if (err) {
                         console.log(err);
                       } else if (!lock) {
@@ -1627,9 +1627,9 @@ router.post(
       }
 
       if (enableVirusScan) {
-        console.log(req.file.path);
+        console.log(sanitizePath(req.file.path));
         exec(
-          `clamdscan --multiscan --fdpass ${req.file.path}`,
+          `clamdscan --multiscan --fdpass ${sanitizePath(req.file.path)}`,
           {},
           (err, stdout, stderr) => {
             if (stdout.indexOf("Infected files: 0") != -1) {
@@ -1637,7 +1637,7 @@ router.post(
               loadFile();
             } else {
               res.send("Virus Detected.");
-              fs.rmSync(req.file.path);
+              fs.rmSync(sanitizePath(req.file.path));
             }
           }
         );
@@ -1648,10 +1648,10 @@ router.post(
 
       function loadFile() {
         fs.copyFileSync(
-          req.file.path,
+          sanitizePath(req.file.path),
           "servers/" + id + "/" + path + "/" + filename
         );
-        fs.rmSync(req.file.path);
+        fs.rmSync(sanitizePath(req.file.path));
         res.status(200).send("Upload Complete.");
 
       }
