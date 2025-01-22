@@ -2080,13 +2080,9 @@ function hasAccess(token, account, id) {
 
 //fixes directory traversal vulnerabilities
 function sanitizePath(userPath, baseDir) {
-  const resolvedPath = path.resolve(path.join(baseDir, userPath));
-  if (resolvedPath.startsWith(path.resolve(baseDir))) {
-    return resolvedPath;
-  } else {
-    return "invalid";
-  }
-  
+  const normalizedUserPath = userPath.startsWith('/') ? userPath.slice(1) : userPath;
+  const resolvedPath = path.resolve(path.join(baseDir, normalizedUserPath));
+  return resolvedPath.startsWith(path.resolve(baseDir)) ? resolvedPath : "invalid";
 }
 
 
