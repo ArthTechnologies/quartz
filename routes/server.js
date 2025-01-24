@@ -1671,6 +1671,8 @@ router.delete("/:id/file/:path", function (req, res) {
     hasAccess(token, account, req.params.id) &&
     fs.existsSync(`servers/${req.params.id}/`)
   ) {
+    console.log("unsanitized path: " + req.params.path);
+    console.log("sanitized path: " + sanitizePath(req.params.path, ``));
     let path = sanitizePath(req.params.path, ``);
     console.log("DELETING " + sanitizePath(req.params.path, ``) + " " + email);
     if (sanitizePath(req.params.path, ``).includes("*")) {
