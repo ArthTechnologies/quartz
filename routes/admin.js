@@ -19,9 +19,10 @@ router.get("/",  (req, res) => {
 
     // System memory (using /proc/meminfo)
     const memInfo =  execSync("grep -E 'MemTotal|MemAvailable' /proc/meminfo");
-    const [total, available] = memInfo.stdout.match(/\d+/g).map(Number);
-    memory.totalSystemUsed = (total - available) * 1024; // Convert KB to bytes
-    memory.totalSystemMax = total * 1024;
+    const memInfoLines = memInfo.toString().trim().split('\n');
+    const totalMem = parseInt(memInfoLines[0].match(/\d+/)[0]);
+    const availableMem = parseInt(memInfoLines[1].match(/\d+/)[0]);
+    memory.system = availableMem + ":" + totalMem;
 
     res.send(memory);
 });
