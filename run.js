@@ -731,6 +731,38 @@ app.use("/curseforge", require("./routes/curseforge"));
 app.use("/translate", require("./routes/translate"));
 app.use("/node", require("./routes/node"));
 
+const adminApp = express();
+const adminPort = process.env.ADMIN_PORT || 4001;
+
+
+
+// Admin-specific middleware stack
+adminApp.use(express.json());
+adminApp.use(cors({
+  origin: config.adminAllowedOrigins || ['http://localhost:3000'],
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Authorization', 'Content-Type']
+}));
+
+adminApp.use((req, res, next) => {
+  console.log(`Admin access: ${req.method} ${req.path}`);
+  next();
+});
+
+
+// Error handling for admin routes
+adminApp.use((err, req, res, next) => {
+  console.error('Admin route error:', err);
+  res.status(500).json({ error: 'Internal admin server error' });
+});
+
+// Start admin server
+adminApp.listen(adminPort, () => {
+  console.log(`Admin API running on port ${adminPort}`);
+});
+
+app.use("/admin", require("./routes/admin"));
+
 // port
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`Listening on Port: ${port}`));
