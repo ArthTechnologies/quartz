@@ -12,10 +12,7 @@ router.get("/",  (req, res) => {
     const dockerStats =  execSync("docker stats --no-stream --format '{{.MemUsage}}'");
     console.log(dockerStats.toString());
     memory.dockerContainers = dockerStats.toString().trim().split('\n').map(line => line.trim());
-    memory.dockerContainers = memory.dockerContainers.map(entry => {
-      const [used, total] = entry.split('/').map(mem => parseInt(mem.replace(/[^\d]/g, '')));
-      return { used, total };
-    });
+   
     console.log(memory.dockerContainers);
 
     // Total Docker memory
