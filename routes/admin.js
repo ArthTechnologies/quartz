@@ -3,13 +3,13 @@ const router = express.Router();
 const fs = require("fs");
 const { readJSON } = require("../scripts/utils.js");
 
-router.get("/", async (req, res) => {
+router.get("/",  (req, res) => {
 
-    const { execAsync, execSync } = require("child_process");
+    const {  execSync } = require("child_process");
     const memory = {};
     
     // Docker container memory (format: "bytes:port")
-    const dockerStats = await execAsync("docker stats --no-stream --format '{{.Container}}:{{.MemUsage}}'");
+    const dockerStats =  execSync("docker stats --no-stream --format '{{.Container}}:{{.MemUsage}}'");
     memory.dockerContainers = dockerStats.stdout.trim().split('\n')
       .filter(line => line.includes(':'))
       .map(line => {
@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
     memory.nodeJs = process.memoryUsage().rss;
 
     // System memory (using /proc/meminfo)
-    const memInfo = await execAsync("grep -E 'MemTotal|MemAvailable' /proc/meminfo");
+    const memInfo =  execSync("grep -E 'MemTotal|MemAvailable' /proc/meminfo");
     const [total, available] = memInfo.stdout.match(/\d+/g).map(Number);
     memory.totalSystemUsed = (total - available) * 1024; // Convert KB to bytes
     memory.totalSystemMax = total * 1024;
