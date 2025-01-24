@@ -13,11 +13,6 @@ router.get("/",  (req, res) => {
     console.log(dockerStats.toString());
     memory.dockerContainers = dockerStats.toString().trim().split('\n').map(line => line.trim());
    
-    console.log(memory.dockerContainers);
-
-    // Total Docker memory
-    memory.totalDocker = memory.dockerContainers.reduce((sum, entry) => 
-      sum + parseInt(entry.split(':')[0]), 0);
 
     // Node.js memory
     memory.nodeJs = process.memoryUsage().rss;
