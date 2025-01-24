@@ -9,17 +9,14 @@ router.get("/",  (req, res) => {
     const memory = {};
     
     // Docker container memory (format: "bytes:port")
-    const dockerStats =  execSync("docker stats --no-stream --format '{{.Container}}:{{.MemUsage}}'");
+    const dockerStats =  execSync("docker stats --no-stream --format '{{.MemUsage}}'");
     console.log(dockerStats.toString());
-    memory.dockerContainers = dockerStats.stdout.trim().split('\n')
-      .filter(line => line.includes(':'))
-      .map(line => {
-        const [container, mem] = line.split(':');
-        const bytes = parseInt(mem.replace(/[^\d]/g, '')) * 1024; // Convert from KiB to bytes
-        const portOutput = execSync(`docker inspect ${container} --format '{{.NetworkSettings.Ports}}'`).toString();
-        const port = (portOutput.match(/0.0.0.0:(\d+)/) || [])[1] || 'unknown';
-        return `${bytes}:${port}`;
-      });
+    memory.dockerContainers = dockerStats.toString().trim().split('\n').map(line => line.trim());
+    memory.dockerContainers = memory.dockerContainers.map(entry => {
+      const [used, total] = entry.split('/').map(mem => parseInt(mem.replace(/[^\d]/g, '')));
+      return { used, total };
+    });
+    console.log(memory.dockerContainers);
 
     // Total Docker memory
     memory.totalDocker = memory.dockerContainers.reduce((sum, entry) => 
