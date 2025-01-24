@@ -1432,7 +1432,7 @@ router.get("/:id/file/:path", function (req, res) {
   let account = readJSON("accounts/" + email + ".json");
   let server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account, req.params.id)) {
-    let path = sanitizePath(req.params.path, ``).split("*").join("/");
+    let path = sanitizePath(req.params.path).split("*").join("/");
     if (fs.existsSync(`servers/${req.params.id}/${path}`)) {
       if (fs.lstatSync(`servers/${req.params.id}/${path}`).isDirectory()) {
         res.status(200).json({
@@ -1464,11 +1464,11 @@ router.get("/:id/file/:path", function (req, res) {
           //get the file's previous versions
           if (
             fs.existsSync(
-              `servers/${req.params.id}/.fileVersions/${sanitizePath(req.params.path, ``)}`
+              `servers/${req.params.id}/.fileVersions/${sanitizePath(req.params.path)}`
             )
           ) {
             versionsArray = fs.readdirSync(
-              `servers/${req.params.id}/.fileVersions/${sanitizePath(req.params.path, ``)}`
+              `servers/${req.params.id}/.fileVersions/${sanitizePath(req.params.path)}`
             );
           }
           res.status(200).json({
@@ -1492,27 +1492,27 @@ router.get("/:id/file/download/:path", function (req, res) {
   let account = readJSON("accounts/" + email + ".json");
   let server = readJSON("servers/" + req.params.id + "/server.json");
   if (hasAccess(token, account, req.params.id)) {
-    let path = sanitizePath(req.params.path, ``);
-    if (sanitizePath(req.params.path, ``).includes("*")) {
-      path = sanitizePath(req.params.path, ``).split("*").join("/");
+    let path = sanitizePath(req.params.path);
+    if (sanitizePath(req.params.path).includes("*")) {
+      path = sanitizePath(req.params.path).split("*").join("/");
     }
     if (fs.existsSync(`servers/${req.params.id}/${path}`)) {
       if (fs.statSync(`servers/${req.params.id}/${path}`).isDirectory()) {
         //zip the folder and send it to the client
         exec(
-          `zip -r -q -X ../${sanitizePath(req.params.path, ``)}.zip .`,
+          `zip -r -q -X ../${sanitizePath(req.params.path)}.zip .`,
           { cwd: `servers/${req.params.id}/${path}` },
           (err) => {
             res.setHeader("Content-Type", "application/zip");
 
             res.setHeader(
               "Content-Disposition",
-              `attachment; filename=${sanitizePath(req.params.path, ``)}.zip`
+              `attachment; filename=${sanitizePath(req.params.path)}.zip`
             );
 
             res.status(200).download(
               `servers/${req.params.id}/${path}.zip`,
-              `${sanitizePath(req.params.path, ``)}.zip`,
+              `${sanitizePath(req.params.path)}.zip`,
               () => {
                 //delete the zip file
                 fs.unlinkSync(`servers/${req.params.id}/${path}.zip`);
@@ -1524,7 +1524,7 @@ router.get("/:id/file/download/:path", function (req, res) {
         res.setHeader("Content-Type", "application/octet-stream");
         res.setHeader(
           "Content-Disposition",
-          `attachment; filename=${sanitizePath(req.params.path, ``)}`
+          `attachment; filename=${sanitizePath(req.params.path)}`
         );
         res.status(200).download(`servers/${req.params.id}/${path}`);
       }
@@ -1545,9 +1545,9 @@ router.post("/:id/file/:path", function (req, res) {
     hasAccess(token, account, req.params.id) &&
     fs.existsSync(`servers/${req.params.id}/`)
   ) {
-    let path = sanitizePath(req.params.path, ``);
-    if (sanitizePath(req.params.path, ``).includes("*")) {
-      path = sanitizePath(req.params.path, ``).split("*").join("/");
+    let path = sanitizePath(req.params.path);
+    if (sanitizePath(req.params.path).includes("*")) {
+      path = sanitizePath(req.params.path).split("*").join("/");
     }
     let extension = path.split(".")[path.split(".").length - 1];
     let filename = path.split("/")[path.split("/").length - 1];
@@ -1569,11 +1569,11 @@ router.post("/:id/file/:path", function (req, res) {
     ) {
       if (
         !fs.existsSync(
-          `servers/${req.params.id}/.fileVersions/${sanitizePath(req.params.path, ``)}`
+          `servers/${req.params.id}/.fileVersions/${sanitizePath(req.params.path)}`
         )
       ) {
         fs.mkdirSync(
-          `servers/${req.params.id}/.fileVersions/${sanitizePath(req.params.path, ``)}`
+          `servers/${req.params.id}/.fileVersions/${sanitizePath(req.params.path)}`
         );
       }
       //write only the difference between the old file and the new file
@@ -1594,7 +1594,7 @@ router.post("/:id/file/:path", function (req, res) {
       let filename = fs.statSync(`servers/${req.params.id}/${path}`).mtimeMs;
       console.log(filename);
       fs.writeFileSync(
-        `servers/${req.params.id}/.fileVersions/${sanitizePath(req.params.path, ``)}/${filename}`,
+        `servers/${req.params.id}/.fileVersions/${sanitizePath(req.params.path)}/${filename}`,
         diffString
       );
 
@@ -1621,10 +1621,10 @@ router.post(
       fs.existsSync(`servers/${req.params.id}/`)
     ) {
       let id = req.params.id;	
-      let path = sanitizePath(req.params.path, ``);
+      let path = sanitizePath(req.params.path);
       let filename = req.query.filename;
-      if (sanitizePath(req.params.path, ``).includes("*")) {
-        path = sanitizePath(req.params.path, ``).split("*").join("/");
+      if (sanitizePath(req.params.path).includes("*")) {
+        path = sanitizePath(req.params.path).split("*").join("/");
       }
 
       if (enableVirusScan) {
@@ -1672,11 +1672,11 @@ router.delete("/:id/file/:path", function (req, res) {
     fs.existsSync(`servers/${req.params.id}/`)
   ) {
     console.log("unsanitized path: " + req.params.path);
-    console.log("sanitized path: " + sanitizePath(req.params.path, ``));
-    let path = sanitizePath(req.params.path, ``);
-    console.log("DELETING " + sanitizePath(req.params.path, ``) + " " + email);
-    if (sanitizePath(req.params.path, ``).includes("*")) {
-      path = sanitizePath(req.params.path, ``).split("*").join("/");
+    console.log("sanitized path: " + sanitizePath(req.params.path));
+    let path = sanitizePath(req.params.path);
+    console.log("DELETING " + sanitizePath(req.params.path) + " " + email);
+    if (sanitizePath(req.params.path).includes("*")) {
+      path = sanitizePath(req.params.path).split("*").join("/");
     }
     let extension = path.split(".")[path.split(".").length - 1];
     let filename = path.split("/")[path.split("/").length - 1];
@@ -1705,10 +1705,10 @@ router.delete("/:id/folder/:path", function (req, res) {
     fs.existsSync(`servers/${req.params.id}/`) &&
     files.hash(password, account.salt).split(":")[1] == account.password
   ) {
-    console.log("DELETING " + sanitizePath(req.params.path, ``) + " " + email);
-    let path = sanitizePath(req.params.path, ``);
-    if (sanitizePath(req.params.path, ``).includes("*")) {
-      path = sanitizePath(req.params.path, ``).split("*").join("/");
+    console.log("DELETING " + sanitizePath(req.params.path) + " " + email);
+    let path = sanitizePath(req.params.path);
+    if (sanitizePath(req.params.path).includes("*")) {
+      path = sanitizePath(req.params.path).split("*").join("/");
     }
     if (
       fs.existsSync(`servers/${req.params.id}/${path}`) &&
@@ -2031,14 +2031,14 @@ router.get("/:id/webmap", function (req, res) {
 
 router.get("/:id/webmap/:path", function (req, res) {
   let url =
-    `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` + sanitizePath(req.params.path, ``);
+    `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` + sanitizePath(req.params.path);
   console.log(`Proxying request to: ${url}`);
   req.url = "/"; // Set the URL to the root before proxying
   proxy.web(req, res, { target: url });
 });
 
 router.get("/:id/webmap/:path/:path2/", function (req, res) {
-  let path2 = sanitizePath(req.params.path, ``)2;
+  let path2 = sanitizePath(req.params.path)2;
   req.url = "/"; // Set the URL to the root before proxying
   if (path2.includes("?")) {
     req.url = path2.split("?")[0];
@@ -2046,7 +2046,7 @@ router.get("/:id/webmap/:path/:path2/", function (req, res) {
 
   let url =
     `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` +
-    sanitizePath(req.params.path, ``) +
+    sanitizePath(req.params.path) +
     "/" +
     path2;
   console.log(`Proxying request to: ${url}`);
@@ -2057,11 +2057,11 @@ router.get("/:id/webmap/:path/:path2/", function (req, res) {
 router.get("/:id/webmap/:path/:path2/:path3", function (req, res) {
   let url =
     `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` +
-    sanitizePath(req.params.path, ``) +
+    sanitizePath(req.params.path) +
     "/" +
-    sanitizePath(req.params.path, ``)2 +
+    sanitizePath(req.params.path)2 +
     "/" +
-    sanitizePath(req.params.path, ``)3;
+    sanitizePath(req.params.path)3;
   console.log(`Proxying request to: ${url}`);
   req.url = "/"; // Set the URL to the root before proxying
   proxy.web(req, res, { target: url });
@@ -2080,11 +2080,38 @@ function hasAccess(token, account, id) {
   return accountOwner && (serverOwner || allowedAccount);
 }
 
-//fixes directory traversal vulnerabilities
-function sanitizePath(userPath, baseDir) {
-  const normalizedUserPath = userPath.startsWith('/') ? userPath.slice(1) : userPath;
-  const resolvedPath = path.resolve(path.join(baseDir, normalizedUserPath));
-  return resolvedPath.startsWith(path.resolve(baseDir)) ? resolvedPath : "invalid";
+const path = require('path');
+
+function sanitizePath(userInput) {
+  // Step 1: Block null bytes (common in attacks)
+  if (userInput.includes('\0')) {
+    console.log("null byte blocked: " + userInput);
+    return "invalid";
+  }
+
+  // Step 2: Normalize the path to resolve `..` and `.`
+  const normalized = path.normalize(userInput);
+
+  // Step 3: Split into parts and filter out traversal attempts
+  const parts = normalized.split(path.sep); // Handles OS-specific separators
+  const filteredParts = parts.filter(part => {
+    // Reject empty parts (e.g., from leading/trailing slashes)
+    if (part === '') return false;
+    // Block parent directory traversal
+    if (part === '..') return false;
+    return true;
+  });
+
+  // Step 4: Rebuild the sanitized path
+  const sanitized = filteredParts.join(path.sep);
+
+  // Step 5: Block absolute paths (e.g., /etc/passwd or C:\Windows)
+  if (path.isAbsolute(sanitized)) {
+    console.log("absolute path blocked: " + sanitized);
+    return "invalid";
+  }
+
+  return sanitized;
 }
 
 
