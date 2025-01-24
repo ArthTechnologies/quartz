@@ -2080,8 +2080,6 @@ function hasAccess(token, account, id) {
   return accountOwner && (serverOwner || allowedAccount);
 }
 
-const path = require('path');
-
 function sanitizePath(userInput) {
   // Step 1: Block null bytes (common in attacks)
   if (userInput.includes('\0')) {
