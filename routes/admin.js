@@ -4,6 +4,8 @@ const fs = require("fs");
 const { readJSON } = require("../scripts/utils.js");
 
 router.get("/", async (req, res) => {
+
+    const { execAsync, execSync } = require("child_process");
     const memory = {};
     
     // Docker container memory (format: "bytes:port")
