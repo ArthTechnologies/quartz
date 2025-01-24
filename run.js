@@ -761,7 +761,7 @@ adminApp.listen(adminPort, () => {
   console.log(`Admin API running on port ${adminPort}`);
 });
 
-app.use("/admin", require("./routes/admin"));
+adminApp.use("/admin", require("./routes/admin"));
 
 // port
 const port = process.env.PORT || 4000;
