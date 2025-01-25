@@ -85,7 +85,7 @@ router.get(`/claim/:id`, function (req, res) {
   let account = readJSON("accounts/" + email + ".json");
   let id = req.params.id;
   if (token === account.token || !enableAuth) {
-    if (id < parseInt(config.maxServers)) {
+    if (id < idOffset + parseInt(config.maxServers)) {
       console.log(account.servers + " servers");
       if (!account.servers.includes(id)) {
         account.servers.push(id);
