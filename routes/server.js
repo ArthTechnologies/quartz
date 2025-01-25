@@ -65,7 +65,7 @@ router.get(`/reserve`, function (req, res) {
       }
     }
     //make sure the id is not above the max
-    if (id > parseInt(config.maxServers)) {
+    if (id > idOffset + parseInt(config.maxServers)) {
       id = -1;
     } else {
       resObj.atCapacity = false;
