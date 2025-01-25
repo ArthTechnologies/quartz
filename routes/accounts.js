@@ -154,10 +154,8 @@ Router.post("/email/signin/", (req, res) => {
         accountId: account.accountId,
       };
       account.lastSignin = new Date().getTime();
-      fs.writeFileSync(
-        "accounts/email:" + email + ".json",
-        JSON.stringify(account)
-      );
+
+      writeJSON("accounts/email:" + email + ".json", account);
     } else {
       response = { token: -1, reason: "Incorrect email or password" };
     }
