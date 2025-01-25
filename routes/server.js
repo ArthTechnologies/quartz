@@ -58,6 +58,7 @@ router.get(`/reserve`, function (req, res) {
     }
     );
     for (let i = idOffset; i < idOffset + serversFolder.length; i++) {
+      console.log(i);
       if (!fs.existsSync("servers/" + i)) {
         id = i;
         break;
