@@ -179,9 +179,9 @@ async function downloadFabricJars() {
     for (let i in fabricVersions) {
         if (fabricVersions[i].stable) {
             const url = `https://meta.fabricmc.net/v2/versions/loader/${fabricVersions[i]}/${latestLoaderVersion}/${latestInstallerVersion}/server/jar`;
-            const filename = `fabric-${fabricVersions[i]}.jar`;
+            const filename = `fabric-${fabricVersions[i].version}.jar`;
 
-            if (!skipOldVersions || getMajorVersion(fabricVersions[i], 0) >= 21) {
+            if (!skipOldVersions || getMajorVersion(fabricVersions[i].version, 0) >= 21) {
                 index[filename] = url;
 
             
