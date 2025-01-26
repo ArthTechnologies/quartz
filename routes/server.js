@@ -931,6 +931,22 @@ router.get("/:id/world", function (req, res) {
       }
     }
 
+    if (server.software == "paper") {
+       //temporarily copy nether and the end to the world folder as vanilla format
+    if (fs.existsSync(path + "/world_nether")) {
+      files.copyDirectoryRecursiveSync(
+        path + "/world_nether",
+        path + "/world/DIM-1"
+      );
+    }
+    if (fs.existsSync(path + "/world_the_end")) {
+      files.copyDirectoryRecursiveSync(
+        path + "/world_the_end",
+        path + "/world/DIM1"
+      );  
+    }
+    }
+
     try {
       exec(`zip -r -q -X ../world.zip .`, { cwd: cwd }, (err) => {
         res.setHeader("Content-Type", "application/zip");
@@ -940,6 +956,13 @@ router.get("/:id/world", function (req, res) {
         res.status(200).download(`${path}/world.zip`, "world.zip", () => {
           //delete the zip file
           fs.unlinkSync(`${path}/world.zip`);
+          if (server.software == "paper") {
+            //delete the nether and the end folders
+            files.removeDirectoryRecursiveSync(path + "/world/DIM-1");
+            files.removeDirectoryRecursiveSync(path + "/world/DIM1");
+          }
+
+          
         });
       });
     } catch {
@@ -1113,39 +1136,53 @@ let id = req.params.id;
                             (err) => {
                               if (err) {
                                 console.log(err);
-                                //start server back up
-                                f.run(
-                                  id,
-                                  undefined,
-                                  undefined,
-                                  undefined,
-                                  undefined,
-                                  email,
-                                  false
-                                );
-                                1;
-                                lock = true;
+                                doneUnzipping();
                               }
                             }
                           );
                         } else {
-                          //start server back up
-                          f.run(
-                            id,
-                            undefined,
-                            undefined,
-                            undefined,
-                            undefined,
-                            email,
-                            false
-                          );
-                          1;
-                          lock = true;
+                          doneUnzipping();
                         }
                       }
                     }
                   );
                 }, 5000);
+              }
+
+              function doneUnzipping() {
+                //if paper, move the nether and end
+                if (server.software == "paper") {
+                  fs.mkdirSync(`servers/${id}/world_nether`);
+                  fs.mkdirSync(`servers/${id}/world_the_end`);
+                  exec(
+                    `mv servers/${id}/world/DIM-1/ servers/${id}/world_nether/DIM-1/`,
+                    (err) => {
+                      if (err) {
+                        console.log(err);
+                      }
+                    }
+                  );
+                  exec(
+                    `mv servers/${id}/world/DIM1/ servers/${id}/world_the_end/DIM1/`, 
+                    (err) => {
+                      if (err) {
+                        console.log(err);
+                      }
+                    }
+                  );
+                }
+                //start server back up
+                f.run(
+                  id,
+                  undefined,
+                  undefined,
+                  undefined,
+                  undefined,
+                  email,
+                  false
+                );
+                1;
+                lock = true;
               }
             });
           }
