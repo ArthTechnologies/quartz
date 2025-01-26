@@ -311,6 +311,7 @@ function fullDownload() {
     setTimeout(() => downloadForgeJars(), 1000);
     setTimeout(() => downloadNeoforgeJars(), 1500);
     setTimeout(() => downloadQuiltJars(), 2000);
+    setTimeout(() => downloadFabricJars(), 2250);
     setTimeout(() => downloadGeyserJars(), 2500);
     setTimeout(() => downloadWorldgenMods(), 3000);
     setTimeout(() => downloadSnapshotJars(), 3500);
@@ -333,6 +334,7 @@ function partialDownload() {
     setTimeout(() => downloadForgeJars(), 200);
     setTimeout(() => downloadNeoforgeJars(), 300);
     setTimeout(() => downloadQuiltJars(), 400);
+    setTimeout(() => downloadFabricJars(), 450);
     setTimeout(() => downloadGeyserJars(), 500);
     setTimeout(() => downloadWorldgenMods(), 600);
     setTimeout(() => downloadSnapshotJars(), 700);
