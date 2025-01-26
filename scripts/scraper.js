@@ -178,7 +178,7 @@ async function downloadFabricJars() {
 
     for (let i in fabricVersions) {
         if (fabricVersions[i].stable) {
-            const url = `https://meta.fabricmc.net/v2/versions/loader/${fabricVersions[i]}/${loader}/${installer}/server/jar`;
+            const url = `https://meta.fabricmc.net/v2/versions/loader/${fabricVersions[i]}/${latestLoaderVersion}/${latestInstallerVersion}/server/jar`;
             const filename = `fabric-${fabricVersions[i]}.jar`;
 
             if (!skipOldVersions || getMajorVersion(fabricVersions[i], 0) >= 21) {
@@ -342,6 +342,8 @@ function partialDownload() {
     setTimeout(() => done(), 10000);
 
 }
+
+partialDownload();
 
 
 module.exports = {fullDownload, partialDownload};
