@@ -162,6 +162,35 @@ async function downloadQuiltJars() {
 
 }
 
+async function downloadFabricJars() {
+    const response = await fetch("https://meta.fabricmc.net/v2/versions/game");
+    const fabricVersions = await response.json();
+
+    //get latest loader version
+    const response2 = await fetch("https://meta.fabricmc.net/v2/versions/loader");
+    const fabricLoaderVersions = await response2.json();
+    const latestLoaderVersion = fabricLoaderVersions[0].version;
+
+    //get latest installer version
+    const response3 = await fetch("https://meta.fabricmc.net/v2/versions/installer");
+    const fabricInstallerVersions = await response3.json();
+    const latestInstallerVersion = fabricInstallerVersions[0].version;
+
+    for (let i in fabricVersions) {
+        if (fabricVersions[i].stable) {
+            const url = `https://meta.fabricmc.net/v2/versions/loader/${fabricVersions[i]}/${loader}/${installer}/server/jar`;
+            const filename = `fabric-${fabricVersions[i]}.jar`;
+
+            if (!skipOldVersions || getMajorVersion(fabricVersions[i], 0) >= 21) {
+                index[filename] = url;
+
+            
+        }
+
+    }
+}
+}
+
 async function downloadGeyserJars() {
 
     
