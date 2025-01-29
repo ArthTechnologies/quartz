@@ -87,14 +87,56 @@ router.get(`/claim/:id`, function (req, res) {
   if (token === account.token || !enableAuth) {
     if (id < idOffset + parseInt(config.maxServers)) {
       console.log(account.servers + " servers");
-      if (!account.servers.includes(id)) {
-        account.servers.push(id);
-        writeJSON("accounts/" + email + ".json", account);
-        //to-do: make a way to write the account tsv file
-        fs.mkdirSync("servers/" + id);
-        res.status(200).json({ msg: `Success. Server claimed.` });
+      let hasPayedForServer = true;
+      if (enablePay) {
+        stripe.customers.list(
+          {
+            limit: 100,
+            email: account.email,
+          },
+          function (err, customers) {
+            if (err) {
+              console.log("err");
+              return "no";
+            } else {
+              console.log("debug: " + email + req.headers.username + em);
+              stripe.subscriptions.list(
+                {
+                  customer: customers.data[0].id,
+                  limit: 100,
+                },
+                function (err, subscriptions) {
+                  let subs = 0;
+                  for (i in subscriptions.data) {
+                    console.log("plan object");
+                    console.log(subscriptions.data[i].plan);
+                    if (subscriptions.data[i] != undefined) {
+                      subs++;
+                    }
+                  }
+                  let freeServers = 0;
+                  if (account.freeServers != undefined) {
+                    freeServers = parseInt(account.freeServers);
+                  }
+                  hasPayedForServer = subs + freeServers > account.servers.length;
+                }
+              );
+            }
+          }
+        );
+      }
+      if (hasPayedForServer) {
+        if (!account.servers.includes(id)) {
+          account.servers.push(id);
+          writeJSON("accounts/" + email + ".json", account);
+          //to-do: make a way to write the account tsv file
+          fs.mkdirSync("servers/" + id);
+          res.status(200).json({ msg: `Success. Server claimed.` });
+        } else {
+          res.status(400).json({ msg: `Server already claimed.` });
+        }
       } else {
-        res.status(400).json({ msg: `Server already claimed.` });
+        res.status(400).json({ msg: `You have not payed for this server.` });
       }
     } else {
       res.status(400).json({ msg: `Invalid server ID.` });
