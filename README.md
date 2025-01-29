@@ -8,6 +8,7 @@ Quartz is a backend for Arth Panel, a lightweight self-hosted Minecraft server p
 - Arth Panel only supports Linux operating systems such as Ubuntu Server.
 - Arth Panel now requires Docker, as features like file uploading could otherwise pose a security vulnerability. 
 - Make sure that docker commands can be run without root permissions. To do this on Ubuntu, run `sudo usermod -aG docker $USER` and restart your computer.
+- Make sure the `screen` and `zip` commands are installed and available on your computer.
 
 ## How to run
 
