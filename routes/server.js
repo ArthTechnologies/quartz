@@ -99,7 +99,7 @@ router.get(`/claim/:id`, function (req, res) {
               console.log("err");
               return "no";
             } else {
-              console.log("debug: " + email + req.headers.username + em);
+              console.log("debug: " + email + req.headers.username);
               stripe.subscriptions.list(
                 {
                   customer: customers.data[0].id,
