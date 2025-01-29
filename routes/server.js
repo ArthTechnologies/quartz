@@ -934,16 +934,20 @@ router.get("/:id/world", function (req, res) {
     if (server.software == "paper") {
        //temporarily copy nether and the end to the world folder as vanilla format
     if (fs.existsSync(path + "/world_nether")) {
-      files.copyDirectoryRecursiveSync(
-        path + "/world_nether",
-        path + "/world/DIM-1"
-      );
+      fs.mkdirSync(path + "/world/DIM-1");	
+      exec(`cp -r ${path}/world_nether/* ${path}/world/DIM-1`, (err) => {
+        if (err) {
+          console.log(err);
+        }
+      });
     }
     if (fs.existsSync(path + "/world_the_end")) {
-      files.copyDirectoryRecursiveSync(
-        path + "/world_the_end",
-        path + "/world/DIM1"
-      );  
+      fs.mkdirSync(path + "/world/DIM1");
+      exec(`cp -r ${path}/world_the_end/* ${path}/world/DIM1`, (err) => {
+        if (err) {
+          console.log(err);
+        }
+      });
     }
     }
 
