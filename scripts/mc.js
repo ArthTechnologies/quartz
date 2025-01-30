@@ -371,7 +371,16 @@ function run(
       }
       let result = data;
       if (!server.adminServer) {
-        result = result.replace(/server-port=25565/g, "server-port=" + port);
+        //find the server-port line 
+        let a = result.split("\n").findIndex((line) => {
+          return line.includes("server-port");
+        });
+        //replace the line with the new port
+        let resultssplit = result.split("\n");
+        resultssplit[a] = "server-port=" + port;
+        result = resultssplit.join("\n");
+        
+
       }
 
       fs.writeFileSync(folder + "/server.properties", result, "utf8");
