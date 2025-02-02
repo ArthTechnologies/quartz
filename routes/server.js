@@ -18,7 +18,7 @@ const stripe = require("stripe")(stripeKey);
 const enableAuth = JSON.parse(config.enableAuth);
 const enablePay = JSON.parse(config.enablePay);
 const enableVirusScan = JSON.parse(config.enableVirusScan);
-const portOffset = parseInt(config.portOffset);
+const portOffset = 10000;
 const idOffset = parseInt(config.idOffset);
 
 function writeServer(id, owner, state, name, software, version, productID, allowedAccounts, specialDatapacks, specialPlugins) {
