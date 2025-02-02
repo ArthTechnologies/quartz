@@ -119,6 +119,7 @@ router.get(`/claim/:id`, function (req, res) {
                     freeServers = parseInt(account.freeServers);
                   }
                   hasPayedForServer = subs + freeServers > account.servers.length;
+                  console.log("hasPayedForServer: " + subs + " "+freeServers + ">" + account.servers.length);
                 }
               );
             }
