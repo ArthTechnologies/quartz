@@ -1877,19 +1877,19 @@ router.get("/:id/liveStats", function (req, res) {
     fs.existsSync(`servers/${req.params.id}/`)
   ) {
     try {
-      console.log(`docker ps --filter "publish=${portOffset + req.params.id}" --format "{{.ID}}"`);  
+ 
       exec(
         `docker ps --filter "publish=${portOffset + req.params.id}" --format "{{.ID}}"`,
         (error, stdout, stderr) => {
-          console.log("debug1")
+      
           let pid = stdout.trim();
           let id = parseInt(req.params.id);
-          console.log(stdout);
+         
           exec(
             `docker stats ${pid} --no-stream --format "{{.MemUsage}}"
     `,
             (err, stdout2, stderr) => {
-              console.log(stdout2);
+            
               if (err) {
                 res.status(500).json({ success: false, data: err });
               }
