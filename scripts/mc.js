@@ -815,6 +815,23 @@ function run(
     }
 
     let count = 0;
+
+    //check if server is over storage limit
+    let serverStorageLimit = parseFloat(config.serverStorageLimit);
+    files.folderSizeRecursive(folder, (size) => {
+      //convert size to gb
+      size = size / 1000000000;
+      if (size > serverStorageLimit) {
+        states[id] = "false";
+        console.log("setting status of " + id + " to false on line #12");
+
+        terminalOutput[id] =
+          "Error: Server storage limit exceeded.";
+        killObstructingProcess(parseInt(id));
+        ls.kill();
+      }
+    });
+
   } catch (e) {
     console.log(e);
   }
