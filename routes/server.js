@@ -1894,7 +1894,10 @@ router.get("/:id/liveStats", function (req, res) {
                 res.status(500).json({ success: false, data: err });
               }
               let memory = stdout2.split("/")[0];
-              const net = require('net');
+
+              res.status(200).json({ memory: memory });
+
+              /*const net = require('net');
               const client = new net.Socket();
               const packet = Buffer.from([0xFE, 0x01])
               
@@ -1943,7 +1946,7 @@ router.get("/:id/liveStats", function (req, res) {
                 if (!success) {
                   res.status(500).json({ success: false, data: "Error getting live stats." });
                 }
-              });
+              });*/
 
                
              
