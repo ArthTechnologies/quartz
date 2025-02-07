@@ -2111,6 +2111,31 @@ router.post("/:id/deleteSubdomain", function (req, res) {
   }
 });
 
+router.post("/:id/allowAccount", function (req, res) {
+  let email = req.headers.username;
+  let token = req.headers.token;
+  let account = readJSON("accounts/" + email + ".json");
+  let server = readJSON(`servers/${req.params.id}/server.json`);
+  if (hasAccess(token, account, req.params.id)) {
+    let array = [];
+    if (server.allowedAccounts != undefined) {
+      array = server.allowedAccounts.split(",");
+    }
+  
+    
+    if (!array.includes(req.query.accountId) && array.length < 5) {
+      array.push(req.query.accountId);
+      server.allowedAccounts = array.join(",");
+      writeJSON(`servers/${req.params.id}/server.json`, server);
+      res.status(200).json({ msg: "Done" });
+    }
+
+
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
 /*const httpProxy = require("http-proxy");
 const proxy = httpProxy.createProxyServer();
 
