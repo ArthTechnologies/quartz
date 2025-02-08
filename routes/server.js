@@ -2136,53 +2136,6 @@ router.post("/:id/allowAccount", function (req, res) {
   }
 });
 
-/*const httpProxy = require("http-proxy");
-const proxy = httpProxy.createProxyServer();
-
-router.get("/:id/webmap", function (req, res) {
-  let url = `http://0.0.0.0:${parseInt(req.params.id) + 10200}`;
-  console.log(`Proxying request to: ${url}`);
-  req.url = "/"; // Set the URL to the root before proxying
-  proxy.web(req, res, { target: url });
-});
-
-router.get("/:id/webmap/:path", function (req, res) {
-  let url =
-    `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` + sanitizePath(req.params.path);
-  console.log(`Proxying request to: ${url}`);
-  req.url = "/"; // Set the URL to the root before proxying
-  proxy.web(req, res, { target: url });
-});
-
-router.get("/:id/webmap/:path/:path2/", function (req, res) {
-  let path2 = sanitizePath(req.params.path)2;
-  req.url = "/"; // Set the URL to the root before proxying
-  if (path2.includes("?")) {
-    req.url = path2.split("?")[0];
-  }
-
-  let url =
-    `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` +
-    sanitizePath(req.params.path) +
-    "/" +
-    path2;
-  console.log(`Proxying request to: ${url}`);
-
-  proxy.web(req, res, { target: url });
-});
-
-router.get("/:id/webmap/:path/:path2/:path3", function (req, res) {
-  let url =
-    `http://0.0.0.0:${parseInt(req.params.id) + 10200}/` +
-    sanitizePath(req.params.path) +
-    "/" +
-    sanitizePath(req.params.path)2 +
-    "/" +
-    sanitizePath(req.params.path)3;
-  console.log(`Proxying request to: ${url}`);
-  req.url = "/"; // Set the URL to the root before proxying
-  proxy.web(req, res, { target: url });
-});*/
 
 function hasAccess(token, account, id) {
   let server = readJSON(`servers/${id}/server.json`);
