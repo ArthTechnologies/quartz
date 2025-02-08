@@ -49,7 +49,9 @@ function specialPlugins() {
         if (fs.existsSync(`servers/${servers[i]}/server.json`)) {
         let server = readJSON(`servers/${servers[i]}/server.json`);
         try {
-            let specialDatapacks = server.addons;
+            let specialDatapacks = [];
+            if (typeof server.addons == "string") specialDatapacks = server.addons.split(",");
+            else if (Array.isArray(server.addons)) specialDatapacks = server.addons;
             let specialPlugins = [];
             if (server.webmap) specialPlugins.push("dynmap");
             if (server.voicechat) specialPlugins.push("voicechat");
@@ -57,6 +59,9 @@ function specialPlugins() {
             if (server.discordsrv) specialPlugins.push("discordsrv");
 
         console.log(server.id, specialDatapacks.join(","), specialPlugins.join(","));
+            server.specialDatapacks = specialDatapacks.join(",");
+            server.specialPlugins = specialPlugins.join(",");
+            writeJSON(`servers/${servers[i]}/server.json`, server);
         } catch (e) {
         console.log("error", e);
         }
@@ -64,4 +69,7 @@ function specialPlugins() {
     }
 }
 
-module.exports = {accountsToTSV, serversToTSV, specialPlugins};
+function migration1() {
+    specialPlugins();
+}
+module.exports = {accountsToTSV, serversToTSV, migration1};

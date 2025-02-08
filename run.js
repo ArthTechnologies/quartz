@@ -573,7 +573,8 @@ process.stdin.on("data", (data) => {
 
       break;
     case "runMigrations":
-      migrations.specialPlugins();
+      console.log("Running migration 1");
+      migrations.migration1();
       break;
     case "clear":
       process.stdout.write("\x1B[2J\x1B[0f");
