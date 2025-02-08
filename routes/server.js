@@ -361,6 +361,7 @@ router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
   let server = readJSON("servers/" + req.params.id + "/server.json");
+  console.log("downloading plugin");
   if (hasAccess(token, account, req.params.id)) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
@@ -384,7 +385,7 @@ router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
       let platform = "lr";
       if (pluginUrl.startsWith("https://github.com/")) platform = "gh";
       if (pluginUrl.startsWith("https://edge.forgecdn.net/")) platform = "cf";
-        console.log("downloading plugin");
+        
         files.download(
           `servers/${id}/${modtype}s/${platform}_${pluginId}_${pluginName}.${extension}`,
           pluginUrl
