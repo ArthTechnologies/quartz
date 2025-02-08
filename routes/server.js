@@ -357,11 +357,12 @@ router.post(`/:id/version/`, function (req, res) {
 
 
 router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
+  console.log("downloading plugin");
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
   let server = readJSON("servers/" + req.params.id + "/server.json");
-  console.log("downloading plugin");
+
   if (hasAccess(token, account, req.params.id)) {
     //add cors header
     res.header("Access-Control-Allow-Origin", "*");
