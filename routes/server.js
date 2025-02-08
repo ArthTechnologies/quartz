@@ -384,13 +384,14 @@ router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
       let platform = "lr";
       if (pluginUrl.startsWith("https://github.com/")) platform = "gh";
       if (pluginUrl.startsWith("https://edge.forgecdn.net/")) platform = "cf";
-      if (pluginUrl) {
+        console.log("downloading plugin" + pluginUrl);
+        console.log(`servers/${id}/${modtype}/${platform}_${pluginId}_${pluginName}.${extension}`);
         files.download(
           `servers/${id}/${modtype}s/${platform}_${pluginId}_${pluginName}.${extension}`,
           pluginUrl
         );
      
-      }
+      
 
       res.status(202).json({ msg: `Success. Plugin added.` });
     }
