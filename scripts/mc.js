@@ -444,7 +444,7 @@ function run(
           }, 10);
         }
 
-        /*if (plugins[i].includes("Bluemap")) {
+        if (plugins[i].includes("Bluemap")) {
           //change accept-download to true in BlueMap/core.conf
           let interval1 = setInterval(() => {
             if (fs.existsSync(folder + "/plugins/Bluemap/core.conf")) {
@@ -464,7 +464,39 @@ function run(
                 lines.join("\n"),
 
                 "utf8"
-              );*/
+              );
+
+              //change the port in Bluemap/webserver.conf to port + 66
+              let data2 = fs.readFileSync(
+                folder + "/plugins/Bluemap/webserver.conf",
+                "utf8"
+              );
+              let lines2 = data2.split("\n");
+              let b = lines2.findIndex((line) => {
+                return line.includes("port");
+              });
+              lines2[b] = "port: " + (port + 66);
+              fs.writeFileSync(
+
+
+                folder + "/plugins/Bluemap/webserver.conf",
+                lines2.join("\n"),
+                "utf8"
+              );
+              if (!server.specialPlugins.includes("bluemap")) { 
+                server.specialPlugins.push("bluemap");
+              }
+              utils.writeJSON("servers/" + id + "/server.json", server);
+              let interval2 = setInterval(() => {
+                if (getState(id) == "true") {
+                  writeTerminal(id, "bluemap render world");
+                  clearInterval(interval2); 
+                }
+              }, 3000);
+              clearInterval(interval1);
+            }
+          }, 10);
+        }
 
         if (plugins[i].includes("Simple-Voice-Chat")) {
           let interval1 = setInterval(() => {
