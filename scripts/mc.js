@@ -93,11 +93,8 @@ function checkServer(id) {
   return {
     version: server.version,
     software: server.software,
-    addons: server.addons,
-    webmap: server.webmap,
-    voicechat: server.voicechat,
-    discordsrv: server.discordsrv,
-    chunky: server.chunky,
+    specialDatapacks: server.specialDatapacks,
+    specialPlugins: server.specialPlugins,
     state: states[id],
   };
 }
@@ -391,10 +388,7 @@ function run(
     //it hasnt been installed yet and the config needs to modified
     let plugins = fs.readdirSync(folder + "/plugins");
 
-    server.webmap = false;
-    server.voicechat = false;
-    server.chunky = false;
-    server.discordsrv = false;
+
     utils.writeJSON("servers/" + id + "/server.json", server);
 
     for (i in plugins) {
@@ -435,7 +429,9 @@ function run(
                 "utf8"
               );
 
-              server.webmap = true;
+              if (!server.specialPlugins.includes("dynmap")) {
+                server.specialPlugins.push("dynmap");
+              }
               utils.writeJSON("servers/" + id + "/server.json", server);
               let interval2 = setInterval(() => {
                 if (getState(id) == "true") {
@@ -447,6 +443,28 @@ function run(
             }
           }, 10);
         }
+
+        /*if (plugins[i].includes("Bluemap")) {
+          //change accept-download to true in BlueMap/core.conf
+          let interval1 = setInterval(() => {
+            if (fs.existsSync(folder + "/plugins/Bluemap/core.conf")) {
+              let data = fs.readFileSync(
+                folder + "/plugins/Bluemap/core.conf",
+                "utf8"
+
+              );
+              let lines = data.split("\n");
+              let a = lines.findIndex((line) => {
+                return line.includes("accept-download");
+              } 
+);
+              lines[a] = "  accept-download: true";
+              fs.writeFileSync(
+                folder + "/plugins/Bluemap/core.conf",
+                lines.join("\n"),
+
+                "utf8"
+              );*/
 
         if (plugins[i].includes("Simple-Voice-Chat")) {
           let interval1 = setInterval(() => {

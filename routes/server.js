@@ -523,13 +523,10 @@ router.post(`/new/:id`, function (req, res) {
               server.name = req.body.name;
               server.software = req.body.software;
               server.version = req.body.version;
-              server.addons = req.body.addons;
+              server.specialDatapacks = req.body.addons;
               server.accountId = account.accountId;
               server.id = id;
-              server.webmap = false;
-              server.voicechat = false;
-              server.discordsrv = false;
-              server.chunky = false;
+              server.specialPlugins = [];
               if (!fs.existsSync("servers/" + id)) {
                 fs.mkdirSync("servers/" + id);
               }

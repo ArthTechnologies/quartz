@@ -26,12 +26,8 @@ function serversToTSV() {
         if (fs.existsSync(`servers/${servers[i]}/server.json`)) {
         let server = readJSON(`servers/${servers[i]}/server.json`);
         try {
-            let specialDatapacks = server.addons;
-            let specialPlugins = [];
-            if (server.webmap) specialPlugins.push("webmap");
-            if (server.voicechat) specialPlugins.push("voicechat");
-            if (server.chunky) specialPlugins.push("chunky");
-            if (server.discordsrv) specialPlugins.push("discordsrv");
+            let specialDatapacks = server.specialDatapacks || [];   
+        let specialPlugins = server.specialPlugins || [];
 
         let row = [server.id, server.accountId,"created",server.name, server.software, server.version, server.productID, "", specialDatapacks.join(","), specialPlugins.join(",")];	
         tsv += row.join("\t") + "\n";
