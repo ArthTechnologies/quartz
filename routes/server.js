@@ -394,7 +394,7 @@ router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
      
       
 
-      res.status(202).json({ msg: `Success. Plugin added.` });
+      res.status(202).json({ msg: `Success. Plugin added. test` });
     }
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
