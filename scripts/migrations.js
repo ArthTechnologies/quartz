@@ -59,8 +59,14 @@ function specialPlugins() {
             if (server.discordsrv) specialPlugins.push("discordsrv");
 
         console.log(server.id, specialDatapacks.join(","), specialPlugins.join(","));
-            server.specialDatapacks = specialDatapacks.join(",");
-            server.specialPlugins = specialPlugins.join(",");
+            server.specialDatapacks = specialDatapacks;
+            server.specialPlugins = specialPlugins;
+            //remove addons, webmap, voicechat, chunky, discordsrv
+            delete server.addons;
+            delete server.webmap;
+            delete server.voicechat;
+            delete server.chunky;
+            delete server.discordsrv;
             writeJSON(`servers/${servers[i]}/server.json`, server);
         } catch (e) {
         console.log("error", e);
