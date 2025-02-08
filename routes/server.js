@@ -1640,12 +1640,7 @@ router.post("/:id/file/:path", function (req, res) {
     if (
       req.body.content !== undefined &&
       fs.existsSync(`servers/${req.params.id}/${path}`) &&
-      (extension == "yml" ||
-        extension == "yaml" ||
-        extension == "json" ||
-        extension == "toml" ||
-        extension == "txt" ||
-        extension == "properties") &&
+      
       filename != "server.json" &&
       filename != "velocity.toml" &&
       filename != "modrinth.index.json" &&
