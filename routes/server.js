@@ -355,7 +355,7 @@ router.post(`/:id/version/`, function (req, res) {
   }
 });
 
-let lastPlugin = "";
+
 router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
@@ -384,12 +384,12 @@ router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
       let platform = "lr";
       if (pluginUrl.startsWith("https://github.com/")) platform = "gh";
       if (pluginUrl.startsWith("https://edge.forgecdn.net/")) platform = "cf";
-      if (pluginUrl != lastPlugin) {
+      if (pluginUrl) {
         files.download(
           `servers/${id}/${modtype}s/${platform}_${pluginId}_${pluginName}.${extension}`,
           pluginUrl
         );
-        lastPlugin = pluginUrl;
+     
       }
 
       res.status(202).json({ msg: `Success. Plugin added.` });
