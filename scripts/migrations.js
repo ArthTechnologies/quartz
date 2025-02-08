@@ -43,4 +43,25 @@ function serversToTSV() {
     fs.writeFileSync("servers.tsv", tsv);
 }
 
-module.exports = {accountsToTSV, serversToTSV};
+function specialPlugins() {
+    let servers = fs.readdirSync("servers");
+    for (let i in servers) {
+        if (fs.existsSync(`servers/${servers[i]}/server.json`)) {
+        let server = readJSON(`servers/${servers[i]}/server.json`);
+        try {
+            let specialDatapacks = server.addons;
+            let specialPlugins = [];
+            if (server.webmap) specialPlugins.push("dynmap");
+            if (server.voicechat) specialPlugins.push("voicechat");
+            if (server.chunky) specialPlugins.push("chunky");
+            if (server.discordsrv) specialPlugins.push("discordsrv");
+
+        console.log(server.id, specialDatapacks.join(","), specialPlugins.join(","));
+        } catch (e) {
+        console.log("error", e);
+        }
+        }
+    }
+}
+
+module.exports = {accountsToTSV, serversToTSV, specialPlugins};

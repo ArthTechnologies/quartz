@@ -572,6 +572,9 @@ process.stdin.on("data", (data) => {
       });
 
       break;
+    case "runMigrations":
+      migrations.specialPlugins();
+      break;
     case "clear":
       process.stdout.write("\x1B[2J\x1B[0f");
       break;
@@ -624,33 +627,6 @@ setInterval(() => {
   }
 }, 1000 * 60 * 5);
 
-/*files.downloadAsync(
-  "assets/java/java21.tar.gz",
-  "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.3%2B9/OpenJDK21U-jdk_x64_linux_hotspot_21.0.3_9.tar.gz",
-  (data) => {
-    files.extractAsync("assets/java/java21.tar.gz", "assets/java", () => {
-      fs.unlinkSync("assets/java/java21.tar.gz");
-    });
-  }
-);
-files.downloadAsync(
-  "assets/java/java17.tar.gz",
-  "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz",
-  (data) => {
-    files.extractAsync("assets/java/java17.tar.gz", "assets/java", () => {
-      fs.unlinkSync("assets/java/java17.tar.gz");
-    });
-  }
-);
-files.downloadAsync(
-  "assets/java/java8.tar.gz",
-  "https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u382-b05/OpenJDK8U-jdk_x64_linux_hotspot_8u382b05.tar.gz",
-  (data) => {
-    files.extractAsync("assets/java/java8.tar.gz", "assets/java", () => {
-      fs.unlinkSync("assets/java/java8.tar.gz");
-    });
-  }
-);*/
 const f = require("./scripts/mc.js");
 //this gets the server states every 5 minutes so that if quartz restarts, servers that were up will startup again
 function getServerStates() {
