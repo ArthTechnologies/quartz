@@ -444,12 +444,12 @@ function run(
           }, 10);
         }
 
-        if (plugins[i].toLowerCase().includes("Bluemap")) {
+        if (plugins[i].includes("BlueMap")) {
           //change accept-download to true in BlueMap/core.conf
           let interval1 = setInterval(() => {
-            if (fs.existsSync(folder + "/plugins/Bluemap/core.conf")) {
+            if (fs.existsSync(folder + "/plugins/BlueMap/core.conf")) {
               let data = fs.readFileSync(
-                folder + "/plugins/Bluemap/core.conf",
+                folder + "/plugins/BlueMap/core.conf",
                 "utf8"
 
               );
@@ -460,15 +460,15 @@ function run(
 );
               lines[a] = "  accept-download: true";
               fs.writeFileSync(
-                folder + "/plugins/Bluemap/core.conf",
+                folder + "/plugins/BlueMap/core.conf",
                 lines.join("\n"),
 
                 "utf8"
               );
 
-              //change the port in Bluemap/webserver.conf to port + 66
+              //change the port in BlueMap/webserver.conf to port + 66
               let data2 = fs.readFileSync(
-                folder + "/plugins/Bluemap/webserver.conf",
+                folder + "/plugins/BlueMap/webserver.conf",
                 "utf8"
               );
               let lines2 = data2.split("\n");
@@ -479,17 +479,17 @@ function run(
               fs.writeFileSync(
 
 
-                folder + "/plugins/Bluemap/webserver.conf",
+                folder + "/plugins/BlueMap/webserver.conf",
                 lines2.join("\n"),
                 "utf8"
               );
-              if (!server.specialPlugins.includes("bluemap")) { 
-                server.specialPlugins.push("bluemap");
+              if (!server.specialPlugins.includes("BlueMap")) { 
+                server.specialPlugins.push("BlueMap");
               }
               utils.writeJSON("servers/" + id + "/server.json", server);
               let interval2 = setInterval(() => {
                 if (getState(id) == "true") {
-                  writeTerminal(id, "bluemap render world");
+                  writeTerminal(id, "BlueMap render world");
                   clearInterval(interval2); 
                 }
               }, 3000);
