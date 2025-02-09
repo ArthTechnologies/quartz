@@ -1849,6 +1849,7 @@ router.get("/:id/storageInfo", function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
+  const server = readJSON(`servers/${req.params.id}/server.json`);
   if (
     hasAccess(token, account, req.params.id) &&
     fs.existsSync(`servers/${req.params.id}/`)
