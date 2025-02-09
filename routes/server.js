@@ -1850,9 +1850,9 @@ router.get("/:id/storageInfo", function (req, res) {
     let worlds = files.folderSizeRecursive(`servers/${req.params.id}/world`);
     let serverStorageLimit = 10;
     if (config.plus == server.productID) {
-      allocatedRAM = 15;
+      serverStorageLimit = 15;
     } else if (config.premium == server.productID) {
-      allocatedRAM = 20;
+      serverStorageLimit = 20;
     }
    limit = serverStorageLimit * 1024 * 1024 * 1024;
 
