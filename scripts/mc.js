@@ -461,7 +461,7 @@ function run(
               } 
 );
               lines[a] = "accept-download: true";
-              console.log(lines.join("\n"));  
+              console.log(folder + "/plugins/BlueMap/core.conf");
               fs.writeFileSync(
                 folder + "/plugins/BlueMap/core.conf",
                 lines.join("\n"),
