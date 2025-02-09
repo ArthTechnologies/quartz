@@ -442,6 +442,13 @@ function run(
               clearInterval(interval1);
             }
           }, 10);
+        } else {
+          if (server.specialPlugins.includes("dynmap")) {
+            server.specialPlugins.splice(
+              server.specialPlugins.indexOf("dynmap"),
+              1
+            );
+          }
         }
 
         if (plugins[i].includes("BlueMap")) {
@@ -496,6 +503,13 @@ function run(
               }
             }
           }, 10);
+        } else {
+          if (server.specialPlugins.includes("bluemap")) {
+            server.specialPlugins.splice(
+              server.specialPlugins.indexOf("bluemap"),
+              1
+            );
+          }
         }
 
         if (plugins[i].includes("Simple-Voice-Chat")) {
@@ -524,22 +538,49 @@ function run(
 
                 "utf8"
               );
-              server.voicechat = true;
+              if (!server.specialPlugins.includes("voicechat")) {
+                server.specialPlugins.push("voicechat");
+              }
               utils.writeJSON("servers/" + id + "/server.json", server);
 
               clearInterval(interval1);
             }
           }, 10);
+        } else {
+          if (server.specialPlugins.includes("voicechat")) {
+            server.specialPlugins.splice(
+              server.specialPlugins.indexOf("voicechat"),
+              1
+            );
+          }
         }
 
         if (plugins[i].includes("DiscordSRV")) {
-          server.discordsrv = true;
+          if (!server.specialPlugins.includes("discordsrv")) {
+            server.specialPlugins.push("discordsrv");
+          }
           utils.writeJSON("servers/" + id + "/server.json", server);
+        } else {
+          if (server.specialPlugins.includes("discordsrv")) {
+            server.specialPlugins.splice(
+              server.specialPlugins.indexOf("discordsrv"),
+              1
+            );
+          }
         }
 
         if (plugins[i].includes("Chunky")) {
-          server.chunky = true;
+          if (!server.specialPlugins.includes("chunky")) {
+            server.specialPlugins.push("chunky");
+          }
           utils.writeJSON("servers/" + id + "/server.json", server);
+        } else {
+          if (server.specialPlugins.includes("chunky")) {
+            server.specialPlugins.splice(
+              server.specialPlugins.indexOf("chunky"),
+              1
+            );
+          }
         }
       }
     }
