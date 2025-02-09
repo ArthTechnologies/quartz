@@ -1848,10 +1848,13 @@ router.get("/:id/storageInfo", function (req, res) {
     let plugins = files.folderSizeRecursive(`servers/${req.params.id}/plugins`);
     let mods = files.folderSizeRecursive(`servers/${req.params.id}/mods`);
     let worlds = files.folderSizeRecursive(`servers/${req.params.id}/world`);
-
-    if (config.serverStorageLimit !== undefined) {
-      limit = config.serverStorageLimit * 1024 * 1024 * 1024;
+    let serverStorageLimit = 10;
+    if (config.plus == server.productID) {
+      allocatedRAM = 15;
+    } else if (config.premium == server.productID) {
+      allocatedRAM = 20;
     }
+   serverStorageLimit = serverStorageLimit * 1024 * 1024 * 1024;
 
     res.status(200).json({
       used: used,
