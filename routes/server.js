@@ -1854,7 +1854,7 @@ router.get("/:id/storageInfo", function (req, res) {
     } else if (config.premium == server.productID) {
       allocatedRAM = 20;
     }
-   serverStorageLimit = serverStorageLimit * 1024 * 1024 * 1024;
+   limit = serverStorageLimit * 1024 * 1024 * 1024;
 
     res.status(200).json({
       used: used,
