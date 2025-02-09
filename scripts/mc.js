@@ -457,11 +457,11 @@ function run(
              
               let lines = data.split("\n");
               let a = lines.findIndex((line) => {
-                return line.includes("accept-download");
+                return line.includes("accept-download:");
               } 
 );
               lines[a] = "accept-download: true";
-              console.log(folder + "/plugins/BlueMap/core.conf");
+
               fs.writeFileSync(
                 folder + "/plugins/BlueMap/core.conf",
                 lines.join("\n"),
@@ -476,7 +476,7 @@ function run(
               );
               let lines2 = data2.split("\n");
               let b = lines2.findIndex((line) => {
-                return line.includes("port");
+                return line.includes("port:");
               });
               lines2[b] = "port: " + (port + 66);
               fs.writeFileSync(
@@ -486,8 +486,8 @@ function run(
                 lines2.join("\n"),
                 "utf8"
               );
-              if (!server.specialPlugins.includes("BlueMap")) { 
-                server.specialPlugins.push("BlueMap");
+              if (!server.specialPlugins.includes("bluemap")) { 
+                server.specialPlugins.push("bluemap");
               }
               utils.writeJSON("servers/" + id + "/server.json", server);
               let interval2 = setInterval(() => {
