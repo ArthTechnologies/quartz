@@ -861,7 +861,7 @@ router.get(`/:id/getInfo`, function (req, res) {
     for (let i = 0; i < accountstsv.length; i++) {
       let account = accountstsv[i].split("\t");
       if (allowedAccounts1.includes(account[0])) {
-        allowedAccounts.push(account[0] + ":" + account[1]);
+        allowedAccounts.push(account[0] + ":" + account[1].split(":")[1]);
       }
     } 
     res.status(200).json({
