@@ -854,7 +854,16 @@ router.get(`/:id/getInfo`, function (req, res) {
     }
 
     let automaticStartup = false;
-
+    let allowedAccounts1 = server.allowedAccounts.split(",");
+    //scan accounts.tsv for each accountId and get the username
+    let allowedAccounts = [];
+    let accountstsv = fs.readFileSync("accounts.tsv").toString().split("\n");
+    for (let i = 0; i < accountstsv.length; i++) {
+      let account = accountstsv[i].split("\t");
+      if (allowedAccounts1.includes(account[0])) {
+        allowedAccounts.push(account[0] + ":" + account[1]);
+      }
+    } 
     res.status(200).json({
       msg: `Success: Got server info`,
       iconUrl: iconUrl,
@@ -862,6 +871,7 @@ router.get(`/:id/getInfo`, function (req, res) {
       secret: secret,
       proxiesEnabled: proxiesEnabled,
       automaticStartup: automaticStartup,
+      allowedAccounts: allowedAccounts
     });
   } else {
     res.status(401).json({ msg: `Invalid credentials.` });
