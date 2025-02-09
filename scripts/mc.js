@@ -717,7 +717,8 @@ function run(
             prefix = "../" + path;
             execLine = prefix + " -jar quilt-server-launch.jar nogui";
           }
-          console.log("starting server " + id + " with:\n" + execLine);
+          let timestamp = new Date().toLocaleTimeString();
+          console.log(timestamp + " :t starting server " + id + " with:\n" + execLine);
           ls = spawn(
             execLine,
             { cwd: cwd, stdio: ["pipe", "pipe", "pipe"], shell: true },
