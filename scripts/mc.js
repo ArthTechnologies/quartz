@@ -470,33 +470,35 @@ function run(
               );
 
               //change the port in BlueMap/webserver.conf to port + 66
-              let data2 = fs.readFileSync(
-                folder + "/plugins/BlueMap/webserver.conf",
-                "utf8"
-              );
-              let lines2 = data2.split("\n");
-              let b = lines2.findIndex((line) => {
-                return line.includes("port:");
-              });
-              lines2[b] = "port: " + (port + 66);
-              fs.writeFileSync(
-
-
-                folder + "/plugins/BlueMap/webserver.conf",
-                lines2.join("\n"),
-                "utf8"
-              );
-              if (!server.specialPlugins.includes("bluemap")) { 
-                server.specialPlugins.push("bluemap");
-              }
-              utils.writeJSON("servers/" + id + "/server.json", server);
-              let interval2 = setInterval(() => {
-                if (getState(id) == "true") {
-                  writeTerminal(id, "BlueMap render world");
-                  clearInterval(interval2); 
+              if (fs.existsSync(folder + "/plugins/BlueMap/webserver.conf")) {
+                let data2 = fs.readFileSync(
+                  folder + "/plugins/BlueMap/webserver.conf",
+                  "utf8"
+                );
+                let lines2 = data2.split("\n");
+                let b = lines2.findIndex((line) => {
+                  return line.includes("port:");
+                });
+                lines2[b] = "port: " + (port + 66);
+                fs.writeFileSync(
+  
+  
+                  folder + "/plugins/BlueMap/webserver.conf",
+                  lines2.join("\n"),
+                  "utf8"
+                );
+                if (!server.specialPlugins.includes("bluemap")) { 
+                  server.specialPlugins.push("bluemap");
                 }
-              }, 3000);
-              clearInterval(interval1);
+                utils.writeJSON("servers/" + id + "/server.json", server);
+                let interval2 = setInterval(() => {
+                  if (getState(id) == "true") {
+                    writeTerminal(id, "BlueMap render world");
+                    clearInterval(interval2); 
+                  }
+                }, 3000);
+                clearInterval(interval1);
+              }
             }
           }, 10);
         }
