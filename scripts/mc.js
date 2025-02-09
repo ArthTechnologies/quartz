@@ -445,6 +445,7 @@ function run(
         }
 
         if (plugins[i].includes("BlueMap")) {
+          console.log("Configuring BlueMap plugin...");
           //change accept-download to true in BlueMap/core.conf
           let interval1 = setInterval(() => {
             if (fs.existsSync(folder + "/plugins/BlueMap/core.conf")) {
