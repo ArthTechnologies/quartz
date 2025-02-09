@@ -454,13 +454,14 @@ function run(
                 "utf8"
 
               );
-              console.log(data);
+             
               let lines = data.split("\n");
               let a = lines.findIndex((line) => {
                 return line.includes("accept-download");
               } 
 );
               lines[a] = "accept-download: true";
+              console.log(lines.join("\n"));  
               fs.writeFileSync(
                 folder + "/plugins/BlueMap/core.conf",
                 lines.join("\n"),
