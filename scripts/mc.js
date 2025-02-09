@@ -926,9 +926,14 @@ function run(
     }
 
     let count = 0;
-
     //check if server is over storage limit
-    let serverStorageLimit = parseFloat(config.serverStorageLimit);
+    let serverStorageLimit = 10;
+    if (config.plus == server.productID) {
+      allocatedRAM = 15;
+    } else if (config.premium == server.productID) {
+      allocatedRAM = 20;
+    }
+      
     files.folderSizeRecursive(folder, (size) => {
       //convert size to gb
       size = size / 1000000000;
