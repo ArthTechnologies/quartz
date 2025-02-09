@@ -587,6 +587,16 @@ process.stdin.on("data", (data) => {
           );
           
         }
+        //five minute reminder
+        setTimeout(() => {
+          for (let i in fs.readdirSync("servers")) {
+            const serverId = fs.readdirSync("servers")[i];
+            f.writeTerminal(
+              serverId,
+              "say [Broadcast] Server restarting in 5 minutes."
+            );
+          }
+        }, (time - 5) * 60 * 1000); 
         console.log("Restart scheduled in " + time + " minutes.");
         console.log("Make sure the autorestart script is working.");
         setTimeout(() => {
