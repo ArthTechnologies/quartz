@@ -30,6 +30,16 @@ async function downloadPaperJars() {
         if (!skipOldVersions || getMajorVersion(version, 1) >= 21) {
             index[filename] = link;
     }
+    //if the channel is release and theres an existing beta jar, delete it
+    if (channel == "release") {
+        const betaFilename = `paper-${version}-beta.jar`;
+        if (index[betaFilename]) {
+            delete index[betaFilename];
+        }
+        if (fs.existsSync(`assets/jars/${betaFilename}`)) {
+            fs.unlinkSync(`assets/jars/${betaFilename}`);
+        }   
+    }
 
         
     
@@ -202,7 +212,7 @@ async function downloadWorldgenMods() {
     let worldgenMods = ["terralith", "incendium", "nullscape", "structory"];
     for (let z in worldgenMods) {
 
-        console.log(worldgenMods[z]);
+        
 
 
     const response = await fetch(`https://api.modrinth.com/v2/project/${worldgenMods[z]}/version?loaders=[%22datapack%22]`);
@@ -230,7 +240,7 @@ async function downloadWorldgenMods() {
         }  
     } 
     }
-    console.log(minecraftVersions);
+
     for (let i in minecraftVersions) {
         if (worldgenMods[z] != undefined) {
         let minecraftVersion = minecraftVersions[i].split("*")[0];
@@ -323,7 +333,7 @@ function fullDownload() {
 function done() {
     const indexJson = JSON.stringify(index);
     fs.writeFileSync("assets/scraper.json", indexJson);
-    console.log("Done");
+    console.log("Done running jars scraper");
 }
 
 function partialDownload() {
