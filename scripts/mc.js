@@ -448,6 +448,7 @@ function run(
               server.specialPlugins.indexOf("dynmap"),
               1
             );
+            utils.writeJSON("servers/" + id + "/server.json", server);
           }
         }
 
@@ -509,6 +510,7 @@ function run(
               server.specialPlugins.indexOf("bluemap"),
               1
             );
+            utils.writeJSON("servers/" + id + "/server.json", server);
           }
         }
 
@@ -552,6 +554,7 @@ function run(
               server.specialPlugins.indexOf("voicechat"),
               1
             );
+            utils.writeJSON("servers/" + id + "/server.json", server);
           }
         }
 
@@ -566,6 +569,7 @@ function run(
               server.specialPlugins.indexOf("discordsrv"),
               1
             );
+            utils.writeJSON("servers/" + id + "/server.json", server);
           }
         }
 
@@ -580,6 +584,7 @@ function run(
               server.specialPlugins.indexOf("chunky"),
               1
             );
+            utils.writeJSON("servers/" + id + "/server.json", server);
           }
         }
       }
