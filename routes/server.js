@@ -1763,6 +1763,7 @@ router.delete("/:id/file/:path", function (req, res) {
     }
     let extension = path.split(".")[path.split(".").length - 1];
     let filename = path.split("/")[path.split("/").length - 1];
+    console.log(`servers/${req.params.id}/${path}`);
     if (
       fs.existsSync(`servers/${req.params.id}/${path}`) &&
       filename != "server.json"
