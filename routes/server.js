@@ -621,6 +621,8 @@ router.post(`/new/:id`, function (req, res) {
                             server.accountId = account.accountId;
                             server.id = id;
                             server.productID = planId;
+                            server.specialPlugins = [];
+                            server.specialDatapacks = [];
                             if (!fs.existsSync("servers/" + id)) {
                               fs.mkdirSync("servers/" + id);
                             }

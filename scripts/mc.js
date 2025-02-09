@@ -443,12 +443,14 @@ function run(
             }
           }, 10);
         } else {
-          if (server.specialPlugins.includes("dynmap")) {
-            server.specialPlugins.splice(
-              server.specialPlugins.indexOf("dynmap"),
-              1
-            );
-            utils.writeJSON("servers/" + id + "/server.json", server);
+          if (server.specialPlugins != undefined) {
+            if (server.specialPlugins.includes("dynmap")) {
+              server.specialPlugins.splice(
+                server.specialPlugins.indexOf("dynmap"),
+                1
+              );
+              utils.writeJSON("servers/" + id + "/server.json", server);
+            }
           }
         }
 
@@ -505,6 +507,7 @@ function run(
             }
           }, 10);
         } else {
+          if (server.specialPlugins != undefined) {
           if (server.specialPlugins.includes("bluemap")) {
             server.specialPlugins.splice(
               server.specialPlugins.indexOf("bluemap"),
@@ -512,6 +515,7 @@ function run(
             );
             utils.writeJSON("servers/" + id + "/server.json", server);
           }
+        }
         }
 
         if (plugins[i].includes("Simple-Voice-Chat")) {
@@ -549,6 +553,7 @@ function run(
             }
           }, 10);
         } else {
+          if (server.specialPlugins != undefined) {
           if (server.specialPlugins.includes("voicechat")) {
             server.specialPlugins.splice(
               server.specialPlugins.indexOf("voicechat"),
@@ -557,6 +562,7 @@ function run(
             utils.writeJSON("servers/" + id + "/server.json", server);
           }
         }
+        }
 
         if (plugins[i].includes("DiscordSRV")) {
           if (!server.specialPlugins.includes("discordsrv")) {
@@ -564,6 +570,7 @@ function run(
           }
           utils.writeJSON("servers/" + id + "/server.json", server);
         } else {
+          if (server.specialPlugins != undefined) {
           if (server.specialPlugins.includes("discordsrv")) {
             server.specialPlugins.splice(
               server.specialPlugins.indexOf("discordsrv"),
@@ -572,6 +579,7 @@ function run(
             utils.writeJSON("servers/" + id + "/server.json", server);
           }
         }
+        }
 
         if (plugins[i].includes("Chunky")) {
           if (!server.specialPlugins.includes("chunky")) {
@@ -579,6 +587,7 @@ function run(
           }
           utils.writeJSON("servers/" + id + "/server.json", server);
         } else {
+          if (server.specialPlugins != undefined) {
           if (server.specialPlugins.includes("chunky")) {
             server.specialPlugins.splice(
               server.specialPlugins.indexOf("chunky"),
@@ -586,6 +595,7 @@ function run(
             );
             utils.writeJSON("servers/" + id + "/server.json", server);
           }
+        }
         }
       }
     }
