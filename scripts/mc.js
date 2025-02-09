@@ -455,7 +455,6 @@ function run(
         }
 
         if (plugins[i].includes("BlueMap")) {
-          console.log("Configuring BlueMap plugin...");
           //change accept-download to true in BlueMap/core.conf
           let interval1 = setInterval(() => {
             if (fs.existsSync(folder + "/plugins/BlueMap/core.conf")) {
@@ -489,6 +488,7 @@ function run(
                 let b = lines2.findIndex((line) => {
                   return line.includes("port:");
                 });
+                let configuredAlready = !lines2[b].includes("8100");
                 lines2[b] = "port: " + (port + 66);
                 fs.writeFileSync(
   
@@ -501,7 +501,10 @@ function run(
                   server.specialPlugins.push("bluemap");
                 }
                 utils.writeJSON("servers/" + id + "/server.json", server);
-
+                if (!configuredAlready) {
+                  writeTerminal(id, "say [Arth Panel] BlueMap has been configured. Please restart the server to start using it.");
+                  
+                }
                 clearInterval(interval1);
               }
             }
