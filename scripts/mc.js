@@ -491,12 +491,7 @@ function run(
                   server.specialPlugins.push("bluemap");
                 }
                 utils.writeJSON("servers/" + id + "/server.json", server);
-                let interval2 = setInterval(() => {
-                  if (getState(id) == "true") {
-                    writeTerminal(id, "BlueMap render world");
-                    clearInterval(interval2); 
-                  }
-                }, 3000);
+
                 clearInterval(interval1);
               }
             }
