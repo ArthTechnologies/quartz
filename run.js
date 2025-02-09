@@ -572,6 +572,32 @@ process.stdin.on("data", (data) => {
       });
 
       break;
+    case "scheduleRestart":
+      userInput = true;
+      console.log(
+        `Enter restart time in minutes (ex: "5" for 5 minutes):`
+      );
+      process.stdin.once("data", (data) => {
+        const time = data.trim();
+        for (let i in fs.readdirSync("servers")) {
+          const serverId = fs.readdirSync("servers")[i];
+          f.writeTerminal(
+            serverId,
+            "say [Broadcast] Server restarting in " + time + " minutes."
+          );
+          
+        }
+        console.log("Restart scheduled in " + time + " minutes.");
+        console.log("Make sure the autorestart script is working.");
+        setTimeout(() => {
+          //kill quartz process
+          process.exit(0);
+        }, time * 60 * 1000);
+ 
+        userInput = false;
+      });
+
+      break;
     case "runMigrations":
       console.log("Running migration 1");
       migrations.migration1();
