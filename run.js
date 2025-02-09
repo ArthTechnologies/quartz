@@ -583,7 +583,7 @@ process.stdin.on("data", (data) => {
           const serverId = fs.readdirSync("servers")[i];
           f.writeTerminal(
             serverId,
-            "say [Broadcast] Server restarting in " + time + " minutes."
+            "say [Broadcast] Server briefly restarting in " + time + " minutes for maintenance."
           );
           
         }
@@ -593,7 +593,7 @@ process.stdin.on("data", (data) => {
             const serverId = fs.readdirSync("servers")[i];
             f.writeTerminal(
               serverId,
-              "say [Broadcast] Server restarting in 5 minutes."
+              "say [Broadcast] Server briefly restarting in 5 minutes for maintenance."
             );
           }
         }, (time - 5) * 60 * 1000); 
