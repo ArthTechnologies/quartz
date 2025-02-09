@@ -989,7 +989,7 @@ function readTerminal(id) {
 function writeTerminal(id, cmd) {
   terminalInput = cmd;
   let timestamp = new Date().toLocaleTimeString();
-  console.log("writing to terminal: " + cmd);
+  console.log("[" + timestamp + "] writing to terminal: " + cmd);
   eventEmitter.emit("writeCmd:" + id);
 }
 function downloadModpack(id, modpackURL, modpackID, versionID) {
