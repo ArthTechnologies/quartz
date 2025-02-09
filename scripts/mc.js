@@ -784,7 +784,8 @@ function run(
       }, interval);
     } else {
       let count = 0;
-      console.log("starting server " + id + " with:\n" + prefix + " " + args);
+      let timestamp = new Date().toLocaleTimeString();
+      console.log(timestamp + " :t starting server " + id + " with:\n" + prefix + " " + args);
       ls = spawn(
         prefix + " " + args,
         { cwd: folder, stdio: ["pipe", "pipe", "pipe"], shell: true },
