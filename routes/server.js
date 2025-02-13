@@ -99,13 +99,14 @@ router.get(`/claim/:id`, function (req, res) {
               console.log("err");
               return "no";
             } else {
-              console.log("debug: " + email + req.headers.username);
+              console.log("hasPayedForServer1: " + email + req.headers.username);
               stripe.subscriptions.list(
                 {
                   customer: customers.data[0].id,
                   limit: 100,
                 },
                 function (err, subscriptions) {
+                  console.log("hasPayedForServer2");
                   let subs = 0;
                   for (i in subscriptions.data) {
                     console.log("plan object");
@@ -119,7 +120,7 @@ router.get(`/claim/:id`, function (req, res) {
                     freeServers = parseInt(account.freeServers);
                   }
                   hasPayedForServer = subs + freeServers > account.servers.length;
-                  console.log("hasPayedForServer: " + subs + " "+freeServers + ">" + account.servers.length);
+                  console.log("hasPayedForServer3: " + subs + " "+freeServers + ">" + account.servers.length);
                 }
               );
             }
