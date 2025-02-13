@@ -1794,7 +1794,7 @@ router.post(
       const exec = require("child_process").exec;
       console.log(`unzip -o servers/` + req.params.id + `/${path} -d servers/` + req.params.id + `/${filename.split(".zip")[0]}`);
       exec(
-        `unzip -o servers/` + req.params.id + `/${path} -d servers/` + req.params.id + `/${filename.split(".zip")[0]}`,
+        `unzip -o servers/` + req.params.id + `/${path} -d servers/` + req.params.id + `/${path.split(".zip")[0]}`,
         (err, stdout, stderr) => {
           if (err) {
             console.log(err);
