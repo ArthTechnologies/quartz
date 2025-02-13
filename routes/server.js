@@ -87,7 +87,7 @@ router.get(`/claim/:id`, function (req, res) {
   if (token === account.token || !enableAuth) {
     if (id < idOffset + parseInt(config.maxServers)) {
       console.log(account.servers + " servers");
-      let hasPayedForServer = true;
+      let hasPayedForServer = false;
       console.log("claiming server " + id);
       if (enablePay) {
         stripe.customers.list(
