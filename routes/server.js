@@ -122,13 +122,26 @@ router.get(`/claim/:id`, function (req, res) {
                   }
                   hasPayedForServer = subs + freeServers > account.servers.length;
                   console.log("hasPayedForServer3: " + subs + " "+freeServers + ">" + account.servers.length);
+                  if (hasPayedForServer) {
+                    if (!account.servers.includes(id)) {
+                      account.servers.push(id);
+                      writeJSON("accounts/" + email + ".json", account);
+                      //to-do: make a way to write the account tsv file
+                      fs.mkdirSync("servers/" + id);
+                      res.status(200).json({ msg: `Success. Server claimed.` });
+                    } else {
+                      res.status(400).json({ msg: `Server already claimed.` });
+                    }
+                  } else {
+                    res.status(400).json({ msg: `You have not payed for this server.` });
+                  }
                 }
               );
             }
           }
         );
-      }
-      if (hasPayedForServer) {
+      } else {
+    
         if (!account.servers.includes(id)) {
           account.servers.push(id);
           writeJSON("accounts/" + email + ".json", account);
@@ -138,9 +151,8 @@ router.get(`/claim/:id`, function (req, res) {
         } else {
           res.status(400).json({ msg: `Server already claimed.` });
         }
-      } else {
-        res.status(400).json({ msg: `You have not payed for this server.` });
-      }
+    
+    }
     } else {
       res.status(400).json({ msg: `Invalid server ID.` });
     }
