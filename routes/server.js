@@ -1793,7 +1793,7 @@ router.post(
       //unzip the file and put it in /servers/id/{filename}
       const exec = require("child_process").exec;
       exec(
-        `unzip -o ${path} -d servers/` + req.params.id + `/${filename.split(".zip")[0]}`,
+        `unzip -o servers/` + req.params.id + `/${path} -d servers/` + req.params.id + `/${filename.split(".zip")[0]}`,
         (err, stdout, stderr) => {
           if (err) {
             console.log(err);
