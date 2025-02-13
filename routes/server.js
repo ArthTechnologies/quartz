@@ -1772,76 +1772,45 @@ router.post(
 );
 
 router.post(
-  "/:id/folder/upload/:path",
-  upload.array("files[]"), // Expect an array of files from the client.
-  function (req, res) {
-    const email = req.headers.username;
-    const token = req.headers.token;
-    const account = readJSON("accounts/" + email + ".json");
-    const server = readJSON("servers/" + req.params.id + "/server.json");
-    
-    if (
-      hasAccess(token, account, req.params.id) &&
-      fs.existsSync(`servers/${req.params.id}/`)
-    ) {
-      const id = req.params.id;
-      let pathParam = sanitizePath(req.params.path);
-      if (pathParam.includes("*")) {
-        pathParam = pathParam.split("*").join("/");
-      }
-      
-      // The query parameter "foldername" can be used as a root folder name.
-      const foldername = req.query.foldername;
-      
-      if (!req.files || req.files.length === 0) {
-        return res.status(400).send("No files uploaded.");
-      }
-      
-      // Process each file. We'll track the number of files left to process.
-      let pending = req.files.length;
-      let errorOccurred = false;
-      
-      req.files.forEach((file) => {
-        const processFile = () => {
-          // file.originalname should hold the full relative path (e.g., "subfolder/file.txt")
-          // Build the destination path:
-          // servers/{id}/{sanitized_path}/{foldername}/{relative_file_path}
-          const destination = path.join("servers", id, pathParam, foldername, file.originalname);
-          
-          // Ensure the destination directory exists.
-          fs.mkdirSync(path.dirname(destination), { recursive: true });
-          // Copy the file from the temporary location to the destination.
-          fs.copyFileSync(file.path, destination);
-          // Remove the temporary file.
-          fs.rmSync(file.path);
-          pending--;
-          if (pending === 0 && !errorOccurred) {
-            res.status(200).send("Upload Complete.");
-          }
-        };
-        
-        if (enableVirusScan) {
-          // Scan the file for viruses before processing.
-          exec(`clamdscan --multiscan --fdpass ${file.path}`, {}, (err, stdout, stderr) => {
-            if (stdout.indexOf("Infected files: 0") !== -1) {
-              processFile();
-            } else {
-              fs.rmSync(file.path);
-              if (!errorOccurred) {
-                errorOccurred = true;
-                res.send("Virus Detected.");
-              }
-            }
-          });
-        } else {
-          processFile();
-        }
-      });
-    } else {
-      res.status(401).json({ msg: "Invalid credentials." });
+  "/:id/extractfile/:path", function (req, res) { 
+  let email = req.headers.username; 
+  let token = req.headers.token;
+  let account = readJSON("accounts/" + email + ".json");
+  let server = readJSON("servers/" + req.params.id + "/server.json");
+  if (
+    hasAccess(token, account, req.params.id) &&
+    fs.existsSync(`servers/${req.params.id}/`)
+  ) {
+    let path = sanitizePath(req.params.path);
+    if (sanitizePath(req.params.path).includes("*")) {
+      path = sanitizePath(req.params.path).split("*").join("/");
     }
+    let filename = path.split("/")[path.split("/").length - 1];
+    if (
+      fs.existsSync(`servers/${req.params.id}/${path}`) &&
+      filename.includes(".zip"))
+    {
+      //unzip the file and put it in /servers/id/{filename}
+      const exec = require("child_process").exec;
+      exec(
+        `unzip -o ${req.params.path} -d servers/` + req.params.id + `/${filename.split(".zip")[0]}`,
+        (err, stdout, stderr) => {
+          if (err) {
+            console.log(err);
+          } else {
+            res.status(200).json({ msg: "Done" });
+          }
+        } 
+      );
+        
+    } else {
+      res.status(400).json({ msg: "Invalid request." });
+    }
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
   }
-);
+}
+);  
 
 
 router.delete("/:id/file/:path", function (req, res) {
