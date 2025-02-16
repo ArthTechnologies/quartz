@@ -25,3 +25,4 @@ config.txt
 !/assets/template/config.txt
 bun.lockb
 assets/terminal-log.txt
+assets/scraper.json

@@ -1610,7 +1610,7 @@ router.get("/:id/download", function (req, res) {
   if (hasAccess(token, account, req.params.id)) {
     if (fs.existsSync(`servers/${req.params.id}/`)) {
       exec(
-        `zip -r -q -X ../${req.params.id}.zip .`,
+        `zip -r -q -X ${req.params.id}.zip .`,
         { cwd: `servers/${req.params.id}` },
         (err) => {
           res.setHeader("Content-Type", "application/zip");
