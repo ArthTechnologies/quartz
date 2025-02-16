@@ -957,6 +957,7 @@ router.delete(`/:id`, function (req, res) {
 
                 console.log("making sure server is deleted...");
                 files.removeDirectoryRecursive(`servers/${req.params.id}`);
+                fs.mkdirSync(`servers/${req.params.id}`);
               }, 5000);
             }
           );
