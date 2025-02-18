@@ -8,6 +8,14 @@ const fs = require("fs");
 const crypto = require("crypto");
 const files = require("./scripts/files.js");
 const scraper = require("./scripts/scraper.js");
+
+if (!fs.existsSync("accounts")) {
+  fs.mkdirSync("accounts");
+  fs.writeFileSync(
+    "accounts/noemail.json",
+    `{"accountId":"noemail", "servers":[]}`
+  );
+}
 const migrations = require("./scripts/migrations.js");
 
 if (!fs.existsSync("accounts.tsv")) {
@@ -108,13 +116,7 @@ if (!fs.existsSync("config.txt")) {
   }
 }
 
-if (!fs.existsSync("accounts")) {
-  fs.mkdirSync("accounts");
-  fs.writeFileSync(
-    "accounts/noemail.json",
-    `{"accountId":"noemail", "servers":[]}`
-  );
-}
+
 
 const readJSON = require("./scripts/utils.js").readJSON;
 const writeJSON = require("./scripts/utils.js").writeJSON;
