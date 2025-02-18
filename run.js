@@ -16,6 +16,13 @@ if (!fs.existsSync("accounts")) {
     `{"accountId":"noemail", "servers":[]}`
   );
 }
+
+if (!fs.existsSync("./servers")) {
+  fs.mkdirSync("servers");
+} else if (fs.existsSync("./servers/template")) {
+  fs.rmSync("./servers/template", { recursive: true });
+}
+
 const migrations = require("./scripts/migrations.js");
 
 if (!fs.existsSync("accounts.tsv")) {
@@ -32,11 +39,7 @@ if (!fs.existsSync("./backup")) {
 if (!fs.existsSync("./backup/disabledServers")) {
   fs.mkdirSync("backup/disabledServers");
 }
-if (!fs.existsSync("./servers")) {
-  fs.mkdirSync("servers");
-} else if (fs.existsSync("./servers/template")) {
-  fs.rmSync("./servers/template", { recursive: true });
-}
+
 
 
 
