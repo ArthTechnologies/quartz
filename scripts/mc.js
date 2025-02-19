@@ -852,7 +852,7 @@ function run(
 
     if (software == "paper" || software == "spigot") {
       if (
-        fs.existsSync("assets/jars/cx_geyser-spigot_Geyser.jar") &&
+        fs.existsSync("assets/jars/geyser-spigot.jar") &&
         (fs.existsSync(folder + "/plugins/cx_geyser-spigot_Geyser.jar") ||
           isNew)
       ) {
