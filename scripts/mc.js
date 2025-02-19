@@ -857,11 +857,11 @@ function run(
           isNew)
       ) {
         fs.copyFileSync(
-          "assets/jars/cx_geyser-spigot_Geyser.jar",
+          "assets/jars/geyser-spigot.jar",
           folder + "/plugins/cx_geyser-spigot_Geyser.jar"
         );
         fs.copyFileSync(
-          "assets/jars/cx_floodgate-spigot_Floodgate.jar",
+          "assets/jars/floodgate-spigot.jar",
           folder + "/plugins/cx_floodgate-spigot_Floodgate.jar"
         );
       }
