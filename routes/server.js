@@ -832,6 +832,7 @@ router.get(`/:id/getInfo`, function (req, res) {
         return line.includes("motd");
       });
       desc = textByLine[index].split("=")[1];
+      try{
       if (f.checkServer(id).software == "paper") {
         secret = fs.readFileSync(
           `servers/${id}/config/paper-global.yml`,
@@ -847,6 +848,9 @@ router.get(`/:id/getInfo`, function (req, res) {
         //cut quotes off of secret
         secret = secret.substring(1, secret.length - 1);
       }
+    } catch (err) {
+      console.log(err);
+    }
 
       let onlineMode = textByLine[
         textByLine.findIndex((line) => {
@@ -878,6 +882,7 @@ router.get(`/:id/getInfo`, function (req, res) {
         allowedAccounts.push(account[0] + ":" + account[1].split(":")[1]);
       }
     } 
+   
     res.status(200).json({
       msg: `Success: Got server info`,
       iconUrl: iconUrl,
