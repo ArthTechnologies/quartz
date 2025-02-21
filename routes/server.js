@@ -2136,7 +2136,7 @@ router.post("/:id/claimSubdomain", function (req, res) {
         -H "X-Auth-Email: ${config.cloudflareEmail}" \
         -H "X-Auth-Key: ${config.cloudflareKey}" \
         -d '{
-        "name": "_minecraft.udp.${subdomain}",
+        "name": "_minecraft._udp.${subdomain}",
               "type": "SRV",
           "data": {
              "port": ${portOffset + parseInt(req.params.id)},
