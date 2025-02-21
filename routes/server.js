@@ -2076,6 +2076,7 @@ router.get("/:id/liveStats", function (req, res) {
 
 router.post("/:id/claimSubdomain", function (req, res) {
   let subdomain = req.query.subdomain;
+  let baseUrl = req.query.baseUrl;
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
@@ -2099,7 +2100,7 @@ router.post("/:id/claimSubdomain", function (req, res) {
       "data": {
          "port": ${portOffset + parseInt(req.params.id)},
          "priority": ${portOffset + parseInt(req.params.id)},
-         "target": "join.arthmc.xyz",
+         "target": "${baseUrl}",
          "weight": 5
       }
 
