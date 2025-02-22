@@ -139,7 +139,7 @@ async function downloadNeoforgeJars() {
     }
 
     for (let i in latestVersions) {
-        let url = `https://maven.neoforged.net/releases/net/neoforged/neoforge/21.4.23-beta/neoforge-${latestVersions[i]}-installer.jar`;
+        let url = `https://maven.neoforged.net/releases/net/neoforged/neoforge/${latestVersions[i]}/neoforge-${latestVersions[i]}-installer.jar`;
         let minecraftVersion = "1." + latestVersions[i].split(".")[0] + "." + latestVersions[i].split(".")[1];
         let channel = "release";
         if (latestVersions[i].includes("beta")) {
