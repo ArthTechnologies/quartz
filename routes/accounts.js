@@ -61,6 +61,8 @@ Router.post("/email/signup/", (req, res) => {
     signup();
   }
   function signup() {
+
+    email = email.toLowerCase();
     try {
       if (fs.existsSync("accounts/email:" + email + ".json")) {
         emailExists = true;
@@ -81,7 +83,7 @@ Router.post("/email/signup/", (req, res) => {
             account.ips.push(files.getIPID(req.ip));
             account.type = "email";
             account.servers = [];
-            account.email = email.toLowerCase();
+            account.email = email;
             account.freeServers = 0;
             account.lastSignin = new Date().getTime();
 ;
