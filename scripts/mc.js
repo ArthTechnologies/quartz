@@ -167,7 +167,9 @@ function run(
       allocatedRAM = 5;
     } else if (config.premium == server.productID) {
       allocatedRAM = 8;
-    } else {
+    } else if (config.max == server.productID) {
+      allocatedRAM = 12;
+    }else {
       allocatedRAM = 4;
     }
     let args = [
@@ -929,9 +931,9 @@ function run(
     //check if server is over storage limit
     let serverStorageLimit = 10;
     if (config.plus == server.productID) {
-      allocatedRAM = 15;
+      serverStorageLimit = 15;
     } else if (config.premium == server.productID) {
-      allocatedRAM = 20;
+      serverStorageLimit = 20;
     }
       
     files.folderSizeRecursive(folder, (size) => {

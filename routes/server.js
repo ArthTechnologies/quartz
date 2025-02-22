@@ -1964,6 +1964,8 @@ router.get("/:id/storageInfo", function (req, res) {
       serverStorageLimit = 15;
     } else if (config.premium == server.productID) {
       serverStorageLimit = 20;
+    } else if (config.max == server.productID) {
+      serverStorageLimit = 25;
     }
    limit = serverStorageLimit * 1024 * 1024 * 1024;
 

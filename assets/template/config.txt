@@ -21,6 +21,7 @@ stripeReturnUrl=
 basic=
 plus=
 premium=
+max=
 
 # Advanced Settings:
 

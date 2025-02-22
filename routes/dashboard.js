@@ -83,6 +83,7 @@ Router.get("/customers", async (req, res) => {
         if (config.basic == plan.product) planType = "basic";
         else if (config.plus == plan.product) planType = "modded";
         else if (config.premium == plan.product) planType = "premium";
+        else if (config.max == plan.product) planType = "max";
         else valid = false;
 
         if (planType != "other") {
