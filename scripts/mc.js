@@ -731,13 +731,14 @@ function run(
                 execLine = prefix + ` -jar ${jarname}`;
               }
             } else {
-              execLine = prefix + ` @user_jvm_args.txt @libraries/net/neoforged/neoforge/21.1.122/unix_args.txt "$@"`;
+              execLine = prefix + ` @user_jvm_args.txt @libraries/net/neoforged/neoforge/${forgeVersion}/unix_args.txt "$@"`;
             }
 
    
           } else {
        
             execLine = prefix + ` @user_jvm_args.txt @libraries/net/neoforged/neoforge/21.1.122/unix_args.txt "$@"`;
+            //?
           }
           console.log("exec line: "+execLine);
           let timestamp = new Date().toLocaleTimeString();
