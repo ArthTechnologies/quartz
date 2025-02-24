@@ -213,6 +213,11 @@ function run(
         c = "modded";
         installer = true;
         break;
+      case "neoforge":
+        s = "neoforge";
+        c = "modded";
+        installer = true;
+        break;
       case "fabric":
         s = "fabric";
         c = "modded";
