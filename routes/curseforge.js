@@ -7,6 +7,16 @@ Router.get("/search", (req, res) => {
   if (apiKey != "") {
     let gameVersion = req.query.version;
     let modLoaderType = req.query.loader;
+
+    if (typeof modLoaderType != "number") {
+      if (modLoaderType == "forge") {
+        modLoaderType = 1;
+      } else if (modLoaderType == "fabric") {
+        modLoaderType = 4;
+      } else if (modLoaderType == "neoforge") {
+        modLoaderType = 6;
+      } 
+    }
     let filterText = req.query.query;
     let classId = req.query.classId;
     let index = req.query.index || 0;
