@@ -733,7 +733,7 @@ function run(
                 execLine = prefix + ` -jar ${jarname}`;
               }
             } else {
-              execLine = prefix + ` -jar neoforge-${forgeVersion}.jar`;
+              execLine = prefix + ` @user_jvm_args.txt @libraries/net/neoforged/neoforge/21.1.122/unix_args.txt "$@"`;
             }
 
    
