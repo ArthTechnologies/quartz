@@ -675,7 +675,7 @@ function run(
       ) {
         doneInstallingServer = true;
       } else {
-        console.log("libraryLine: "+libraryline);
+        console.log("exists: "+folder + "/libraries/net/"+libraryline);
         states[id] = "false";
         terminalOutput[id] = "[Error]: Forge failed to install.";
       }
