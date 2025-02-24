@@ -689,13 +689,13 @@ function run(
 
           let execLine = "";
           let cwd = folder;
-
+          let line = "/libraries/net/minecraftforge/forge/";
+          if (software == "neoforge") {
+            line = "/libraries/net/neoforged/neoforge/";
+          }
           if (software == "forge" || software == "neoforge") {
             let forgeVersion;
-            let line = "/libraries/net/minecraftforge/forge/";
-            if (software == "neoforge") {
-              line = "/libraries/net/neoforged/neoforge/";
-            }
+
             if (fs.existsSync(folder + "/libraries/net/"+line)) {
               forgeVersion = fs.readdirSync(
                 folder + "/libraries/net/"+ line
