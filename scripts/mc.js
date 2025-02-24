@@ -278,7 +278,7 @@ function run(
     if (software == "neoforge") {
       line = "/libraries/net/neoforged/neoforge/";
     }
-    
+
     if (software != "quilt") {
       if (fs.existsSync("assets/jars/" + software + "-" + version + ".jar")) {
         fs.copyFileSync(
@@ -710,32 +710,36 @@ function run(
               prefix +
               ` @user_jvm_args.txt @libraries/net/${line}/${forgeVersion}/unix_args.txt "$@"`;
 
-            if (parseInt(version.split(".")[1]) >= 21) {
-              execLine = prefix + ` -jar forge-${forgeVersion}-shim.jar`;
-            }
-
-            if (version.includes("1.16")) {
-              execLine = prefix + ` -jar forge-${forgeVersion}.jar`;
-            }
-
-            if (version.includes("1.12")) {
-              execLine = prefix + ` ${args} -jar forge-${forgeVersion}.jar`;
-            }
-
-            if (parseInt(version.split(".")[1]) <= 8) {
-              let jarname = "";
-              fs.readdirSync(folder).forEach((file) => {
-                if (file.includes("-universal.jar")) {
-                  jarname = file;
-                }
-              });
-              execLine = prefix + ` -jar ${jarname}`;
+            if (software == "forge") {
+              if (parseInt(version.split(".")[1]) >= 21) {
+                execLine = prefix + ` -jar forge-${forgeVersion}-shim.jar`;
+              }
+  
+              if (version.includes("1.16")) {
+                execLine = prefix + ` -jar forge-${forgeVersion}.jar`;
+              }
+  
+              if (version.includes("1.12")) {
+                execLine = prefix + ` ${args} -jar forge-${forgeVersion}.jar`;
+              }
+  
+              if (parseInt(version.split(".")[1]) <= 8) {
+                let jarname = "";
+                fs.readdirSync(folder).forEach((file) => {
+                  if (file.includes("-universal.jar")) {
+                    jarname = file;
+                  }
+                });
+                execLine = prefix + ` -jar ${jarname}`;
+              }
+            } else {
+              execLine = prefix + ` -jar neoforge-${forgeVersion}.jar`;
             }
 
             console.log(execLine);
           } else {
        
-            execLine = prefix + " -jar quilt-server-launch.jar nogui";
+            execLine = prefix + ` @user_jvm_args.txt @libraries/net/neoforged/neoforge/21.1.122/unix_args.txt "$@"`;
           }
           let timestamp = new Date().toLocaleTimeString();
           console.log(timestamp + " :t starting server " + id + " with:\n" + execLine);
