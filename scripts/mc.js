@@ -671,11 +671,11 @@ function run(
           );
         }
       } else if (
-        fs.existsSync(folder + "/libraries/net/"+libraryline)
+        fs.existsSync(folder + "/libraries/net"+libraryline)
       ) {
         doneInstallingServer = true;
       } else {
-        console.log("exists: "+folder + "/libraries/net/"+libraryline);
+        console.log("exists: "+folder + "/libraries/net"+libraryline);
         states[id] = "false";
         terminalOutput[id] = "[Error]: Forge failed to install.";
       }
