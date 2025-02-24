@@ -186,6 +186,7 @@ function run(
 
     //make software all lowercase
     software = software.toLowerCase();
+    console.log("SOFTWARE: " + software);
     switch (software) {
       case "paper":
         s = "paper";
