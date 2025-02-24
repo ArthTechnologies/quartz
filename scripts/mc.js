@@ -274,7 +274,11 @@ function run(
     if (!fs.existsSync(folder + "/.fileVersions")) {
       fs.mkdirSync(folder + "/.fileVersions");
     }
-
+    let line = "/libraries/net/minecraftforge/forge/";
+    if (software == "neoforge") {
+      line = "/libraries/net/neoforged/neoforge/";
+    }
+    
     if (software != "quilt") {
       if (fs.existsSync("assets/jars/" + software + "-" + version + ".jar")) {
         fs.copyFileSync(
