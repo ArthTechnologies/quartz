@@ -26,7 +26,7 @@ Router.get("/search", (req, res) => {
 
     const exec = require("child_process").exec;
 
-    console.log(`curseforge request : ${gameVersion} ${modLoaderType} ${filterText} ${classId} ${index} ${sortField} ${categories}`);
+    console.log(`curseforge request ?gameId=432&gameVersion=${gameVersion}&modLoaderType=${modLoaderType}&searchFilter=${filterText}&classId=${classId}&index=${index}&pageSize=15&sortField=${sortField}&sortOrder=desc&categoryIds=${categories}`);
 
     exec(
       `curl -X GET "https://api.curseforge.com/v1/mods/search` +
