@@ -736,11 +736,12 @@ function run(
               execLine = prefix + ` -jar neoforge-${forgeVersion}.jar`;
             }
 
-            console.log(execLine);
+   
           } else {
        
             execLine = prefix + ` @user_jvm_args.txt @libraries/net/neoforged/neoforge/21.1.122/unix_args.txt "$@"`;
           }
+          console.log("exec line: "+execLine);
           let timestamp = new Date().toLocaleTimeString();
           console.log(timestamp + " :t starting server " + id + " with:\n" + execLine);
           ls = spawn(
