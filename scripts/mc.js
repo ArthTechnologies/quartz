@@ -247,6 +247,10 @@ function run(
     let absolutePath = execSync("pwd").toString().trim();
     console.log("absolutePath: " + absolutePath);
 
+    if (software == "quilt") {
+      absolutePath = absolutePath + "/servers/" + id;
+    }
+
     let port = portOffset + parseInt(id);
     let prefix = `docker run -m ${allocatedRAM}g -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp -p ${port + 66}:${port + 66}/tcp -p ${port + 33}:${port + 33}/udp --user 1000:1000 openjdk:${javaVer} java`;
     console.log("prefix: " + prefix);
@@ -663,7 +667,7 @@ function run(
           );
         }
       } else if (
-        fs.existsSync(folder + "/libraries/net/minecraftforge/forge")
+        fs.existsSync(folder + "/libraries/net/"+line)
       ) {
         doneInstallingServer = true;
       } else {
@@ -686,17 +690,21 @@ function run(
           let execLine = "";
           let cwd = folder;
 
-          if (software == "forge") {
+          if (software == "forge" || software == "neoforge") {
             let forgeVersion;
-            if (fs.existsSync(folder + "/libraries/net/minecraftforge/forge")) {
+            let line = "/libraries/net/minecraftforge/forge/";
+            if (software == "neoforge") {
+              line = "/libraries/net/neoforged/neoforge/";
+            }
+            if (fs.existsSync(folder + "/libraries/net/"+line)) {
               forgeVersion = fs.readdirSync(
-                folder + "/libraries/net/minecraftforge/forge/"
+                folder + "/libraries/net/"+ line
               )[0];
             }
 
             execLine =
               prefix +
-              ` @user_jvm_args.txt @libraries/net/minecraftforge/forge/${forgeVersion}/unix_args.txt "$@"`;
+              ` @user_jvm_args.txt @libraries/net/${line}/${forgeVersion}/unix_args.txt "$@"`;
 
             if (parseInt(version.split(".")[1]) >= 21) {
               execLine = prefix + ` -jar forge-${forgeVersion}-shim.jar`;
@@ -722,7 +730,7 @@ function run(
 
             console.log(execLine);
           } else {
-            prefix = "../" + path;
+       
             execLine = prefix + " -jar quilt-server-launch.jar nogui";
           }
           let timestamp = new Date().toLocaleTimeString();
