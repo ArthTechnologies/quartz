@@ -698,15 +698,15 @@ function run(
           if (software == "forge" || software == "neoforge") {
             let forgeVersion;
 
-            if (fs.existsSync(folder + "/libraries/net/"+libraryline)) {
+            if (fs.existsSync(folder +libraryline)) {
               forgeVersion = fs.readdirSync(
-                folder + "/libraries/net/"+ libraryline
+                folder + libraryline
               )[0];
             }
 
             execLine =
               prefix +
-              ` @user_jvm_args.txt @libraries/net/${libraryline}/${forgeVersion}/unix_args.txt "$@"`;
+              ` @user_jvm_args.txt @${libraryline}/${forgeVersion}/unix_args.txt "$@"`;
 
             if (software == "forge") {
               if (parseInt(version.split(".")[1]) >= 21) {
