@@ -26,6 +26,8 @@ Router.get("/search", (req, res) => {
 
     const exec = require("child_process").exec;
 
+    console.log(`curseforge request : ${gameVersion} ${modLoaderType} ${filterText} ${classId} ${index} ${sortField} ${categories}`);
+
     exec(
       `curl -X GET "https://api.curseforge.com/v1/mods/search` +
         `?gameId=432` +
