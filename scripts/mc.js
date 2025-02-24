@@ -274,9 +274,9 @@ function run(
     if (!fs.existsSync(folder + "/.fileVersions")) {
       fs.mkdirSync(folder + "/.fileVersions");
     }
-    let line = "/libraries/net/minecraftforge/forge/";
+    let libraryline = "/libraries/net/minecraftforge/forge/";
     if (software == "neoforge") {
-      line = "/libraries/net/neoforged/neoforge/";
+      libraryline = "/libraries/net/neoforged/neoforge/";
     }
 
     if (software != "quilt") {
@@ -671,10 +671,11 @@ function run(
           );
         }
       } else if (
-        fs.existsSync(folder + "/libraries/net/"+line)
+        fs.existsSync(folder + "/libraries/net/"+libraryline)
       ) {
         doneInstallingServer = true;
       } else {
+        console.log("libraryLine: "+libraryline);
         states[id] = "false";
         terminalOutput[id] = "[Error]: Forge failed to install.";
       }
@@ -693,22 +694,19 @@ function run(
 
           let execLine = "";
           let cwd = folder;
-          let line = "/libraries/net/minecraftforge/forge/";
-          if (software == "neoforge") {
-            line = "/libraries/net/neoforged/neoforge/";
-          }
+
           if (software == "forge" || software == "neoforge") {
             let forgeVersion;
 
-            if (fs.existsSync(folder + "/libraries/net/"+line)) {
+            if (fs.existsSync(folder + "/libraries/net/"+libraryline)) {
               forgeVersion = fs.readdirSync(
-                folder + "/libraries/net/"+ line
+                folder + "/libraries/net/"+ libraryline
               )[0];
             }
 
             execLine =
               prefix +
-              ` @user_jvm_args.txt @libraries/net/${line}/${forgeVersion}/unix_args.txt "$@"`;
+              ` @user_jvm_args.txt @libraries/net/${libraryline}/${forgeVersion}/unix_args.txt "$@"`;
 
             if (software == "forge") {
               if (parseInt(version.split(".")[1]) >= 21) {
