@@ -6,6 +6,9 @@ const apiKey = config.curseforgeKey;
 Router.get("/search", (req, res) => {
   if (apiKey != "") {
     let gameVersion = req.query.version;
+    if (gameVersion.includes(".0")) {
+      gameVersion = gameVersion.replace(".0", "");
+    }
     let modLoaderType = req.query.loader;
 
     if (typeof modLoaderType != "number") {
