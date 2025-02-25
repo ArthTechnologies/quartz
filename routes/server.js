@@ -2120,7 +2120,7 @@ router.post("/:id/claimSubdomain", function (req, res) {
       "data": {
          "port": ${portOffset + parseInt(req.params.id)},
          "priority": ${portOffset + parseInt(req.params.id)},
-         "target": "join.arthmc.xyz",
+         "target": "${baseUrl}",
          "weight": 5
       }
 
@@ -2143,7 +2143,7 @@ router.post("/:id/claimSubdomain", function (req, res) {
           "data": {
              "port": ${portOffset + parseInt(req.params.id)},
              "priority": ${portOffset + parseInt(req.params.id)},
-             "target": "join.arthmc.xyz",
+             "target": "${baseUrl}",
              "weight": 5
           }
     
