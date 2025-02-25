@@ -706,7 +706,7 @@ function run(
 
             execLine =
               prefix +
-              ` @user_jvm_args.txt @${libraryline}/${forgeVersion}/unix_args.txt "$@"`;
+              ` @user_jvm_args.txt @${libraryline.substring(1)}${forgeVersion}/unix_args.txt "$@"`;
 
             if (software == "forge") {
               if (parseInt(version.split(".")[1]) >= 21) {
