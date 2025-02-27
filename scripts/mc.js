@@ -307,29 +307,50 @@ function run(
       }
       fs.mkdirSync(folder + "/world/datapacks");
     }
-
+    
     for (i in addons) {
+      let lowercase;
+      let uppercase;
+      let lrId;
       if (addons[i] == "terralith") {
-        fs.copyFileSync(
-          "assets/jars/terralith-" + version.split("*")[0] + ".zip",
-          folder + "/world/datapacks/lr_8oi3bsk5_Terralith.zip"
-        );
-      } else if (addons[i] == "incendium") {
-        fs.copyFileSync(
-          "assets/jars/incendium-" + version.split("*")[0] + ".zip",
-          folder + "/world/datapacks/lr_ZVzW5oNS_Incendium.zip"
-        );
-      } else if (addons[i] == "nullscape") {
-        fs.copyFileSync(
-          "assets/jars/nullscape-" + version.split("*")[0] + ".zip",
-          folder + "/world/datapacks/lr_LPjGiSO4_Nullscape.zip"
-        );
-      } else if (addons[i] == "structory") {
-        fs.copyFileSync(
-          "assets/jars/structory-" + version.split("*")[0] + ".zip",
-          folder + "/world/datapacks/lr_aKCwCJlY_Structory.zip"
-        );
+         lowercase = "terralith";
+         uppercase = "Terralith";
+         lrId = "8oi3bsk5";
       }
+      if (addons[i] == "incendium") {
+         lowercase = "incendium";
+         uppercase = "Incendium";
+         lrId = "ZVzW5oNS";
+      }
+      if (addons[i] == "nullscape") {
+         lowercase = "nullscape";
+         uppercase = "Nullscape";
+         lrId = "LPjGiSO4";
+      }
+      if (addons[i] == "structory") {
+         lowercase = "structory";
+         uppercase = "Structory";
+         lrId = "aKCwCJlY";
+      }
+
+        if (fs.existsSync("assets/jars/"+lowercase+"-" + version.split("*")[0] + ".zip")) {
+        fs.copyFileSync(
+          "assets/jars/"+lowercase+"-" + version.split("*")[0] + ".zip",
+          folder + "/world/datapacks/lr_"+lrId+"_"+uppercase+".zip"
+        );
+      } else if (fs.existsSync("assets/jars/"+lowercase+"-" + version.split("*")[0] + "*beta.zip")) {
+        fs.copyFileSync(
+          "assets/jars/"+lowercase+"-" + version.split("*")[0] + "*beta.zip",
+          folder + "/world/datapacks/lr_"+lrId+"_"+uppercase+".zip"
+        );  
+      } else if (fs.existsSync("assets/jars/"+lowercase+"-" + version.split("*")[0] + "*alpha.zip")) {
+
+        fs.copyFileSync(
+          "assets/jars/"+lowercase+"-" + version.split("*")[0] + "*alpha.zip",
+          folder + "/world/datapacks/lr_"+lrId+"_"+uppercase+".zip"
+        );  
+      }
+
       
     }
 
