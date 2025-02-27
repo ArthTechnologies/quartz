@@ -20,6 +20,7 @@
     "express-rate-limit": "^6.7.0",
     "extract-zip": "^2.0.1",
     "extract-zip-relative-path": "^2.0.4",
+    "ftpd": "^0.2.16",
     "http-proxy": "^1.18.1",
     "image-size": "^1.0.2",
     "jquery": "^3.7.1",

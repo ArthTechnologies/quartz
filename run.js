@@ -9,6 +9,10 @@ const crypto = require("crypto");
 const files = require("./scripts/files.js");
 const scraper = require("./scripts/scraper.js");
 
+const ftp = require("./scripts/ftp.js");
+
+ftp.startFtpServer();
+
 if (!fs.existsSync("accounts")) {
   fs.mkdirSync("accounts");
   fs.writeFileSync(

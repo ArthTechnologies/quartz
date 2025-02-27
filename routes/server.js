@@ -9,6 +9,7 @@ const readJSON = require("../scripts/utils.js").readJSON;
 const data = readJSON("assets/data.json");
 const JsDiff = require("diff");
 const config = require("../scripts/utils.js").getConfig();
+const ftp = require("../scripts/ftp.js");
 const exec = require("child_process").exec;
 const fs = require("fs");
 const writeJSON = require("../scripts/utils.js").writeJSON;
@@ -2071,6 +2072,20 @@ router.get("/:id/liveStats", function (req, res) {
     } catch (e) {
       res.status(500).json({ success: false, data: e });
     }
+  } else {
+    res.status(401).json({ msg: "Invalid credentials." });
+  }
+});
+
+router.get("/:id/getFtpToken", function (req, res) {
+  let email = req.headers.username;
+  let token = req.headers.token;
+  let account = readJSON("accounts/" + email + ".json");
+  if (
+    hasAccess(token, account, req.params.id) &&
+    fs.existsSync(`servers/${req.params.id}/`)
+  ) {
+    res.status(200).json({ token: ftp.getTempToken(email) });
   } else {
     res.status(401).json({ msg: "Invalid credentials." });
   }
