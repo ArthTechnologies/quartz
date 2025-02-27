@@ -3,7 +3,7 @@ var fs = require('fs');
 var path = require('path');
 const { readJSON } = require('./utils');
 const crypto = require('crypto');
-
+const config = require('./utils').getConfig();
 var server;
 let users = [];
 let accountsFolder = fs.readdirSync('./accounts');
@@ -27,12 +27,12 @@ users.forEach(entry => {
   let [username, password, directory] = entry.split(':');
   userMap[username] = { password, directory };
 });
-
+let port = 10000 + parseInt(config.idOffset) + 99;
 function startFtpServer() {
   setTimeout(() => {
     var options = {
         host: process.env.IP || '127.0.0.1',
-        port: 4002, // Change to port 4002
+        port: port, // Change to port 4002
         tls: null, // Ensure TLS is null for FTP only
       };
     
