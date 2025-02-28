@@ -38,7 +38,7 @@ for (let i = 0; i < users.length; i++) {
 console.log(mountArray);
 function startFtpServer() {
     const { exec} = require('child_process');
-    console.log(`docker run -d --name sftp_server -p ${port}:22 ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`);
+    //console.log(`docker run -d --name sftp_server -p ${port}:22 ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`);
     exec(`docker run -d --name sftp_server -p ${port}:22 ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error starting FTP server: ${error}`);
