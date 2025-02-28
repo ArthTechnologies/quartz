@@ -11,7 +11,7 @@ const scraper = require("./scripts/scraper.js");
 
 const ftp = require("./scripts/ftp.js");
 
-ftp.startFtpServer();
+//ftp.startFtpServer();
 
 if (!fs.existsSync("accounts")) {
   fs.mkdirSync("accounts");
