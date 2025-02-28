@@ -12,9 +12,11 @@ for (let i = 0; i < accountsFolder.length; i++) {
     let account = accountsFolder[i];
     if (account.endsWith('.json')) {
         let data = readJSON(`./accounts/${account}`);
-        let servers = data.servers;
+        if (data.servers != undefined && data.servers.length > 0) {
+            let servers = data.servers;
         let tempToken = crypto.randomBytes(6).toString("hex");
-        users.push(`${accountsFolder[i].split(".json")[0].split(":").join("**")}:${tempToken}:/home/sysadmin/servers/${servers[0]}/:${servers[0]}`); 
+        users.push(`${accountsFolder[i].split(".json")[0].split(":").join("**")}:${tempToken}:/home/sysadmin/quartz/servers/${servers[0]}/:${servers[0]}`); 
+        }
     }
 }
 console.log(users);
@@ -31,7 +33,7 @@ let port = 10000 + parseInt(config.idOffset) + 99;
 
 let mountArray = [];
 let usersArray = [];
-for (let i = 0; i < 3; i++) {
+for (let i = 0; i < 5; i++) {
     mountArray.push(`-v "${users[i].split(":")[2]}:/home/username/server-${users[i].split(":")[3]}" `);
     usersArray.push(`"${users[i].split(":")[0]}:${users[i].split(":")[1]}:::server-${users[i].split(":")[3]}" `);
 }
