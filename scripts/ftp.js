@@ -48,13 +48,15 @@ function startFtpServer() {
         }
         console.log(`FTP server stopped`);
     });
-    exec('docker rm sftp_server', (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error removing FTP server: ${error}`);
-            return;
-        }
-        console.log(`FTP server removed`);
-    });
+    setTimeout(() => {
+        exec('docker rm sftp_server', (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error removing FTP server: ${error}`);
+                return;
+            }
+            console.log(`FTP server removed`);
+        });
+    }, 1000);
     console.log(`docker run -d --name sftp_server -p ${port}:22 ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`);
     setTimeout(() => {
         exec(`docker run -d --name sftp_server -p ${port}:22 ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`, (error, stdout, stderr) => {
@@ -64,7 +66,7 @@ function startFtpServer() {
             }
             console.log(`FTP server started on port ${port}`);
         });
-    }, 1000);
+    }, 2000);
 
 }
 
