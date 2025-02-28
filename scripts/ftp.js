@@ -40,6 +40,21 @@ for (let i = 0; i < users.length; i++) {
 console.log(mountArray);
 function startFtpServer() {
     const { exec} = require('child_process');
+    //stop any containers with the name sftp_server
+    exec('docker stop sftp_server', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error stopping FTP server: ${error}`);
+            return;
+        }
+        console.log(`FTP server stopped`);
+    });
+    exec('docker rm sftp_server', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error removing FTP server: ${error}`);
+            return;
+        }
+        console.log(`FTP server removed`);
+    });
     console.log(`docker run -d --name sftp_server -p ${port}:22 ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`);
     exec(`docker run -d --name sftp_server -p ${port}:22 ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`, (error, stdout, stderr) => {
         if (error) {
