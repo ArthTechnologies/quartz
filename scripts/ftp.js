@@ -33,7 +33,7 @@ let port = 10000 + parseInt(config.idOffset) + 99;
 
 let mountArray = [];
 let usersArray = [];
-for (let i = 0; i < users.length; i++) {
+for (let i = 0; i < 5; i++) {
     mountArray.push(`-v "${users[i].split(":")[2]}:/home/username/server-${users[i].split(":")[3]}" `);
     usersArray.push(`"${users[i].split(":")[0]}:${users[i].split(":")[1]}:::server-${users[i].split(":")[3]}" `);
 }
@@ -55,7 +55,7 @@ function startFtpServer() {
         }
         console.log(`FTP server removed`);
     });
-    //console.log(`docker run -d --name sftp_server -p ${port}:22 ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`);
+    console.log(`docker run -d --name sftp_server -p ${port}:22 ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`);
     exec(`docker run -d --name sftp_server -p ${port}:22 ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error starting FTP server: ${error}`);
