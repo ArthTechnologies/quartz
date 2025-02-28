@@ -387,6 +387,10 @@ router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
     pluginId = req.query.id;
     pluginName = req.query.name;
     pluginName = pluginName.replace(/\//g, "-");
+    //replace other symbols like & with +
+    pluginName = pluginName.replace(/&/g, "+");
+    pluginName = pluginName.replace(/ /g, "_");
+    
     modtype = req.params.modtype;
     if (modtype == "datapack") {
       modtype = "world/datapack";
