@@ -14,7 +14,7 @@ for (let i = 0; i < accountsFolder.length; i++) {
         let data = readJSON(`./accounts/${account}`);
         let servers = data.servers;
         let tempToken = crypto.randomBytes(6).toString("hex");
-        users.push(`${accountsFolder[i].split(".json")[0]}:${tempToken}:./servers/${servers[0]}`);
+        users.push(`${accountsFolder[i].split(".json")[0].split(":").join("**")}:${tempToken}:/home/sysadmin/servers/${servers[0]}/:${servers[0]}`); 
     }
 }
 console.log(users);
@@ -28,60 +28,24 @@ users.forEach(entry => {
   userMap[username] = { password, directory };
 });
 let port = 10000 + parseInt(config.idOffset) + 99;
+
+let mountArray = [];
+let usersArray = [];
+for (let i = 0; i < users.length; i++) {
+    mountArray.push(`-v "${users[i].split(":")[2]}:/home/username/server-${users[i].split(":")[3]}" `);
+    usersArray.push(`"${users[i].split(":")[0]}:${users[i].split(":")[1]}:::server-${users[i].split(":")[3]}" `);
+}
+console.log(mountArray);
 function startFtpServer() {
-  setTimeout(() => {
-    var options = {
-        host: process.env.IP || '127.0.0.1',
-        port: port, // Change to port 4002
-        tls: null, // Ensure TLS is null for FTP only
-      };
-    
-      server = new ftpd.FtpServer(options.host, {
-        getInitialCwd: function(connection) {
-          return userMap[connection.username] ? userMap[connection.username].directory : '/';
-        },
-        getRoot: function(connection) {
-          return userMap[connection.username] ? userMap[connection.username].directory : process.cwd();
-        },
-        pasvPortRangeStart: 1025,
-        pasvPortRangeEnd: 1050,
-        tlsOptions: options.tls, // This will remain null
-        allowUnauthorizedTls: true,
-        useWriteFile: false,
-        useReadFile: false,
-        uploadMaxSlurpSize: 7000, // N/A unless 'useWriteFile' is true.
-      });
-    
-      server.on('error', function(error) {
-        console.log('FTP Server error:', error);
-      });
-    
-      server.on('client:connected', function(connection) {
-        console.log('Client connected: ' + connection.remoteAddress);
-    
-        connection.on('command:user', function(user, success, failure) {
-          if (userMap[user]) {
-            connection.username = user;
-            success();
-          } else {
-            failure();
-          }
-        });
-    
-        connection.on('command:pass', function(pass, success, failure) {
-          if (connection.username && userMap[connection.username].password === pass) {
-            success(connection.username);
-          } else {
-            failure();
-          }
-        });
-      });
-    
-      server.debugging = 4;
-      server.listen(options.port);
-    
-      console.log('FTP Server listening on port ' + options.port);
-    }, 2000);
+    const { exec} = require('child_process');
+    exec(`docker run -d --name sftp_server -p ${port}:22 ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error starting FTP server: ${error}`);
+            return;
+        }
+        console.log(`FTP server started on port ${port}`);
+    });
+
 }
 
 function getTempToken(username) {
