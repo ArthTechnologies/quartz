@@ -1665,6 +1665,8 @@ router.get("/:id/file/download/:path", function (req, res) {
     if (fs.existsSync(`servers/${req.params.id}/${path}`)) {
       if (fs.statSync(`servers/${req.params.id}/${path}`).isDirectory()) {
         //zip the folder and send it to the client
+        console.log("unzipping");
+        console.log(`zip -r -q -X ../${sanitizePath(req.params.path)}.zip .`);
         exec(
           `zip -r -q -X ../${sanitizePath(req.params.path)}.zip .`,
           { cwd: `servers/${req.params.id}/${path}` },
