@@ -877,6 +877,10 @@ router.get(`/:id/getInfo`, function (req, res) {
     }
 
     let automaticStartup = false;
+    //if allowedAccounts begins with a , remove it
+    if (server.allowedAccounts.startsWith(",")) {
+      server.allowedAccounts = server.allowedAccounts.substring(1);
+    }
     let allowedAccounts1 = server.allowedAccounts.split(",");
     //scan accounts.tsv for each accountId and get the username
     let allowedAccounts = [];
