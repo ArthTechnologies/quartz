@@ -728,7 +728,27 @@ function run(
             execLine =
               prefix +
               ` @user_jvm_args.txt @${libraryline.substring(1)}${forgeVersion}/unix_args.txt "$@"`;
-
+            
+               //allocate ram to user_jvm_args.txt
+               if (fs.existsSync
+                (folder + "/user_jvm_args.txt")) {
+                  let data = fs.readFileSync(
+                    folder + "/user_jvm_args.txt",
+                    "utf8"  
+                  );
+                  let lines = data.split("\n");
+                  let a = lines.findIndex((line) => {
+                    return line.includes("-Xmx");
+                  }   
+                  );
+                  lines[a] = "-Xmx" + allocatedRAM + "G";
+                  fs.writeFileSync(
+                    folder + "/user_jvm_args.txt",
+                    lines.join("\n"),
+                    "utf8"
+                  );
+                }
+              
             if (software == "forge") {
               if (parseInt(version.split(".")[1]) >= 21) {
                 execLine = prefix + ` -jar forge-${forgeVersion}-shim.jar`;
