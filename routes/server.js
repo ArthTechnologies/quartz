@@ -2261,6 +2261,7 @@ router.post("/:id/allowAccount", function (req, res) {
       server.allowedAccounts = array.join(",");
       writeJSON(`servers/${req.params.id}/server.json`, server);
       let accountsFolder = fs.readdirSync("accounts");
+      console.log(req.query.accountId);
       accountsFolder.forEach((item) => {
         let account = readJSON(`accounts/${item}`);
         if (account.accountId == req.query.accountId) {
