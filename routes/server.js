@@ -2264,7 +2264,7 @@ router.post("/:id/allowAccount", function (req, res) {
       accountsFolder.forEach((item) => {
         let account = readJSON(`accounts/${item}`);
         if (account.accountId == req.query.accountId) {
-          account.allowedServers.push(req.params.id);
+          account.servers.push(req.params.id);
           writeJSON(`accounts/${item}`, account);
           res.status(200).json({ msg: "Done" });
         }
