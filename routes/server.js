@@ -1679,7 +1679,7 @@ router.get("/:id/file/download/:path", function (req, res) {
             );
 
             res.status(200).download(
-              `servers/${req.params.id}/${path}.zip`,
+              `servers/${req.params.id}/${sanitizePath(req.params.path)}.zip`,
               `${sanitizePath(req.params.path)}.zip`,
               () => {
                 //delete the zip file
