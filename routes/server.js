@@ -2260,7 +2260,16 @@ router.post("/:id/allowAccount", function (req, res) {
       array.push(req.query.accountId);
       server.allowedAccounts = array.join(",");
       writeJSON(`servers/${req.params.id}/server.json`, server);
-      res.status(200).json({ msg: "Done" });
+      let accountsFolder = fs.readdirSync("accounts");
+      accountsFolder.forEach((item) => {
+        let account = readJSON(`accounts/${item}`);
+        if (account.accountId == req.query.accountId) {
+          account.allowedServers.push(req.params.id);
+          writeJSON(`accounts/${item}`, account);
+          res.status(200).json({ msg: "Done" });
+        }
+      });
+      
     }
 
 
