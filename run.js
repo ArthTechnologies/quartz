@@ -684,6 +684,8 @@ function getServerStates() {
   fs.readdirSync("servers").forEach((file) => {
     data.serverStates[file] = file + ":" + f.getState(file);
   });
+  console.log("Server states updated");
+  console.log(data.serverStates)
 
   writeJSON("./assets/data.json", data);
 }
