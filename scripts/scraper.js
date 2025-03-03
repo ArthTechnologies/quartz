@@ -85,6 +85,9 @@ async function downloadForgeJars() {
 
     // section.sidebar-nav li.li-version-list > ul > li
     let minecraftVersions = minecraftVersionsHtml.find("section.sidebar-nav li.li-version-list > ul > li > a").toArray();
+    let latest = minecraftVersionsHtml.find("section.sidebar-nav li.li-version-list > ul > li.elem-active").toArray()[0];
+    minecraftVersions.push(latest);
+    console.log(minecraftVersions)
     for (let i in minecraftVersions) {
         let url = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/index_"+minecraftVersions[i].textContent.trim()+".html";
         const response2 = await fetch(url);
@@ -271,12 +274,12 @@ function downloadSnapshotJars() {
 
                 }
               } catch (e) {
-                console.log(e);
+                //console.log(e);
               }
             });
           }
         } catch (e) {
-          console.log(e);
+          //console.log(e);
         }
       }
     );
@@ -300,13 +303,13 @@ function downloadSnapshotJars() {
                                     }
                                 }
                             } catch (e) {
-                                console.log(e);
+                                //console.log(e);
                             }
                         });
                     }
                 }
             } catch (e) {
-                console.log(e);
+                //console.log(e);
             }
 
         }   
@@ -333,7 +336,7 @@ function fullDownload() {
 function done() {
     const indexJson = JSON.stringify(index);
     fs.writeFileSync("assets/scraper.json", indexJson);
-    console.log("Done running jars scraper");
+    //console.log("Done running jars scraper");
 }
 
 function partialDownload() {
