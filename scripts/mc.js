@@ -111,6 +111,9 @@ function run(
   modpackVersionID
 ) {
   try {
+    if (version.includes(" ")) {
+      version = version.split(" ").join("*");
+    }
     const { exec, execSync, spawn } = require("child_process");
     //this looks for servers running on the same port that may obstruct startup
     killObstructingProcess(parseInt(id));
