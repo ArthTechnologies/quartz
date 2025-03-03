@@ -280,6 +280,7 @@ function run(
     }
 
     if (software != "quilt") {
+      console.log("moving " + software + "-" + version + ".jar to " + folder);
       if (fs.existsSync("assets/jars/" + software + "-" + version + ".jar")) {
         fs.copyFileSync(
           "assets/jars/" + software + "-" + version + ".jar",
