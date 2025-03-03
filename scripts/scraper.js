@@ -103,9 +103,11 @@ async function downloadForgeJars() {
             let components = link.split("/").pop().split("-");
             let filename = "forge-" + components[1] + "-" + channel + ".jar";
 
-            if (!skipOldVersions || getMajorVersion(components[i], 1) >= 21) {
-                index[filename] = link;
-        }
+            if (components[1].includes("1.7.10_pre4")) {
+                if (!skipOldVersions || getMajorVersion(components[i], 1) >= 21) {
+                    index[filename] = link;
+            }
+            }
         }
 
 
