@@ -1668,7 +1668,7 @@ router.get("/:id/file/download/:path", function (req, res) {
         console.log("unzipping");
         console.log(`zip -r -q -X ../${sanitizePath(req.params.path)}.zip .`);
         exec(
-          `zip -r -q -X ../${sanitizePath(req.params.path)}.zip .`,
+          `zip -r -q -X ./${sanitizePath(req.params.path)}.zip .`,
           { cwd: `servers/${req.params.id}/` },
           (err) => {
             res.setHeader("Content-Type", "application/zip");
