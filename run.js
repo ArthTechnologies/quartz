@@ -684,8 +684,8 @@ function getServerStates() {
   fs.readdirSync("servers").forEach((file) => {
     //20%% chance to debug log the server state
     let debug = Math.floor(Math.random() * 5) == 1;
-    if (debug) console.log("checking server states for " + file + " and it is " + f.getState(file));
-    data.serverStates[file] = file + ":" + f.getState(file);
+  
+    data.serverStates.push(file + ":" + f.getState(file));
   });
   console.log("Server states updated");
   console.log(data.serverStates)
@@ -714,7 +714,7 @@ for (i in data.serverStates) {
 }
 setInterval(() => {
   getServerStates();
-}, 1000 * 60 * 2);
+}, 1000 * 60 * 3);
 
 app.get("/", (req, res) => {
   res.status(200).sendFile(path.join(__dirname, "assets/clientMessage.html"));
