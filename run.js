@@ -678,10 +678,13 @@ const f = require("./scripts/mc.js");
 function getServerStates() {
   const data = readJSON("./assets/data.json");
 
-  if (data.serverStates == undefined) {
+
     data.serverStates = [];
-  }
+  
   fs.readdirSync("servers").forEach((file) => {
+    //20%% chance to debug log the server state
+    let debug = Math.floor(Math.random() * 5) == 1;
+    if (debug) console.log("checking server states for " + file + " and it is " + f.getState(file));
     data.serverStates[file] = file + ":" + f.getState(file);
   });
   console.log("Server states updated");
