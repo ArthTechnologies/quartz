@@ -701,10 +701,11 @@ for (i in data.serverStates) {
     ) {
       //the multiplier determines the stagger delay by the amount of servers
       let multiplier = data.serverStates.length / 16;
-
+      //random value between 1 and 32
+      let random = Math.floor(Math.random() * 32) + 1;
       setTimeout(() => {
         f.run(id, undefined, undefined, undefined, undefined, undefined, false);
-      }, 3000 * i * multiplier);
+      }, 3000 * random * multiplier);
     }
   }
 }
