@@ -1677,7 +1677,7 @@ router.get("/:id/file/download/:path", function (req, res) {
               "Content-Disposition",
               `attachment; filename=${sanitizePath(req.params.path)}.zip`
             );
-
+            console.log(`downloading folder servers/${req.params.id}/${sanitizePath(req.params.path)}.zip`);
             res.status(200).download(
               `servers/${req.params.id}/${sanitizePath(req.params.path)}.zip`,
               `${sanitizePath(req.params.path)}.zip`,
