@@ -1683,7 +1683,7 @@ router.get("/:id/file/download/:path", function (req, res) {
               `${sanitizePath(req.params.path)}.zip`,
               () => {
                 //delete the zip file
-                fs.unlinkSync(`servers/${req.params.id}/${path}.zip`);
+                fs.unlinkSync(`servers/${req.params.id}/${sanitizePath(req.params.path)}.zip`);
               }
             );
           }
