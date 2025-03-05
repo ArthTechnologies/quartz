@@ -898,10 +898,12 @@ function run(
       eventEmitter.on("writeCmd:" + id, function () {
         ls.stdin.write(terminalInput + "\n");
       });
-      ls.on("exit", () => {
+      ls.on("exit", (code) => {
         states[id] = "false";
         console.log("setting status of " + id + " to false on line #11");
         terminalOutput[id] = out.join("\n");
+        console.log(out);
+        console.log(code);
         console.log(terminalOutput[id]);
         clearInterval(intervalID);
       });
