@@ -321,7 +321,8 @@ function downloadSnapshotJars() {
 
 function fullDownload() {
     skipOldVersions = false;;
-    downloadPaperJars();
+    try {
+        downloadPaperJars();
     setTimeout(() => downloadVelocityJars(), 500);
     setTimeout(() => downloadForgeJars(), 1000);
     setTimeout(() => downloadNeoforgeJars(), 1500);
@@ -332,6 +333,9 @@ function fullDownload() {
     setTimeout(() => downloadSnapshotJars(), 3500);
     setTimeout(() => downloadVanillaJars(), 4000);  
     setTimeout(() => done(), 10000);
+    } catch (e) {
+        //console.log(e);
+    }
 
 }
 
@@ -344,7 +348,8 @@ function done() {
 function partialDownload() {
 
     skipOldVersions = true;
-    downloadPaperJars();
+    try {
+        downloadPaperJars();
     setTimeout(() => downloadVelocityJars(), 100);
     setTimeout(() => downloadForgeJars(), 200);
     setTimeout(() => downloadNeoforgeJars(), 300);
@@ -355,6 +360,9 @@ function partialDownload() {
     setTimeout(() => downloadSnapshotJars(), 700);
     setTimeout(() => downloadVanillaJars(), 800);
     setTimeout(() => done(), 10000);
+    } catch {
+        //console.log(e);
+    }
 
 }
 
