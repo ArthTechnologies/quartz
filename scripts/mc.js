@@ -903,7 +903,8 @@ function run(
         console.log("setting status of " + id + " to false on line #11");
         terminalOutput[id] = out.join("\n");
         console.log(out);
-        console.log(code);
+        console.log("code");
+        console.log(code)
         console.log(terminalOutput[id]);
         clearInterval(intervalID);
       });
