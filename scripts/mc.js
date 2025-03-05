@@ -902,6 +902,7 @@ function run(
         states[id] = "false";
         console.log("setting status of " + id + " to false on line #11");
         terminalOutput[id] = out.join("\n");
+        console.log(terminalOutput[id]);
         clearInterval(intervalID);
       });
     }
