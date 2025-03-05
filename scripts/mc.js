@@ -255,7 +255,7 @@ function run(
     }
 
     let port = portOffset + parseInt(id);
-    let prefix = `docker run -m ${allocatedRAM}g -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp -p ${port + 66}:${port + 66}/tcp -p ${port + 33}:${port + 33}/udp --user 1000:1000 openjdk:${javaVer} java`;
+    let prefix = `docker run -m ${allocatedRAM}g -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp -p ${port + 66}:${port + 66}/tcp -p ${port + 33}:${port + 33}/udp --user 1000:1000 --cpus="1" openjdk:${javaVer} java`;
     console.log("prefix: " + prefix);
 
     let doneInstallingServer = false;
