@@ -157,6 +157,54 @@ Router.get("/customers", async (req, res) => {
   }
 });
 
+const { exec } = require("child_process");
+function getContainerMemoryUsage() {
+  return new Promise((resolve, reject) => {
+      exec("docker stats --no-stream --format '{{.Container}} {{.MemUsage}}'", (err, stdout) => {
+          if (err) return reject(err);
+          const memoryData = stdout.trim().split("\n").map(line => {
+              const [id, ...mem] = line.split(" ");
+              return { id, memory: mem.join(" ") };
+          });
+          resolve(memoryData);
+      });
+  });
+}
+
+// Function to get container ports
+function getContainerPorts() {
+  return new Promise((resolve, reject) => {
+      exec("docker ps --format '{{.ID}} {{.Ports}}'", (err, stdout) => {
+          if (err) return reject(err);
+          const portData = stdout.trim().split("\n").map(line => {
+              const [id, ...ports] = line.split(" ");
+              return { id, ports: ports.join(" ") };
+          });
+          resolve(portData);
+      });
+  });
+}
+
+// Route to get container snapshot
+Router.get("/snapshot", async (req, res) => {
+  try {
+      const [memoryUsage, ports] = await Promise.all([
+          getContainerMemoryUsage(),
+          getContainerPorts()
+      ]);
+
+      // Merge data by container ID
+      const containerInfo = memoryUsage.map(memContainer => {
+          const portContainer = ports.find(p => p.id === memContainer.id) || { ports: "N/A" };
+          return { id: memContainer.id, memory: memContainer.memory, ports: portContainer.ports };
+      });
+
+      res.json(containerInfo);
+  } catch (error) {
+      console.error("Error fetching container info:", error);
+      res.status(500).json({ error: "Failed to fetch container snapshot" });
+  }
+});
 const { execSync } = require("child_process");
 Router.get("/servers", async (req, res) => {
   const datajson = utils.readJSON("assets/data.json");
