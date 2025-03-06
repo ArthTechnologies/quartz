@@ -219,7 +219,7 @@ function getMemoryUsage() {
 }
 
 let mostRecentSnapshot = {threads: [], memory: {}};
-let lastSnapshotTime = Date.now();
+let lastSnapshotTime = 0;
 // Route to get thread and memory snapshot
 Router.get("/snapshot", async (req, res) => {
 //if last snapshot was 60 seconds ago or more
