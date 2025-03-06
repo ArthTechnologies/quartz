@@ -159,32 +159,44 @@ Router.get("/customers", async (req, res) => {
 
 const { exec } = require("child_process");
 
-// Function to get CPU usage per hardware thread
 function getThreadUsage() {
     return new Promise((resolve, reject) => {
-        exec("mpstat -P ALL 1 1", (err, stdout) => {
+        exec("grep 'cpu[0-9]' /proc/stat", (err, firstSample) => {
             if (err) return reject(err);
 
-            const lines = stdout.trim().split("\n").slice(3); // Skip the first 3 header lines
-            const threads = lines
-                .map((line) => {
-                    const parts = line.trim().split(/\s+/);
-                    
-                    if (parts.length < 4 || isNaN(parts[1])) return null; // Ignore invalid lines
-                    
-                    return {
-                        id: `cpu${parts[1]}`, // Ensure correct ID
-                        cpuUsage: parseFloat(parts[3]) || 0, // Extract %usr column
-                    };
-                })
-                .filter(Boolean) // Remove any null/invalid entries
-                .filter(thread => thread.id.match(/^cpu\d+$/)); // Ensure only "cpu0" to "cpu15" are included
+            setTimeout(() => {
+                exec("grep 'cpu[0-9]' /proc/stat", (err, secondSample) => {
+                    if (err) return reject(err);
 
-            resolve(threads);
+                    const threads = [];
+                    const firstLines = firstSample.trim().split("\n");
+                    const secondLines = secondSample.trim().split("\n");
+
+                    for (let i = 0; i < firstLines.length; i++) {
+                        const firstParts = firstLines[i].split(/\s+/);
+                        const secondParts = secondLines[i].split(/\s+/);
+
+                        const id = firstParts[0]; // "cpu0", "cpu1", ...
+
+                        const firstTotal = firstParts.slice(1, 8).reduce((sum, val) => sum + parseInt(val), 0);
+                        const firstIdle = parseInt(firstParts[4]);
+
+                        const secondTotal = secondParts.slice(1, 8).reduce((sum, val) => sum + parseInt(val), 0);
+                        const secondIdle = parseInt(secondParts[4]);
+
+                        const totalDiff = secondTotal - firstTotal;
+                        const idleDiff = secondIdle - firstIdle;
+                        const usage = totalDiff > 0 ? ((totalDiff - idleDiff) / totalDiff) * 100 : 0;
+
+                        threads.push({ id, cpuUsage: usage.toFixed(2) });
+                    }
+
+                    resolve(threads);
+                });
+            }, 500); // 500ms delay between samples
         });
     });
 }
-
 
 
 
