@@ -165,21 +165,26 @@ function getThreadUsage() {
         exec("mpstat -P ALL 1 1", (err, stdout) => {
             if (err) return reject(err);
 
-            const lines = stdout.trim().split("\n").slice(3); // Skip headers
-            const threads = lines.map((line) => {
-                const parts = line.trim().split(/\s+/);
-                if (parts[1] === "CPU" || parts[1] === "all") return null; // Skip headers
-
-                return {
-                    id: `cpu${parts[1]}`,
-                    cpuUsage: parseFloat(parts[3]) || 0, // %usr column (user CPU usage)
-                };
-            }).filter(Boolean);
+            const lines = stdout.trim().split("\n").slice(3); // Skip the first 3 header lines
+            const threads = lines
+                .map((line) => {
+                    const parts = line.trim().split(/\s+/);
+                    
+                    if (parts.length < 4 || isNaN(parts[1])) return null; // Ignore invalid lines
+                    
+                    return {
+                        id: `cpu${parts[1]}`, // Ensure correct ID
+                        cpuUsage: parseFloat(parts[3]) || 0, // Extract %usr column
+                    };
+                })
+                .filter(Boolean) // Remove any null/invalid entries
+                .filter(thread => thread.id.match(/^cpu\d+$/)); // Ensure only "cpu0" to "cpu15" are included
 
             resolve(threads);
         });
     });
 }
+
 
 
 
