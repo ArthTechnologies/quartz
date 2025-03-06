@@ -218,19 +218,28 @@ function getMemoryUsage() {
   });
 }
 
+let mostRecentSnapshot = {threads: [], memory: {}};
+let lastSnapshotTime = Date.now();
 // Route to get thread and memory snapshot
 Router.get("/snapshot", async (req, res) => {
+//if last snapshot was 60 seconds ago or more
+if (Date.now() - lastSnapshotTime > 60000) {
   try {
-      const [threads, memory] = await Promise.all([
-          getThreadUsage(),
-          getMemoryUsage()
-      ]);
+    const [threads, memory] = await Promise.all([
+        getThreadUsage(),
+        getMemoryUsage()
+    ]);
 
-      res.json({ threads, memory });
-  } catch (error) {
-      console.error("Error fetching snapshot info:", error);
-      res.status(500).json({ error: "Failed to fetch snapshot data" });
-  }
+    res.json({ threads, memory });
+    mostRecentSnapshot = {threads, memory};
+} catch (error) {
+    console.error("Error fetching snapshot info:", error);
+    res.status(500).json({ error: "Failed to fetch snapshot data" });
+}
+} else {
+
+  res.json(mostRecentSnapshot);
+}
 });
 const { execSync } = require("child_process");
 Router.get("/servers", async (req, res) => {
