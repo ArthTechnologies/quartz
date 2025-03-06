@@ -158,6 +158,7 @@ Router.get("/customers", async (req, res) => {
 });
 
 const { exec } = require("child_process");
+// Function to get container memory usage
 function getContainerMemoryUsage() {
   return new Promise((resolve, reject) => {
       exec("docker stats --no-stream --format '{{.Container}} {{.MemUsage}}'", (err, stdout) => {
@@ -185,18 +186,40 @@ function getContainerPorts() {
   });
 }
 
+// Function to get container CPU and thread usage
+function getContainerCPUAndThreads() {
+  return new Promise((resolve, reject) => {
+      exec("docker stats --no-stream --format '{{.Container}} {{.CPUPerc}} {{.PIDs}}'", (err, stdout) => {
+          if (err) return reject(err);
+          const cpuData = stdout.trim().split("\n").map(line => {
+              const [id, cpu, pids] = line.split(" ");
+              return { id, cpuUsage: cpu, threads: pids };
+          });
+          resolve(cpuData);
+      });
+  });
+}
+
 // Route to get container snapshot
 Router.get("/snapshot", async (req, res) => {
   try {
-      const [memoryUsage, ports] = await Promise.all([
+      const [memoryUsage, ports, cpuThreads] = await Promise.all([
           getContainerMemoryUsage(),
-          getContainerPorts()
+          getContainerPorts(),
+          getContainerCPUAndThreads()
       ]);
 
       // Merge data by container ID
       const containerInfo = memoryUsage.map(memContainer => {
           const portContainer = ports.find(p => p.id === memContainer.id) || { ports: "N/A" };
-          return { id: memContainer.id, memory: memContainer.memory, ports: portContainer.ports };
+          const cpuThreadContainer = cpuThreads.find(c => c.id === memContainer.id) || { cpuUsage: "N/A", threads: "N/A" };
+          return { 
+              id: memContainer.id, 
+              memory: memContainer.memory, 
+              ports: portContainer.ports, 
+              cpuUsage: cpuThreadContainer.cpuUsage, 
+              threads: cpuThreadContainer.threads 
+          };
       });
 
       res.json(containerInfo);
