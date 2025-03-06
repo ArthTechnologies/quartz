@@ -158,19 +158,28 @@ Router.get("/customers", async (req, res) => {
 });
 
 const { exec } = require("child_process");
-// Function to get thread usage
+
+// Function to get per-thread CPU usage
 function getThreadUsage() {
-  return new Promise((resolve, reject) => {
-      exec("top -b -n 1 -H | awk '{print $1, $9}'", (err, stdout) => {
-          if (err) return reject(err);
-          const threads = stdout.trim().split("\n").slice(7).map(line => {
-              const [id, cpu] = line.split(" ");
-              return { id, cpuUsage: cpu ? parseFloat(cpu) : 0 };
-          });
-          resolve(threads);
-      });
-  });
+    return new Promise((resolve, reject) => {
+        exec("grep 'cpu[0-9]' /proc/stat", (err, stdout) => {
+            if (err) return reject(err);
+
+            const threads = stdout
+                .trim()
+                .split("\n")
+                .map((line) => {
+                    const parts = line.split(/\s+/);
+                    const id = parts[0]; // cpu0, cpu1, ..., cpu15
+                    const totalTime = parts.slice(1, 8).reduce((sum, val) => sum + parseInt(val), 0); // Sum all time categories
+                    return { id, totalTime };
+                });
+
+            resolve(threads);
+        });
+    });
 }
+
 
 // Function to get memory usage
 function getMemoryUsage() {
