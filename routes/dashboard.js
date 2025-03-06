@@ -232,6 +232,7 @@ if (Date.now() - lastSnapshotTime > 60000) {
 
     res.json({ threads, memory });
     mostRecentSnapshot = {threads, memory};
+    lastSnapshotTime = Date.now();
 } catch (error) {
     console.error("Error fetching snapshot info:", error);
     res.status(500).json({ error: "Failed to fetch snapshot data" });
