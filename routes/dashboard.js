@@ -242,6 +242,7 @@ async function captureSnapshot() {
     }
 }
 
+captureSnapshot();
 // Automatically refresh every 60 seconds
 setInterval(captureSnapshot, 60000);
 
