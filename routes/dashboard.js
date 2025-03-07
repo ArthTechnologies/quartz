@@ -218,30 +218,38 @@ function getMemoryUsage() {
   });
 }
 
-let mostRecentSnapshot = {threads: [], memory: {}};
+let snapshotHistory = []; // Store past 60 minutes of snapshots
 let lastSnapshotTime = 0;
+
+// Function to capture a new snapshot
+async function captureSnapshot() {
+    try {
+        const [threads, memory] = await Promise.all([
+            getThreadUsage(),
+            getMemoryUsage()
+        ]);
+        
+        const newSnapshot = { timestamp: Date.now(), threads, memory };
+        snapshotHistory.push(newSnapshot);
+        
+        // Keep only the past 60 minutes of data
+        const oneHourAgo = Date.now() - 3600000;
+        snapshotHistory = snapshotHistory.filter(snapshot => snapshot.timestamp >= oneHourAgo);
+        
+        lastSnapshotTime = Date.now();
+    } catch (error) {
+        console.error("Error fetching snapshot info:", error);
+    }
+}
+
+// Automatically refresh every 60 seconds
+setInterval(captureSnapshot, 60000);
+
 // Route to get thread and memory snapshot
-Router.get("/snapshot", async (req, res) => {
-//if last snapshot was 60 seconds ago or more
-if (Date.now() - lastSnapshotTime > 60000) {
-  try {
-    const [threads, memory] = await Promise.all([
-        getThreadUsage(),
-        getMemoryUsage()
-    ]);
-
-    res.json({ threads, memory });
-    mostRecentSnapshot = {threads, memory};
-    lastSnapshotTime = Date.now();
-} catch (error) {
-    console.error("Error fetching snapshot info:", error);
-    res.status(500).json({ error: "Failed to fetch snapshot data" });
-}
-} else {
-
-  res.json(mostRecentSnapshot);
-}
+Router.get("/snapshot", (req, res) => {
+    res.json(snapshotHistory);
 });
+
 const { execSync } = require("child_process");
 Router.get("/servers", async (req, res) => {
   const datajson = utils.readJSON("assets/data.json");
