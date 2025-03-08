@@ -15,46 +15,17 @@ let terminalInput = "";
 
 const portOffset = 10000; 
 
+let amountOfThreads = 16;
+
+const {execSync} = require("child_process");
+amountOfThreads = execSync(`lscpu | grep "^Core(s) per socket" | awk '{print $4}'`);
 
 
 let threads = [];
 
-//this function gets threads and orders them by which is the least active first
-function getThreads() {
-  const { execSync } = require("child_process");
-  let output = execSync("mpstat -P ALL 1 1 | grep -v 'Average'").toString();
-  let lines = output.split("\n");
-  let threads = [];
-  let threadsTemp = [];
-  for (let i = 0; i < lines.length; i++) {
-    let line = lines[i].trim();
-    if (line != "") {
-      let parts = line.split(/\s+/);  
-      console.log(parts[12])
-      if (parts[12] != undefined && !isNaN(parts[12]) && parts[2] != "all") {
-      let thread = {
-        id: parts[2],
-        usage: 100-parseFloat(parts[12])
-      };
-      threadsTemp.push(thread);
-    }
-    }
-  }
-  console.log(threadsTemp)
-  threadsTemp.sort((a, b) => a.usage - b.usage);
-  for (let i = 0; i < threadsTemp.length; i++) {
-    threads.push(threadsTemp[i].id);
-  }
-  return threads;
+for (let i = 0; i < amountOfThreads; i++) {
+  threads.push(i);
 }
-
-threads = getThreads();
-console.log("threads")
-console.log(threads)
-setTimeout(() => {
-  threads = getThreads();
-}, 1000);
-
         
 function proxiesToggle(id, toggle, secret) {
   if (toggle == true) {
@@ -297,7 +268,22 @@ function run(
     }
 
     let port = portOffset + parseInt(id);
-    let prefix = `docker run -m ${allocatedRAM}g -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp -p ${port + 66}:${port + 66}/tcp -p ${port + 33}:${port + 33}/udp --user 1000:1000 --cpus="3" openjdk:${javaVer} java`;
+    let thread1 = threads[1]
+    let thread2 = threads[2]; 
+    let thread3 = threads[3];
+    let thread4 = threads[4];
+    //removes those threads from the array
+    threads.splice(1, 4);
+    
+    //adds those threads to the end of the array
+    threads.push(thread1);
+    threads.push(thread2);
+    threads.push(thread3);
+    threads.push(thread4);
+
+    let threadsString = threads.join(",");
+
+    let prefix = `docker run -m ${allocatedRAM}g -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp -p ${port + 66}:${port + 66}/tcp -p ${port + 33}:${port + 33}/udp --user 1000:1000 --cpuset-cpus="${threadsString}" openjdk:${javaVer} java`;
     console.log("prefix: " + prefix);
 
     let doneInstallingServer = false;
