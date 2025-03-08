@@ -284,6 +284,8 @@ function run(
     let threadsString = threads.join(",");
     //if theres a , at the end of threadsString, remove it
     if (threadsString.endsWith(",")) {
+      threadsString = threadsString.slice(0, -1);
+    }
 
     let prefix = `docker run -m ${allocatedRAM}g -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp -p ${port + 66}:${port + 66}/tcp -p ${port + 33}:${port + 33}/udp --user 1000:1000 --cpuset-cpus="${threadsString}" openjdk:${javaVer} java`;
     console.log("prefix: " + prefix);
