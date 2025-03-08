@@ -11,7 +11,7 @@ for (let i = 0; i < serverFolderItems.length; i++) {
     }
 }
 function getMemory(serverId) {
-    console.log("getMemory for server: " + serverId);
+
     try {
  
         exec(
@@ -19,7 +19,7 @@ function getMemory(serverId) {
           (error, stdout, stderr) => {
         
             let pid = stdout.trim();
-         
+            console.log("getMemory for server: " + pid);
            
             exec(
               `docker stats ${pid} --no-stream --format "{{.MemUsage}}"
