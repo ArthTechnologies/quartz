@@ -31,6 +31,10 @@ let serversOnThreads = [];
 setInterval(() => {
   console.log(serversOnThreads);
 }, 1000* 60 * 5);
+
+function getServersOnThreads() {
+  return serversOnThreads;
+}
         
 function proxiesToggle(id, toggle, secret) {
   if (toggle == true) {
@@ -1309,4 +1313,5 @@ module.exports = {
   getState,
   downloadModpack,
   killAsync,
+  getServersOnThreads
 };
