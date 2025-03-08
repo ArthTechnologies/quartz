@@ -281,10 +281,10 @@ function run(
     }
 
     let port = portOffset + parseInt(id);
-    let thread1 = threads[1]
-    let thread2 = threads[2]; 
-    let thread3 = threads[3];
-    let thread4 = threads[4];
+    let thread1 = threads[0]
+    let thread2 = threads[1]; 
+    let thread3 = threads[2];
+    let thread4 = threads[3];
     //removes those threads from the array
     threads.splice(1, 4);
     
