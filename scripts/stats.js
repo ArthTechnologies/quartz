@@ -41,6 +41,7 @@ for (let i = 0; i < servers.length; i++) {
 }
 
 async function cycle() {
+    console.log("Running memory cycle");
     for (let i = 0; i < servers.length; i++) {
         const memoryData = await getMemory(servers[i]); // Await memory retrieval
         if (memoryData) {
