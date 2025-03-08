@@ -13,7 +13,6 @@ for (let i = 0; i < serverFolderItems.length; i++) {
 }
 
 async function getMemory(serverId) {
-    console.log(`Fetching memory for server ${serverId}`);
     try {
         const port = 10000 + parseInt(serverId);
         const { stdout: containerId } = await execPromise(
@@ -28,6 +27,20 @@ async function getMemory(serverId) {
         );
 
         const [used, total] = memoryStats.trim().split('/').map(s => s.trim());
+
+        //convert MiB to bytes and GiB to bytes
+        if (used.endsWith('MiB')) {
+            used = parseFloat(used) * 1024 * 1024;
+        }
+        if (used.endsWith('GiB')) {
+            used = parseFloat(used) * 1024 * 1024 * 1024;
+        }
+        if (total.endsWith('MiB')) {
+            total = parseFloat(total) * 1024 * 1024;
+        }
+        if (total.endsWith('GiB')) {
+            total = parseFloat(total) * 1024 * 1024 * 1024;
+        }   
 
         return { used, total };
     } catch (error) {
