@@ -26,7 +26,7 @@ async function getMemory(serverId) {
             `docker stats ${pid} --no-stream --format "{{.MemUsage}}"`
         );
 
-        const [used, total] = memoryStats.trim().split('/').map(s => s.trim());
+        let [used, total] = memoryStats.trim().split('/').map(s => s.trim());
 
         //convert MiB to bytes and GiB to bytes
         if (used.endsWith('MiB')) {
