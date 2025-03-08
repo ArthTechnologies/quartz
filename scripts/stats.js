@@ -13,19 +13,19 @@ for (let i = 0; i < serverFolderItems.length; i++) {
 function getMemory(serverId) {
 
     try {
-
+        console.log("serverId: " + serverId);   
         exec(
           `docker ps --filter "publish=${10000 + parseInt(serverId)}" --format "{{.ID}}"`,
           (error, stdout, stderr) => {
         
             let pid = stdout.trim();
-         
+            console.log("pid: " + pid);
            
             exec(
               `docker stats ${pid} --no-stream --format "{{.MemUsage}}"
       `,
               (err, stdout2, stderr) => {
-              
+              console.log("stdout2: " + stdout2);
             
                 let used = stdout2.split("/")[0];
                 let total = stdout2.split("/")[1];
