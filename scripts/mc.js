@@ -18,7 +18,7 @@ const portOffset = 10000;
 let amountOfThreads = 16;
 
 const {execSync} = require("child_process");
-amountOfThreads = execSync(`lscpu | grep "^Core(s) per socket" | awk '{print $4}'`);
+amountOfThreads = parseInt(execSync(`lscpu | grep "^Core(s) per socket" | awk '{print $4}'`))*2;
 
 
 let threads = [];
@@ -286,11 +286,7 @@ function run(
     threads.push(thread3);
     threads.push(thread4);
 
-    let threadsString = threads.join(",");
-    //if theres a , at the end of threadsString, remove it
-    if (threadsString.endsWith(",")) {
-      threadsString = threadsString.slice(0, -1);
-    }
+    let threadsString = thread1 + "," + thread2 + "," + thread3 + "," + thread4;
 
     serversOnThreads.push({id: id, threads: threadsString});
 
