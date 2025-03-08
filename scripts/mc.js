@@ -40,6 +40,7 @@ function getThreads() {
     }
     }
   }
+  console.log(threadsTemp)
   threadsTemp.sort((a, b) => a.usage - b.usage);
   for (let i = 0; i < threadsTemp.length; i++) {
     threads.push(threadsTemp[i].id);
