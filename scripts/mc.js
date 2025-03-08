@@ -26,6 +26,11 @@ let threads = [];
 for (let i = 0; i < amountOfThreads; i++) {
   threads.push(i);
 }
+let serversOnThreads = threads.length;
+
+setInterval(() => {
+  console.log(serversOnThreads);
+}, 1000);
         
 function proxiesToggle(id, toggle, secret) {
   if (toggle == true) {
@@ -286,6 +291,13 @@ function run(
     if (threadsString.endsWith(",")) {
       threadsString = threadsString.slice(0, -1);
     }
+
+    // find each thread on serversOnThreads and add the server id
+    for (let i = 0; i < serversOnThreads; i++) {
+      if (threadsString.includes(i)) {
+        threadsString = threadsString.replace(i, i + "."+id);
+      }
+    } 
 
     let prefix = `docker run -m ${allocatedRAM}g -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp -p ${port + 66}:${port + 66}/tcp -p ${port + 33}:${port + 33}/udp --user 1000:1000 --cpuset-cpus="${threadsString}" openjdk:${javaVer} java`;
     console.log("prefix: " + prefix);
