@@ -21,6 +21,7 @@ const enablePay = JSON.parse(config.enablePay);
 const enableVirusScan = JSON.parse(config.enableVirusScan);
 const portOffset = 10000;
 const idOffset = parseInt(config.idOffset);
+const stats = require("../scripts/stats.js");
 
 function writeServer(id, owner, state, name, software, version, productID, allowedAccounts, specialDatapacks, specialPlugins) {
   let tsv = fs.readFileSync("servers.tsv", "utf8").split("\n");
@@ -2000,87 +2001,11 @@ router.get("/:id/liveStats", function (req, res) {
     hasAccess(token, account, req.params.id) &&
     fs.existsSync(`servers/${req.params.id}/`)
   ) {
-    try {
- 
-      exec(
-        `docker ps --filter "publish=${portOffset + req.params.id}" --format "{{.ID}}"`,
-        (error, stdout, stderr) => {
-      
-          let pid = stdout.trim();
-          let id = parseInt(req.params.id);
-         
-          exec(
-            `docker stats ${pid} --no-stream --format "{{.MemUsage}}"
-    `,
-            (err, stdout2, stderr) => {
-            
-              if (err) {
-                res.status(500).json({ success: false, data: err });
-              }
-              let memory = stdout2.split("/")[0];
-
-              res.status(200).json({ memory: memory });
-
-              /*const net = require('net');
-              const client = new net.Socket();
-              const packet = Buffer.from([0xFE, 0x01])
-              
-
-             
-              
-              client.connect(portOffset + id, 'localhost', () => {
-                client.write(packet);
-              }); 
-              let success = false;
-              client.on('data', (data) => {
-                console.log(data.toString());
-                let stdout3 = data.toString();
-                let minecraftVersion = readJSON(`servers/${id}/server.json`).version;
-                let description;
-                let maxPlayers;
-                let serverProperties = fs.readFileSync(`servers/${id}/server.properties`, "utf8");
-                let lines = serverProperties.split("\n");
-                let index = lines.findIndex((line) => {
-                  return line.startsWith("motd");
-                }
-                );
-                let index2 = lines.findIndex((line) => {
-                  return line.startsWith("max-players");
-                }
-                );
-                maxPlayers = lines[index2].split("=")[1];
-                description = lines[index].split("=")[1];
-                let players = "0/0";
-                if (stdout3 != undefined) {  
-                  try {
-                    console.log(stdout3);
-                console.log(stdout3.split(minecraftVersion)[1].split(description)[1]);
-                players = stdout3.split(minecraftVersion)[1].split(description)[1];
-                  } catch (e) {
-                    players = "0/0";
-                  }
-                }
-                res.status(200).json({ memory: memory, players: players });
-                success = true;
-                client.destroy();
-              });
-           
-
-              client.on('close', () => {
-                if (!success) {
-                  res.status(500).json({ success: false, data: "Error getting live stats." });
-                }
-              });*/
-
-               
-             
-          
-            }
-          );
-        }
-      );
-    } catch (e) {
-      res.status(500).json({ success: false, data: e });
+    const object = stats.getLiveStats(req.params.id);
+    if (object) {
+      res.status(200).json(object);
+    } else {
+      res.status(200).json({});
     }
   } else {
     res.status(401).json({ msg: "Invalid credentials." });

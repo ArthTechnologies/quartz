@@ -5,6 +5,7 @@ const stripe = require("stripe")(stripeKey);
 const config = require("../scripts/utils.js").getConfig();
 const utils = require("../scripts/utils.js");
 const files = require("../scripts/files.js");
+const f = require("../scripts/mc.js");
 
 Router.get("/verifyToken", (req, res) => {
   let tempToken = req.query.tempToken;
