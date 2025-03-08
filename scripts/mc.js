@@ -28,6 +28,8 @@ let threads = [];
 for (let i = 0; i < amountOfThreads; i++) {
   threads.push(i);
 }
+
+console.log("threads: " + threads);
 let serversOnThreads = [];
 
 setInterval(() => {
