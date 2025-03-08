@@ -57,7 +57,7 @@ for (let i = 0; i < servers.length; i++) {
 }
 function cycle() {
     for (let i = 0; i < servers.length; i++) {
-        let object = {memory: getMemoryStats(servers[i]), timestamp: Date.now()};
+        let object = {memory: getMemory(servers[i]), timestamp: Date.now()};
         //remove the oldest object if there are more than 60
         if (stats["server_"+servers[i]].length > 60) {
             stats["server_"+servers[i]].shift();
