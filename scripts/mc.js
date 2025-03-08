@@ -46,6 +46,8 @@ function getThreads() {
 }
 
 threads = getThreads();
+console.log("threads")
+console.log(threads)
 setTimeout(() => {
   threads = getThreads();
 }, 1000);
