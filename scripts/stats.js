@@ -30,7 +30,7 @@ function getMemory(serverId) {
                 let total = stdout2.split("/")[1];
   
                 return {
-                  used: memory,
+                  used: used,
                     total: total,
                 };
   
