@@ -14,6 +14,43 @@ let terminalOutput = [];
 let terminalInput = "";
 
 const portOffset = 10000; 
+
+
+
+let threads = [];
+
+//this function gets threads and orders them by which is the least active first
+function getThreads() {
+  const { execSync } = require("child_process");
+  let output = execSync("mpstat -P ALL 1 1 | grep -v 'Average'").toString();
+  let lines = output.split("\n");
+  let threads = [];
+  let threadsTemp = [];
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i].trim();
+    if (line != "") {
+      let parts = line.split(/\s+/);  
+      console.log(parts[12])
+      let thread = {
+        id: parts[1],
+        usage: 100-parseFloat(parts[12])
+      };
+      threadsTemp.push(thread);
+    }
+  }
+  threadsTemp.sort((a, b) => a.usage - b.usage);
+  for (let i = 0; i < threadsTemp.length; i++) {
+    threads.push(threadsTemp[i].id);
+  }
+  return threads;
+}
+
+threads = getThreads();
+setTimeout(() => {
+  threads = getThreads();
+}, 1000);
+
+        
 function proxiesToggle(id, toggle, secret) {
   if (toggle == true) {
     let paperGlobal = fs.readFileSync(
