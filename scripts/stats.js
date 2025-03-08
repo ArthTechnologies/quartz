@@ -20,7 +20,7 @@ async function getMemory(serverId) {
         );
 
         const pid = containerId.trim();
-        if (!pid) return null; // If no container is found, return null.
+        if (!pid) return {used:0, total:0}; // If no container is found, return null.
 
         const { stdout: memoryStats } = await execPromise(
             `docker stats ${pid} --no-stream --format "{{.MemUsage}}"`
