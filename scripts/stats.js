@@ -1,79 +1,66 @@
-const {execSync} = require('child_process')
-const config = require('./utils.js').getConfig();
+const { exec } = require('child_process');
+const { promisify } = require('util');
+const execPromise = promisify(exec);
 const fs = require('fs');
-let servers = [];
+
+const servers = [];
 
 let serverFolderItems = fs.readdirSync('./servers');
 for (let i = 0; i < serverFolderItems.length; i++) {
-    //if its a valid number
     if (!isNaN(serverFolderItems[i])) {
         servers.push(parseInt(serverFolderItems[i]));
     }
 }
-function getMemory(serverId) {
 
+async function getMemory(serverId) {
     try {
-       
-        exec(
-          `docker ps --filter "publish=${10000 + parseInt(serverId)}" --format "{{.ID}}"`,
-          (error, stdout, stderr) => {
-        
-            let pid = stdout.trim();
-
-           
-            exec(
-              `docker stats ${pid} --no-stream --format "{{.MemUsage}}"
-      `,
-              (err, stdout2, stderr) => {
-              console.log("stdout2: " + stdout2);
-            
-                let used = stdout2.split("/")[0];
-                let total = stdout2.split("/")[1];
-  
-                return {
-                  used: used,
-                    total: total,
-                };
-  
-               
-  
-                 
-               
-            
-              }
-            );
-          }
+        const port = 10000 + parseInt(serverId);
+        const { stdout: containerId } = await execPromise(
+            `docker ps --filter "publish=${port}" --format "{{.ID}}"`
         );
-      } catch (e) {
-        res.status(500).json({ success: false, data: e });
-      }
-    
 
+        const pid = containerId.trim();
+        if (!pid) return null; // If no container is found, return null.
+
+        const { stdout: memoryStats } = await execPromise(
+            `docker stats ${pid} --no-stream --format "{{.MemUsage}}"`
+        );
+
+        const [used, total] = memoryStats.trim().split('/').map(s => s.trim());
+
+        return { used, total };
+    } catch (error) {
+        console.error(`Error fetching memory for server ${serverId}:`, error);
+        return null;
+    }
 }
 
 const stats = {};
-//create a key for every server
 for (let i = 0; i < servers.length; i++) {
-    stats["server_"+servers[i]] = [];
-}
-function cycle() {
-    for (let i = 0; i < servers.length; i++) {
-        let object = {memory: getMemory(servers[i]), timestamp: Date.now()};
-        //remove the oldest object if there are more than 60
-        if (stats["server_"+servers[i]].length > 60) {
-            stats["server_"+servers[i]].shift();
-        }   
-        stats["server_"+servers[i]].push(object);
-    }
-    
+    stats["server_" + servers[i]] = [];
 }
 
+async function cycle() {
+    for (let i = 0; i < servers.length; i++) {
+        const memoryData = await getMemory(servers[i]); // Await memory retrieval
+        if (memoryData) {
+            const object = { memory: memoryData, timestamp: Date.now() };
+            
+            const key = "server_" + servers[i];
+            if (stats[key].length > 60) {
+                stats[key].shift(); // Keep only the latest 60 entries
+            }
+            stats[key].push(object);
+        }
+    }
+}
+
+// Run immediately, then every 60 seconds
 cycle();
 setInterval(cycle, 1000 * 60);
 
-
 function getLiveStats(serverId) {
-    return stats["server_"+serverId];
+    return stats["server_" + serverId] || [];
 }
 
-module.exports = {getLiveStats}
+module.exports = { getLiveStats };
