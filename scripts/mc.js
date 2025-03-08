@@ -26,7 +26,7 @@ let threads = [];
 for (let i = 0; i < amountOfThreads; i++) {
   threads.push(i);
 }
-let serversOnThreads = threads;
+let serversOnThreads = [];
 
 setInterval(() => {
   console.log(serversOnThreads);
@@ -292,12 +292,9 @@ function run(
       threadsString = threadsString.slice(0, -1);
     }
 
-    // find each thread on serversOnThreads and add the server id
-    for (let i = 0; i < serversOnThreads.length; i++) {
-      if (threadsString.includes(serversOnThreads[i])) {
-        serversOnThreads[i] = serversOnThreads[i] + "."+id;
-      }
-    } 
+    serversOnThreads.push({id: id, threads: threadsString});
+
+
 
     let prefix = `docker run -m ${allocatedRAM}g -i -v ${absolutePath}/servers/${id}:/server -w /server -p ${port}:${port}/tcp -p ${port}:${port}/udp -p ${port + 66}:${port + 66}/tcp -p ${port + 33}:${port + 33}/udp --user 1000:1000 --cpuset-cpus="${threadsString}" openjdk:${javaVer} java`;
     console.log("prefix: " + prefix);
