@@ -11,6 +11,7 @@ for (let i = 0; i < serverFolderItems.length; i++) {
     }
 }
 function getMemory(serverId) {
+    console.log("getMemory for server: " + serverId);
     try {
  
         exec(
