@@ -31,11 +31,13 @@ function getThreads() {
     if (line != "") {
       let parts = line.split(/\s+/);  
       console.log(parts[12])
+      if (parts[12] != undefined && !isNaN(parts[12])) {
       let thread = {
         id: parts[1],
         usage: 100-parseFloat(parts[12])
       };
       threadsTemp.push(thread);
+    }
     }
   }
   threadsTemp.sort((a, b) => a.usage - b.usage);
