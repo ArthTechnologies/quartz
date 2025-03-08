@@ -15,11 +15,11 @@ function getMemory(serverId) {
     try {
  
         exec(
-          `docker ps --filter "publish=${config.portOffset + serverId}" --format "{{.ID}}"`,
+          `docker ps --filter "publish=${10000 + serverId}" --format "{{.ID}}"`,
           (error, stdout, stderr) => {
         
             let pid = stdout.trim();
-            console.log("getMemory for server: " + pid);
+         
            
             exec(
               `docker stats ${pid} --no-stream --format "{{.MemUsage}}"
