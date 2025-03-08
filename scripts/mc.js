@@ -18,7 +18,9 @@ const portOffset = 10000;
 let amountOfThreads = 16;
 
 const {execSync} = require("child_process");
-amountOfThreads = parseInt(execSync(`lscpu | grep "^Core(s) per socket" | awk '{print $4}'`))*2;
+let amountOfCores = parseInt(execSync(`lscpu | grep "^Core(s) per socket" | awk '{print $4}'`));
+let threadsPerCore = parseInt(execSync(`lscpu | grep "^Thread(s) per core" | awk '{print $4}'`));
+amountOfThreads = amountOfCores * threadsPerCore;
 
 
 let threads = [];
