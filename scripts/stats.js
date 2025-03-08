@@ -13,7 +13,7 @@ for (let i = 0; i < serverFolderItems.length; i++) {
 function getMemory(serverId) {
 
     try {
-        console.log("serverId: " + serverId);   
+        console.log(`docker ps --filter "publish=${10000 + parseInt(serverId)}" --format "{{.ID}}"`);   
         exec(
           `docker ps --filter "publish=${10000 + parseInt(serverId)}" --format "{{.ID}}"`,
           (error, stdout, stderr) => {
