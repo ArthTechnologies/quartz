@@ -27,10 +27,6 @@ for (let i = 0; i < amountOfThreads; i++) {
   threads.push(i);
 }
 let serversOnThreads = [];
-
-setInterval(() => {
-  console.log(serversOnThreads);
-}, 1000);
         
 function proxiesToggle(id, toggle, secret) {
   if (toggle == true) {
