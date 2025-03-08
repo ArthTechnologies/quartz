@@ -13,6 +13,7 @@ for (let i = 0; i < serverFolderItems.length; i++) {
 }
 
 async function getMemory(serverId) {
+    console.log(`Fetching memory for server ${serverId}`);
     try {
         const port = 10000 + parseInt(serverId);
         const { stdout: containerId } = await execPromise(
@@ -41,8 +42,9 @@ for (let i = 0; i < servers.length; i++) {
 }
 
 async function cycle() {
-    console.log("Running memory cycle");
+
     for (let i = 0; i < servers.length; i++) {
+        
         const memoryData = await getMemory(servers[i]); // Await memory retrieval
         if (memoryData) {
             const object = { memory: memoryData, timestamp: Date.now() };
