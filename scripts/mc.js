@@ -295,7 +295,7 @@ function run(
     // find each thread on serversOnThreads and add the server id
     for (let i = 0; i < serversOnThreads.length; i++) {
       if (threadsString.includes(serversOnThreads[i])) {
-        serversOnThreads[i] = serversOnThreads[i].replace(serversOnThreads[i], serversOnThreads[i] + "."+id);
+        serversOnThreads[i] = serversOnThreads[i] + "."+id;
       }
     } 
 
