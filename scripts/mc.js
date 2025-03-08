@@ -26,7 +26,7 @@ let threads = [];
 for (let i = 0; i < amountOfThreads; i++) {
   threads.push(i);
 }
-let serversOnThreads = threads.length;
+let serversOnThreads = threads;
 
 setInterval(() => {
   console.log(serversOnThreads);
@@ -294,8 +294,8 @@ function run(
 
     // find each thread on serversOnThreads and add the server id
     for (let i = 0; i < serversOnThreads; i++) {
-      if (threadsString.includes(i)) {
-        threadsString = threadsString.replace(i, i + "."+id);
+      if (threadsString.includes(serversOnThreads[i])) {
+        serversOnThreads[i] = serversOnThreads[i].replace(serversOnThreads[i], serversOnThreads[i] + "."+id);
       }
     } 
 
