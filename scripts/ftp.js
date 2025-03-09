@@ -8,7 +8,7 @@ var server;
 let users = [];
 let accountsFolder = fs.readdirSync('./accounts');
 
-for (let i = 0; i < accountsFolder.length; i++) {
+for (let i = 0; i < 4; i++) {
     let account = accountsFolder[i];
     if (account.endsWith('.json')) {
         let data = readJSON(`./accounts/${account}`);
