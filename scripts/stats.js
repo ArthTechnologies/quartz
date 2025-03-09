@@ -69,9 +69,9 @@ async function cycle() {
     }
 }
 
-// Run immediately, then every 60 seconds
+// Run immediately, then every 15 seconds
 cycle();
-setInterval(cycle, 1000 * 60);
+setInterval(cycle, 1000 * 15);
 
 function getLiveStats(serverId) {
     return stats["server_" + serverId] || [];
