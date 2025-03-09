@@ -697,6 +697,8 @@ function getServerStates() {
 
 //automatic server start-up systen
 const data = readJSON("./assets/data.json");
+console.log("Server states");
+console.log(data.serverStates);
 for (i in data.serverStates) {
   if (data.serverStates[i] != null && data.serverStates[i].split(":")[1] == "true") {
     let id = parseInt(data.serverStates[i].split(":")[0]);
