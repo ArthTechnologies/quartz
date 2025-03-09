@@ -962,7 +962,7 @@ function run(
           !terminalOutput[id].includes("Server stopped")
         ) {
           fs.appendFileSync(
-            "assets/crashLog.txt",
+            "assets/crashLog.txt", Date.now().toString() + "\n" + 
             out[out.length-1] + "\n"
           );
         }
