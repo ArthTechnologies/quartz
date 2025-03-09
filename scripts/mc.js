@@ -951,6 +951,21 @@ function run(
         console.log("code");
         console.log(code)
         console.log(terminalOutput[id]);
+
+        if (!fs.existsSync("assets/crashLog.txt")) {
+          fs.writeFileSync("assets/crashLog.txt", "");
+        }
+        if (
+          !terminalOutput[id].includes("stop") &&
+          !terminalOutput[id].includes("Stopping server") &&
+          !terminalOutput[id].includes("Stopping the server") &&
+          !terminalOutput[id].includes("Server stopped")
+        ) {
+          fs.appendFileSync(
+            "assets/crashLog.txt",
+            out[out.length-1] + "\n"
+          );
+        }
         clearInterval(intervalID);
       });
     }
