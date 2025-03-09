@@ -26,8 +26,8 @@ async function getStats(serverId) {
             `docker stats ${pid} --no-stream --format "{{.MemUsage}} {{.CPUPerc}}"`
         );
         console.log(`docker stats ${pid} --no-stream --format "{{.MemUsage}} {{.CPUPerc}}"`);
-        let [memoryUsage, cpuUsage] = memoryStats.trim().split(' ').map(s => s.trim());
-        let [used, total] = memoryUsage.split('/').map(s => s.trim());
+        let [used, slash, total, cpuUsage] = memoryStats.trim().split(' ').map(s => s.trim());
+       
  
         // Convert MiB to bytes and GiB to bytes
         if (used.includes('MiB')) {
