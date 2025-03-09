@@ -25,7 +25,7 @@ async function getStats(serverId) {
         const { stdout: memoryStats } = await execPromise(
             `docker stats ${pid} --no-stream --format "{{.MemUsage}} {{.CPUPerc}}"`
         );
-        console.log(memoryStats)
+        console.log(`docker stats ${pid} --no-stream --format "{{.MemUsage}} {{.CPUPerc}}"`);
         let [memoryUsage, cpuUsage] = memoryStats.trim().split(' ').map(s => s.trim());
         let [used, total] = memoryUsage.split('/').map(s => s.trim());
  
