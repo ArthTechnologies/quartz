@@ -27,18 +27,16 @@ async function getMemory(serverId) {
         );
 
         let [used, total] = memoryStats.trim().split('/').map(s => s.trim());
-        console.log(used)
+ 
         //convert MiB to bytes and GiB to bytes
         if (used.includes('MiB')) {
             used = parseFloat(used) * 1024 * 1024;
-        }
-        if (used.includes('GiB')) {
+        } else if (used.includes('GiB')) {
             used = parseFloat(used) * 1024 * 1024 * 1024;
         }
         if (total.includes('MiB')) {
             total = parseFloat(total) * 1024 * 1024;
-        }
-        if (total.includes('GiB')) {
+        } else if (total.includes('GiB')) {
             total = parseFloat(total) * 1024 * 1024 * 1024;
         }   
 
