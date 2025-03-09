@@ -680,7 +680,8 @@ const f = require("./scripts/mc.js");
 function getServerStates() {
   const data = readJSON("./assets/data.json");
 
-
+  console.log("Previous server states");
+  console.log(data.serverStates)
     data.serverStates = [];
   
   fs.readdirSync("servers").forEach((file) => {
@@ -689,8 +690,7 @@ function getServerStates() {
   
     data.serverStates.push(file + ":" + f.getState(file));
   });
-  console.log("Server states updated");
-  console.log(data.serverStates)
+
 
   writeJSON("./assets/data.json", data);
 }
