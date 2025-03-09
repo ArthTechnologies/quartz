@@ -15,7 +15,7 @@ for (let i = 0; i < accountsFolder.length; i++) {
         if (data.servers != undefined && data.servers.length > 0) {
             let servers = data.servers;
         let tempToken = crypto.randomBytes(6).toString("hex");
-        users.push(`${accountsFolder[i].split(".json")[0].split(":").join("..").replace("@","..")}:${tempToken}:/home/sysadmin/quartz/servers/${servers[0]}/:${servers[0]}`); 
+        users.push(`${accountsFolder[i].split(".json")[0].split(":").join(".-.").replace("@",".-.")}:${tempToken}:/home/sysadmin/quartz/servers/${servers[0]}/:${servers[0]}`); 
         }
     }
 }
