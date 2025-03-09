@@ -594,7 +594,7 @@ process.stdin.on("data", (data) => {
           const serverId = fs.readdirSync("servers")[i];
           f.writeTerminal(
             serverId,
-            "say [Broadcast] Server briefly restarting in " + time + " minutes for maintenance."
+            "say [Broadcast] Server restarting in " + time + " minutes to update our systems."
           );
           
         }
@@ -604,15 +604,25 @@ process.stdin.on("data", (data) => {
             const serverId = fs.readdirSync("servers")[i];
             f.writeTerminal(
               serverId,
-              "say [Broadcast] Server briefly restarting in 5 minutes for maintenance."
+              "say [Broadcast] Server restarting in 5 minutes to update our systems."
             );
           }
         }, (time - 5) * 60 * 1000); 
         console.log("Restart scheduled in " + time + " minutes.");
         console.log("Make sure the autorestart script is working.");
         setTimeout(() => {
-          //kill quartz process
-          process.exit(0);
+          //send stop commands to all servers
+          for (let i in fs.readdirSync("servers")) {
+            const serverId = fs.readdirSync("servers")[i];
+            f.stopAsync(serverId, () => {
+              console.log("Server " + serverId + " stopped.");
+            });
+          }
+          setTimeout(() => {
+            //end the process
+            process.exit(0);
+          }
+          , 1000 * 60 * 5);
         }, time * 60 * 1000);
  
         userInput = false;

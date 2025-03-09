@@ -1,9 +1,9 @@
 #!/bin/bash
 
-while [ true ]; do
+while true; do
    node run
 
-   echo Restarting...
-   echo CTRL + C to stop.
-
+   echo "Restarting in 5 seconds..."
+   echo "Press CTRL + C to stop."
+   sleep 5
 done
