@@ -286,7 +286,7 @@ function run(
     let thread3 = threads[2];
     let thread4 = threads[3];
     //removes those threads from the array
-    threads.splice(1, 4);
+    threads.splice(0, 3);
     
     //adds those threads to the end of the array
     threads.push(thread1);
