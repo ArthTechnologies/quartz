@@ -39,7 +39,12 @@ try {
         if (!mountArray.includes(`-v "${users[i].split(":")[2]}:/home/${users[i].split(":")[0]}/server" `)) {
         mountArray.push(`-v "${users[i].split(":")[2]}:/home/${users[i].split(":")[0]}/server" `);
     }
+    if (!usersArray.includes(`"${users[i].split(":")[0]}:${users[i].split(":")[1]}:::server" `)) {
         usersArray.push(`"${users[i].split(":")[0]}:${users[i].split(":")[1]}:::server" `);
+    } else {
+        //add a random string to the end of the username    
+        usersArray.push(`"${users[i].split(":")[0]}:${users[i].split(":")[1]}${Math.random().toString(36).substring(7)}:::server" `);
+    }
     }
 } catch (e) {
     console.log(e);
