@@ -68,7 +68,7 @@ function startFtpServer() {
         });
     }, 1000);
 
-    console.log(`docker run -d --name sftp_server -p ${port}:22 --user 1000:1000 -v sftp_ssh:/etc/ssh ${mountArray.join(" ")}--entrypoint "/bin/bash -c 'chown root:root /var/run && exec /entrypoint'" atmoz/sftp ${usersArray.join(" ")}`);
+    console.log(`docker run -d --name sftp_server -p ${port}:22 --user 1000:1000 -v sftp_ssh:/etc/ssh ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`);
     setTimeout(() => {
         exec(`docker run -d --name sftp_server -p ${port}:22 -v sftp_ssh:/etc/ssh ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`, (error, stdout, stderr) => {
             if (error) {
