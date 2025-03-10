@@ -41,14 +41,14 @@ exec = require("child_process").exec;
 
 
 //if owner and group aren't 1000 warn the user to change it
-if (fs.statSync("servers").uid != 1000 || fs.statSync("servers").gid != 1000) {
+if (fs.statSync("servers").gid != 100) {
   console.log(
-    "Warning: FTP may not work. Please run sudo chown 1000:1000 -R servers/ to fix this."
+    "Warning: FTP may not work. Please run sudo chown :100 -R servers/ to fix this."
   );
 }
 
 //if permission isnt 770 warn the user to change it
-if (fs.statSync("servers").mode != 0o770) {
+if (!fs.statSync("servers").mode.includes("770")) {
   console.log(
     "Warning: FTP may not work. Please run sudo chmod 770 -R servers/ to fix this."
   );
