@@ -44,7 +44,7 @@ exec = require("child_process").exec;
 //if owner and group aren't 1000 warn the user to change it
 if (fs.statSync("servers").gid != 100) {
   console.log(
-    "Warning: FTP may not work. Please run sudo chown :100 -R servers/ and sudo chmod 770 -R servers/ to fix this."
+    "Warning: FTP may not work. Please run sudo chown yourusername:100 -R servers/ and sudo chmod 770 -R servers/ to fix this."
   );
 }
 require("dotenv").config();
