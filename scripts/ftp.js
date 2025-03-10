@@ -16,7 +16,7 @@ for (let i = 0; i < accountsFolder.length; i++) {
             let servers = data.servers;
         let tempToken = crypto.randomBytes(6).toString("hex");
         
-        users.push(`${data.accountId}:${tempToken}:/home/sysadmin/quartz/servers/${servers[0]}/:${servers[0]}`); 
+        users.push(`${data.accountId.split("-")[0]}:${tempToken}:/home/sysadmin/quartz/servers/${servers[0]}/:${servers[0]}`); 
         }
     }
 }
