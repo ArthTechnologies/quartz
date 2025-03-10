@@ -48,7 +48,7 @@ if (fs.statSync("servers").gid != 100) {
 }
 
 //if permission isnt 770 warn the user to change it
-if (!fs.statSync("servers").mode.includes("770")) {
+if (!fs.statSync("servers").mode.toString().includes("770")) {
   console.log(
     "Warning: FTP may not work. Please run sudo chmod 770 -R servers/ to fix this."
   );
