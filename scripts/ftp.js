@@ -17,7 +17,7 @@ for (let i = 0; i < accountsFolder.length; i++) {
             let server = data.servers[j];
             let tempToken = crypto.randomBytes(6).toString("hex");
             
-            users.push(`${data.accountId.split("-")[0]}:${tempToken}:/home/sysadmin/quartz/servers/${server}/:${server}`); 
+            users.push(`${data.accountId.split("-")[0]}.${server}:${tempToken}:/home/sysadmin/quartz/servers/${server}/:${server}`); 
          }
         }
     }
@@ -83,14 +83,8 @@ function startFtpServer() {
 
 }
 
-function getTempToken(username, id) {
-  for (let i = 0; i < users.length; i++) {
-    let user = users[i].split(':');
-    if (user[0] === username && user[3] === id) {
-      return user[1];
-    }
-  }
-  return null;
+function getTempToken(username) {
+  return users.find(user => user.startsWith(username)).split(':')[1];
 }
 
 module.exports = {
