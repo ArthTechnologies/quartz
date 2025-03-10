@@ -13,10 +13,12 @@ for (let i = 0; i < accountsFolder.length; i++) {
     if (account.endsWith('.json')) {
         let data = readJSON(`./accounts/${account}`);
         if (data.servers != undefined && data.servers.length > 0) {
-            let servers = data.servers;
-        let tempToken = crypto.randomBytes(6).toString("hex");
-        
-        users.push(`${data.accountId.split("-")[0]}:${tempToken}:/home/sysadmin/quartz/servers/${servers[0]}/:${servers[0]}`); 
+         for (let j = 0; j < data.servers.length; j++) {
+            let server = data.servers[j];
+            let tempToken = crypto.randomBytes(6).toString("hex");
+            
+            users.push(`${data.accountId.split("-")[0]}:${tempToken}:/home/sysadmin/quartz/servers/${server}/:${server}`); 
+         }
         }
     }
 }
@@ -81,8 +83,14 @@ function startFtpServer() {
 
 }
 
-function getTempToken(username) {
-  return users.find(user => user.startsWith(username)).split(':')[1];
+function getTempToken(username, id) {
+  for (let i = 0; i < users.length; i++) {
+    let user = users[i].split(':');
+    if (user[0] === username && user[3] === id) {
+      return user[1];
+    }
+  }
+  return null;
 }
 
 module.exports = {
