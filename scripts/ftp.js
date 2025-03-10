@@ -20,7 +20,7 @@ for (let i = 0; i < accountsFolder.length; i++) {
         }
     }
 }
-console.log(users);
+
 // User authentication array (username:password:directory)
 
 
