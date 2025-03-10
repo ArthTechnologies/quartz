@@ -38,6 +38,14 @@ if (!fs.existsSync("servers.tsv")) {
   migrations.serversToTSV();
 }
 exec = require("child_process").exec;
+
+//print the owner and permissions of the servers folder
+console.log("Servers folder permissions:");
+console.log(fs.statSync("servers").mode.toString(8));
+console.log("Servers folder owner:");
+console.log(fs.statSync("servers").uid);
+console.log("Servers folder group:");
+console.log(fs.statSync("servers").gid);
 require("dotenv").config();
 if (!fs.existsSync("./backup")) {
   fs.mkdirSync("backup");
