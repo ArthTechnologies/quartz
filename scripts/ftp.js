@@ -67,9 +67,10 @@ function startFtpServer() {
             console.log(`FTP server removed`);
         });
     }, 1000);
-    console.log(`docker run -d --name sftp_server -p ${port}:22 -v ${path.resolve('./ssh-keys')}:/etc/ssh ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`);
+    fs.mkdirSync('/home/sysadmin/quartz/assets/ssh', { recursive: true });
+    console.log(`docker run -d --name sftp_server -p ${port}:22 -v /home/sysadmin/quartz/assets/ssh:/etc/ssh ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`);
     setTimeout(() => {
-        exec(`docker run -d --name sftp_server -p ${port}:22 -v ${path.resolve('./ssh-keys')}:/etc/ssh ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`, (error, stdout, stderr) => {
+        exec(`docker run -d --name sftp_server -p ${port}:22 -v /home/sysadmin/quartz/assets/ssh:/etc/ssh ${mountArray.join(" ")}atmoz/sftp ${usersArray.join(" ")}`, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error starting FTP server: ${error}`);
                 return;
