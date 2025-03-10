@@ -34,7 +34,7 @@ let port = 2222;
 let mountArray = [];
 let usersArray = [];
 try {
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < users.length; i++) {
         mountArray.push(`-v "${users[i].split(":")[2]}:/home/username/server-${users[i].split(":")[3]}" `);
         usersArray.push(`"${users[i].split(":")[0]}:${users[i].split(":")[1]}:::server-${users[i].split(":")[3]}" `);
     }
