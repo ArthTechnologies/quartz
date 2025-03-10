@@ -39,13 +39,20 @@ if (!fs.existsSync("servers.tsv")) {
 }
 exec = require("child_process").exec;
 
-//print the owner and permissions of the servers folder
-console.log("Servers folder permissions:");
-console.log(fs.statSync("servers").mode.toString(8));
-console.log("Servers folder owner:");
-console.log(fs.statSync("servers").uid);
-console.log("Servers folder group:");
-console.log(fs.statSync("servers").gid);
+
+//if owner and group aren't 1000 warn the user to change it
+if (fs.statSync("servers").uid != 1000 || fs.statSync("servers").gid != 1000) {
+  console.log(
+    "Warning: FTP may not work. Please run sudo chown 1000:1000 -R servers/ to fix this."
+  );
+}
+
+//if permission isnt 770 warn the user to change it
+if (fs.statSync("servers").mode != 0o770) {
+  console.log(
+    "Warning: FTP may not work. Please run sudo chmod 770 -R servers/ to fix this."
+  );
+}
 require("dotenv").config();
 if (!fs.existsSync("./backup")) {
   fs.mkdirSync("backup");
