@@ -29,7 +29,7 @@ users.forEach(entry => {
   let [username, password, directory] = entry.split(':');
   userMap[username] = { password, directory };
 });
-let port = 10000 + parseInt(config.idOffset) + 99;
+let port = 2222;
 
 let mountArray = [];
 let usersArray = [];
