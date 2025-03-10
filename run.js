@@ -4,12 +4,6 @@ const app = express();
 const path = require("path");
 const cors = require("cors");
 
-process.setgid(100);
-//verify that the gid is 100
-if (process.getgid() != 100) {
-  console.log("Error: gid is not 100");
-  process.exit(1);
-}
 
 const fs = require("fs");
 const crypto = require("crypto");
