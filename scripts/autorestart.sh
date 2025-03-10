@@ -1,7 +1,9 @@
 #!/bin/bash
 
 while true; do
-   sg 100 -c 'node run'
+   newgrp 100 <<EOF
+   node run
+EOF
 
    echo "Restarting in 5 seconds..."
    echo "Press CTRL + C to stop."
