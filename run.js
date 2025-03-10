@@ -46,7 +46,7 @@ if (fs.statSync("servers").gid != 100) {
     "Warning: FTP may not work. Please run sudo chown :100 -R servers/ to fix this."
   );
 }
-
+console.log(fs.statSync("servers").mode.toString());
 //if permission isnt 770 warn the user to change it
 if (!fs.statSync("servers").mode.toString().includes("770")) {
   console.log(
