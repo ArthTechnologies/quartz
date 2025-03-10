@@ -15,7 +15,8 @@ for (let i = 0; i < accountsFolder.length; i++) {
         if (data.servers != undefined && data.servers.length > 0) {
             let servers = data.servers;
         let tempToken = crypto.randomBytes(6).toString("hex");
-        users.push(`${accountsFolder[i].split(".json")[0].replace("@",":").split(":")[1]}:${tempToken}:/home/sysadmin/quartz/servers/${servers[0]}/:${servers[0]}`); 
+        
+        users.push(`${data.accountId}:${tempToken}:/home/sysadmin/quartz/servers/${servers[0]}/:${servers[0]}`); 
         }
     }
 }
@@ -41,9 +42,6 @@ try {
     }
     if (!usersArray.includes(`"${users[i].split(":")[0]}:${users[i].split(":")[1]}:::server" `)) {
         usersArray.push(`"${users[i].split(":")[0]}:${users[i].split(":")[1]}:::server" `);
-    } else {
-        //add a random string to the end of the username    
-        usersArray.push(`"${users[i].split(":")[0]}:${users[i].split(":")[1]}${Math.random().toString(36).substring(7)}:::server" `);
     }
     }
 } catch (e) {
