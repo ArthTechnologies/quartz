@@ -35,11 +35,8 @@ let mountArray = [];
 let usersArray = [];
 try {
     for (let i = 0; i < users.length; i++) {
-        mountArray.push(`-v "${users[i].split(":")[2]}:/home/${users[i].split(":")[0]}/server `);
-        //if server folder hasnt already been mounted
-        if (!mountArray.includes(`-v "${users[i].split(":")[2]}:/home/${users[i].split(":")[0]}/server" `)) {
+        mountArray.push(`-v "${users[i].split(":")[2]}:/home/${users[i].split(":")[0]}/server" `);
         usersArray.push(`"${users[i].split(":")[0]}:${users[i].split(":")[1]}:::server" `);
-    }
     }
 } catch (e) {
     console.log(e);
