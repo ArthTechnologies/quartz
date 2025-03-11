@@ -344,7 +344,7 @@ Router.post("/freeExpiredServer", async (req, res) => {
       }
       account.servers = newServers;
       utils.writeJSON(`accounts/${owner}`, account);
-      utils.removeDirectoryRecursiveAsync(`servers/${serverId}`);
+      utils.removeDirectoryRecursiveAsync(`servers/${serverId}/*`);
       res.status(200).send({ success: true });
     } catch (error) {
       res.status(500).send({ error: error });
