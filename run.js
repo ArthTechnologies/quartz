@@ -625,7 +625,7 @@ process.stdin.on("data", (data) => {
             console.log("Exiting...");
             process.exit(0);
           }
-          , 1000 * 60 * 5);
+          , 1000 * 5);
           //send stop commands to all servers
           for (let i in fs.readdirSync("servers")) {
             const serverId = fs.readdirSync("servers")[i];
