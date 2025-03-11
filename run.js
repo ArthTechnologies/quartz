@@ -629,6 +629,7 @@ process.stdin.on("data", (data) => {
           }
           setTimeout(() => {
             //end the process
+            console.log("Exiting...");
             process.exit(0);
           }
           , 1000 * 60 * 5);
