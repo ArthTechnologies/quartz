@@ -962,7 +962,7 @@ router.delete(`/:id`, function (req, res) {
           writeJSON(`accounts/${email}.json`, account);
           console.log("deleting4 " + req.params.id);
           files.removeDirectoryRecursiveAsync(
-            `servers/${req.params.id}/*`,
+            `servers/${req.params.id}`,
             () => {
               console.log("deleting5 " + req.params.id);
               res.status(200).json({ msg: `Deleted server` });
@@ -971,8 +971,8 @@ router.delete(`/:id`, function (req, res) {
                 //sometimes, it'll delete the files inside a folder but not the folder itself.
 
                 console.log("making sure server is deleted...");
-                files.removeDirectoryRecursive(`servers/${req.params.id}/*`);
-             
+                files.removeDirectoryRecursive(`servers/${req.params.id}`);
+                fs.mkdirSync(`servers/${req.params.id}`);
               }, 5000);
             }
           );

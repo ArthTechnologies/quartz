@@ -97,50 +97,73 @@ function readFilesRecursive(directoryPath) {
   return result;
 }
 
-function removeDirectoryRecursive(directoryPath) {
-  const exec = require("child_process").execSync;
-  //check if directory exists
-  //fs cannot be relied upon for this because of a bug
-  //where if a directory itself exists but there are no files,
-  //it says it doesn't exist
+const { execSync, exec } = require("child_process");
+const path = require("path");
 
-  exec(
-    `[ -e ${directoryPath}} ] && echo "File exists" || echo "File does not exist"`,
-    (error, stdout, stderr) => {
-      if (stdout.includes("File exists")) {
-        //check if directory path is inside the server folder
-        if (directoryPath.startsWith("servers")) {
-          exec(`rm -r ${directoryPath}`);
-        } else {
-          console.log("Directory path is not inside servers folder");
-        }
-      } else {
-        console.log(`Directory "${directoryPath}" does not exist.`);
-      }
+function removeDirectoryRecursive(directoryPath) {
+  try {
+    // Normalize path
+    const normalizedPath = path.normalize(directoryPath);
+
+    // Check if the directory exists
+    try {
+      fs.statSync(normalizedPath);
+    } catch {
+      console.log(`Directory "${normalizedPath}" does not exist.`);
+      return;
     }
-  );
+
+    // Check if the directory is within "servers"
+    if (normalizedPath.includes("servers")) {
+      execSync(`rm -rf ${normalizedPath}/*`); // Removes contents but keeps folder
+    } else {
+      execSync(`rm -rf ${normalizedPath}`); // Removes folder entirely
+    }
+
+    console.log(`Successfully cleaned: ${normalizedPath}`);
+  } catch (error) {
+    console.error(`Error removing directory: ${error.message}`);
+  }
 }
 
 function removeDirectoryRecursiveAsync(directoryPath, callback) {
-  const exec = require("child_process").exec;
-  //check if directory exists
-  if (fs.existsSync(directoryPath)) {
-    //check if directory path is inside the server folder
-    if (directoryPath.startsWith("servers")) {
-      exec(`rm -rf ${directoryPath}`, (error, stdout, stderr) => {
-        if (callback != undefined) {
+  try {
+    const normalizedPath = path.normalize(directoryPath);
+
+    // Check if directory exists
+    fs.stat(normalizedPath, (err, stats) => {
+      if (err) {
+        console.log(`Directory "${normalizedPath}" does not exist.`);
+        return callback(`Directory "${normalizedPath}" does not exist.`);
+      }
+
+      // Check if the directory is inside "servers"
+      if (normalizedPath.includes("servers")) {
+        exec(`rm -rf ${normalizedPath}/*`, (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error removing directory contents: ${stderr}`);
+            return callback(stderr);
+          }
+          console.log(`Successfully cleaned: ${normalizedPath}`);
           callback(stdout);
-        }
-      });
-    } else {
-      console.log("Directory path is not inside servers folder");
-      callback("Directory path is not inside servers folder");
-    }
-  } else {
-    console.log(`Directory "${directoryPath}" does not exist.`);
-    callback(`Directory "${directoryPath}" does not exist.`);
+        });
+      } else {
+        exec(`rm -rf ${normalizedPath}`, (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error removing directory: ${stderr}`);
+            return callback(stderr);
+          }
+          console.log(`Successfully removed: ${normalizedPath}`);
+          callback(stdout);
+        });
+      }
+    });
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
+    callback(error.message);
   }
 }
+
 function getIPID(ip) {
   const config = require("./utils.js").getConfig();
   return hash(ip, config.pepper).split(":")[1];

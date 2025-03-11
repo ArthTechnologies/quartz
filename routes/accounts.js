@@ -176,7 +176,7 @@ Router.delete("/email", (req, res) => {
   if (token == account.token) {
     if (account.password == files.hash(password, account.salt).split(":")[1]) {
       for (i in account.servers) {
-        files.removeDirectoryRecursiveAsync("servers/" + account.servers[i]+ "/*");
+        files.removeDirectoryRecursiveAsync("servers/" + account.servers[i]);
       }
       fs.unlinkSync("accounts/email:" + email + ".json");
 
@@ -346,7 +346,7 @@ Router.delete("/discord", (req, res) => {
 
   if (token == account.token) {
     for (i in account.servers) {
-      files.removeDirectoryRecursiveAsync("servers/" + account.servers[i] + "/*");
+      files.removeDirectoryRecursiveAsync("servers/" + account.servers[i]);
     }
 
     fs.unlinkSync("accounts/discord:" + username + ".json");
