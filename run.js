@@ -620,6 +620,12 @@ process.stdin.on("data", (data) => {
         console.log("Restart scheduled in " + time + " minutes.");
         console.log("Make sure the autorestart script is working.");
         setTimeout(() => {
+          setTimeout(() => {
+            //end the process
+            console.log("Exiting...");
+            process.exit(0);
+          }
+          , 1000 * 60 * 5);
           //send stop commands to all servers
           for (let i in fs.readdirSync("servers")) {
             const serverId = fs.readdirSync("servers")[i];
@@ -627,12 +633,7 @@ process.stdin.on("data", (data) => {
               console.log("Server " + serverId + " stopped.");
             });
           }
-          setTimeout(() => {
-            //end the process
-            console.log("Exiting...");
-            process.exit(0);
-          }
-          , 1000 * 60 * 5);
+
         }, time * 60 * 1000);
  
         userInput = false;
