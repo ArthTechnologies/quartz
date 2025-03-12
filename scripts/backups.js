@@ -19,7 +19,7 @@ exec("du -c servers/*/world --max-depth=0 | tail -n 1", (error, stdout, stderr) 
         console.error(`Error getting total world size: ${stderr}`);
         return;
     }
-    serverWorldsTotalSize = parseInt(stdout.split("\t")[0]);
+    serverWorldsTotalSize = parseInt(stdout.split("\t")[0])*1024;
     console.log("SERVER WORLDS SIZE TOTAL" + serverWorldsTotalSize); 
 });
 
