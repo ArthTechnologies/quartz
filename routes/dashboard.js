@@ -219,20 +219,33 @@ function getMemoryUsage() {
   });
 }
 
+// Function to get CPU usage
+function getCpuUsage() {  
+  return new Promise((resolve, reject) => {
+      exec(`top -bn1 | grep "Cpu(s)" | awk '{print 100 - $8 "%"}'`, (err, stdout) => {
+          if (err) return reject(err);
+          const cpu = parseFloat(stdout);
+          resolve(cpu); 
+      });
+  });
+}
+
+
 let snapshotHistory = []; // Store past 60 minutes of snapshots
 let lastSnapshotTime = 0;
 
 // Function to capture a new snapshot
 async function captureSnapshot() {
     try {
-        const [threads, memory] = await Promise.all([
+        const [threads, memory, cpu] = await Promise.all([
             getThreadUsage(),
-            getMemoryUsage()
+            getMemoryUsage(),
+            getCpuUsage()
         ]);
 
         let serversOnThreads = f.getServersOnThreads();
         
-        const newSnapshot = { timestamp: Date.now(), threads, memory, serversOnThreads };
+        const newSnapshot = { timestamp: Date.now(), threads, memory, cpu, serversOnThreads };
         snapshotHistory.push(newSnapshot);
         
         // Keep only the past 6 hours of data
