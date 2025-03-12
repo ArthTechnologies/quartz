@@ -5,6 +5,9 @@ const fs = require('fs');
 
 const servers = [];
 
+if (!fs.existsSync('./backups')) {
+    fs.mkdirSync('./backups');
+}
 let serverFolderItems = fs.readdirSync('./servers');
 for (let i = 0; i < serverFolderItems.length; i++) {
     if (!isNaN(serverFolderItems[i])) {
@@ -54,7 +57,23 @@ setTimeout(() => {
  function cycle() {
     console.log("Running backup cycle...");
     for (let i = 0; i < servers.length; i++) {
-        
+        let backupFolder = fs.readdirSync(`./backups/${servers[i]}`);
+        if (backupFolder.length >= backupSlots) {
+            let amountToDelete = backupFolder.length - backupSlots;
+            for (let j = 0; j < amountToDelete; j++) {
+                fs.rmSync(`./backup/${servers[i]}/${backupFolder[j]}`, { recursive: true });
+            }
+        }
+
+        //backup by zipping the world folder
+        exec(`zip -r ./backups/${servers[i]}/${Date.now().toString()}.zip ./servers/${servers[i]}/world`, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error zipping world folder: ${stderr}`);
+                return;
+            }
+            console.log(`Successfully backed up server ${servers[i]}`);
+        });
+
     }
 }
 
