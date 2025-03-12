@@ -23,6 +23,33 @@ exec("du -c servers/*/world --max-depth=0 | tail -n 1", (error, stdout, stderr) 
     console.log("SERVER WORLDS SIZE TOTAL" + serverWorldsTotalSize); 
 });
 
+let spaceAvailableOnSystem = 0;
+exec("df --output=avail / | tail -n 1", (error, stdout, stderr) => {
+    if (error) {
+        console.error(`Error getting available space: ${stderr}`);
+        return;
+    }
+    spaceAvailableOnSystem = parseInt(stdout);
+    console.log("SPACE AVAILABLE ON SYSTEM" + spaceAvailableOnSystem);
+});
+
+let backupsFolderSize = 0;  
+try {
+    exec("du -c backups | tail -n 1", (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error getting total backups size: ${stderr}`);
+            return;
+        }
+        backupsFolderSize = parseInt(stdout.split("\t")[0]);
+        console.log("BACKUPS FOLDER SIZE" + backupsFolderSize); 
+    });
+} catch {
+    console.log("Error getting backups folder size");
+}
+
+let backupSlots = ((spaceAvailableOnSystem - 10*1024*1024*1024 + backupsFolderSize) - serverWorldsTotalSize).toFixed(0);
+console.log("BACKUP SLOTS" + backupSlots);
+
 
  function cycle() {
     console.log("CYCLE");
