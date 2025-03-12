@@ -29,7 +29,7 @@ exec("df --output=avail / | tail -n 1", (error, stdout, stderr) => {
         console.error(`Error getting available space: ${stderr}`);
         return;
     }
-    spaceAvailableOnSystem = parseInt(stdout);
+    spaceAvailableOnSystem = parseInt(stdout)/1024/1024;
     console.log("SPACE AVAILABLE ON SYSTEM" + spaceAvailableOnSystem);
 });
 
