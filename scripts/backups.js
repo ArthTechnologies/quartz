@@ -13,6 +13,7 @@ for (let i = 0; i < serverFolderItems.length; i++) {
 }
 
 let serverWorldsTotalSize = 0;
+console.log("CYCLE");
 exec("du -c servers/*/world --max-depth=0 | tail -n 1", (error, stdout, stderr) => {
     if (error) {
         console.error(`Error getting total world size: ${stderr}`);
@@ -24,6 +25,7 @@ exec("du -c servers/*/world --max-depth=0 | tail -n 1", (error, stdout, stderr) 
 
 
  function cycle() {
+    console.log("CYCLE");
     for (let i = 0; i < servers.length; i++) {
         
     }
@@ -36,4 +38,4 @@ function getLiveStats(serverId) {
     return stats["server_" + serverId] || [];
 }
 
-module.exports = { getLiveStats };
+module.exports = {  };

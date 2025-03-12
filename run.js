@@ -10,6 +10,7 @@ const crypto = require("crypto");
 const files = require("./scripts/files.js");
 const scraper = require("./scripts/scraper.js");
 const f = require("./scripts/mc.js");
+const backups = require("./scripts/backups.js");
 
 const ftp = require("./scripts/ftp.js");
 
@@ -784,7 +785,6 @@ app.use("/accounts", require("./routes/accounts"));
 app.use("/curseforge", require("./routes/curseforge"));
 app.use("/translate", require("./routes/translate"));
 app.use("/node", require("./routes/node"));
-app.use("/backups", require("./routes/backups")); 
 
 const adminApp = express();
 const adminPort = process.env.ADMIN_PORT || 4001;
