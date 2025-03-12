@@ -77,6 +77,7 @@ setTimeout(() => {
     }
 }
 
+cycle();    
 // Run every 12 hours
 setInterval(cycle, 1000 * 60 * 60 * 12);
 
