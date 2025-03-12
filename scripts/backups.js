@@ -8,7 +8,12 @@ const servers = [];
 if (!fs.existsSync('./backups')) {
     fs.mkdirSync('./backups');
 }
-let serverFolderItems = fs.readdirSync('./servers');
+
+
+
+ function cycle() {
+    //getting info
+    let serverFolderItems = fs.readdirSync('./servers');
 for (let i = 0; i < serverFolderItems.length; i++) {
     if (!isNaN(serverFolderItems[i])) {
         servers.push(parseInt(serverFolderItems[i]));
@@ -53,8 +58,7 @@ setTimeout(() => {
     console.log("BACKUP SLOTS" + backupSlots);
 }, 1000);
 
-
- function cycle() {
+setTimeout(() => {
     console.log("Running backup cycle...");
     for (let i = 0; i < servers.length; i++) {
         if (!fs.existsSync(`./backups/${servers[i]}`)) {
@@ -79,14 +83,36 @@ setTimeout(() => {
         });
 
     }
+},5000);
 }
 
-setTimeout(cycle, 1000 * 5); 
-// Run every 12 hours
-setInterval(cycle, 1000 * 60 * 60 * 12);
+//get the time and make it so it backs up every day at 12am, 6am, 12pm and 6pm
 
-function getLiveStats(serverId) {
-    return stats["server_" + serverId] || [];
+let now = new Date();
+let millisTill12 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0) - now;
+if (millisTill12 < 0) {
+    millisTill12 += 86400000; // it's after 12am, try 12am tomorrow.
 }
+let millisTill6 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 6, 0, 0, 0) - now;
+if (millisTill6 < 0) {
+    millisTill6 += 86400000; // it's after 6am, try 6am tomorrow.
+}
+let millisTill12pm = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0) - now;
+if (millisTill12pm < 0) {
+    millisTill12pm += 86400000; // it's after 12pm, try 12pm tomorrow.
+}
+let millisTill6pm = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18, 0, 0, 0) - now;
+if (millisTill6pm < 0) {
+    millisTill6pm += 86400000; // it's after 6pm, try 6pm tomorrow.
+}
+
+let millisTillBackup = Math.min(millisTill12, millisTill6, millisTill12pm, millisTill6pm);
+setTimeout(() => {
+    cycle();
+    setInterval(cycle, 86400000);
+}
+, millisTillBackup);
+
+
 
 module.exports = {  };
