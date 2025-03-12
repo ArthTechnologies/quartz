@@ -47,9 +47,9 @@ let backupsFolderSize = 0;
        
     });
 
-
+let backupSlots = 0;
 setTimeout(() => {
-    let backupSlots = ((spaceAvailableOnSystem - 10*1024*1024*1024 + backupsFolderSize) / serverWorldsTotalSize).toFixed(0);
+     backupSlots = ((spaceAvailableOnSystem - 10*1024*1024*1024 + backupsFolderSize) / serverWorldsTotalSize).toFixed(0);
     console.log("BACKUP SLOTS" + backupSlots);
 }, 1000);
 
@@ -80,7 +80,7 @@ setTimeout(() => {
     }
 }
 
-cycle();    
+setTimeout(cycle, 1000 * 5); 
 // Run every 12 hours
 setInterval(cycle, 1000 * 60 * 60 * 12);
 
