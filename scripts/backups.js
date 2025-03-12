@@ -47,8 +47,10 @@ try {
     console.log("Error getting backups folder size");
 }
 
-let backupSlots = ((spaceAvailableOnSystem - 10*1024*1024*1024 + backupsFolderSize) - serverWorldsTotalSize).toFixed(0);
-console.log("BACKUP SLOTS" + backupSlots);
+setTimeout(() => {
+    let backupSlots = ((spaceAvailableOnSystem - 10*1024*1024*1024 + backupsFolderSize) - serverWorldsTotalSize).toFixed(0);
+    console.log("BACKUP SLOTS" + backupSlots);
+}, 1000);
 
 
  function cycle() {
