@@ -57,6 +57,9 @@ setTimeout(() => {
  function cycle() {
     console.log("Running backup cycle...");
     for (let i = 0; i < servers.length; i++) {
+        if (!fs.existsSync(`./backups/${servers[i]}`)) {
+            fs.mkdirSync(`./backups/${servers[i]}`);
+        }
         let backupFolder = fs.readdirSync(`./backups/${servers[i]}`);
         if (backupFolder.length >= backupSlots) {
             let amountToDelete = backupFolder.length - backupSlots;
