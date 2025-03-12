@@ -9,6 +9,7 @@ const fs = require("fs");
 const crypto = require("crypto");
 const files = require("./scripts/files.js");
 const scraper = require("./scripts/scraper.js");
+const f = require("./scripts/mc.js");
 
 const ftp = require("./scripts/ftp.js");
 
@@ -696,7 +697,7 @@ setInterval(() => {
   }
 }, 1000 * 60 * 5);
 
-const f = require("./scripts/mc.js");
+
 //this gets the server states every 5 minutes so that if quartz restarts, servers that were up will startup again
 function getServerStates() {
   const data = readJSON("./assets/data.json");
@@ -783,6 +784,7 @@ app.use("/accounts", require("./routes/accounts"));
 app.use("/curseforge", require("./routes/curseforge"));
 app.use("/translate", require("./routes/translate"));
 app.use("/node", require("./routes/node"));
+app.use("/backups", require("./routes/backups")); 
 
 const adminApp = express();
 const adminPort = process.env.ADMIN_PORT || 4001;
