@@ -195,9 +195,9 @@ function run(
     }
     let allocatedRAM;
     if (config.basic == server.productID) {
-      allocatedRAM = 3;
+      allocatedRAM = 4;
     } else if (config.plus == server.productID) {
-      allocatedRAM = 5;
+      allocatedRAM = 6;
     } else if (config.premium == server.productID) {
       allocatedRAM = 8;
     } else if (config.max == server.productID) {
