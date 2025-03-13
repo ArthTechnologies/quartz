@@ -260,9 +260,9 @@ async function captureSnapshot() {
         const newSnapshot = { timestamp: Date.now(), threads, memory, cpuUsage, cpuName, serversOnThreads };
         snapshotHistory.push(newSnapshot);
         
-        // Keep only the past 6 hours of data
-        const sixHoursAgo = Date.now() - 6 * 60 * 60 * 1000;
-        snapshotHistory = snapshotHistory.filter(snapshot => snapshot.timestamp >= sixHoursAgo);
+        // Keep only the past 60 minutes of data
+        const hourAgo = Date.now() - 3600000;
+        snapshotHistory = snapshotHistory.filter(snapshot => snapshot.timestamp > hourAgo);
         
         lastSnapshotTime = Date.now();
     } catch (error) {
