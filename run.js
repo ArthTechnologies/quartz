@@ -90,7 +90,7 @@ if (!fs.existsSync("config.txt")) {
 const f = require("./scripts/mc.js");
 const backups = require("./scripts/backups.js");
 
-const ftp = require("./scripts/ftp.js");
+
 
 try {ftp.startFtpServer();} catch {
   console.log("Error starting FTP server");
@@ -109,6 +109,7 @@ if (!fs.existsSync("./servers")) {
 } else if (fs.existsSync("./servers/template")) {
   fs.rmSync("./servers/template", { recursive: true });
 }
+const ftp = require("./scripts/ftp.js");
 
 const migrations = require("./scripts/migrations.js");
 
