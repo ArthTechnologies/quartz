@@ -9,56 +9,6 @@ const fs = require("fs");
 const crypto = require("crypto");
 const files = require("./scripts/files.js");
 const scraper = require("./scripts/scraper.js");
-const f = require("./scripts/mc.js");
-const backups = require("./scripts/backups.js");
-
-const ftp = require("./scripts/ftp.js");
-
-try {ftp.startFtpServer();} catch {
-  console.log("Error starting FTP server");
-}
-
-if (!fs.existsSync("accounts")) {
-  fs.mkdirSync("accounts");
-  fs.writeFileSync(
-    "accounts/noemail.json",
-    `{"accountId":"noemail", "servers":[]}`
-  );
-}
-
-if (!fs.existsSync("./servers")) {
-  fs.mkdirSync("servers");
-} else if (fs.existsSync("./servers/template")) {
-  fs.rmSync("./servers/template", { recursive: true });
-}
-
-const migrations = require("./scripts/migrations.js");
-
-if (!fs.existsSync("accounts.tsv")) {
-  migrations.accountsToTSV();
-}
-if (!fs.existsSync("servers.tsv")) {
-  migrations.serversToTSV();
-}
-exec = require("child_process").exec;
-
-
-//if owner and group aren't 1000 warn the user to change it
-if (fs.statSync("servers").gid != 100) {
-  console.log(
-    "Warning: FTP may not work. Please run sudo chown yourusername:100 -R servers/ and sudo chmod 2770 -R servers/ to fix this."
-  );
-}
-require("dotenv").config();
-if (!fs.existsSync("./backup")) {
-  fs.mkdirSync("backup");
-}
-if (!fs.existsSync("./backup/disabledServers")) {
-  fs.mkdirSync("backup/disabledServers");
-}
-
-
-
 
 if (!fs.existsSync("config.txt")) {
   //migration from old way of storing settings to config.txt
@@ -135,6 +85,59 @@ if (!fs.existsSync("config.txt")) {
     process.exit(1);
   }
 }
+
+
+const f = require("./scripts/mc.js");
+const backups = require("./scripts/backups.js");
+
+const ftp = require("./scripts/ftp.js");
+
+try {ftp.startFtpServer();} catch {
+  console.log("Error starting FTP server");
+}
+
+if (!fs.existsSync("accounts")) {
+  fs.mkdirSync("accounts");
+  fs.writeFileSync(
+    "accounts/noemail.json",
+    `{"accountId":"noemail", "servers":[]}`
+  );
+}
+
+if (!fs.existsSync("./servers")) {
+  fs.mkdirSync("servers");
+} else if (fs.existsSync("./servers/template")) {
+  fs.rmSync("./servers/template", { recursive: true });
+}
+
+const migrations = require("./scripts/migrations.js");
+
+if (!fs.existsSync("accounts.tsv")) {
+  migrations.accountsToTSV();
+}
+if (!fs.existsSync("servers.tsv")) {
+  migrations.serversToTSV();
+}
+exec = require("child_process").exec;
+
+
+//if owner and group aren't 1000 warn the user to change it
+if (fs.statSync("servers").gid != 100) {
+  console.log(
+    "Warning: FTP may not work. Please run sudo chown yourusername:100 -R servers/ and sudo chmod 2770 -R servers/ to fix this."
+  );
+}
+require("dotenv").config();
+if (!fs.existsSync("./backup")) {
+  fs.mkdirSync("backup");
+}
+if (!fs.existsSync("./backup/disabledServers")) {
+  fs.mkdirSync("backup/disabledServers");
+}
+
+
+
+
 
 
 
