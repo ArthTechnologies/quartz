@@ -306,12 +306,14 @@ function refreshTempToken() {
 }
 
 function downloadJars(type) {
+  console.log("running downloadJars")
   const datajson = readJSON("./assets/data.json");
   datajson.lastUpdate = Date.now();
   
 
   writeJSON("assets/data.json", datajson);
-  if (type == "full") {	
+  if (type == "full") {
+    console.log("calling scraper.js");	
   scraper.fullDownload();
   } else if (type == "partial") {
     scraper.partialDownload();
@@ -331,7 +333,8 @@ function downloadJars(type) {
       try {
   
       let counter = 0;
-      for (i in scraperjson) {
+      for (let i in scraperjson) {
+
         counter++;
         try {
           //create downloads folder if it doesn't exist
@@ -340,12 +343,17 @@ function downloadJars(type) {
           }
         let filename = i;
 
+
         let url = scraperjson[i];
         let software = filename.split("-")[0];
         let version = filename.split("-")[1];
         let extension = filename.split(".")[filename.split(".").length - 1];
         let channel = "";
+    
+    
+   
         if (filename.split("-").length > 2) {
+               
 
          channel = filename.split("-")[2].split("."+extension)[0];
         if (channel == "release") {
@@ -356,8 +364,11 @@ function downloadJars(type) {
       } else {
         version = version.split("."+extension)[0];
       } 
+
         let newFilename = `${software}-${version}${channel}.${extension}`;
+  
         setTimeout(() => {
+       
         files.downloadAsync("assets/jars/downloads/"+newFilename, url, (data) => {
           if (data == "error") {
                     for (let j in downloads) {
@@ -594,6 +605,10 @@ process.stdin.on("data", (data) => {
       break;
     case "backup":
       backups.triggerBackupCycle();
+      break;
+    case "debugScraper":
+      console.log("1");
+      downloadJars("full");
       break;
     case "numServersOnline":
       let numServersOnline = 0;
