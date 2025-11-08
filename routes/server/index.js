@@ -145,7 +145,7 @@ router.get(`/claim/:id`, function (req, res) {
                 function (err, subscriptions) {
                   console.log("hasPayedForServer2");
                   let subs = 0;
-                  for (i in subscriptions.data) {
+                  for (let i in subscriptions.data) {
                     console.log("plan object");
                     console.log(subscriptions.data[i].plan);
                     if (subscriptions.data[i] != undefined) {
@@ -386,7 +386,7 @@ router.get(`/:id/:modtype(plugins|datapacks|mods)`, function (req, res) {
 
     if (modpack != undefined) {
       if (modpack.files.length > 0) {
-        for (i in modpack.files) {
+        for (let i in modpack.files) {
           if (modpack.files[i].path != undefined) {
             if (modpack.files[i].path.includes("\\")) {
               modpack.files[i].path = modpack.files[i].path.replace(/\\/g, "/");
@@ -400,7 +400,7 @@ router.get(`/:id/:modtype(plugins|datapacks|mods)`, function (req, res) {
     }
 
     //add unknownMods array to the end of mods
-    for (i in unknownMods) {
+    for (let i in unknownMods) {
       mods.push(unknownMods[i]);
     }
 
@@ -565,7 +565,7 @@ router.post(`/new/:id`, function (req, res) {
           console.log("debug: " + email + req.headers.username);
           if (account.servers == undefined) account.servers = [];
           let fullServers = 0;
-          for (i in account.servers) {
+          for (let i in account.servers) {
             if (account.servers[i] != undefined) {
               if (
                 fs.existsSync("servers/" + account.servers[i] + "/server.json")
@@ -679,7 +679,7 @@ router.post(`/new/:id`, function (req, res) {
                         let subs = 0;
                         let planId = "";
                         //go through each item in the subscriptions.data array and if its not undefined, add 1 to the subscriptions variable
-                        for (i in subscriptions.data) {
+                        for (let i in subscriptions.data) {
                           console.log("plan object");
                           console.log(subscriptions.data[i].plan);
                           planId = subscriptions.data[i].plan.product;
@@ -1133,7 +1133,7 @@ router.post("/:id/world", upload.single("file"), function (req, res) {
                           console.log("worldFolders: " + worldFolders);
                           let biggestFolder = "";
                           let biggestSize = 0;
-                          for (i in worldFolders) {
+                          for (let i in worldFolders) {
                             let folder = worldFolders[i];
                             let size = files.folderSizeRecursive(
                               `servers/${id}/world/${folder}`

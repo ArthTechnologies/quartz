@@ -55,7 +55,7 @@ router.get(`/servers`, function (req, res) {
     }
 
 
-    for (i in account.servers) {
+    for (let i in account.servers) {
 
 
   
@@ -164,7 +164,7 @@ router.get(`/billing`, function (req, res) {
             function (err, subscriptions2) {
           
 
-              for (i in subscriptions2.data) {
+              for (let i in subscriptions2.data) {
                 let plan = subscriptions2.data[i].items.data[0].plan;
                 try {
                   let name = "basic";
@@ -187,7 +187,7 @@ router.get(`/billing`, function (req, res) {
                 }
               }
               let serversArray = [];
-              for (i in account.servers) {
+              for (let i in account.servers) {
                 if (fs.existsSync(`servers/${account.servers[i]}/server.json`)) {
                   let planName = "basic";
                   if (account.servers[i].productID == config.plus) planName = "plus"; 
@@ -329,7 +329,7 @@ router.get(`/capacity`, function (req, res) {
     } else {
       let foundOwner = false;
       try {
-        for (i in fs.readdirSync(`accounts`)) {
+        for (let i in fs.readdirSync(`accounts`)) {
           if (
             !fs.readdirSync(`accounts`)[i].includes("swp") &&
             readJSON(

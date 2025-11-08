@@ -193,7 +193,7 @@ function run(
       }
     }
 
-    for (i in cmd) {
+    for (let i in cmd) {
       if (cmd[i] != undefined) {
         cmd[i] = cmd[i].toLowerCase();
       }
@@ -414,7 +414,7 @@ function run(
       fs.mkdirSync(folder + "/world/datapacks");
     }
     
-    for (i in addons) {
+    for (let i in addons) {
       let lowercase;
       let uppercase;
       let lrId;
@@ -537,7 +537,7 @@ function run(
 
     utils.writeJSON("servers/" + id + "/server.json", server);
 
-    for (i in plugins) {
+    for (let i in plugins) {
       let isJar = plugins[i].includes(".jar");
       if (isJar) {
         if (plugins[i].includes("Dynmap")) {
@@ -1057,7 +1057,7 @@ ls.stderr.on("data", data => {
     }
 
     //for every item in the cmd array, run the command
-    for (i in cmd) {
+    for (let i in cmd) {
       if (cmd[i] != undefined && cmd[i] != "op") {
         ls.stdin.write(cmd[i] + "\n");
       }
@@ -1150,7 +1150,7 @@ ls.stderr.on("data", data => {
     console.log(e.message);
     terminalOutput[id] =
       "Server failed to start. Here is the error message:\n\n"+e.message+"\n"+e.stack;
-    for (i in e.message.split("\n")) {
+    for (let i in e.message.split("\n")) {
       let item = e.message.split("\n")[i];
       if (item.includes("no such file or directory, open")) terminalOutput[id] = "[Error]: Missing file "+ item.split("y, open ")[1];
     }
@@ -1287,7 +1287,7 @@ function downloadModpack(id, modpackURL, modpackID, versionID) {
                     );
 
                     //for each file in modpack.files, download it
-for (i in modpack.files) {
+for (let i in modpack.files) {
                       //if the prefixhas a backslash, convert it to slash, as backslashes are ignored in linux
                       if (modpack.files[i].path.includes("\\")) {
                         modpack.files[i].prefix = modpack.files[i].path.replace(
@@ -1366,7 +1366,7 @@ for (i in modpack.files) {
                 let subfolderFiles = fs.readdirSync(
                   folder + "/temp/" + tempFiles[0]
                 );
-                for (i in subfolderFiles) {
+                for (let i in subfolderFiles) {
                   if (subfolderFiles[i] != "server.properties") {
                     fs.renameSync(
                       folder +
@@ -1398,7 +1398,7 @@ for (i in modpack.files) {
                     modpack = JSON.parse(
                       fs.readFileSync(folder + "/curseforge.index.json")
                     );
-                    for (i in modpack.files) {
+                    for (let i in modpack.files) {
                       let projectID = modpack.files[i].projectID;
                       let fileID = modpack.files[i].fileID;
                       console.log(projectID + " " + fileID);

@@ -194,7 +194,7 @@ const checkSubscriptions = utils.checkSubscriptions;
 if (fs.existsSync("accounts.json") && fs.existsSync("servers.json")) {
   const oldAccounts = require("./accounts.json");
   const oldServers = require("./servers.json");
-  for (i in oldAccounts) {
+  for (let i in oldAccounts) {
     let newAccount = {};
     newAccount = oldAccounts[i];
     newAccount.servers = [];
@@ -444,7 +444,7 @@ function backup() {
       let backupsList = config.backupsList.split(",");
       let spaceLimit = 512;
 
-      for (i in backupsList) {
+      for (let i in backupsList) {
         if (backupsList[i] != "") {
           //if backupsList[i]'s last character is a /, remove it
           if (backupsList[i].charAt(backupsList[i].length - 1) == "/") {
@@ -894,7 +894,7 @@ if (!data.serverStateDetails) {
 }
 
 // Process servers that should be running
-for (i in data.serverStates) {
+for (let i in data.serverStates) {
   if (data.serverStates[i] != null) {
     let id = parseInt(data.serverStates[i].split(":")[0]);
     let state = data.serverStates[i].split(":")[1];
