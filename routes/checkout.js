@@ -6,6 +6,7 @@ const config = require("../scripts/utils.js").getConfig();
 
 Router.post("/:priceId", async (req, res) => {
   try {
+    let uiMode = req.query.ui_mode || "embedded";
     let priceId = req.params.priceId;
     let quantity = req.query.quantity || 1;
     let customer_email = req.query.customer_email || null;
@@ -21,7 +22,7 @@ Router.post("/:priceId", async (req, res) => {
     console.log("Customer Email: " + customer_email);
 
     const session = await stripe.checkout.sessions.create({
-      ui_mode: "embedded",
+      ui_mode: uiMode,
       ...(customer_email && { customer_email: customer_email }), // This line will only add the customer_email field if it's not null
       currency: currency,
       locale: locale,
@@ -34,11 +35,12 @@ Router.post("/:priceId", async (req, res) => {
         },
       ],
       mode: "subscription",
-      return_url: config.stripeReturnUrl,
+...(uiMode === "embedded" && { return_url: config.stripeReturnUrl }),
+...(uiMode === "hosted" && { success_url: config.stripeReturnUrl, cancel_url: "https://servers.arthmc.xyz/signup/plans" }),
       automatic_tax: { enabled: true },
     });
 
-    res.send({ clientSecret: session.client_secret });
+    res.send({ clientSecret: session.client_secret, url: session.url });
   } catch (err) {
     console.log(err);
     res.status(500).send({ error: err });
