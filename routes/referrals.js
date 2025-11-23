@@ -8,7 +8,7 @@ const stripe = require("stripe")(stripeKey);
 // Hash function (predictable, static salt)
 function scrambleEmail(email) {
   
-  return "coupon_"+email.split('')[3]+ email.split('')[2] + email.split('')[4] + email.split('')[1] + email.split('')[5];
+  return "coupon-"+email.split('')[3]+ email.split('')[2] + email.split('')[4] + email.split('')[1] + email.split('')[5];
 
 }
 
@@ -41,6 +41,12 @@ Router.get("/referred_coupon", async (req, res) => {
       name: couponId,
     });
 
+    //create the promotion code
+    await stripe.promotionCodes.create({
+      coupon: couponId,
+      code: couponId,
+    });
+
     res.send(couponId);
   } catch (err) {
     console.error(err);
@@ -67,10 +73,10 @@ Router.get("/referrer_coupon/:id", async (req, res) => {
     const used = invoices.data.some(inv => inv.discount?.coupon?.id === couponId);
     if (used) {
         //create a new coupon
-        let newId = "coupon_" + (() => Math.random().toString(36).slice(2, 2 + 8))();
+        let newId = "coupon-" + (() => Math.random().toString(36).slice(2, 2 + 8))();
         stripe.coupons.create({
           id: newId,
-          percent_off: 40,
+          percent_off: 50,
           duration: "once",
           name: newId,
         });
@@ -141,7 +147,7 @@ Router.get('/price', async (req, res) => {
       const sub = subscriptions.data[0];
       const item = sub.items.data[0];
       let price = `${(item.price.unit_amount / 100).toFixed(2)} ${item.price.currency.toUpperCase()}`;
-    let halfOff = `${(Math.floor((item.price.unit_amount / 100 * 0.6) * 100) / 100).toFixed(2)} ${item.price.currency.toUpperCase()}`;
+    let halfOff = `${(Math.floor((item.price.unit_amount / 100 * 0.5) * 100) / 100).toFixed(2)} ${item.price.currency.toUpperCase()}`;
 
       res.json({
         price_id: item.price.id,
