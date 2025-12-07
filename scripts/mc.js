@@ -252,6 +252,12 @@ function run(
     }else {
       allocatedRAM = 4;
     }
+
+    // Cap RAM to 1GB if testing mode is enabled
+    if (config.testingMode === "true" || config.testingMode === true) {
+      allocatedRAM = 1;
+    }
+
     let startupFlags = server.startupFlags || getDefaultStartupFlags(allocatedRAM);
     let args = [
       startupFlags + " -jar server.jar",

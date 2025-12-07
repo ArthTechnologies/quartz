@@ -1510,13 +1510,14 @@ router.get("/:id/backups", function (req, res) {
 
 });
 
-router.post("/:id/backup", function (req, res) {
+router.post("/:id/backup", async function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
   let account = readJSON("accounts/" + email + ".json");
   if (utils.hasAccess(token, account, req.params.id)) {
     try {
-      backups.triggerBackupCycle();
+      const serverId = req.params.id;
+      await backups.backupSingleServer(serverId);
       res.status(202).json({ msg: "Backup started." });
     } catch (e) {
       console.log(e);

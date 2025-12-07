@@ -65,6 +65,7 @@ async function getWorldFileCount(serverId) {
 }
 
 async function runZip(serverId, timestamp) {
+ 
   return new Promise(async (resolve, reject) => {
     console.log(`Starting backup for server ${serverId}...`);
 
@@ -86,6 +87,9 @@ async function runZip(serverId, timestamp) {
       `./backups/${serverId}/${timestamp}.zip`,
       `./servers/${serverId}/world`,
     ]);
+    console.log("-r",
+      `./backups/${serverId}/${timestamp}.zip`,
+      `./servers/${serverId}/world`);
 
     // Monitor stdout for file additions
     if (zip.stdout) {
@@ -115,6 +119,7 @@ async function runZip(serverId, timestamp) {
     }
 
     zip.on("close", (code) => {
+      console.log("backup " + serverId + " code is " + code);
       if (code === 0 || code === 12) {
         console.log(`Successfully backed up server ${serverId}`);
         if (backupProgress[serverId]) {
@@ -250,6 +255,66 @@ async function getBackupSlots(serverId) {
   return backupSlots;
 }
 
+async function backupSingleServer(serverId) {
+  console.log(`Starting backup for single server ${serverId}...`);
+
+  const serverDir = `./servers/${serverId}`;
+
+  // Check if server directory exists
+  try {
+    await fs.access(serverDir);
+  } catch {
+    throw new Error(`Server directory ${serverDir} not found`);
+  }
+
+  // Create backup folder
+  await fs.mkdir(`./backups/${serverId}`, { recursive: true });
+
+  const backupFolder = await fs.readdir(`./backups/${serverId}`);
+
+  // Get space available and world size for this specific server
+  const worldSize = await getWorldTotalSize(serverId);
+  const spaceAvailable = await getSpaceAvailable();
+  const backupsFolderSize = await getBackupsFolderSize();
+
+  const backupSlots = Math.floor(
+    (spaceAvailable - 10 * 1024 * 1024 * 1024 + backupsFolderSize) / worldSize
+  );
+
+  // Delete old backups if necessary
+  if (backupFolder.length >= backupSlots) {
+    const amountToDelete = backupFolder.length - backupSlots + 1;
+    const sorted = backupFolder.sort();
+
+    for (let j = 0; j < amountToDelete; j++) {
+      await fs.rm(`./backups/${serverId}/${sorted[j]}`, {
+        recursive: true,
+        force: true,
+      });
+    }
+  }
+
+  const timestamp = Date.now();
+  try {
+    await runZip(serverId, timestamp);
+  } catch (err) {
+    console.error(`Error backing up server ${serverId}:`, err.message);
+    throw err;
+  }
+}
+
+async function getWorldTotalSize(serverId) {
+  try {
+    const { stdout } = await execPromise(
+      `du -c servers/${serverId}/world --max-depth=0 | tail -n 1`
+    );
+    return parseInt(stdout.split("\t")[0]) * 1024 || 1024 * 1024; // Default to 1MB if empty
+  } catch (err) {
+    console.error(`Error getting world size for server ${serverId}:`, err.message);
+    return 1024 * 1024; // Default to 1MB
+  }
+}
+
 function triggerBackupCycle() {
   cycle();
 }
@@ -258,4 +323,4 @@ function getBackupProgress(serverId) {
   return backupProgress[serverId] || null;
 }
 
-module.exports = { getBackupSlots, triggerBackupCycle, getBackupProgress };
+module.exports = { getBackupSlots, triggerBackupCycle, getBackupProgress, backupSingleServer };

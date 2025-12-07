@@ -27,6 +27,8 @@ max=
 
 # Advanced Settings:
 
+# Enable testing mode: caps all Docker containers at 1GB RAM (useful for testing on limited resources)
+testingMode=false
 # The DeepL API Key to use for translating mod descriptions and such (You can apply for one at deepl.com):
 deeplKey=
 # Arth Hosting Only: PIN so that backend can get account data
