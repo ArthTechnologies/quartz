@@ -39,6 +39,7 @@ const fs = require("fs");
 const crypto = require("crypto");
 const files = require("./scripts/files.js");
 const scraper = require("./scripts/scraper.js");
+const schedules = require("./scripts/schedules.js");
 
 
 if (!fs.existsSync("config.txt")) {
@@ -251,34 +252,6 @@ if (!fs.existsSync("assets/jars")) {
 fs.readdirSync("assets/uploads").forEach((file) => {
   fs.unlinkSync(`assets/uploads/${file}`);
 });
-
-const datajson = readJSON("./assets/data.json");
-if (Date.now() - datajson.lastUpdate > 1000 * 60 * 60 * 6) {
-  downloadJars("partial");
-  checkSubscriptions();
-  // Start periodic tasks (includes subscription checks and subdomain cleanup)
-  utils.runPeriodicTasks();
-  backup();
-  refreshTempToken();
-  refreshFileAccess();
-  removeUnusedAccounts();
-}
-setInterval(() => {
-  downloadJars("partial");
-}, 1000 * 60 * 60 * 2);
-setInterval(() => {
-
-  // Start periodic tasks (includes subscription checks and subdomain cleanup)
-  utils.runPeriodicTasks();
-  backup();
-  refreshTempToken();
-  refreshFileAccess();
-  removeUnusedAccounts();
-}, 1000 * 60 * 60 * 12);
-
-setInterval(() => {
-  downloadJars("full");
-}, 1000 * 60 * 60 * 24);
 
 function refreshTempToken() {
   const datajson = readJSON("./assets/data.json");
@@ -981,6 +954,7 @@ app.use("/curseforge", require("./routes/curseforge"));
 app.use("/translate", require("./routes/translate"));
 app.use("/node", require("./routes/node"));
 app.use("/referrals", require("./routes/referrals"));
+app.use("/admin", require("./routes/admin.js"));
 
 //support for extensions
 
@@ -1026,6 +1000,103 @@ adminApp.use("/", require("./routes/dashboard"));
 // port
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`Listening on Port: ${port}`));
+
+// Initialize scheduler
+schedules.startScheduler(require("./scripts/mc.js"), files);
+
+// Automatically add a 6-hour backup task for servers before dataVer 1
+(async () => {
+  try {
+    const serversFolder = fs.readdirSync("servers");
+    const allSchedules = schedules.readSchedules();
+
+    for (const serverDir of serversFolder) {
+      // Skip non-numeric folders
+      if (isNaN(parseInt(serverDir))) continue;
+
+      const serverId = serverDir;
+      const serverJsonPath = `servers/${serverId}/server.json`;
+
+      // Check if server.json exists
+      if (!fs.existsSync(serverJsonPath)) continue;
+
+      try {
+        const serverData = readJSON(serverJsonPath);
+
+        // Check if dataVersion is missing
+        if (serverData.dataVersion === undefined) {
+          // Set dataVersion to 1
+          serverData.dataVersion = 1;
+          writeJSON(serverJsonPath, serverData);
+          console.log(`[Init] Set dataVersion=1 for server ${serverId}`);
+
+          // Check if backup task already exists for this server
+          const hasBackupTask = allSchedules.userTasks.some(
+            (t) => t.serverId === serverId && t.type === "backup"
+          );
+
+          // Create backup task if it doesn't exist
+          if (!hasBackupTask) {
+            schedules.createTask(serverId, `Auto-Backup (Every 6h)`, "backup", "0 */6 * * *");
+            console.log(`[Init] Created auto-backup task for server ${serverId}`);
+          }
+        }
+      } catch (err) {
+        console.error(`[Init] Error processing server ${serverId}:`, err.message);
+      }
+    }
+  } catch (err) {
+    console.error("[Init] Error initializing server backup tasks:", err);
+  }
+})();
+
+// Register system functions for the scheduler
+schedules.registerFunction("downloadPartialJars", async () => {
+  console.log("[System Task] Downloading partial jars...");
+  downloadJars("partial");
+});
+
+schedules.registerFunction("downloadFullJars", async () => {
+  console.log("[System Task] Downloading full jars...");
+  downloadJars("full");
+});
+
+schedules.registerFunction("runPeriodicMaintenance", async () => {
+  console.log("[System Task] Running periodic maintenance...");
+  utils.runPeriodicTasks();
+  refreshTempToken();
+  refreshFileAccess();
+  removeUnusedAccounts();
+});
+
+// Create system tasks for maintenance
+(async () => {
+  try {
+    const allSchedules = schedules.readSchedules();
+
+    // Check if maintenance tasks already exist
+    const hasPartialJarTask = allSchedules.systemTasks.some((t) => t.command === "downloadPartialJars");
+    const hasFullJarTask = allSchedules.systemTasks.some((t) => t.command === "downloadFullJars");
+    const hasMaintenanceTask = allSchedules.systemTasks.some((t) => t.command === "runPeriodicMaintenance");
+
+    if (!hasPartialJarTask) {
+      schedules.createSystemTask(null, "Download Partial Jars", "function", "0 */2 * * *", "downloadPartialJars");
+      console.log("[Init] Created system task: Download Partial Jars (every 2h)");
+    }
+
+    if (!hasFullJarTask) {
+      schedules.createSystemTask(null, "Download Full Jars", "function", "0 0 * * *", "downloadFullJars");
+      console.log("[Init] Created system task: Download Full Jars (daily)");
+    }
+
+    if (!hasMaintenanceTask) {
+      schedules.createSystemTask(null, "Periodic Maintenance", "function", "0 */12 * * *", "runPeriodicMaintenance");
+      console.log("[Init] Created system task: Periodic Maintenance (every 12h)");
+    }
+  } catch (err) {
+    console.error("[Init] Error creating system tasks:", err);
+  }
+})();
 
 app.use((err, req, res, next) => {
   switch (err.message) {
