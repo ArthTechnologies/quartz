@@ -139,8 +139,8 @@ try {
               console.log("[STAGE3] " + JSON.stringify(json));
             if (json.adminServer == undefined || json.adminServer == false) {
               const accountId = json.accountId;
-              if (serverId == 10) console.log("SIGMASIGMA7")
-              if (accountId === "4409dfd4-42b4-4f11-8417-6aa99ad61ec4") console.log("SIGMASIGMA2")
+       
+           
               fs.readdirSync("accounts").forEach((file) => 
               
                 {
