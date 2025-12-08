@@ -112,36 +112,51 @@ function sanitizePath(userInput) {
 
 function checkSubscriptions() {
       let servers = fs.readdirSync("servers");
+      //sort the folder alphanumerically for debugging purposes 
+      servers.sort((a, b) => {
+        return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+      });
+            console.log("[STAGE0] " + servers);
       let data = [];
       for (let i in servers) {
    
-
-
-        try {
           const serverId = servers[i];
+      console.log("[STAGE1] " + serverId);
+        try {
+      
           let storage = 0;
-  
+      
           try {
             storage = files.folderSizeRecursive("servers/" + serverId);
           } catch (e) {
             console.log(e);
           }
+             console.log("[STAGE2] " + `servers/${serverId}/server.json`);
           if (fs.existsSync(`servers/${serverId}/server.json`)) {
 try {
+  
               let json = readJSON(`servers/${serverId}/server.json`);
+              console.log("[STAGE3] " + JSON.stringify(json));
             if (json.adminServer == undefined || json.adminServer == false) {
               const accountId = json.accountId;
+              if (serverId == 10) console.log("SIGMASIGMA7")
+              if (accountId === "4409dfd4-42b4-4f11-8417-6aa99ad61ec4") console.log("SIGMASIGMA2")
               fs.readdirSync("accounts").forEach((file) => 
+              
                 {
+                    try {
                 let owner = null;
                         let email = null;
-                const account = readJSON(`accounts/${file}`);
+                        let account;
+                if (!file.includes(".swp")) account = readJSON(`accounts/${file}`);
+                else account.servers = [];
+                if (file.includes(".swp")) console.log("[STAGE2.7] " + JSON.stringify(account));  
                 if (account.accountId == accountId && file != "noemail.json") {
                   owner = file;
                   if (!file.includes("email:")) email = account.email;
                   else email = file.split("email:")[1].split(".json")[0];
                   data.push({
-                    serverId: servers[i],
+                    serverId: serverId,
                     owner: owner,
                     email: email,
                     storage: storage,
@@ -224,6 +239,9 @@ try {
                       console.log(e);
                     }
                 }
+              } catch(e) {
+                console.log("Caught Error: " + e);
+              }
               });
             }
 } catch (e) {
@@ -232,20 +250,29 @@ try {
             }
           } else {
             fs.readdirSync("accounts").forEach((file) => {
-              try {
-                let account = readJSON(`accounts/${file}`);
-                console.log("Checking account " + file);
+            
+                let account;
+                try {
+             account = readJSON(`accounts/${file}`);
+                } catch (e) {
+                
+                 account.servers = [];
+                }
+
+                if (file.includes(".swp")) console.log("[STAGE2.7] " + JSON.stringify(account));
+                //console.log("Checking account " + file);
                 if (
                   account.servers.includes(serverId) ||
                   account.servers.includes(parseInt(serverId))
                   && file != "noemail.json"
                 ) {
+                   console.log("[STAGE3] " + JSON.stringify(account));
                   owner = file;
                   if (!file.includes("email:")) email = account.email;
                   else email = file.split("email:")[1].split(".json")[0];
   
                   data.push({
-                    serverId: servers[i],
+                    serverId: serverId,
                     owner: owner,
                     email: email,
                     storage: storage,
@@ -326,11 +353,7 @@ try {
                       console.log(e);
                     }
                 }
-              } catch (error) {
-                console.log("error scanning account " + file);
-                console.log(error);
-                data = [];
-              }
+         
             });
           }
         } catch {

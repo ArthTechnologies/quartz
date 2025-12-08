@@ -467,6 +467,7 @@ function backup() {
 function removeUnusedAccounts() {
   const accounts = fs.readdirSync("accounts");
   for (let i = 0; i < accounts.length; i++) {
+    try {
     const account = readJSON(`accounts/${accounts[i]}`);
 
     //there is no system to tell file creation date accurately yet
@@ -520,6 +521,9 @@ function removeUnusedAccounts() {
         );
       }
     }
+  } catch(e) {
+    //console.log(e)
+  }
   }
 }
 
