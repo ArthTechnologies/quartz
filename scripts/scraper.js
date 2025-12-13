@@ -1,6 +1,7 @@
 const jQuery = require("jquery");
 const {JSDOM} = require("jsdom");
 const fs = require("fs");
+const path = require("path");
 const $ = jQuery(new JSDOM().window);
 const {exec} = require("child_process");
 const files = require("./files.js");
@@ -10,7 +11,62 @@ let skipOldVersions = false;
 let index = {};
 let scraperLog = [];
 
-// Helper function to log jar downloads
+// Helper function to download a jar and track it
+async function downloadAndLogJar(filename, url) {
+    try {
+        const jarPath = path.join("assets/jars", filename);
+
+        // Check if file already exists
+        if (fs.existsSync(jarPath)) {
+            index[filename] = url;
+            scraperLog.push({
+                filename: filename,
+                url: url,
+                success: true,
+                timestamp: new Date().toISOString(),
+                note: "File already exists"
+            });
+            return true;
+        }
+
+        // Download the jar
+        const response = await fetch(url);
+        if (!response.ok) {
+            scraperLog.push({
+                filename: filename,
+                url: url,
+                success: false,
+                timestamp: new Date().toISOString(),
+                error: `HTTP ${response.status}`
+            });
+            return false;
+        }
+
+        const buffer = await response.buffer();
+        fs.writeFileSync(jarPath, buffer);
+
+        index[filename] = url;
+        scraperLog.push({
+            filename: filename,
+            url: url,
+            success: true,
+            timestamp: new Date().toISOString(),
+            fileSize: buffer.length
+        });
+        return true;
+    } catch (err) {
+        scraperLog.push({
+            filename: filename,
+            url: url,
+            success: false,
+            timestamp: new Date().toISOString(),
+            error: err.message
+        });
+        return false;
+    }
+}
+
+// Helper function to log jar URLs (for tracking without downloading)
 function logJar(filename, url, success = true) {
     scraperLog.push({
         filename: filename,
@@ -27,6 +83,10 @@ async function downloadPaperJars() {
     for (let i in paperVersions.versions) {
         try {
             let version = paperVersions.versions[i];
+            // Skip pre-release and release candidate versions
+            if (version.includes("-pre") || version.includes("-rc")) {
+                continue;
+            }
         const response = await fetch(`https://api.papermc.io/v2/projects/paper/versions/${version}/builds`);
         const builds = await response.json();
         const build = builds.builds[builds.builds.length - 1].build;
@@ -40,8 +100,7 @@ async function downloadPaperJars() {
         const filename = `paper-${version}-${channel}.jar`;
 
         if (!skipOldVersions || getMajorVersion(version, 1) >= 21) {
-            index[filename] = link;
-            logJar(filename, link);
+            await downloadAndLogJar(filename, link);
     }
     //if the channel is release and theres an existing beta jar, delete it
     if (channel == "release") {
@@ -83,8 +142,7 @@ async function downloadVelocityJars() {
         const filename = `velocity-${version}-${channel}.jar`;
 
         if (!skipOldVersions || getMajorVersion(version, 1) >= 21) {
-            index[filename] = link;
-            logJar(filename, link);
+            await downloadAndLogJar(filename, link);
     }
 
         //
@@ -94,7 +152,8 @@ async function downloadVelocityJars() {
 }
 
 async function downloadForgeJars() {
-    const response = await fetch("https://files.minecraftforge.net/maven/net/minecraftforge/forge/index.html");
+    try {
+        const response = await fetch("https://files.minecraftforge.net/maven/net/minecraftforge/forge/index.html");
 
     // Wait for the response text to resolve
     const minecraftVersionsHtml = $(await response.text());
@@ -121,16 +180,16 @@ async function downloadForgeJars() {
             let filename = "forge-" + components[1] + "-" + channel + ".jar";
             if (!components[1].includes("1.7.10_pre4")) {
                 if (!skipOldVersions || getMajorVersion(components[i], 1) >= 21) {
-                    index[filename] = link;
-                    logJar(filename, link);
+                    await downloadAndLogJar(filename, link);
             }
             }
         }
 
 
     }
-
-
+    } catch (err) {
+        console.error("Error downloading Forge jars:", err);
+    }
 
 }
 
@@ -170,8 +229,7 @@ async function downloadNeoforgeJars() {
         let filename = `neoforge-${minecraftVersion}-${channel}.jar`;
 
         if (!skipOldVersions || getMajorVersion(minecraftVersion, 0) >= 21) {
-            index[filename] = url;
-            logJar(filename, url);
+            await downloadAndLogJar(filename, url);
     }
 
     }
@@ -191,8 +249,7 @@ async function downloadQuiltJars() {
 
     let filename = "quilt-installer.jar";
 
-        index[filename] = url;
-        logJar(filename, url);
+        await downloadAndLogJar(filename, url);
 
 }
 
@@ -216,8 +273,7 @@ async function downloadFabricJars() {
             const filename = `fabric-${fabricVersions[i].version}.jar`;
 
             if (!skipOldVersions || getMajorVersion(fabricVersions[i].version, 0) >= 21) {
-                index[filename] = url;
-                logJar(filename, url);
+                await downloadAndLogJar(filename, url);
 
 
         }
@@ -228,11 +284,8 @@ async function downloadFabricJars() {
 
 async function downloadGeyserJars() {
 
-
-        index["geyser-spigot.jar"] = "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot";
-        logJar("geyser-spigot.jar", "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot");
-        index["floodgate-spigot.jar"] = "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot";
-        logJar("floodgate-spigot.jar", "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot");
+        await downloadAndLogJar("geyser-spigot.jar", "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot");
+        await downloadAndLogJar("floodgate-spigot.jar", "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot");
 }
 
 async function downloadWorldgenMods() {
@@ -275,8 +328,7 @@ async function downloadWorldgenMods() {
         let channel = minecraftVersions[i].split("*")[2];
         let filename = `${worldgenMods[z]}-${minecraftVersion}-${channel}.zip`;
         if (!skipOldVersions || getMajorVersion(minecraftVersion, 1) >= 21) {
-            index[filename] = url;
-            logJar(filename, url);
+            await downloadAndLogJar(filename, url);
     }
     }
 }
@@ -344,21 +396,21 @@ function downloadSnapshotJars() {
 }   
 
 
-function fullDownload() {
+async function fullDownload() {
     skipOldVersions = false;
     scraperLog = [];
     try {
-        downloadPaperJars();
-    setTimeout(() => downloadVelocityJars(), 500);
-    setTimeout(() => downloadForgeJars(), 1000);
-    setTimeout(() => downloadNeoforgeJars(), 1500);
-    setTimeout(() => downloadQuiltJars(), 2000);
-    setTimeout(() => downloadFabricJars(), 2250);
-    setTimeout(() => downloadGeyserJars(), 2500);
-    setTimeout(() => downloadWorldgenMods(), 3000);
-    setTimeout(() => downloadSnapshotJars(), 3500);
-    setTimeout(() => downloadVanillaJars(), 4000);  
-    setTimeout(() => done(), 30000);
+        await downloadPaperJars();
+        await downloadVelocityJars();
+        await downloadForgeJars();
+        await downloadNeoforgeJars();
+        await downloadQuiltJars();
+        await downloadFabricJars();
+        await downloadGeyserJars();
+        await downloadWorldgenMods();
+        downloadSnapshotJars();
+        downloadVanillaJars();
+        setTimeout(() => done(), 5000);
     } catch (e) {
         //console.log(e);
     }
@@ -375,23 +427,23 @@ function done() {
     //console.log("Done running jars scraper");
 }
 
-function partialDownload() {
+async function partialDownload() {
 
     skipOldVersions = true;
     scraperLog = [];
     try {
-        downloadPaperJars();
-    setTimeout(() => downloadVelocityJars(), 100);
-    setTimeout(() => downloadForgeJars(), 200);
-    setTimeout(() => downloadNeoforgeJars(), 300);
-    setTimeout(() => downloadQuiltJars(), 400);
-    setTimeout(() => downloadFabricJars(), 450);
-    setTimeout(() => downloadGeyserJars(), 500);
-    setTimeout(() => downloadWorldgenMods(), 600);
-    setTimeout(() => downloadSnapshotJars(), 700);
-    setTimeout(() => downloadVanillaJars(), 800);
-    setTimeout(() => done(), 10000);
-    } catch {
+        await downloadPaperJars();
+        await downloadVelocityJars();
+        await downloadForgeJars();
+        await downloadNeoforgeJars();
+        await downloadQuiltJars();
+        await downloadFabricJars();
+        await downloadGeyserJars();
+        await downloadWorldgenMods();
+        downloadSnapshotJars();
+        downloadVanillaJars();
+        setTimeout(() => done(), 5000);
+    } catch (e) {
         //console.log(e);
     }
 
