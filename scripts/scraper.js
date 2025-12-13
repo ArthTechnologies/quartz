@@ -8,6 +8,17 @@ const files = require("./files.js");
 let skipOldVersions = false;
 
 let index = {};
+let scraperLog = [];
+
+// Helper function to log jar downloads
+function logJar(filename, url, success = true) {
+    scraperLog.push({
+        filename: filename,
+        url: url,
+        success: success,
+        timestamp: new Date().toISOString()
+    });
+}
 
 //paper
 async function downloadPaperJars() {
@@ -30,6 +41,7 @@ async function downloadPaperJars() {
 
         if (!skipOldVersions || getMajorVersion(version, 1) >= 21) {
             index[filename] = link;
+            logJar(filename, link);
     }
     //if the channel is release and theres an existing beta jar, delete it
     if (channel == "release") {
@@ -72,6 +84,7 @@ async function downloadVelocityJars() {
 
         if (!skipOldVersions || getMajorVersion(version, 1) >= 21) {
             index[filename] = link;
+            logJar(filename, link);
     }
 
         //
@@ -109,6 +122,7 @@ async function downloadForgeJars() {
             if (!components[1].includes("1.7.10_pre4")) {
                 if (!skipOldVersions || getMajorVersion(components[i], 1) >= 21) {
                     index[filename] = link;
+                    logJar(filename, link);
             }
             }
         }
@@ -157,6 +171,7 @@ async function downloadNeoforgeJars() {
 
         if (!skipOldVersions || getMajorVersion(minecraftVersion, 0) >= 21) {
             index[filename] = url;
+            logJar(filename, url);
     }
 
     }
@@ -177,6 +192,7 @@ async function downloadQuiltJars() {
     let filename = "quilt-installer.jar";
 
         index[filename] = url;
+        logJar(filename, url);
 
 }
 
@@ -201,8 +217,9 @@ async function downloadFabricJars() {
 
             if (!skipOldVersions || getMajorVersion(fabricVersions[i].version, 0) >= 21) {
                 index[filename] = url;
+                logJar(filename, url);
 
-            
+
         }
 
     }
@@ -211,9 +228,11 @@ async function downloadFabricJars() {
 
 async function downloadGeyserJars() {
 
-    
-        index["geyser-spigot.jar"] = "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot";	
+
+        index["geyser-spigot.jar"] = "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot";
+        logJar("geyser-spigot.jar", "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot");
         index["floodgate-spigot.jar"] = "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot";
+        logJar("floodgate-spigot.jar", "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot");
 }
 
 async function downloadWorldgenMods() {
@@ -257,6 +276,7 @@ async function downloadWorldgenMods() {
         let filename = `${worldgenMods[z]}-${minecraftVersion}-${channel}.zip`;
         if (!skipOldVersions || getMajorVersion(minecraftVersion, 1) >= 21) {
             index[filename] = url;
+            logJar(filename, url);
     }
     }
 }
@@ -274,8 +294,9 @@ function downloadSnapshotJars() {
               try {
                 const version = JSON.parse(data);
                 if (version.downloads.server != undefined) {
-    
+
   index["snapshot-" + json.versions[0].id + ".jar"] = version.downloads.server.url;
+  logJar("snapshot-" + json.versions[0].id + ".jar", version.downloads.server.url);
 
                 }
               } catch (e) {
@@ -303,8 +324,9 @@ function downloadSnapshotJars() {
                             try {
                                 const version = JSON.parse(data);
                                 if (version.downloads.server != undefined) {
-                                    if (!skipOldVersions || getMajorVersion(version.id, 1) >= 21) { 
+                                    if (!skipOldVersions || getMajorVersion(version.id, 1) >= 21) {
                                     index["vanilla-" + version.id + ".jar"] = version.downloads.server.url;
+                                    logJar("vanilla-" + version.id + ".jar", version.downloads.server.url);
                                     }
                                 }
                             } catch (e) {
@@ -323,7 +345,8 @@ function downloadSnapshotJars() {
 
 
 function fullDownload() {
-    skipOldVersions = false;;
+    skipOldVersions = false;
+    scraperLog = [];
     try {
         downloadPaperJars();
     setTimeout(() => downloadVelocityJars(), 500);
@@ -345,12 +368,17 @@ function fullDownload() {
 function done() {
     const indexJson = JSON.stringify(index);
     fs.writeFileSync("assets/scraper.json", indexJson);
+
+    // Write scraper log to logs folder
+    const scraperLogJson = JSON.stringify(scraperLog, null, 2);
+    fs.writeFileSync("logs/scraper.json", scraperLogJson);
     //console.log("Done running jars scraper");
 }
 
 function partialDownload() {
 
     skipOldVersions = true;
+    scraperLog = [];
     try {
         downloadPaperJars();
     setTimeout(() => downloadVelocityJars(), 100);
