@@ -42,7 +42,8 @@ async function downloadAndLogJar(filename, url) {
             return false;
         }
 
-        const buffer = await response.buffer();
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
         fs.writeFileSync(jarPath, buffer);
 
         index[filename] = url;
@@ -153,7 +154,13 @@ async function downloadVelocityJars() {
 
 async function downloadForgeJars() {
     try {
-        const response = await fetch("https://files.minecraftforge.net/maven/net/minecraftforge/forge/index.html");
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+
+        const response = await fetch("https://files.minecraftforge.net/maven/net/minecraftforge/forge/index.html", {
+            signal: controller.signal
+        });
+        clearTimeout(timeout);
 
     // Wait for the response text to resolve
     const minecraftVersionsHtml = $(await response.text());
@@ -188,50 +195,75 @@ async function downloadForgeJars() {
 
     }
     } catch (err) {
-        console.error("Error downloading Forge jars:", err);
+        console.error("Error downloading Forge jars (skipping):", err.message);
+        scraperLog.push({
+            filename: "forge-general",
+            url: "https://files.minecraftforge.net/maven/net/minecraftforge/forge/index.html",
+            success: false,
+            timestamp: new Date().toISOString(),
+            error: `${err.name}: ${err.message} (skipped, will retry next run)`
+        });
     }
 
 }
 
 // neoforge
 async function downloadNeoforgeJars() {
-    const response = await fetch("https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge");
-    let neoforgeVersions = await response.json();
-    neoforgeVersions = neoforgeVersions.versions;
+    try {
+        const response = await fetch("https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge");
+        let neoforgeVersions = await response.json();
+        neoforgeVersions = neoforgeVersions.versions;
 
-    const latestVersions = [];
-    for (let i = neoforgeVersions.length - 1; i >= 0; i--) {
-        let version = neoforgeVersions[i];
-        let minecraftVersion = version.split(".")[0] + "." + version.split(".")[1];
+        const latestVersions = [];
+        for (let i = neoforgeVersions.length - 1; i >= 0; i--) {
+            let version = neoforgeVersions[i];
 
-        let minecraftVersionAlreadyPresent = false;
-        for (let j in latestVersions) {
-            let version2 = latestVersions[j];
+            // Skip invalid versions (like 0.25w14craftmine.*)
+            if (!version.match(/^\d+\.\d+/)) {
+                continue;
+            }
 
-            if (version2.includes(minecraftVersion)) {
-                minecraftVersionAlreadyPresent = true;
-                break;
+            let minecraftVersion = version.split(".")[0] + "." + version.split(".")[1];
+
+            let minecraftVersionAlreadyPresent = false;
+            for (let j in latestVersions) {
+                let version2 = latestVersions[j];
+
+                if (version2.includes(minecraftVersion)) {
+                    minecraftVersionAlreadyPresent = true;
+                    break;
+                }
+            }
+
+            if (!minecraftVersionAlreadyPresent) {
+                latestVersions.push(version);
             }
         }
 
-        if (!minecraftVersionAlreadyPresent) {
-            latestVersions.push(version);
+        for (let i in latestVersions) {
+            let url = `https://maven.neoforged.net/releases/net/neoforged/neoforge/${latestVersions[i]}/neoforge-${latestVersions[i]}-installer.jar`;
+            // Convert NeoForge version (e.g., 21.6.15) to Minecraft version (e.g., 1.21.6)
+            let parts = latestVersions[i].split(".");
+            let minecraftVersion = "1." + parts[0] + "." + parts[1];
+            let channel = "release";
+            if (latestVersions[i].includes("beta")) {
+                channel = "beta";
+            }
+            let filename = `neoforge-${minecraftVersion}-${channel}.jar`;
+            console.log(`NeoForge: Version=${latestVersions[i]}, MinecraftVersion=${minecraftVersion}, Filename=${filename}`);
+
+            if (!skipOldVersions || getMajorVersion(minecraftVersion, 1) >= 20) {
+                await downloadAndLogJar(filename, url);
+            }
         }
-    }
-
-    for (let i in latestVersions) {
-        let url = `https://maven.neoforged.net/releases/net/neoforged/neoforge/${latestVersions[i]}/neoforge-${latestVersions[i]}-installer.jar`;
-        let minecraftVersion = "1." + latestVersions[i].split(".")[0] + "." + latestVersions[i].split(".")[1];
-        let channel = "release";
-        if (latestVersions[i].includes("beta")) {
-            channel = "beta";
-        }
-        let filename = `neoforge-${minecraftVersion}-${channel}.jar`;
-
-        if (!skipOldVersions || getMajorVersion(minecraftVersion, 0) >= 21) {
-            await downloadAndLogJar(filename, url);
-    }
-
+    } catch (err) {
+        scraperLog.push({
+            filename: "neoforge-general",
+            url: "https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge",
+            success: false,
+            timestamp: new Date().toISOString(),
+            error: err.message
+        });
     }
 }
 
