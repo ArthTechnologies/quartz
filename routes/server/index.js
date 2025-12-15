@@ -433,6 +433,34 @@ router.post(`/:id/version/`, function (req, res) {
   }
 });
 
+router.post(`/:id/software/`, function (req, res) {
+  let email = req.headers.username;
+  let token = req.headers.token;
+  let account = readJSON("accounts/" + email + ".json");
+  let server = readJSON("servers/" + req.params.id + "/server.json");
+  if (utils.hasAccess(token, account, req.params.id)) {
+    let id = req.params.id;
+    let newSoftware = req.query.software;
+    let newVersion = req.query.version;
+
+    if (!newSoftware || !newVersion) {
+      res.status(400).json({ msg: `Software and version are required.` });
+      return;
+    }
+
+    server.software = newSoftware;
+    server.version = newVersion;
+    writeJSON("servers/" + id + "/server.json", server);
+
+    f.stopAsync(id, () => {
+      f.run(id, undefined, undefined, undefined, undefined, email, false);
+    });
+    res.status(202).json({ msg: `Success. Server software updated.` });
+  } else {
+    res.status(401).json({ msg: `Invalid credentials.` });
+  }
+});
+
 router.post(`/:id/add/:modtype(plugin|datapack|mod)`, function (req, res) {
   let email = req.headers.username;
   let token = req.headers.token;
