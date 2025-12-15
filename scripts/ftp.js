@@ -106,7 +106,15 @@ function startFtpServer() {
 }
 
 function getTempToken(username) {
-  return users.find(user => user.startsWith(username)).split(':')[1];
+  // username format: "ACCID.SERVERID"
+  const serverId = username.split('.')[1];
+  if (!serverId) return null;
+  try {
+    return security.getFileAccessKey(serverId);
+  } catch (e) {
+    console.error(`Error getting FTP token for ${username}:`, e);
+    return null;
+  }
 }
 
 module.exports = {
