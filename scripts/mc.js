@@ -785,23 +785,40 @@ function run(
           "...";
 
         if (software == "forge") {
-          exec(
+          const forgeInstaller = spawn(
             prefix + " -jar server.jar --installServer",
-            { cwd: folder, stdio: "inherit" },
-            (err, out) => {
-              if (err == null || !err.toString().includes("Command failed")) {
-                doneInstallingServer = true;
-              } else if (
-                out
-                  .toString()
-                  .includes("authserver.mojang.com: Name or service not known")
-              ) {
-                terminalOutput[id] =
-                  "Error]: Minecraft's auth servers are down. Try again later.";
-                states[id] = "false";
-              }
-            }
+            { cwd: folder, stdio: ["pipe", "pipe", "pipe"], shell: true, timeout: 600000 }
           );
+
+          forgeInstaller.stdout.on("data", (data) => {
+            terminalOutput[id] += "\n[Forge Installer] " + data.toString();
+            console.log("[Forge " + id + "] " + data.toString());
+          });
+
+          forgeInstaller.stderr.on("data", (data) => {
+            terminalOutput[id] += "\n[Forge Error] " + data.toString();
+            console.log("[Forge Error " + id + "] " + data.toString());
+          });
+
+          forgeInstaller.on("exit", (code) => {
+            console.log("Forge installer exited with code: " + code);
+            terminalOutput[id] += "\n[Forge Installer] Process exited with code: " + code;
+            // Don't mark as done yet - wait for libraries to actually exist
+            // Poll for libraries since installer may exit before downloads complete
+            let libraryCheckCount = 0;
+            const maxLibraryChecks = 240;
+            const libraryCheckInterval = setInterval(() => {
+              libraryCheckCount++;
+              if (fs.existsSync(folder + libraryline)) {
+                clearInterval(libraryCheckInterval);
+                doneInstallingServer = true;
+              } else if (libraryCheckCount > maxLibraryChecks) {
+                clearInterval(libraryCheckInterval);
+                states[id] = "false";
+                terminalOutput[id] += "\n[Error]: Forge libraries failed to download.";
+              }
+            }, 500);
+          });
         } else {
           //quilt
           exec(
