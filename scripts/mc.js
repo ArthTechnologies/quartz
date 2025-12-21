@@ -153,11 +153,6 @@ function run(
   modpackVersionID
 ) {
   try {
-
-    
-    if (version != undefined && version.includes(" ")) {
-      version = version.split(" ").join("*");
-    }
     const { exec, execSync, spawn } = require("child_process");
     //this looks for servers running on the same port that may obstruct startup
     killObstructingProcess(parseInt(id));
@@ -396,12 +391,20 @@ function run(
     }
 
     if (software != "quilt") {
-      console.log("moving " + software + "-" + version + ".jar to " + folder);
-      if (fs.existsSync("assets/jars/" + software + "-" + version + ".jar")) {
-        fs.copyFileSync(
-          "assets/jars/" + software + "-" + version + ".jar",
-          folder + "/server.jar"
-        );
+      console.log("moving " + software + "-" + version + " to " + folder);
+      // Try to find jar with any variant
+      let jarPath = null;
+      const jarDir = "assets/jars/";
+      const jars = fs.readdirSync(jarDir);
+      for (let jar of jars) {
+        if (jar.startsWith(software + "-" + version + "-") && jar.endsWith(".jar")) {
+          jarPath = jarDir + jar;
+          break;
+        }
+      }
+
+      if (jarPath && fs.existsSync(jarPath)) {
+        fs.copyFileSync(jarPath, folder + "/server.jar");
       }
     } else {
       fs.copyFileSync(
@@ -450,22 +453,22 @@ function run(
          lrId = "aKCwCJlY";
       }
 
-        if (fs.existsSync("assets/jars/"+lowercase+"-" + version.split("*")[0] + ".zip")) {
+      // Try to find zip with any variant
+      let zipPath = null;
+      const jarDir = "assets/jars/";
+      const jars = fs.readdirSync(jarDir);
+      for (let jar of jars) {
+        if (jar.startsWith(lowercase + "-" + version + "-") && jar.endsWith(".zip")) {
+          zipPath = jarDir + jar;
+          break;
+        }
+      }
+
+      if (zipPath && fs.existsSync(zipPath)) {
         fs.copyFileSync(
-          "assets/jars/"+lowercase+"-" + version.split("*")[0] + ".zip",
+          zipPath,
           folder + "/world/datapacks/lr_"+lrId+"_"+uppercase+".zip"
         );
-      } else if (fs.existsSync("assets/jars/"+lowercase+"-" + version.split("*")[0] + "*beta.zip")) {
-        fs.copyFileSync(
-          "assets/jars/"+lowercase+"-" + version.split("*")[0] + "*beta.zip",
-          folder + "/world/datapacks/lr_"+lrId+"_"+uppercase+".zip"
-        );  
-      } else if (fs.existsSync("assets/jars/"+lowercase+"-" + version.split("*")[0] + "*alpha.zip")) {
-
-        fs.copyFileSync(
-          "assets/jars/"+lowercase+"-" + version.split("*")[0] + "*alpha.zip",
-          folder + "/world/datapacks/lr_"+lrId+"_"+uppercase+".zip"
-        );  
       }
 
       

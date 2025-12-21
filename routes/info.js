@@ -265,11 +265,25 @@ router.get(`/worldgenMods`, function (req, res) {
   res.status(200).json(returnArray);
 });
 
+function normalizeJarName(filename) {
+  // Match: software-version.ext or software-version-variant.ext or software-version*variant.ext
+  // Convert to: software-version-variant.ext (always with variant, default to release)
+  const match = filename.match(/^([a-zA-Z]+)-(\d+(?:\.\d+)*)(?:[-*](\w+))?(\.\w+)$/);
+  if (match) {
+    const software = match[1];
+    const version = match[2];
+    const variant = match[3] || 'release'; // Default to 'release' if no variant
+    const ext = match[4];
+    return `${software}-${version}-${variant}${ext}`;
+  }
+  return filename;
+}
+
 router.get(`/jars`, function (req, res) {
   let returnArray = [];
   fs.readdirSync("assets/jars").forEach((file) => {
     if (file.includes(".jar") || file.includes(".zip")) {
-      returnArray.push(file);
+      returnArray.push(normalizeJarName(file));
     }
   });
   //sort
@@ -281,23 +295,23 @@ router.get(`/jars`, function (req, res) {
 
 function sortFiles(files) {
   return files.sort((a, b) => {
-      const regex = /([a-zA-Z]+)-(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\*(\w+))?\.jar|\.zip/;
+      const regex = /([a-zA-Z]+)-(\d+)(?:\.(\d+))?(?:\.(\d+))?-(\w+)\.jar|\.zip/;
       const matchA = a.match(regex);
       const matchB = b.match(regex);
-      
+
       const nameA = matchA ? matchA[1] : a;
       const versionA = matchA ? [parseInt(matchA[2]), matchA[3] ? parseInt(matchA[3]) : 0, matchA[4] ? parseInt(matchA[4]) : 0] : [0, 0, 0];
-      const preA = matchA ? matchA[5] || '' : '';
+      const variantA = matchA ? matchA[5] || '' : '';
 
       const nameB = matchB ? matchB[1] : b;
       const versionB = matchB ? [parseInt(matchB[2]), matchB[3] ? parseInt(matchB[3]) : 0, matchB[4] ? parseInt(matchB[4]) : 0] : [0, 0, 0];
-      const preB = matchB ? matchB[5] || '' : '';
+      const variantB = matchB ? matchB[5] || '' : '';
 
       if (nameA !== nameB && nameA != undefined && nameB != undefined) return nameA.localeCompare(nameB);
       for (let i = 0; i < 3; i++) {
           if (versionA[i] !== versionB[i]) return versionA[i] - versionB[i];
       }
-      return preA.localeCompare(preB);
+      return variantA.localeCompare(variantB);
   });
 }
 

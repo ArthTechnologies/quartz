@@ -336,27 +336,28 @@ function getIndex(callback) {
       }
 
       if (file.includes("-")) {
-        let software = file.split("-")[0];
-        let version = "";
-        if (file.includes(".jar")) {
-          console.log(file);
-          version = file.split("-")[1].split(".jar")[0];
-        } else {
-          version = file.split("-")[1].split(".zip")[0];
+        // Format: software-version-variant.ext
+        const match = file.match(/^([a-zA-Z]+)-(\d+(?:\.\d+)*)-(\w+)\.(jar|zip)$/);
+        if (match) {
+          const software = match[1];
+          const version = match[2];
+          const variant = match[3];
+          const ext = match[4];
+
+          if (index[software] == undefined) {
+            index[software] = [];
+          }
+          let date;
+          if (fs.existsSync("./assets/jars/" + file)) {
+            date = fs.statSync("./assets/jars/" + file).mtime;
+          }
+          index[software].push({
+            version: version,
+            link: `jars/${software}/${version}`,
+            date: date,
+            software: software,
+          });
         }
-        if (index[software] == undefined) {
-          index[software] = [];
-        }
-        let date;
-        if (fs.existsSync("./assets/jars/" + file)) {
-          date = fs.statSync("./assets/jars/" + file).mtime;
-        }
-        index[software].push({
-          version: version,
-          link: `jars/${software}/${version}`,
-          date: date,
-          software: software,
-        });
       }
     });
     callback(index);

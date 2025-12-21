@@ -321,24 +321,15 @@ function downloadJars(type) {
         let software = filename.split("-")[0];
         let version = filename.split("-")[1];
         let extension = filename.split(".")[filename.split(".").length - 1];
-        let channel = "";
-    
-    
-   
+        let variant = "release"; // Default to release
+
         if (filename.split("-").length > 2) {
-               
-
-         channel = filename.split("-")[2].split("."+extension)[0];
-        if (channel == "release") {
-          channel = "";
+          variant = filename.split("-")[2].split("."+extension)[0];
         } else {
-          channel = "*" + channel;
+          version = version.split("."+extension)[0];
         }
-      } else {
-        version = version.split("."+extension)[0];
-      } 
 
-        let newFilename = `${software}-${version}${channel}.${extension}`;
+        let newFilename = `${software}-${version}-${variant}.${extension}`;
   
         setTimeout(() => {
        
