@@ -30,8 +30,8 @@ function startFtpServer() {
                     let server = data.servers[j];
                 let tempToken = security.getFileAccessKey(server);
                 if (data.accountId.includes("acc_")) data.accountId = data.accountId.replace("acc_", "");
-                console.log(`Adding user ${data.accountId.slice(0, 6)}.${server}:${tempToken}:/home/sysadmin/quartz/servers/${server}/:${server}`);
-                users.push(`${data.accountId.slice(0, 6)}.${server}:${tempToken}:/home/sysadmin/quartz/servers/${server}/:${server}`); 
+                console.log(`Adding user ${data.accountId.slice(-6)}.${server}:${tempToken}:/home/sysadmin/quartz/servers/${server}/:${server}`);
+                users.push(`${data.accountId.slice(-6)}.${server}:${tempToken}:/home/sysadmin/quartz/servers/${server}/:${server}`); 
                 }
              }
             }
