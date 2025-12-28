@@ -567,9 +567,33 @@ process.stdin.on("data", (data) => {
     case "exit":
       process.exit(0);
     case "help":
-      console.log(
-        "Commands:\nstop\nend\nexit\nbackup\nnumServersOnline\ngetServerOwner\ngetDashboardToken\nscanAccountIds\nscanAccountServers\nbroadcast\nhelp\nclear - clears the terminal\nrefresh - downloads the latest jars, gets the latest version, verifies subscriptions, and cleans up inactive subdomains. This automatically runs every 12 hours.\ncleanupSubdomains - manually triggers the subdomain cleanup process\n"
-      );
+      console.log(`Commands:
+  stop | end | exit           - Exit the Quartz process.
+  help                        - Show this help text.
+  clear                       - Clear the terminal output.
+
+  backup                      - Trigger the backup cycle.
+  runMigrations               - W.I.P
+
+  debugScraper                - Debug: force a full jar download (calls downloadJars("full")).
+  refresh                     - Download latest jars, verify subscriptions, refresh file access and clean up inactive subdomains (also runs automatically every 12h).
+  runPeriodicTasks            - Run periodic maintenance tasks immediately.
+  refreshFileAccess           - Refresh file access keys and restart the FTP server (if needed).
+  checkSubscriptions          - Verify Stripe subscriptions for accounts.
+
+  numServersOnline            - Print number of servers currently online and percentage.
+  getServerOwner              - Prompt for a server id and print the owning account.
+  getDashboardToken           - Print the current dashboard temporary token.
+
+  broadcast                   - Prompt for a message and broadcast it to all servers.
+  scheduleRestart             - Prompt for minutes and schedule a restart with notifications.
+
+  scanAccountIds              - List accountId and filename for all accounts.
+  scanAccountServers          - List servers for each account file.
+  cleanupSubdomains           - Manually trigger subdomain cleanup process.
+
+Type a command and press Enter. For commands that prompt (e.g. getServerOwner, broadcast, scheduleRestart) follow the on-screen prompts.
+`);
       break;
     case "backup":
       backups.triggerBackupCycle();
@@ -706,13 +730,31 @@ process.stdin.on("data", (data) => {
       break;
     case "refresh":
       downloadJars("full");
-      checkSubscriptions();
       utils.runPeriodicTasks();
       refreshTempToken();
       removeUnusedAccounts();
       refreshFileAccess();
       
       console.log("downloading latest jars, verifying subscriptions, and cleaning up subdomains...");
+      break;
+    case "runPeriodicTasks":
+      utils.runPeriodicTasks();
+      refreshTempToken();
+      removeUnusedAccounts();
+      refreshFileAccess();
+      break;
+    case "refreshFileAccess":
+      // Trigger file access refresh and attempt to restart FTP server
+      try {
+        refreshFileAccess();
+        console.log("Triggered refreshFileAccess: refreshing keys and (re)starting FTP server.");
+      } catch (e) {
+        console.log("Error running refreshFileAccess: " + e);
+      }
+      break;
+    case "checkSubscriptions":
+      console.log("Verifying subscriptions...");
+      checkSubscriptions();
       break;
     case "scanAccountIds":
       fs.readdirSync("accounts").forEach((file) => {
@@ -1056,7 +1098,7 @@ schedules.registerFunction("downloadFullJars", async () => {
   downloadJars("full");
 });
 
-schedules.registerFunction("runPeriodicMaintenance", async () => {
+schedules.registerFunction("runPeriodicTasks", async () => {
   console.log("[System Task] Running periodic maintenance...");
   utils.runPeriodicTasks();
   refreshTempToken();
@@ -1072,7 +1114,7 @@ schedules.registerFunction("runPeriodicMaintenance", async () => {
     // Check if maintenance tasks already exist
     const hasPartialJarTask = allSchedules.systemTasks.some((t) => t.command === "downloadPartialJars");
     const hasFullJarTask = allSchedules.systemTasks.some((t) => t.command === "downloadFullJars");
-    const hasMaintenanceTask = allSchedules.systemTasks.some((t) => t.command === "runPeriodicMaintenance");
+    const hasMaintenanceTask = allSchedules.systemTasks.some((t) => t.command === "runPeriodicTasks");
 
     if (!hasPartialJarTask) {
       schedules.createSystemTask(null, "Download Partial Jars", "function", "0 */2 * * *", "downloadPartialJars");
@@ -1085,7 +1127,7 @@ schedules.registerFunction("runPeriodicMaintenance", async () => {
     }
 
     if (!hasMaintenanceTask) {
-      schedules.createSystemTask(null, "Periodic Maintenance", "function", "0 */12 * * *", "runPeriodicMaintenance");
+      schedules.createSystemTask(null, "Periodic Maintenance", "function", "0 */12 * * *", "runPeriodicTasks");
       console.log("[Init] Created system task: Periodic Maintenance (every 12h)");
     }
   } catch (err) {
